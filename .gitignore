@@ -71,4 +71,4 @@ cmake_install.cmake
 run.sh
 .scannerwork/
 CuraEngine
-
+*.dll
