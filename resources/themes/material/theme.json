@@ -103,10 +103,10 @@
             255
         ],
         "border": [
-            127,
-            127,
-            127,
-            255
+            0,
+            0,
+            0,
+            30
         ],
         "secondary": [
             245,
@@ -235,15 +235,15 @@
             255
         ],
         "sidebar_header_highlight": [
-            68,
-            192,
-            255,
+            2,
+            119,
+            189,
             255
         ],
         "sidebar_header_highlight_hover": [
-            68,
-            192,
-            255,
+            2,
+            119,
+            189,
             255
         ],
         "sidebar_header_text_inactive": [
@@ -391,9 +391,9 @@
             255
         ],
         "button_tooltip_border": [
-            68,
-            192,
-            255,
+            2,
+            119,
+            189,
             255
         ],
         "button_tooltip_text": [
@@ -799,15 +799,15 @@
             255
         ],
         "slider_handle_hover": [
-            77,
-            182,
-            226,
+            2,
+            119,
+            189,
             255
         ],
         "slider_handle_active": [
-            68,
-            192,
-            255,
+            2,
+            119,
+            189,
             255
         ],
         "slider_handle_border": [
@@ -937,9 +937,9 @@
             255
         ],
         "tooltip": [
-            68,
-            192,
-            255,
+            2,
+            119,
+            189,
             255
         ],
         "tooltip_text": [
@@ -967,10 +967,10 @@
             120
         ],
         "message_border": [
-            127,
-            127,
-            127,
-            255
+            0,
+            0,
+            0,
+            30
         ],
         "message_text": [
             0,
@@ -1021,9 +1021,9 @@
             255
         ],
         "message_progressbar_control": [
-            77,
-            182,
-            226,
+            2,
+            119,
+            189,
             255
         ],
         "tool_panel_background": [
@@ -1076,20 +1076,20 @@
         ],
         "x_axis": [
             255,
-            0,
-            0,
+            82,
+            82,
             255
         ],
         "y_axis": [
-            0,
-            0,
-            255,
+            156,
+            39,
+            176,
             255
         ],
         "z_axis": [
-            0,
-            255,
-            0,
+            76,
+            175,
+            80,
             255
         ],
         "all_axis": [
@@ -1142,8 +1142,8 @@
         ],
         "error_area": [
             255,
-            0,
-            0,
+            82,
+            82,
             127
         ],
         "model_default": [
@@ -1154,8 +1154,8 @@
         ],
         "model_overhang": [
             255,
-            0,
-            0,
+            82,
+            82,
             255
         ],
         "model_unslicable": [
@@ -1190,8 +1190,8 @@
         ],
         "xray_error": [
             255,
-            0,
-            0,
+            82,
+            82,
             255
         ],
         "layerview_ghost": [
@@ -1208,14 +1208,14 @@
         ],
         "layerview_inset_0": [
             255,
-            0,
-            0,
+            82,
+            82,
             255
         ],
         "layerview_inset_x": [
-            0,
-            255,
-            0,
+            76,
+            175,
+            80,
             255
         ],
         "layerview_skin": [
@@ -1249,9 +1249,9 @@
             255
         ],
         "layerview_move_combing": [
-            0,
-            0,
-            255,
+            156,
+            39,
+            176,
             255
         ],
         "layerview_move_retraction": [
@@ -1270,13 +1270,13 @@
             181,
             166,
             66,
-            50
+            150
         ],
         "configuration_item": [
             255,
             255,
             255,
-            0
+            100
         ],
         "configuration_item_active": [
             2,
@@ -1363,9 +1363,9 @@
             255
         ],
         "favorites_row_selected": [
-            196,
-            239,
-            255,
+            88,
+            165,
+            240,
             255
         ],
         "monitor_card_background_inactive": [
@@ -1501,8 +1501,8 @@
             50
         ],
         "default_lining": [
-            0.08,
-            0.08
+            0.12,
+            0.12
         ],
         "default_arrow": [
             0.8,

@@ -11,6 +11,7 @@ QtObject {
     property Component sidebar_header_button: Component {
         ButtonStyle {
             background: Rectangle {
+                radius: 6
                 color:
                 {
                     if(control.enabled)
@@ -93,6 +94,7 @@ QtObject {
     property Component topbar_header_tab_no_overlay: Component {
         ButtonStyle {
             background: Rectangle {
+                
                 implicitHeight: Theme.getSize("topbar_button").height
                 implicitWidth: Theme.getSize("topbar_button").width
                 color: "transparent"
@@ -101,7 +103,7 @@ QtObject {
                 Rectangle
                 {
                     id: underline
-
+                    radius: 6
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
@@ -733,7 +735,7 @@ QtObject {
             background: Rectangle {
                 implicitHeight: Theme.getSize("setting_control").height;
                 implicitWidth: Theme.getSize("setting_control").width;
-
+                radius: 6
                 color: control.hovered ? UM.Theme.getColor("setting_control_highlight") : UM.Theme.getColor("setting_control")
                 Behavior on color { ColorAnimation { duration: 50; } }
 
@@ -782,6 +784,7 @@ QtObject {
         ComboBoxStyle {
 
             background: Rectangle {
+                radius: 6
                 color: !enabled ? UM.Theme.getColor("setting_control_disabled") : control._hovered ? UM.Theme.getColor("setting_control_highlight") : UM.Theme.getColor("setting_control")
                 border.width: UM.Theme.getSize("default_lining").width
                 border.color: !enabled ? UM.Theme.getColor("setting_control_disabled_border") : control._hovered ? UM.Theme.getColor("setting_control_border_highlight") : UM.Theme.getColor("setting_control_border")
@@ -963,7 +966,7 @@ QtObject {
 
                 border.width: Theme.getSize("default_lining").width;
                 border.color: control.hovered ? Theme.getColor("setting_control_border_highlight") : Theme.getColor("setting_control_border");
-
+                radius: 6
                 color: Theme.getColor("setting_validation_ok");
 
                 Label {
@@ -984,6 +987,7 @@ QtObject {
         {
             background: Rectangle
             {
+                radius: 6
                 border.width: UM.Theme.getSize("default_lining").width
                 border.color:
                 {

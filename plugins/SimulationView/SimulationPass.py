@@ -3,6 +3,7 @@
 
 from UM.Math.Color import Color
 from UM.Math.Vector import Vector
+from UM.Math.Quaternion import Quaternion
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 from UM.Resources import Resources
 from UM.Scene.SceneNode import SceneNode
@@ -95,6 +96,7 @@ class SimulationPass(RenderPass):
         tool_handle_batch = RenderBatch(self._tool_handle_shader, type = RenderBatch.RenderType.Overlay, backface_cull = True)
         active_build_plate = Application.getInstance().getMultiBuildPlateModel().activeBuildPlate
         head_position = None  # Indicates the current position of the print head
+        head_rotation = None
         nozzle_node = None
 
         for node in DepthFirstIterator(self._scene.getRoot()):
@@ -131,6 +133,8 @@ class SimulationPass(RenderPass):
                                     continue
                                 # The head position is calculated and translated
                                 head_position = Vector(polygon.data[index+offset][0], polygon.data[index+offset][1], polygon.data[index+offset][2]) + node.getWorldPosition()
+                                head_rotation = Quaternion(
+                                    polygon.data[index+offset][3], polygon.data[index+offset][4], polygon.data[index+offset][5])
                                 break
                             break
                         if self._layer_view._minimum_layer_num > layer:
@@ -179,7 +183,10 @@ class SimulationPass(RenderPass):
         if not self._switching_layers and not self._compatibility_mode and self._layer_view.getActivity() and nozzle_node is not None:
             if head_position is not None:
                 nozzle_node.setVisible(True)
+                if head_rotation is not None:
+                    nozzle_node.setOrientation(head_rotation)
                 nozzle_node.setPosition(head_position)
+                
                 nozzle_batch = RenderBatch(self._nozzle_shader, type = RenderBatch.RenderType.Transparent)
                 nozzle_batch.addItem(nozzle_node.getWorldTransformation(), mesh = nozzle_node.getMeshData())
                 nozzle_batch.render(self._scene.getActiveCamera())
