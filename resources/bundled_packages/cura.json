@@ -50,6 +50,23 @@
             }
         }
     },
+    "CLIReader": {
+        "package_info": {
+            "package_id": "CLIReader",
+            "package_type": "plugin",
+            "display_name": "CLI Reader",
+            "description": "Allows loading and displaying CLI files.",
+            "package_version": "1.0.0",
+            "sdk_version": 5,
+            "website": "https://stereotech.org",
+            "author": {
+                "author_id": "StereotechPackages",
+                "display_name": "Stereotech LLC.",
+                "email": "dev@ste3d.ru",
+                "website": "https://stereotech.org"
+            }
+        }
+    },
     "CuraEngineBackend": {
         "package_info": {
             "package_id": "CuraEngineBackend",

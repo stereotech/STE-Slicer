@@ -131,9 +131,10 @@ class FlavorParser:
             matrix.rotateByAxis(radians(point[5]), Vector.Unit_Z)
             vector_matrix.rotateByAxis(radians(point[3]), Vector.Unit_X)
             vector_matrix.rotateByAxis(radians(point[4]), Vector.Unit_Y)
-            vector_matrix.rotateByAxis(radians(point[5]), Vector.Unit_Z)
+            vector_matrix.rotateByAxis(radians(point[5])-math.pi/2, Vector.Unit_Z)
             #points[i, :] = [point[0] + extruder_offsets[0], point[2], -point[1] - extruder_offsets[1]]
-            points[i, :] = [matrix.at(0,0) + extruder_offsets[0], matrix.at(0,2), -matrix.at(0,1)-extruder_offsets[1], vector_matrix.at(0,0), vector_matrix.at(0,2), vector_matrix.at(0,1)]
+            points[i, :] = [matrix.at(0,0) + extruder_offsets[0], matrix.at(0,2), -matrix.at(0,1)-extruder_offsets[1], 
+                            vector_matrix.at(0,0), vector_matrix.at(0,2), -vector_matrix.at(0,1)]
             extrusion_values[i] = point[7]
             if i > 0:
                 line_feedrates[i - 1] = point[6]

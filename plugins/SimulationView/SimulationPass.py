@@ -184,7 +184,7 @@ class SimulationPass(RenderPass):
             if head_position is not None:
                 nozzle_node.setVisible(True)
                 if head_rotation is not None:
-                    nozzle_node.setOrientation(head_rotation)
+                    nozzle_node.setOrientation(head_rotation, 3)
                 nozzle_node.setPosition(head_position)
                 
                 nozzle_batch = RenderBatch(self._nozzle_shader, type = RenderBatch.RenderType.Transparent)
