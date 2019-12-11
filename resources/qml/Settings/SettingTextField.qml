@@ -31,7 +31,7 @@ SettingItem
         id: control
 
         anchors.fill: parent
-
+        radius: 4
         border.width: Math.round(UM.Theme.getSize("default_lining").width)
         border.color:
         {

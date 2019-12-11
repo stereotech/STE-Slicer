@@ -182,6 +182,7 @@ Item {
 
             // 1 = not started, 4 = error, 5 = disabled
             text: [1, 4, 5].indexOf(base.backendState) != -1 ? catalog.i18nc("@label:Printjob", "Prepare") : catalog.i18nc("@label:Printjob", "Cancel")
+            
             onClicked:
             {
                 sliceOrStopSlicing();
@@ -234,6 +235,7 @@ Item {
                         }
                         font: UM.Theme.getFont("action_button")
                         text: control.text;
+                        //
                     }
                 }
                 label: Item { }

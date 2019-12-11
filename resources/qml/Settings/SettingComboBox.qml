@@ -22,6 +22,7 @@ SettingItem
 
         background: Rectangle
         {
+            radius: 4
             color:
             {
                 if (!enabled) {

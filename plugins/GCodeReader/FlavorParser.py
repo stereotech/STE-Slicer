@@ -46,7 +46,7 @@ class FlavorParser:
         self._is_layers_in_file = False  # Does the Gcode have the layers comment?
         self._extruder_offsets = {}  # type: Dict[int, List[float]] # Offsets for multi extruders. key is index, value is [x-offset, y-offset]
         self._current_layer_thickness = 0.2  # default
-        self._filament_diameter = 2.85       # default
+        self._filament_diameter = 1.75       # default
         self._previous_extrusion_value = 0.0  # keep track of the filament retractions
 
         CuraApplication.getInstance().getPreferences().addPreference("gcodereader/show_caution", True)

@@ -569,37 +569,37 @@ Column
                 visible: !Cura.MachineManager.isCurrentSetupSupported || buildplateCompatibilityError || buildplateCompatibilityWarning
             }
 
-            Label {
-                id: materialInfoLabel
-                wrapMode: Text.WordWrap
-                text: "<a href='%1'>" + catalog.i18nc("@label", "Check compatibility") + "</a>"
-                font: UM.Theme.getFont("default")
-                color: UM.Theme.getColor("text")
-                linkColor: UM.Theme.getColor("text_link")
-                verticalAlignment: Text.AlignTop
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        // open the material URL with web browser
-                        var url = "https://ultimaker.com/incoming-links/cura/material-compatibilty"
-                        Qt.openUrlExternally(url);
-                    }
-                    onEntered: {
-                        var content = catalog.i18nc("@tooltip", "Click to check the material compatibility on Ultimaker.com.");
-                        base.showTooltip(
-                            materialInfoRow,
-                            Qt.point(-UM.Theme.getSize("sidebar_margin").width, 0),
-                            catalog.i18nc("@tooltip", content)
-                        );
-                    }
-                    onExited: base.hideTooltip();
-                }
-            }
+            //Label {
+            //    id: materialInfoLabel
+            //    wrapMode: Text.WordWrap
+            //    text: "<a href='%1'>" + catalog.i18nc("@label", "Check compatibility") + "</a>"
+            //    font: UM.Theme.getFont("default")
+            //    color: UM.Theme.getColor("text")
+            //    linkColor: UM.Theme.getColor("text_link")
+            //    verticalAlignment: Text.AlignTop
+            //    anchors.top: parent.top
+            //    anchors.right: parent.right
+            //    anchors.bottom: parent.bottom
+//
+            //    MouseArea {
+            //        anchors.fill: parent
+            //        hoverEnabled: true
+            //        onClicked: {
+            //            // open the material URL with web browser
+            //            var url = "https://ultimaker.com/incoming-links/cura/material-compatibilty"
+            //            Qt.openUrlExternally(url);
+            //        }
+            //        onEntered: {
+            //            var content = catalog.i18nc("@tooltip", "Click to check the material compatibility on Ultimaker.com.");
+            //            base.showTooltip(
+            //                materialInfoRow,
+            //                Qt.point(-UM.Theme.getSize("sidebar_margin").width, 0),
+            //                catalog.i18nc("@tooltip", content)
+            //            );
+            //        }
+            //        onExited: base.hideTooltip();
+            //    }
+            //}
         }
     }
 

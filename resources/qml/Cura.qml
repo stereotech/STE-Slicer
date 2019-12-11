@@ -17,7 +17,7 @@ UM.MainWindow
     id: base
     //: Cura application window title
     title: catalog.i18nc("@title:window","Ultimaker Cura");
-    viewportRect: Qt.rect(0, 0, (base.width - sidebar.width) / base.width, 1.0)
+    viewportRect: Qt.rect(0, 0, 1.0, 1.0)
     property bool showPrintMonitor: false
 
     backgroundColor: UM.Theme.getColor("viewport_background")
@@ -359,34 +359,25 @@ UM.MainWindow
                 }
             }
 
-            JobSpecs
-            {
-                id: jobSpecs
-                anchors
-                {
-                    bottom: parent.bottom;
-                    right: sidebar.left;
-                    bottomMargin: UM.Theme.getSize("default_margin").height;
-                    rightMargin: UM.Theme.getSize("default_margin").width;
-                }
-            }
+            
 
-            Button
-            {
-                id: openFileButton;
-                text: catalog.i18nc("@action:button","Open File");
-                iconSource: UM.Theme.getIcon("load")
-                style: UM.Theme.styles.tool_button
-                tooltip: ""
-                anchors
-                {
-                    top: topbar.bottom;
-                    topMargin: UM.Theme.getSize("default_margin").height;
-                    left: parent.left;
-                }
-                action: Cura.Actions.open;
-            }
-
+            //Button
+            //{
+            //    id: openFileButton;
+            //    text: catalog.i18nc("@action:button","Open File");
+            //    iconSource: UM.Theme.getIcon("load")
+            //    //style: UM.Theme.styles.tool_button
+            //    tooltip: ""
+            //    anchors
+            //    {
+            //        top: topbar.bottom;
+            //        topMargin: UM.Theme.getSize("default_margin").height;
+            //        left: sidebar.right;
+            //        //right: parent.right;
+            //    }
+            //    action: Cura.Actions.open;
+            //}
+//
             Toolbar
             {
                 id: toolbar;
@@ -395,9 +386,10 @@ UM.MainWindow
                 property int mouseY: base.mouseY
 
                 anchors {
-                    top: openFileButton.bottom;
+                    top: topbar.bottom;
                     topMargin: UM.Theme.getSize("window_margin").height;
-                    left: parent.left;
+                    left: sidebar.right;
+                    //right: parent.right;
                 }
             }
 
@@ -410,38 +402,15 @@ UM.MainWindow
                     bottom: parent.bottom;
                     left: parent.left;
                 }
-
             }
 
             Topbar
             {
                 id: topbar
-                anchors.left: parent.left
+                //anchors.left: parent.left
+                anchors.left: sidebar.right
                 anchors.right: parent.right
                 anchors.top: parent.top
-            }
-
-            Loader
-            {
-                id: main
-
-                anchors
-                {
-                    top: topbar.bottom
-                    bottom: parent.bottom
-                    left: parent.left
-                    right: sidebar.left
-                }
-
-                MouseArea
-                {
-                    visible: UM.Controller.activeStage.mainComponent != ""
-                    anchors.fill: parent
-                    acceptedButtons: Qt.AllButtons
-                    onWheel: wheel.accepted = true
-                }
-
-                source: UM.Controller.activeStage.mainComponent
             }
 
             Loader
@@ -455,10 +424,10 @@ UM.MainWindow
                     if (collapsed) {
                         sidebar.visible = true;
                         sidebar.initialWidth = UM.Theme.getSize("sidebar").width;
-                        viewportRect = Qt.rect(0, 0, (base.width - sidebar.width) / base.width, 1.0);
+                        viewportRect = Qt.rect(0, 0, 1.0, 1.0)//(base.width - sidebar.width) / base.width, 1.0);
                         expandSidebarAnimation.start();
                     } else {
-                        viewportRect = Qt.rect(0, 0, 1, 1.0);
+                        viewportRect = Qt.rect(0, 0, 1.0, 1.0);
                         collapseSidebarAnimation.start();
                     }
                     collapsed = !collapsed;
@@ -472,23 +441,23 @@ UM.MainWindow
                 }
 
                 width: initialWidth
-                x: base.width - sidebar.width
+                x: 0//base.width - sidebar.width
                 source: UM.Controller.activeStage.sidebarComponent
 
-                NumberAnimation {
+                SmoothedAnimation {
                     id: collapseSidebarAnimation
                     target: sidebar
                     properties: "x"
-                    to: base.width
-                    duration: 100
+                    to: - sidebar.width//base.width
+                    duration: 200
                 }
 
-                NumberAnimation {
+                SmoothedAnimation {
                     id: expandSidebarAnimation
                     target: sidebar
                     properties: "x"
-                    to: base.width - sidebar.width
-                    duration: 100
+                    to: 0//base.width 
+                    duration: 200
                 }
 
                 Component.onCompleted:
@@ -509,6 +478,42 @@ UM.MainWindow
                     anchors.fill: parent
                     acceptedButtons: Qt.AllButtons
                     onWheel: wheel.accepted = true
+                }
+            }
+
+            Loader
+            {
+                id: main
+
+                anchors
+                {
+                    top: topbar.bottom
+                    bottom: parent.bottom
+                    left: sidebar.right
+                    //right: parent.left
+                }
+
+                MouseArea
+                {
+                    visible: UM.Controller.activeStage.mainComponent != ""
+                    anchors.fill: parent
+                    acceptedButtons: Qt.AllButtons
+                    onWheel: wheel.accepted = true
+                }
+
+                source: UM.Controller.activeStage.mainComponent
+            }
+
+            JobSpecs
+            {
+                id: jobSpecs
+                anchors
+                {
+                    bottom: parent.bottom;
+                    //left: sidebar.right;
+                    right: parent.right;
+                    bottomMargin: UM.Theme.getSize("default_margin").height;
+                    rightMargin: UM.Theme.getSize("default_margin").width;
                 }
             }
 

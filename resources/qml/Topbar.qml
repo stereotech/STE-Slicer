@@ -25,14 +25,15 @@ Rectangle
     property int allItemsWidth: 0;
 
     function updateMarginsAndSizes() {
-        if (UM.Preferences.getValue("cura/sidebar_collapsed"))
-        {
-            rightMargin = UM.Theme.getSize("default_margin").width;
-        }
-        else
-        {
-            rightMargin = UM.Theme.getSize("sidebar").width + UM.Theme.getSize("default_margin").width;
-        }
+        rightMargin = UM.Theme.getSize("default_margin").width;
+        //if (UM.Preferences.getValue("cura/sidebar_collapsed"))
+        //{
+        //    
+        //}
+        //else
+        //{
+        //    rightMargin = UM.Theme.getSize("sidebar").width + UM.Theme.getSize("default_margin").width;
+        //}
         allItemsWidth = (
             logo.width + UM.Theme.getSize("topbar_logo_right_margin").width +
             UM.Theme.getSize("topbar_logo_right_margin").width + stagesMenuContainer.width +
@@ -61,11 +62,30 @@ Rectangle
         sourceSize.height: height;
     }
 
+    Button
+    {
+        id: openFileButton;
+        text: catalog.i18nc("@action:button","Open File");
+        iconSource: UM.Theme.getIcon("load")
+        //style: UM.Theme.styles.tool_button
+        tooltip: ""
+        anchors
+        {
+            top: base.top;
+            topMargin: UM.Theme.getSize("default_margin").height;
+            left: logo.right;
+            leftMargin: UM.Theme.getSize("default_margin").width;
+            //right: parent.right;
+        }
+        action: Cura.Actions.open;
+    }
+
     Row
     {
         id: stagesMenuContainer
-        anchors.left: logo.right
-        anchors.leftMargin: UM.Theme.getSize("topbar_logo_right_margin").width
+        anchors.horizontalCenter: base.horizontalCenter
+        //anchors.left: openFileButton.right
+        //anchors.leftMargin: UM.Theme.getSize("topbar_logo_right_margin").width
         spacing: UM.Theme.getSize("default_margin").width
 
         // The topbar is dynamically filled with all available stages

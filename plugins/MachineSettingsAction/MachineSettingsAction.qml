@@ -159,6 +159,14 @@ Cura.MachineAction
                                 property string label: catalog.i18nc("@option:check", "Heated bed")
                                 property bool forceUpdateOnChange: true
                             }
+                            Loader
+                            {
+                                id: fiveAxisCheckBox
+                                sourceComponent: simpleCheckBox
+                                property var settingKey: "machine_five_axis"
+                                property string label: catalog.i18nc("@option:check", "Five axis")
+                                property bool forceUpdateOnChange: true
+                            }
 
                             Item { width: UM.Theme.getSize("default_margin").width; height: UM.Theme.getSize("default_margin").height }
 

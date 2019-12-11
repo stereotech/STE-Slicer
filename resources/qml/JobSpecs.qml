@@ -79,7 +79,7 @@ Item {
                 maximumLength: 120
                 property int unremovableSpacing: 5
                 text: PrintInformation.jobName
-                horizontalAlignment: TextInput.AlignRight
+                horizontalAlignment: TextInput.AlignLeft
                 onEditingFinished: {
                     var new_name = text == "" ? catalog.i18nc("@text Print job name", "Untitled") : text;
                     PrintInformation.setJobName(new_name, true);

@@ -133,8 +133,9 @@ class SimulationPass(RenderPass):
                                     continue
                                 # The head position is calculated and translated
                                 head_position = Vector(polygon.data[index+offset][0], polygon.data[index+offset][1], polygon.data[index+offset][2]) + node.getWorldPosition()
-                                head_rotation = Quaternion(
-                                    polygon.data[index+offset][3], polygon.data[index+offset][4], polygon.data[index+offset][5])
+                                if len(polygon.data[index+offset]) > 3:
+                                    head_rotation = Quaternion(
+                                        polygon.data[index+offset][3], polygon.data[index+offset][4], polygon.data[index+offset][5])
                                 break
                             break
                         if self._layer_view._minimum_layer_num > layer:

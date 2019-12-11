@@ -24,10 +24,10 @@ UM.PointingRectangle {
 
     function show(position) {
         if(position.y + base.height > parent.height) {
-            x = position.x - base.width;
+            x = position.x + base.width + 70;
             y = parent.height - base.height;
         } else {
-            x = position.x - base.width;
+            x = position.x + base.width + 70;
             y = position.y - UM.Theme.getSize("tooltip_arrow_margins").height;
             if(y < 0)
             {

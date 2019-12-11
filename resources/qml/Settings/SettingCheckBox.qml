@@ -87,7 +87,7 @@ SettingItem
                 left: parent.left
             }
             width: height
-
+            radius: 4
             color:
             {
                 if(!enabled)
