@@ -167,7 +167,7 @@ Rectangle
 
         width: Math.round(parent.width * 0.55)
         height: UM.Theme.getSize("sidebar_header_mode_toggle").height
-
+        radius: 4
         anchors.right: parent.right
         anchors.rightMargin: UM.Theme.getSize("sidebar_margin").width
         anchors.topMargin: UM.Theme.getSize("sidebar_margin").height
@@ -225,7 +225,7 @@ Rectangle
                 {
                     border.width: control.checked ? UM.Theme.getSize("default_lining").width * 2 : UM.Theme.getSize("default_lining").width
                     border.color: (control.checked || control.pressed) ? UM.Theme.getColor("action_button_active_border") : control.hovered ? UM.Theme.getColor("action_button_hovered_border"): UM.Theme.getColor("action_button_border")
-
+                    radius: 4
                     // for some reason, QtQuick decided to use the color of the background property as text color for the contentItem, so here it is
                     color: (control.checked || control.pressed) ? UM.Theme.getColor("action_button_active") : control.hovered ? UM.Theme.getColor("action_button_hovered") : UM.Theme.getColor("action_button")
                 }

@@ -136,6 +136,8 @@ class SimulationPass(RenderPass):
                                 if len(polygon.data[index+offset]) > 3:
                                     head_rotation = Quaternion(
                                         polygon.data[index+offset][3], polygon.data[index+offset][4], polygon.data[index+offset][5])
+                                else:
+                                    head_rotation = Quaternion(z=1)
                                 break
                             break
                         if self._layer_view._minimum_layer_num > layer:
