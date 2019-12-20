@@ -24,6 +24,7 @@ ToolButton
     {
         background: Rectangle
         {
+            radius:4
             color:
             {
                 if (control.pressed) {
