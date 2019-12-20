@@ -17,7 +17,7 @@ UM.MainWindow
     id: base
     //: Cura application window title
     title: catalog.i18nc("@title:window","Ultimaker Cura");
-    viewportRect: Qt.rect(0, 0, 1.0, 1.0)
+    viewportRect: Qt.rect(sidebar.width, 0, 1.0, 1.0)
     property bool showPrintMonitor: false
 
     backgroundColor: UM.Theme.getColor("viewport_background")

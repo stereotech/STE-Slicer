@@ -167,7 +167,7 @@ Rectangle
 
         width: Math.round(parent.width * 0.55)
         height: UM.Theme.getSize("sidebar_header_mode_toggle").height
-
+        radius: 4
         anchors.right: parent.right
         anchors.rightMargin: UM.Theme.getSize("sidebar_margin").width
         anchors.topMargin: UM.Theme.getSize("sidebar_margin").height

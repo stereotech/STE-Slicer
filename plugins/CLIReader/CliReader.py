@@ -23,7 +23,7 @@ class CliReader(MeshReader):
     def _read(self, file_name):
         with open(file_name, "r", encoding="utf-8") as file:
             file_data = file.read()
-        self.readFromStream(file_data)
+        return self.readFromStream(file_data)
 
     def readFromStream(self, stream):
         parser = CliParser.CliParser()

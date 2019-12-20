@@ -523,6 +523,8 @@ QtObject {
                     anchors.fill: parent;
                     property bool down: control.pressed || (control.checkable && control.checked);
 
+                    radius: control.width / 2
+
                     color:
                     {
                         if(control.customColor !== undefined && control.customColor !== null)
