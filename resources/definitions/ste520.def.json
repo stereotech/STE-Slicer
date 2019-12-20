@@ -1,18 +1,18 @@
 {
     "version": 2,
-    "name": "Stereotech STE320",
+    "name": "Stereotech STE520",
     "inherits": "steprinter",
     "metadata": {
         "author": "Stereotech",
         "manufacturer": "Stereotech",
         "visible": true,
         "file_formats": "text/x-gcode",
-        "platform": "stereotech_ste320_platform.obj",
+        "platform": "stereotech_ste520_platform.obj",
         "platform_texture": "StereotechSte320backplate.png",
         "platform_offset": [
             0,
-            0,
-            -14
+            -97.8,
+            18
         ],
         "has_materials": true,
         "machine_extruder_trains": {
@@ -28,21 +28,27 @@
     },
     "overrides": {
         "machine_name": {
-            "default_value": "Stereotech STE320"
+            "default_value": "Stereotech STE520"
         },
         "machine_width": {
-            "default_value": 218
+            "default_value": 150
         },
         "machine_height": {
-            "default_value": 200
+            "default_value": 150
         },
         "machine_depth": {
-            "default_value": 210
+            "default_value": 150
         },
         "machine_center_is_zero": {
-            "default_value": false
+            "default_value": true
         },
         "machine_heated_bed": {
+            "default_value": false
+        },
+        "machine_shape": {
+            "default_value": "elliptic"
+        },
+        "machine_five_axis": {
             "default_value": true
         },
         "machine_head_with_fans_polygon": {
@@ -82,12 +88,6 @@
         },
         "machine_extruder_count": {
             "default_value": 2
-        },
-        "prime_tower_position_x": {
-            "value": "190"
-        },
-        "prime_tower_position_y": {
-            "value": "180"
         },
         "switch_extruder_retraction_amount": {
             "value": "4"

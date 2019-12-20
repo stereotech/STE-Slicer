@@ -57,7 +57,10 @@ class CliParser:
         self._gcode_list = []
         self._current_layer_thickness = 0
         self._current_layer_height = 0
-        
+
+        self._travel_speed = 0
+        self._wall_0_speed = 0
+        self._support_speed = 0
         
         self._filament_diameter = self._global_stack.getProperty(
             "material_diameter", "value")
@@ -67,6 +70,8 @@ class CliParser:
 
     _layer_keyword = "$$LAYER/"
     _geometry_end_keyword = "$$GEOMETRYEND"
+    _body_type_keyword = "//body//"
+    _support_type_keyword = "//support//"
 
     def processCliStream(self, stream: str) -> Optional[CuraSceneNode]:
         Logger.log("d", "Preparing to load CLI")
@@ -142,6 +147,10 @@ class CliParser:
                 except:
                     pass
                 
+            if line.find(self._body_type_keyword) == 0:
+                self._layer_type = LayerPolygon.Inset0Type
+            if line.find(self._support_type_keyword) == 0:
+                self._layer_type = LayerPolygon.SupportType
 
             # Comment line
             if line.startswith("//"):
@@ -234,11 +243,19 @@ class CliParser:
         self._gcode_position = Position(0, 0, 0, 0, 0, 0, 0, [0])
         self._rot_nwp = Matrix()
         self._rot_nws = Matrix()
+        self._layer_type = LayerPolygon.Inset0Type
 
         self._parsing_type = self._global_stack.getProperty(
             "printing_mode", "value")
         self._line_width = self._global_stack.getProperty("wall_line_width_0", "value")
         self._layer_thickness = self._global_stack.getProperty("layer_height", "value")
+
+        self._travel_speed = self._global_stack.getProperty(
+            "speed_travel", "value")
+        self._wall_0_speed = self._global_stack.getProperty(
+            "speed_wall_0", "value")
+        self._support_speed = self._global_stack.getProperty(
+            "speed_support", "value")
 
     def _transformCoordinates(self, x: float, y: float, z: float, i: float, j: float, k: float, position: Position) -> (float, float, float, float, float, float):
         a = position.a
@@ -345,13 +362,14 @@ class CliParser:
         # TODO: add combing to this polyline
         new_position, new_gcode_position = self._cliPointToPosition(
             CliPoint(float(points[0]), float(points[1])), self._position, False)
-        feedrate = self._global_stack.getProperty("speed_travel", "value")
+        feedrate = self._travel_speed
         x, y, z, a, b, c, f, e = new_position
         self._position = Position(x, y, z, a, b, c, feedrate, e)
-        gcode_command = self._generateGCodeCommand(0, new_gcode_position)
+        gcode_command = self._generateGCodeCommand(0, new_gcode_position, feedrate)
         if gcode_command is not None:
             gcode_list.append(gcode_command)
-        self._gcode_position = new_gcode_position
+        gx, gy, gz, ga, gb, gc, gf, ge = new_gcode_position
+        self._gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
         
         path.append([x, y, z, a, b, c, feedrate, e,
                      LayerPolygon.MoveCombingType])
@@ -359,17 +377,19 @@ class CliParser:
             point = CliPoint(float(points[idx]), float(points[idx + 1]))
             idx += 2
             new_position, new_gcode_position = self._cliPointToPosition(point, self._position)
-            feedrate = self._global_stack.getProperty("speed_wall_0", "value")
+            feedrate = self._wall_0_speed
+            if self._layer_type == LayerPolygon.SupportType:
+                feedrate = self._support_speed
             x, y, z, a, b, c, f, e = new_position
             self._position = Position(x, y, z, a, b, c, feedrate, e)
-            gcode_command = self._generateGCodeCommand(1, new_gcode_position)
+            gcode_command = self._generateGCodeCommand(1, new_gcode_position, feedrate)
             if gcode_command is not None:
                 gcode_list.append(gcode_command)
-            self._gcode_position = new_gcode_position
+            gx, gy, gz, ga, gb, gc, gf, ge = new_gcode_position
+            self._gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
+            path.append([x,y,z,a,b,c, feedrate, e, self._layer_type])
 
-            path.append([x,y,z,a,b,c, feedrate, e, LayerPolygon.Inset0Type])
-
-    def _generateGCodeCommand(self, g: int, gcode_position: Position) -> Optional[str]:
+    def _generateGCodeCommand(self, g: int, gcode_position: Position, feedrate: float) -> Optional[str]:
             gcode_command = "G%s" % g
             if abs(gcode_position.x - self._gcode_position.x) > 0.0001:
                 gcode_command += " X%.2f" % gcode_position.x
@@ -383,10 +403,10 @@ class CliParser:
                 gcode_command += " B%.2f" % gcode_position.b
             if abs(gcode_position.c - self._gcode_position.c) > 0.0001:
                 gcode_command += " C%.2f" % gcode_position.c
-            if abs(gcode_position.f - self._gcode_position.f) > 0.0001:
-                gcode_command += " F%f" % (gcode_position.f * 60)
+            if abs(feedrate - self._gcode_position.f) > 0.0001:
+                gcode_command += " F%.0f" % (feedrate * 60)
             if abs(gcode_position.e[self._extruder_number] - self._gcode_position.e[self._extruder_number]) > 0.0001:
-                gcode_command += " E%.2f" % gcode_position.e[self._extruder_number]
+                gcode_command += " E%.5f" % gcode_position.e[self._extruder_number]
             gcode_command += "\n"
             if gcode_command != "G%s\n" % g:
                 return gcode_command
