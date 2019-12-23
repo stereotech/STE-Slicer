@@ -432,7 +432,7 @@ QtObject {
                     Behavior on color { ColorAnimation { duration: 50; } }
                   
                     UM.RecolorImage {
-                        id: tool_button_arrow
+                        id: open_file_button_arrow
                         anchors.right: parent.right;
                         anchors.rightMargin: Theme.getSize("button").width - Math.round(Theme.getSize("button_icon").width / 4)
                         anchors.bottom: parent.bottom;
@@ -468,7 +468,7 @@ QtObject {
 
             label: Item {
                 UM.RecolorImage {
-                    id:file
+                    id: open_file_button_label_item
                     anchors.left: parent;
                     anchors.verticalCenter:parent.verticalCenter
                     opacity: !control.enabled ? 0.2 : 1.0
@@ -499,7 +499,7 @@ QtObject {
                 }
 
                 Label {
-                        id: button_open_file
+                        id: button_open_file_label
                         anchors.left:file.right
                         //anchors.horizontalCenter: parent.right
                         //anchors.verticalCenter: parent.verticalCenter;
@@ -522,8 +522,6 @@ QtObject {
                     radius: (Theme.getSize("small_button").height)/2
                     anchors.fill: parent;
                     property bool down: control.pressed || (control.checkable && control.checked);
-
-                    radius: control.width / 2
 
                     color:
                     {
@@ -665,8 +663,8 @@ QtObject {
     property Component sidebar_category: Component {
         ButtonStyle {
             background: Rectangle {
-                radius:4
-                anchors.fill: parent;
+                radius: 4
+                anchors.fill: parent
                 anchors.left: parent.left
                 anchors.leftMargin: Theme.getSize("sidebar_margin").width
                 anchors.right: parent.right
