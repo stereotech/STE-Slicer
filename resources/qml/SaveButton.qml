@@ -191,6 +191,7 @@ Item {
             style: ButtonStyle {
                 background: Rectangle
                 {
+                    radius:4
                     border.width: UM.Theme.getSize("default_lining").width
                     border.color:
                     {
@@ -267,17 +268,18 @@ Item {
             style: ButtonStyle {
                 background: Rectangle
                 {
+                    radius:4
                     border.width: UM.Theme.getSize("default_lining").width
                     border.color:
                     {
                         if(!control.enabled)
-                            return UM.Theme.getColor("action_button_disabled_border");
+                            return UM.Theme.getColor("topbar_background_color");
                         else if(control.pressed)
-                            return UM.Theme.getColor("print_button_ready_pressed_border");
+                            return UM.Theme.getColor("topbar_background_color");
                         else if(control.hovered)
-                            return UM.Theme.getColor("print_button_ready_hovered_border");
+                            return UM.Theme.getColor("topbar_background_color");
                         else
-                            return UM.Theme.getColor("print_button_ready_border");
+                            return UM.Theme.getColor("topbar_background_color");
                     }
                     color:
                     {
@@ -333,18 +335,20 @@ Item {
 
             style: ButtonStyle {
                 background: Rectangle {
+                    radius:4
+                    //anchors.leftMargin: 4
                     id: deviceSelectionIcon
                     border.width: UM.Theme.getSize("default_lining").width
                     border.color:
                     {
                         if(!control.enabled)
-                            return UM.Theme.getColor("action_button_disabled_border");
+                            return UM.Theme.getColor("topbar_background_color");
                         else if(control.pressed)
-                            return UM.Theme.getColor("print_button_ready_pressed_border");
+                            return UM.Theme.getColor("topbar_background_color");
                         else if(control.hovered)
-                            return UM.Theme.getColor("print_button_ready_hovered_border");
+                            return UM.Theme.getColor("topbar_background_color");
                         else
-                            return UM.Theme.getColor("print_button_ready_border");
+                            return UM.Theme.getColor("topbar_background_color");
                     }
                     color:
                     {

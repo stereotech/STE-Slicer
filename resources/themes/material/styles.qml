@@ -265,7 +265,6 @@ QtObject {
 
                 UM.PointingRectangle {
                     id: button_tooltip
-
                     anchors.left: parent.right
                     anchors.leftMargin: Theme.getSize("button_tooltip_arrow").width * 2
                     anchors.verticalCenter: parent.verticalCenter
@@ -296,7 +295,6 @@ QtObject {
 
                 Rectangle {
                     id: buttonFace;
-
                     anchors.fill: parent;
                     property bool down: control.pressed || (control.checkable && control.checked);
 
@@ -396,6 +394,123 @@ QtObject {
         }
     }
 
+    property Component open_file_button: Component {
+        ButtonStyle {
+            background: Item {
+                implicitWidth: Theme.getSize("open_file_button").width;
+                implicitHeight: Theme.getSize("open_file_button").height;
+         
+                Rectangle {
+                    id: buttonOpenFile;
+                    radius:4
+                    anchors.fill: parent;
+
+                    property bool down: control.pressed || (control.checkable && control.checked);
+                    color:
+                    {
+                        if(control.customColor !== undefined && control.customColor !== null)
+                        {
+                            return control.customColor
+                        }
+                        else if(control.checkable && control.checked && control.hovered)
+                        {
+                            return Theme.getColor("open_file_button_active_hover");
+                        }
+                        else if(control.pressed || (control.checkable && control.checked))
+                        {
+                            return Theme.getColor("open_file_button_active");
+                        }
+                        else if(control.hovered)
+                        {
+                            return Theme.getColor("open_file_button_hover");
+                        }
+                        else
+                        {
+                            return Theme.getColor("open_file_button");
+                        }
+                    }
+                    Behavior on color { ColorAnimation { duration: 50; } }
+                  
+                    UM.RecolorImage {
+                        id: tool_button_arrow
+                        anchors.right: parent.right;
+                        anchors.rightMargin: Theme.getSize("button").width - Math.round(Theme.getSize("button_icon").width / 4)
+                        anchors.bottom: parent.bottom;
+                        anchors.bottomMargin: Theme.getSize("button").height - Math.round(Theme.getSize("button_icon").height / 4)
+                        width: Theme.getSize("standard_arrow").width
+                        height: Theme.getSize("standard_arrow").height
+                        sourceSize.width: width
+                        sourceSize.height: width
+                        visible: control.menu != null;
+                        color:
+                        {
+                            if(control.checkable && control.checked && control.hovered)
+                            {
+                                return Theme.getColor("button_text_active_hover");
+                            }
+                            else if(control.pressed || (control.checkable && control.checked))
+                            {
+                                return Theme.getColor("button_text_active");
+                            }
+                            else if(control.hovered)
+                            {
+                                return Theme.getColor("button_text_hover");
+                            }
+                            else
+                            {
+                                return Theme.getColor("button_text");
+                            }
+                        }
+                        source: Theme.getIcon("arrow_bottom")
+                    }
+                }
+            }
+
+            label: Item {
+                UM.RecolorImage {
+                    id:file
+                    anchors.left: parent;
+                    anchors.verticalCenter:parent.verticalCenter
+                    opacity: !control.enabled ? 0.2 : 1.0
+                    source: control.iconSource;
+                    width: Theme.getSize("button_icon_open_file").width;
+                    height: Theme.getSize("button_icon_open_file").height;
+                    color:
+                    {
+                        if(control.checkable && control.checked && control.hovered)
+                        {
+                            return Theme.getColor("button_text_active_hover");
+                        }
+                        else if(control.pressed || (control.checkable && control.checked))
+                        {
+                            return Theme.getColor("button_text_active");
+                        }
+                        else if(control.hovered)
+                        {
+                            return Theme.getColor("button_text_hover");
+                        }
+                        else
+                        {
+                            return Theme.getColor("button_text");
+                        }
+                    }
+
+                    sourceSize: Theme.getSize("button_icon")
+                }
+
+                Label {
+                        id: button_open_file
+                        anchors.left:file.right
+                        //anchors.horizontalCenter: parent.right
+                        //anchors.verticalCenter: parent.verticalCenter;
+
+                        text: control.text;
+                        font: Theme.getFont("button_tooltip");
+                        color: Theme.getColor("tooltip_text");
+                    }
+            }
+        }
+    }
     property Component small_tool_button: Component {
         ButtonStyle {
             background: Item {
@@ -404,7 +519,7 @@ QtObject {
 
                 Rectangle {
                     id: smallButtonFace;
-
+                    radius: (Theme.getSize("small_button").height)/2
                     anchors.fill: parent;
                     property bool down: control.pressed || (control.checkable && control.checked);
 
@@ -550,6 +665,7 @@ QtObject {
     property Component sidebar_category: Component {
         ButtonStyle {
             background: Rectangle {
+                radius:4
                 anchors.fill: parent;
                 anchors.left: parent.left
                 anchors.leftMargin: Theme.getSize("sidebar_margin").width
@@ -573,6 +689,7 @@ QtObject {
                 }
                 Behavior on color { ColorAnimation { duration: 50; } }
                 Rectangle {
+                    //radius:4
                     height: Theme.getSize("default_lining").height
                     width: parent.width
                     anchors.bottom: parent.bottom

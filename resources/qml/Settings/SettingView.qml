@@ -152,7 +152,7 @@ Item
     {
         id: filterContainer
         visible: true
-
+        radius:4
         border.width: Math.round(UM.Theme.getSize("default_lining").width)
         border.color:
         {
@@ -196,7 +196,6 @@ Item
             anchors.left: parent.left
             anchors.right: clearFilterButton.left
             anchors.rightMargin: Math.round(UM.Theme.getSize("sidebar_margin").width)
-
             placeholderText: catalog.i18nc("@label:textbox", "Search...")
 
             style: TextFieldStyle

@@ -67,10 +67,11 @@ Rectangle
         id: openFileButton;
         text: catalog.i18nc("@action:button","Open File");
         iconSource: UM.Theme.getIcon("load")
-        //style: UM.Theme.styles.tool_button
+        style: UM.Theme.styles.open_file_button
         tooltip: ""
         anchors
         {
+            verticalCenter: parent.verticalCenter
             top: base.top;
             topMargin: UM.Theme.getSize("default_margin").height;
             left: logo.right;
