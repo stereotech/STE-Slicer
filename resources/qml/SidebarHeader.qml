@@ -519,89 +519,89 @@ Column
     }
 
     // Material info row
-    Item
-    {
-        id: materialInfoRow
-        height: Math.round(UM.Theme.getSize("sidebar_setup").height / 2)
-        visible: (Cura.MachineManager.hasVariants || Cura.MachineManager.hasMaterials || Cura.MachineManager.hasVariantBuildplates) && !sidebar.hideSettings
-
-        anchors
-        {
-            left: parent.left
-            leftMargin: UM.Theme.getSize("sidebar_margin").width
-            right: parent.right
-            rightMargin: UM.Theme.getSize("sidebar_margin").width
-        }
-
-        // TODO This was added to replace the buildplate selector. Remove this component when the feature is ready
-        Label
-        {
-            id: materialCompatibilityLabel
-            y: -Math.round(UM.Theme.getSize("sidebar_margin").height / 3)
-            anchors.left: parent.left
-            width: parent.width - materialCompatibilityLink.width
-            text: catalog.i18nc("@label", "Use glue with this material combination")
-            font: UM.Theme.getFont("very_small")
-            color: UM.Theme.getColor("text")
-            visible: CuraSDKVersion == "dev" ? false : buildplateCompatibilityError || buildplateCompatibilityWarning
-            wrapMode: Text.WordWrap
-            opacity: 0.5
-        }
-
-        Item
-        {
-            id: materialCompatibilityLink
-            height: UM.Theme.getSize("sidebar_setup").height
-            anchors.right: parent.right
-            width: childrenRect.width + UM.Theme.getSize("default_margin").width
-
-            UM.RecolorImage {
-                id: warningImage
-                anchors.right: materialInfoLabel.left
-                anchors.rightMargin: UM.Theme.getSize("default_margin").width
-                anchors.verticalCenter: parent.Bottom
-                source: UM.Theme.getIcon("warning")
-                width: UM.Theme.getSize("section_icon").width
-                height: UM.Theme.getSize("section_icon").height
-                sourceSize.width: width
-                sourceSize.height: height
-                color: UM.Theme.getColor("material_compatibility_warning")
-                visible: !Cura.MachineManager.isCurrentSetupSupported || buildplateCompatibilityError || buildplateCompatibilityWarning
-            }
-
-            //Label {
-            //    id: materialInfoLabel
-            //    wrapMode: Text.WordWrap
-            //    text: "<a href='%1'>" + catalog.i18nc("@label", "Check compatibility") + "</a>"
-            //    font: UM.Theme.getFont("default")
-            //    color: UM.Theme.getColor("text")
-            //    linkColor: UM.Theme.getColor("text_link")
-            //    verticalAlignment: Text.AlignTop
-            //    anchors.top: parent.top
-            //    anchors.right: parent.right
-            //    anchors.bottom: parent.bottom
+    //Item
+    //{
+    //    id: materialInfoRow
+    //    height: Math.round(UM.Theme.getSize("sidebar_setup").height / 2)
+    //    visible: (Cura.MachineManager.hasVariants || Cura.MachineManager.hasMaterials || Cura.MachineManager.hasVariantBuildplates) && !sidebar.hideSettings
 //
-            //    MouseArea {
-            //        anchors.fill: parent
-            //        hoverEnabled: true
-            //        onClicked: {
-            //            // open the material URL with web browser
-            //            var url = "https://ultimaker.com/incoming-links/cura/material-compatibilty"
-            //            Qt.openUrlExternally(url);
-            //        }
-            //        onEntered: {
-            //            var content = catalog.i18nc("@tooltip", "Click to check the material compatibility on Ultimaker.com.");
-            //            base.showTooltip(
-            //                materialInfoRow,
-            //                Qt.point(-UM.Theme.getSize("sidebar_margin").width, 0),
-            //                catalog.i18nc("@tooltip", content)
-            //            );
-            //        }
-            //        onExited: base.hideTooltip();
-            //    }
-            //}
-        }
-    }
+    //    anchors
+    //    {
+    //        left: parent.left
+    //        leftMargin: UM.Theme.getSize("sidebar_margin").width
+    //        right: parent.right
+    //        rightMargin: UM.Theme.getSize("sidebar_margin").width
+    //    }
+//
+    //    // TODO This was added to replace the buildplate selector. Remove this component when the feature is ready
+    //    Label
+    //    {
+    //        id: materialCompatibilityLabel
+    //        y: -Math.round(UM.Theme.getSize("sidebar_margin").height / 3)
+    //        anchors.left: parent.left
+    //        width: parent.width - materialCompatibilityLink.width
+    //        text: catalog.i18nc("@label", "Use glue with this material combination")
+    //        font: UM.Theme.getFont("very_small")
+    //        color: UM.Theme.getColor("text")
+    //        visible: CuraSDKVersion == "dev" ? false : buildplateCompatibilityError || buildplateCompatibilityWarning
+    //        wrapMode: Text.WordWrap
+    //        opacity: 0.5
+    //    }
+//
+    //    Item
+    //    {
+    //        id: materialCompatibilityLink
+    //        height: UM.Theme.getSize("sidebar_setup").height
+    //        anchors.right: parent.right
+    //        width: childrenRect.width + UM.Theme.getSize("default_margin").width
+//
+    //        UM.RecolorImage {
+    //            id: warningImage
+    //            anchors.right: materialInfoLabel.left
+    //            anchors.rightMargin: UM.Theme.getSize("default_margin").width
+    //            anchors.verticalCenter: parent.Bottom
+    //            source: UM.Theme.getIcon("warning")
+    //            width: UM.Theme.getSize("section_icon").width
+    //            height: UM.Theme.getSize("section_icon").height
+    //            sourceSize.width: width
+    //            sourceSize.height: height
+    //            color: UM.Theme.getColor("material_compatibility_warning")
+    //            visible: !Cura.MachineManager.isCurrentSetupSupported || buildplateCompatibilityError || buildplateCompatibilityWarning
+    //        }
+//
+    //        //Label {
+    //        //    id: materialInfoLabel
+    //        //    wrapMode: Text.WordWrap
+    //        //    text: "<a href='%1'>" + catalog.i18nc("@label", "Check compatibility") + "</a>"
+    //        //    font: UM.Theme.getFont("default")
+    //        //    color: UM.Theme.getColor("text")
+    //        //    linkColor: UM.Theme.getColor("text_link")
+    //        //    verticalAlignment: Text.AlignTop
+    //        //    anchors.top: parent.top
+    //        //    anchors.right: parent.right
+    //        //    anchors.bottom: parent.bottom
+////
+    //        //    MouseArea {
+    //        //        anchors.fill: parent
+    //        //        hoverEnabled: true
+    //        //        onClicked: {
+    //        //            // open the material URL with web browser
+    //        //            var url = "https://ultimaker.com/incoming-links/cura/material-compatibilty"
+    //        //            Qt.openUrlExternally(url);
+    //        //        }
+    //        //        onEntered: {
+    //        //            var content = catalog.i18nc("@tooltip", "Click to check the material compatibility on Ultimaker.com.");
+    //        //            base.showTooltip(
+    //        //                materialInfoRow,
+    //        //                Qt.point(-UM.Theme.getSize("sidebar_margin").width, 0),
+    //        //                catalog.i18nc("@tooltip", content)
+    //        //            );
+    //        //        }
+    //        //        onExited: base.hideTooltip();
+    //        //    }
+    //        //}
+    //    }
+    //}
 
     UM.SettingPropertyProvider
     {

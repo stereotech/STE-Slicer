@@ -58,10 +58,18 @@ class CliParser:
         self._current_layer_thickness = 0
         self._current_layer_height = 0
 
+        #speeds
         self._travel_speed = 0
         self._wall_0_speed = 0
         self._support_speed = 0
-        
+        self._retraction_speed = 0
+        self._prime_speed = 0
+
+        #retraction
+        self._enable_retraction = False
+        self._retraction_amount = 0
+        self._retraction_min_travel = 1.5
+
         self._filament_diameter = self._global_stack.getProperty(
             "material_diameter", "value")
         self._line_width = 0.4
@@ -256,6 +264,17 @@ class CliParser:
             "speed_wall_0", "value")
         self._support_speed = self._global_stack.getProperty(
             "speed_support", "value")
+        self._retraction_speed = self._global_stack.getProperty(
+            "retraction_retract_speed", "value")
+        self._prime_speed = self._global_stack.getProperty(
+            "retraction_prime_speed", "value")
+
+        self._enable_retraction = self._global_stack.getProperty(
+            "retraction_enable", "value")
+        self._retraction_amount = self._global_stack.getProperty(
+            "retraction_amount", "value")
+        self._retraction_min_travel = self._global_stack.getProperty(
+            "retraction_min_travel", "value")
 
     def _transformCoordinates(self, x: float, y: float, z: float, i: float, j: float, k: float, position: Position) -> (float, float, float, float, float, float):
         a = position.a

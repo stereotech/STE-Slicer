@@ -96,7 +96,7 @@ class SimulationPass(RenderPass):
         tool_handle_batch = RenderBatch(self._tool_handle_shader, type = RenderBatch.RenderType.Overlay, backface_cull = True)
         active_build_plate = Application.getInstance().getMultiBuildPlateModel().activeBuildPlate
         head_position = None  # Indicates the current position of the print head
-        head_rotation = None
+        head_rotation = None#Quaternion(z=1.0)
         nozzle_node = None
 
         for node in DepthFirstIterator(self._scene.getRoot()):
@@ -136,8 +136,8 @@ class SimulationPass(RenderPass):
                                 if len(polygon.data[index+offset]) > 3:
                                     head_rotation = Quaternion(
                                         polygon.data[index+offset][3], polygon.data[index+offset][4], polygon.data[index+offset][5])
-                                else:
-                                    head_rotation = Quaternion(z=1)
+                                #else:
+                                #    head_rotation = Quaternion(z=1)
                                 break
                             break
                         if self._layer_view._minimum_layer_num > layer:

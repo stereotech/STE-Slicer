@@ -17,7 +17,7 @@ UM.MainWindow
     id: base
     //: Cura application window title
     title: catalog.i18nc("@title:window","Ultimaker Cura");
-    viewportRect: Qt.rect(sidebar.width, 0, 1.0, 1.0)
+    viewportRect: Qt.rect(0, 0, 1.0, 1.0)
     property bool showPrintMonitor: false
 
     backgroundColor: UM.Theme.getColor("viewport_background")
@@ -393,6 +393,27 @@ UM.MainWindow
                 }
             }
 
+            Row
+            {
+                id: exrudersRow
+
+                anchors {
+                    left: sidebar.right;
+                    bottom: parent.bottom;
+                    bottomMargin: UM.Theme.getSize("window_margin").height;
+                }
+
+                Repeater
+                    {
+                        id: extruders
+                        width: childrenRect.width
+                        height: childrenRect.height
+                        property var _model: Cura.ExtrudersModel { id: extrudersModel }
+                        model: _model.items.length > 1 ? _model : 0
+                        ExtruderButton { extruder: model }
+                    }
+            }
+
             ObjectsList
             {
                 id: objectsList;
@@ -424,7 +445,7 @@ UM.MainWindow
                     if (collapsed) {
                         sidebar.visible = true;
                         sidebar.initialWidth = UM.Theme.getSize("sidebar").width;
-                        viewportRect = Qt.rect(0, 0, 1.0, 1.0)//(base.width - sidebar.width) / base.width, 1.0);
+                        viewportRect = Qt.rect(0.0, 0.0, 1.0, 1.0)//(base.width - sidebar.width) / base.width, 1.0);
                         expandSidebarAnimation.start();
                     } else {
                         viewportRect = Qt.rect(0, 0, 1.0, 1.0);
@@ -467,7 +488,7 @@ UM.MainWindow
                     if (sidebar_collapsed)
                     {
                         sidebar.collapsed = true;
-                        viewportRect = Qt.rect(0, 0, 1, 1.0)
+                        viewportRect = Qt.rect(0, 0, 1.0, 1.0)
                         collapseSidebarAnimation.start();
                     }
                 }
@@ -490,7 +511,7 @@ UM.MainWindow
                     top: topbar.bottom
                     bottom: parent.bottom
                     left: sidebar.right
-                    //right: parent.left
+                    right: parent.right
                 }
 
                 MouseArea

@@ -70,17 +70,17 @@ Item
             }
         }
 
-        Item { height: UM.Theme.getSize("default_margin").height; width: UM.Theme.getSize("default_lining").width; visible: extruders.count > 0 }
-
-        Repeater
-        {
-            id: extruders
-            width: childrenRect.width
-            height: childrenRect.height
-            property var _model: Cura.ExtrudersModel { id: extrudersModel }
-            model: _model.items.length > 1 ? _model : 0
-            ExtruderButton { extruder: model }
-        }
+        //Item { height: UM.Theme.getSize("default_margin").height; width: UM.Theme.getSize("default_lining").width; visible: extruders.count > 0 }
+//
+        //Repeater
+        //{
+        //    id: extruders
+        //    width: childrenRect.width
+        //    height: childrenRect.height
+        //    property var _model: Cura.ExtrudersModel { id: extrudersModel }
+        //    model: _model.items.length > 1 ? _model : 0
+        //    ExtruderButton { extruder: model }
+        //}
     }
 
     UM.PointingRectangle

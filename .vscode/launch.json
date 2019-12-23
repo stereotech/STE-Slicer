@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python",
+            "name": "STE Slicer Debug",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/cura_app.py",
