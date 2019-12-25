@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<fdmmaterial version="1.3" xmlns="http://www.ultimaker.com/material">
+  <metadata>
+    <name>
+      <brand>Filamentarno!</brand>
+      <material>S-Soft</material>
+      <color>Light Green</color>
+      <label>S-Soft Салатовый</label>
+    </name>
+    <compatible>True</compatible>
+    <version>7</version>
+    <adhesion_info>70-90°C (возможна печать без подогрева с применением адгезивов)</adhesion_info>
+    <description>S-SOFT: группа сплошных (Solid), то есть непрозрачных пластиков. Спектр использования пластиков этой группы довольно широк: печать ударопрочных корпусов, тактильно приятных конечных изделий (накладок, ручек, сувениров) и любых изделий, которые должны переносить ударные нагрузки и нагрузки на скручивание при сохранении конструктивной целостности.</description>
+    <color_code>#99ff99</color_code>
+    <GUID>810b62c1-b93f-4a2f-80cc-68c1209987d8</GUID>
+    <definition>fdmprinter</definition>
+  </metadata>
+  <properties>
+    <diameter>1.75</diameter>
+    <density>1.01</density>
+    <weight>750</weight>
+  </properties>
+  <settings>
+    <setting key="standby temperature">175</setting>
+    <setting key="heated bed temperature">70.0</setting>
+    <setting key="retraction amount">1.0</setting>
+    <setting key="surface energy">100</setting>
+    <setting key="adhesion tendency">0</setting>
+    <setting key="print temperature">230.0</setting>
+    <setting key="print cooling">60.0</setting>
+  </settings>
+</fdmmaterial>

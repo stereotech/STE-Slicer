@@ -383,7 +383,18 @@ class CliParser:
             CliPoint(float(points[0]), float(points[1])), self._position, False)
         feedrate = self._travel_speed
         x, y, z, a, b, c, f, e = new_position
-        self._position = Position(x, y, z, a, b, c, feedrate, e)
+        is_retraction = self._enable_retraction and self._positionLength(
+            self._position, new_position) > self._retraction_min_travel
+        if is_retraction:
+            #we have retraction move
+            new_extruder_position = self._position.e[self._extruder_number] - self._retraction_amount
+            gcode_list.append("G1 E%.5f F%.0f\n" % (new_extruder_position, (self._retraction_speed * 60)))
+            self._position.e[self._extruder_number] = new_extruder_position
+            self._gcode_position.e[self._extruder_number] = new_extruder_position
+            path.append([self._position.x, self._position.y, self._position.z, self._position.a, self._position.b,
+                         self._position.c, self._retraction_speed, self._position.e, LayerPolygon.MoveRetractionType])
+        
+        self._position = Position(x, y, z, a, b, c, feedrate, self._position.e)
         gcode_command = self._generateGCodeCommand(0, new_gcode_position, feedrate)
         if gcode_command is not None:
             gcode_list.append(gcode_command)
@@ -392,6 +403,16 @@ class CliParser:
         
         path.append([x, y, z, a, b, c, feedrate, e,
                      LayerPolygon.MoveCombingType])
+        
+        if is_retraction:
+            #we have retraction move
+            new_extruder_position = self._position.e[self._extruder_number] + self._retraction_amount
+            gcode_list.append("G1 E%.5f F%.0f\n" % (new_extruder_position, (self._prime_speed * 60)))
+            self._position.e[self._extruder_number] = new_extruder_position
+            self._gcode_position.e[self._extruder_number] = new_extruder_position
+            path.append([self._position.x, self._position.y, self._position.z, self._position.a, self._position.b,
+                         self._position.c, self._prime_speed, self._position.e, LayerPolygon.MoveRetractionType])
+
         while idx < len(points):
             point = CliPoint(float(points[idx]), float(points[idx + 1]))
             idx += 2
@@ -424,7 +445,7 @@ class CliParser:
                 gcode_command += " C%.2f" % gcode_position.c
             if abs(feedrate - self._gcode_position.f) > 0.0001:
                 gcode_command += " F%.0f" % (feedrate * 60)
-            if abs(gcode_position.e[self._extruder_number] - self._gcode_position.e[self._extruder_number]) > 0.0001:
+            if abs(gcode_position.e[self._extruder_number] - self._gcode_position.e[self._extruder_number]) > 0.0001 and g > 0:
                 gcode_command += " E%.5f" % gcode_position.e[self._extruder_number]
             gcode_command += "\n"
             if gcode_command != "G%s\n" % g:
@@ -481,3 +502,7 @@ class CliParser:
         new_position.e[self._extruder_number] = position.e[self._extruder_number] + self._calculateExtrusion([x,y,z], position) if extrusion_move else position.e[self._extruder_number]
         new_gcode_position.e[self._extruder_number] = new_position.e[self._extruder_number]
         return new_position, new_gcode_position
+
+    @staticmethod
+    def _positionLength(start: Position, end: Position) -> float:
+        return numpy.sqrt((start.x - end.x)**2 + (start.y - end.y)**2 + (start.z - end.z)**2)

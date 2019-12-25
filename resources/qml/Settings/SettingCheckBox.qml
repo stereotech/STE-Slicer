@@ -94,11 +94,18 @@ SettingItem
                 {
                     return UM.Theme.getColor("setting_control_disabled")
                 }
-                if(control.containsMouse || control.activeFocus)
+                else if(control.checked)
+                {
+                    return UM.Theme.getColor("checkbox_checked")
+                }
+                else if(control.containsMouse || control.activeFocus)
                 {
                     return UM.Theme.getColor("setting_control_highlight")
                 }
-                return UM.Theme.getColor("setting_control")
+                else {
+                    return UM.Theme.getColor("setting_control")
+                }
+                
             }
 
             border.width: UM.Theme.getSize("default_lining").width
