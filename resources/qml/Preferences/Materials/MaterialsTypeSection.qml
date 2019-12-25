@@ -77,7 +77,7 @@ Rectangle
                 sourceSize.width: width
                 sourceSize.height: height
                 color: "black"
-                source: material_type_section.expanded ? UM.Theme.getIcon("arrow_bottom") : UM.Theme.getIcon("arrow_left")
+                source: material_type_section.expanded ? UM.Theme.getIcon("chevron-down") : UM.Theme.getIcon("chevron-left")
             }
             style: ButtonStyle
             {

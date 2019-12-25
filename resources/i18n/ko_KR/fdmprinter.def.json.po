@@ -4308,7 +4308,7 @@ msgstr "메쉬 수정"
 
 #: fdmprinter.def.json
 msgctxt "meshfix description"
-msgid "category_fixes"
+msgid "image-broken-variant"
 msgstr "카테고리 수정"
 
 #: fdmprinter.def.json
@@ -4398,7 +4398,7 @@ msgstr "특수 모드"
 
 #: fdmprinter.def.json
 msgctxt "blackmagic description"
-msgid "category_blackmagic"
+msgid "auto-fix"
 msgstr "블랙매직 카테고리"
 
 #: fdmprinter.def.json

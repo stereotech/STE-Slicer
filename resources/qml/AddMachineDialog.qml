@@ -107,7 +107,7 @@ UM.Dialog
                             sourceSize.width: width
                             sourceSize.height: width
                             color: palette.windowText
-                            source: base.activeCategory == section ? UM.Theme.getIcon("arrow_bottom") : UM.Theme.getIcon("arrow_right")
+                            source: base.activeCategory == section ? UM.Theme.getIcon("chevron-down") : UM.Theme.getIcon("chevron-right")
                         }
                     }
                 }

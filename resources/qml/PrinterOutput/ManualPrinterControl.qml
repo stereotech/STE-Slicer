@@ -179,7 +179,7 @@ Item
                     Layout.column: 2
                     Layout.preferredWidth: width
                     Layout.preferredHeight: height
-                    iconSource: UM.Theme.getIcon("arrow_top");
+                    iconSource: UM.Theme.getIcon("chevron-up");
                     style: monitorButtonStyle
                     width: height
                     height: UM.Theme.getSize("setting_control").height
@@ -196,7 +196,7 @@ Item
                     Layout.column: 1
                     Layout.preferredWidth: width
                     Layout.preferredHeight: height
-                    iconSource: UM.Theme.getIcon("arrow_left");
+                    iconSource: UM.Theme.getIcon("chevron-left");
                     style: monitorButtonStyle
                     width: height
                     height: UM.Theme.getSize("setting_control").height
@@ -213,7 +213,7 @@ Item
                     Layout.column: 3
                     Layout.preferredWidth: width
                     Layout.preferredHeight: height
-                    iconSource: UM.Theme.getIcon("arrow_right");
+                    iconSource: UM.Theme.getIcon("chevron-right");
                     style: monitorButtonStyle
                     width: height
                     height: UM.Theme.getSize("setting_control").height
@@ -230,7 +230,7 @@ Item
                     Layout.column: 2
                     Layout.preferredWidth: width
                     Layout.preferredHeight: height
-                    iconSource: UM.Theme.getIcon("arrow_bottom");
+                    iconSource: UM.Theme.getIcon("chevron-down");
                     style: monitorButtonStyle
                     width: height
                     height: UM.Theme.getSize("setting_control").height
@@ -277,7 +277,7 @@ Item
 
                 Button
                 {
-                    iconSource: UM.Theme.getIcon("arrow_top");
+                    iconSource: UM.Theme.getIcon("chevron-up");
                     style: monitorButtonStyle
                     width: height
                     height: UM.Theme.getSize("setting_control").height
@@ -303,7 +303,7 @@ Item
 
                 Button
                 {
-                    iconSource: UM.Theme.getIcon("arrow_bottom");
+                    iconSource: UM.Theme.getIcon("chevron-down");
                     style: monitorButtonStyle
                     width: height
                     height: UM.Theme.getSize("setting_control").height

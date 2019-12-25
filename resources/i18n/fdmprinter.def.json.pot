@@ -4970,7 +4970,7 @@ msgstr ""
 
 #: fdmprinter.def.json
 msgctxt "meshfix description"
-msgid "category_fixes"
+msgid "image-broken-variant"
 msgstr ""
 
 #: fdmprinter.def.json
@@ -5084,7 +5084,7 @@ msgstr ""
 
 #: fdmprinter.def.json
 msgctxt "blackmagic description"
-msgid "category_blackmagic"
+msgid "auto-fix"
 msgstr ""
 
 #: fdmprinter.def.json

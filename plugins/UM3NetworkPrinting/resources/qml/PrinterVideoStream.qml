@@ -30,7 +30,7 @@ Item {
             top: cameraImage.top
             topMargin: UM.Theme.getSize("default_margin").height
         }
-        iconSource: UM.Theme.getIcon("cross1");
+        iconSource: UM.Theme.getIcon("close");
         z: 999;
     }
 

@@ -4307,8 +4307,8 @@ msgstr "Netzreparaturen"
 
 #: fdmprinter.def.json
 msgctxt "meshfix description"
-msgid "category_fixes"
-msgstr "category_fixes"
+msgid "image-broken-variant"
+msgstr "image-broken-variant"
 
 #: fdmprinter.def.json
 msgctxt "meshfix_union_all label"
@@ -4397,8 +4397,8 @@ msgstr "Sonderfunktionen"
 
 #: fdmprinter.def.json
 msgctxt "blackmagic description"
-msgid "category_blackmagic"
-msgstr "category_blackmagic"
+msgid "auto-fix"
+msgstr "auto-fix"
 
 #: fdmprinter.def.json
 msgctxt "print_sequence label"

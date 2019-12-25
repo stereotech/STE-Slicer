@@ -264,7 +264,7 @@ Item
         UM.SimpleButton
         {
             id: clearFilterButton
-            iconSource: UM.Theme.getIcon("cross1")
+            iconSource: UM.Theme.getIcon("close")
             visible: findingSettings
 
             height: Math.round(parent.height * 0.4)

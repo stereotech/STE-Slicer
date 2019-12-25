@@ -81,7 +81,7 @@ Rectangle
                 height: UM.Theme.getSize("topbar_button_icon").height
                 sourceSize.width: width
                 sourceSize.height: height
-                source: UM.Theme.getIcon("buildplate")
+                source: UM.Theme.getIcon("layers-outline")
                 color: textColor
             }
 

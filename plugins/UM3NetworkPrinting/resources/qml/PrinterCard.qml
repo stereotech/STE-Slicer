@@ -196,7 +196,7 @@ Item {
                     }
                     color: UM.Theme.getColor("text");
                     height: 15 * screenScaleFactor; // TODO: Theme!
-                    source: root.collapsed ? UM.Theme.getIcon("arrow_left") : UM.Theme.getIcon("arrow_bottom");
+                    source: root.collapsed ? UM.Theme.getIcon("chevron-left") : UM.Theme.getIcon("chevron-down");
                     sourceSize {
                         height: height;
                         width: width;

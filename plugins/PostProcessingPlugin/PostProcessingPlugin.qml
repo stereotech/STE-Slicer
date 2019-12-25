@@ -144,7 +144,7 @@ UM.Dialog
                                     sourceSize.width: width
                                     sourceSize.height: width
                                     color: palette.text
-                                    source: UM.Theme.getIcon("cross1")
+                                    source: UM.Theme.getIcon("close")
                                 }
                             }
                         }
@@ -179,7 +179,7 @@ UM.Dialog
                                     sourceSize.width: width
                                     sourceSize.height: width
                                     color: control.enabled ? palette.text : disabledPalette.text
-                                    source: UM.Theme.getIcon("arrow_bottom")
+                                    source: UM.Theme.getIcon("chevron-down")
                                 }
                             }
                         }
@@ -214,7 +214,7 @@ UM.Dialog
                                     sourceSize.width: width
                                     sourceSize.height: width
                                     color: control.enabled ? palette.text : disabledPalette.text
-                                    source: UM.Theme.getIcon("arrow_top")
+                                    source: UM.Theme.getIcon("chevron-up")
                                 }
                             }
                         }
@@ -480,6 +480,7 @@ UM.Dialog
         style: ButtonStyle {
             background: Rectangle {
                 id: deviceSelectionIcon
+                radius: 4
                 border.width: UM.Theme.getSize("default_lining").width
                 border.color: !control.enabled ? UM.Theme.getColor("action_button_disabled_border") :
                                   control.pressed ? UM.Theme.getColor("action_button_active_border") :

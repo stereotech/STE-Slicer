@@ -123,7 +123,7 @@ Button
                     return UM.Theme.getColor("setting_category_text");
                 }
             }
-            source: base.checked ? UM.Theme.getIcon("arrow_bottom") : UM.Theme.getIcon("arrow_left")
+            source: base.checked ? UM.Theme.getIcon("chevron-down") : UM.Theme.getIcon("chevron-left")
         }
     }
 

@@ -66,7 +66,7 @@ Rectangle
                 sourceSize.width: width
                 sourceSize.height: height
                 color: "black"
-                source: brand_section.expanded ? UM.Theme.getIcon("arrow_bottom") : UM.Theme.getIcon("arrow_left")
+                source: brand_section.expanded ? UM.Theme.getIcon("chevron-down") : UM.Theme.getIcon("chevron-left")
             }
             style: ButtonStyle
             {

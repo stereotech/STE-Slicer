@@ -246,6 +246,7 @@ Column
                             border.color: buttonBorderColor(index)
                             color: buttonBackgroundColor(index)
                             Behavior on color { ColorAnimation { duration: 50; } }
+                            radius: 5
                         }
 
                         Item

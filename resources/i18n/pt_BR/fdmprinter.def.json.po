@@ -4316,7 +4316,7 @@ msgstr "Correções de Malha"
 
 #: fdmprinter.def.json
 msgctxt "meshfix description"
-msgid "category_fixes"
+msgid "image-broken-variant"
 msgstr "reparos_de_categoria"
 
 #: fdmprinter.def.json
@@ -4406,7 +4406,7 @@ msgstr "Modos Especiais"
 
 #: fdmprinter.def.json
 msgctxt "blackmagic description"
-msgid "category_blackmagic"
+msgid "auto-fix"
 msgstr "categoria_blackmagic"
 
 #: fdmprinter.def.json

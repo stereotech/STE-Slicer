@@ -72,7 +72,7 @@ QtObject {
                     sourceSize.width: width
                     sourceSize.height: width
                     color: control.enabled ? Theme.getColor("setting_category_text") : Theme.getColor("setting_category_disabled_text")
-                    source: Theme.getIcon("arrow_bottom")
+                    source: Theme.getIcon("chevron-down")
                 }
                 Label {
                     id: sidebarComboBoxLabel
@@ -356,7 +356,7 @@ QtObject {
                                 return Theme.getColor("button_text");
                             }
                         }
-                        source: Theme.getIcon("arrow_bottom")
+                        source: Theme.getIcon("chevron-down")
                     }
                 }
             }
@@ -461,7 +461,7 @@ QtObject {
                                 return Theme.getColor("button_text");
                             }
                         }
-                        source: Theme.getIcon("arrow_bottom")
+                        source: Theme.getIcon("chevron-down")
                     }
                 }
             }
@@ -500,7 +500,7 @@ QtObject {
 
                 Label {
                         id: button_open_file_label
-                        anchors.left:file.right
+                        anchors.left:open_file_button_label_item.right
                         //anchors.horizontalCenter: parent.right
                         //anchors.verticalCenter: parent.verticalCenter;
 
@@ -578,7 +578,7 @@ QtObject {
                                 return Theme.getColor("small_button_text");
                             }
                         }
-                        source: Theme.getIcon("arrow_bottom")
+                        source: Theme.getIcon("chevron-down")
                     }
                 }
             }
@@ -816,7 +816,7 @@ QtObject {
                             return Theme.getColor("setting_category_text");
                         }
                     }
-                    source: control.checked ? Theme.getIcon("arrow_bottom") : Theme.getIcon("arrow_left")
+                    source: control.checked ? Theme.getIcon("chevron-down") : Theme.getIcon("chevron-left")
                 }
             }
         }
@@ -883,7 +883,7 @@ QtObject {
                     anchors.rightMargin: Theme.getSize("default_lining").width * 2;
                     anchors.verticalCenter: parent.verticalCenter;
 
-                    source: Theme.getIcon("arrow_bottom")
+                    source: Theme.getIcon("chevron-down")
                     width: Theme.getSize("standard_arrow").width
                     height: Theme.getSize("standard_arrow").height
                     sourceSize.width: width + 5 * screenScaleFactor
@@ -943,7 +943,7 @@ QtObject {
                     anchors.rightMargin: UM.Theme.getSize("default_lining").width * 2
                     anchors.verticalCenter: parent.verticalCenter
 
-                    source: UM.Theme.getIcon("arrow_bottom")
+                    source: UM.Theme.getIcon("chevron-down")
                     width: UM.Theme.getSize("standard_arrow").width
                     height: UM.Theme.getSize("standard_arrow").height
                     sourceSize.width: width + 5 * screenScaleFactor
@@ -978,7 +978,7 @@ QtObject {
                     sourceSize.width: width
                     sourceSize.height: width
                     color: Theme.getColor("checkbox_mark")
-                    source: control.exclusiveGroup ? Theme.getIcon("dot") : Theme.getIcon("check")
+                    source: control.exclusiveGroup ? Theme.getIcon("dot") : Theme.getIcon("check-outline")
                     opacity: control.checked
                     Behavior on opacity { NumberAnimation { duration: 100; } }
                 }
@@ -1020,7 +1020,7 @@ QtObject {
                             return Theme.getIcon("solid")
                         }
                         else{
-                            return control.exclusiveGroup ? Theme.getIcon("dot") : Theme.getIcon("check")
+                            return control.exclusiveGroup ? Theme.getIcon("dot") : Theme.getIcon("check-outline")
                         }
                     }
                     opacity: control.checked

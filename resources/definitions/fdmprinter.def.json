@@ -22,7 +22,7 @@
             "label": "Machine",
             "type": "category",
             "description": "Machine specific settings",
-            "icon": "category_machine",
+            "icon": "printer-3d",
             "children": {
                 "machine_name": {
                     "label": "Machine Type",
@@ -678,7 +678,7 @@
         "printing_mode_category": {
             "label": "Printing Mode",
             "type": "category",
-            "icon": "category_layer_height",
+            "icon": "format-line-spacing",
             "description": "Printing Mode",
             "children": {
                 "printing_mode": {
@@ -700,7 +700,7 @@
         "resolution": {
             "label": "Quality",
             "type": "category",
-            "icon": "category_layer_height",
+            "icon": "format-line-spacing",
             "description": "All settings that influence the resolution of the print. These settings have a large impact on the quality (and print time)",
             "children": {
                 "layer_height": {
@@ -916,7 +916,7 @@
         },
         "shell": {
             "label": "Shell",
-            "icon": "category_shell",
+            "icon": "shield-half-full",
             "description": "Shell",
             "type": "category",
             "children": {
@@ -1472,7 +1472,7 @@
         },
         "infill": {
             "label": "Infill",
-            "icon": "category_infill",
+            "icon": "grid",
             "description": "Infill",
             "type": "category",
             "children": {
@@ -1872,7 +1872,7 @@
         },
         "material": {
             "label": "Material",
-            "icon": "category_material",
+            "icon": "movie-roll",
             "description": "Material",
             "type": "category",
             "children": {
@@ -2273,7 +2273,7 @@
         },
         "speed": {
             "label": "Speed",
-            "icon": "category_speed",
+            "icon": "speedometer",
             "description": "Speed",
             "type": "category",
             "children": {
@@ -3101,7 +3101,7 @@
         },
         "travel": {
             "label": "Travel",
-            "icon": "category_travel",
+            "icon": "printer-3d-nozzle",
             "description": "travel",
             "type": "category",
             "children": {
@@ -3247,7 +3247,7 @@
         },
         "cooling": {
             "label": "Cooling",
-            "icon": "category_cool",
+            "icon": "fan",
             "description": "Cooling",
             "type": "category",
             "children": {
@@ -3382,7 +3382,7 @@
         "support": {
             "label": "Support",
             "type": "category",
-            "icon": "category_support",
+            "icon": "pillar",
             "description": "Support",
             "children": {
                 "support_enable": {
@@ -3462,7 +3462,7 @@
                     "description": "Adjusts the placement of the support structures. The placement can be set to touching build plate or everywhere. When set to everywhere the support structures will also be printed on the model.",
                     "type": "enum",
                     "options": {
-                        "buildplate": "Touching Buildplate",
+                        "buildplate": "Touching buildplate",
                         "everywhere": "Everywhere"
                     },
                     "default_value": "everywhere",
@@ -4094,7 +4094,7 @@
         "platform_adhesion": {
             "label": "Build Plate Adhesion",
             "type": "category",
-            "icon": "category_adhesion",
+            "icon": "sticker",
             "description": "Adhesion",
             "children": {
                 "prime_blob_enable": {
@@ -4682,7 +4682,7 @@
         "dual": {
             "label": "Dual Extrusion",
             "type": "category",
-            "icon": "category_dual",
+            "icon": "compare",
             "description": "Settings used for printing with multiple extruders.",
             "children": {
                 "prime_tower_enable": {
@@ -4822,8 +4822,8 @@
         "meshfix": {
             "label": "Mesh Fixes",
             "type": "category",
-            "icon": "category_fixes",
-            "description": "category_fixes",
+            "icon": "image-broken-variant",
+            "description": "image-broken-variant",
             "children": {
                 "meshfix_union_all": {
                     "label": "Union Overlapping Volumes",
@@ -4899,8 +4899,8 @@
         "blackmagic": {
             "label": "Special Modes",
             "type": "category",
-            "icon": "category_blackmagic",
-            "description": "category_blackmagic",
+            "icon": "auto-fix",
+            "description": "auto-fix",
             "children": {
                 "print_sequence": {
                     "label": "Print Sequence",
@@ -5054,7 +5054,7 @@
         "experimental": {
             "label": "Experimental",
             "type": "category",
-            "icon": "category_experimental",
+            "icon": "flask",
             "description": "experimental!",
             "children": {
                 "support_tree_enable": {

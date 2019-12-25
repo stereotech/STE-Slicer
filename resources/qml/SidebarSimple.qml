@@ -819,7 +819,7 @@ Item
                             percentageMax: 89,
                             stepsMin: -1,
                             stepsMax: 0,
-                            icon: "dense"
+                            icon: "grid"
                         })
                         infillModel.append({
                             percentageMin: 90,

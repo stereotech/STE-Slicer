@@ -385,7 +385,7 @@ Item {
                             else
                                 return UM.Theme.getColor("print_button_ready_text");
                         }
-                        source: UM.Theme.getIcon("arrow_bottom");
+                        source: UM.Theme.getIcon("chevron-down");
                     }
                 }
                 label: Label{ }

@@ -4315,7 +4315,7 @@ msgstr "Poprawki Siatki"
 
 #: fdmprinter.def.json
 msgctxt "meshfix description"
-msgid "category_fixes"
+msgid "image-broken-variant"
 msgstr "poprawki_kategorii"
 
 #: fdmprinter.def.json
@@ -4405,8 +4405,8 @@ msgstr "Specjalne Tryby"
 
 #: fdmprinter.def.json
 msgctxt "blackmagic description"
-msgid "category_blackmagic"
-msgstr "category_blackmagic"
+msgid "auto-fix"
+msgstr "auto-fix"
 
 #: fdmprinter.def.json
 msgctxt "print_sequence label"

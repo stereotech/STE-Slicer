@@ -322,9 +322,9 @@ Item {
                         height: 15 * screenScaleFactor; // TODO: Theme!
                         source: {
                             if (configChangeDetails.visible) {
-                                return UM.Theme.getIcon("arrow_top");
+                                return UM.Theme.getIcon("chevron-up");
                             } else {
-                                return UM.Theme.getIcon("arrow_bottom");
+                                return UM.Theme.getIcon("chevron-down");
                             }
                         }
                         sourceSize {

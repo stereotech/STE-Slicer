@@ -4315,7 +4315,7 @@ msgstr "網格修復"
 
 #: fdmprinter.def.json
 msgctxt "meshfix description"
-msgid "category_fixes"
+msgid "image-broken-variant"
 msgstr "修復"
 
 #: fdmprinter.def.json
@@ -4405,7 +4405,7 @@ msgstr "特殊模式"
 
 #: fdmprinter.def.json
 msgctxt "blackmagic description"
-msgid "category_blackmagic"
+msgid "auto-fix"
 msgstr "黑魔法"
 
 #: fdmprinter.def.json

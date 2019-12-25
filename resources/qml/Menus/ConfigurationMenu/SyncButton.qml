@@ -66,7 +66,7 @@ Button
                 sourceSize.width: width
                 sourceSize.height: height
                 color: UM.Theme.getColor("text_emphasis")
-                source: UM.Theme.getIcon("arrow_bottom")
+                source: UM.Theme.getIcon("chevron-down")
             }
             UM.RecolorImage
             {

@@ -91,7 +91,7 @@ Item
                     sourceSize.width: width
                     sourceSize.height: width
                     color:  UM.Theme.getColor("setting_control_text")
-                    source: viewSettings.collapsed ? UM.Theme.getIcon("arrow_left") : UM.Theme.getIcon("arrow_bottom")
+                    source: viewSettings.collapsed ? UM.Theme.getIcon("chevron-left") : UM.Theme.getIcon("chevron-down")
                 }
                 label: Label{ }
             }
