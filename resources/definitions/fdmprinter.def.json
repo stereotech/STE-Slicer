@@ -690,10 +690,22 @@
                         "cylindrical": "Coil5D"
                     },
                     "default_value": "classic",
-                    "enabled": "machine_five_axis",
+                    "enabled": true,
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "settable_per_meshgroup": false
+                },
+                "cylindrical_mode_base_diameter": {
+                    "label": "Base Diameter",
+                    "description": "Diameter of cylindrical base in Coil5D printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 6,
+                    "enabled": "resolveOrValue('printing_mode') == 'cylindrical'",
+                    "minimum_value": "4",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
                 }
             }
         },

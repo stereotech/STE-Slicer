@@ -962,7 +962,17 @@ QtObject {
                 implicitWidth:  Theme.getSize("checkbox").width;
                 implicitHeight: Theme.getSize("checkbox").height;
 
-                color: (control.hovered || control._hovered) ? Theme.getColor("checkbox_hover") : Theme.getColor("checkbox");
+                color: {
+                    if (control.checked) {
+                        return Theme.getColor("checkbox_checked")
+                    }
+                    else if (control.hovered || control._hovered) {
+                        return Theme.getColor("checkbox_hover")
+                    }
+                    else {
+                        return Theme.getColor("checkbox")
+                    }
+                }
                 Behavior on color { ColorAnimation { duration: 50; } }
 
                 radius: control.exclusiveGroup ? Math.round(Theme.getSize("checkbox").width / 2) : 4

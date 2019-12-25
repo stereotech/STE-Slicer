@@ -480,6 +480,7 @@ UM.Dialog
         style: ButtonStyle {
             background: Rectangle {
                 id: deviceSelectionIcon
+                radius: 4
                 border.width: UM.Theme.getSize("default_lining").width
                 border.color: !control.enabled ? UM.Theme.getColor("action_button_disabled_border") :
                                   control.pressed ? UM.Theme.getColor("action_button_active_border") :

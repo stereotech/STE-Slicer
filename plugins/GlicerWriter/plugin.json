@@ -1,0 +1,8 @@
+{
+    "name": "Glicer Writer",
+    "author": "Stereotech LLC.",
+    "version": "1.0.0",
+    "description": "Provides preparing for Glicer Engine",
+    "api": 5,
+    "i18n-catalog": "cura"
+}

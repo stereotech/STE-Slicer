@@ -31,13 +31,13 @@
             "default_value": "Stereotech STE520"
         },
         "machine_width": {
-            "default_value": 150
+            "default_value": 210
         },
         "machine_height": {
             "default_value": 150
         },
         "machine_depth": {
-            "default_value": 150
+            "default_value": 210
         },
         "machine_center_is_zero": {
             "default_value": true
@@ -91,6 +91,9 @@
         },
         "switch_extruder_retraction_amount": {
             "value": "4"
+        },
+        "retraction_amount": {
+            "default_value": 1.5
         }
     }
 }

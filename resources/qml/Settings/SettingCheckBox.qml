@@ -94,11 +94,18 @@ SettingItem
                 {
                     return UM.Theme.getColor("setting_control_disabled")
                 }
-                if(control.containsMouse || control.activeFocus)
+                else if(control.checked)
+                {
+                    return UM.Theme.getColor("checkbox_checked")
+                }
+                else if(control.containsMouse || control.activeFocus)
                 {
                     return UM.Theme.getColor("setting_control_highlight")
                 }
-                return UM.Theme.getColor("setting_control")
+                else {
+                    return UM.Theme.getColor("setting_control")
+                }
+                
             }
 
             border.width: UM.Theme.getSize("default_lining").width
@@ -122,7 +129,7 @@ SettingItem
                 height: Math.round(parent.height / 2.5)
                 sourceSize.width: width
                 sourceSize.height: width
-                color: !enabled ? UM.Theme.getColor("setting_control_disabled_text") : UM.Theme.getColor("setting_control_text");
+                color: !enabled ? UM.Theme.getColor("setting_control_disabled_text") : UM.Theme.getColor("checkbox_mark");
                 source: UM.Theme.getIcon("check")
                 opacity: control.checked ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: 100; } }

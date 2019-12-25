@@ -237,6 +237,23 @@
             }
         }
     },
+    "GlicerWriter": {
+        "package_info": {
+            "package_id": "GlicerWriter",
+            "package_type": "plugin",
+            "display_name": "Glicer Writer",
+            "description": "Provides preparing for Glicer Engine",
+            "package_version": "1.0.0",
+            "sdk_version": 5,
+            "website": "https://stereotech.org",
+            "author": {
+                "author_id": "StereotechPackages",
+                "display_name": "Stereotech LLC.",
+                "email": "dev@ste3d.ru",
+                "website": "https://stereotech.org"
+            }
+        }
+    },
     "ImageReader": {
         "package_info": {
             "package_id": "ImageReader",

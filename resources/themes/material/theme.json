@@ -288,25 +288,25 @@
             75,
             255
         ],
-        "open_file_button":[
+        "open_file_button": [
             2,
             119,
             189,
             255
         ],
-        "open_file_button_hover":[
+        "open_file_button_hover": [
             121,
             189,
             232,
             255
         ],
-        "open_file_button_active":[
+        "open_file_button_active": [
             121,
             189,
             232,
             255
         ],
-        "open_file_button_active_hover":[
+        "open_file_button_active_hover": [
             121,
             189,
             232,
@@ -798,7 +798,7 @@
             39,
             255
         ],
-        "pencil_button_hover":[
+        "pencil_button_hover": [
             68,
             72,
             75,
@@ -888,6 +888,12 @@
             255,
             255
         ],
+        "checkbox_checked": [
+            2,
+            119,
+            189,
+            255
+        ],
         "checkbox_hover": [
             255,
             255,
@@ -907,9 +913,9 @@
             255
         ],
         "checkbox_mark": [
-            119,
-            122,
-            124,
+            255,
+            255,
+            255,
             255
         ],
         "checkbox_text": [
@@ -984,7 +990,7 @@
             255,
             0
         ],
-        "open_file_button_border":[
+        "open_file_button_border": [
             64,
             69,
             72,
@@ -1696,7 +1702,7 @@
             2.5,
             2.5
         ],
-        "button_icon_open_file":[
+        "button_icon_open_file": [
             2.0,
             2.0
         ],
@@ -1704,7 +1710,7 @@
             0,
             0
         ],
-        "open_file_button":[
+        "open_file_button": [
             8,
             3
         ],
@@ -1752,7 +1758,7 @@
             1.0,
             1.3
         ],
-        "button_open_file":[
+        "button_open_file": [
             3.0,
             1.3
         ],
