@@ -32,6 +32,41 @@
         "relative_extrusion": {
             "value": false,
             "enabled": false
+        },
+        "retraction_amount": {
+            "default_value": 1.5
+        },
+        "machine_head_with_fans_polygon": {
+            "default_value": [
+                [
+                    -29,
+                    22
+                ],
+                [
+                    -29,
+                    -20
+                ],
+                [
+                    27,
+                    22
+                ],
+                [
+                    27,
+                    -20
+                ]
+            ]
+        },
+        "gantry_height": {
+            "value": "25"
+        },
+        "machine_use_extruder_offset_to_offset_coords": {
+            "default_value": true
+        },
+        "machine_gcode_flavor": {
+            "default_value": "RepRap (Marlin/Sprinter)"
+        },
+        "switch_extruder_retraction_amount": {
+            "value": "4"
         }
     }
 }

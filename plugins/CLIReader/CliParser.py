@@ -77,8 +77,7 @@ class CliParser:
         self._retraction_amount = 0
         self._retraction_min_travel = 1.5
 
-        self._filament_diameter = self._global_stack.getProperty(
-            "material_diameter", "value")
+        self._filament_diameter = 1.75
         self._line_width = 0.4
         self._layer_thickness = 0.2
         self._clearValues()
@@ -290,11 +289,13 @@ class CliParser:
 
         extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None) #type: Optional[ExtruderStack]
         
-        self._enable_retraction = self._global_stack.getProperty(
+        self._filament_diameter = extruder.getProperty(
+            "material_diameter", "value")
+        self._enable_retraction = extruder.getProperty(
             "retraction_enable", "value")
-        self._retraction_amount = self._global_stack.getProperty(
+        self._retraction_amount = extruder.getProperty(
             "retraction_amount", "value")
-        self._retraction_min_travel = self._global_stack.getProperty(
+        self._retraction_min_travel = extruder.getProperty(
             "retraction_min_travel", "value")
 
     def _transformCoordinates(self, x: float, y: float, z: float, i: float, j: float, k: float, position: Position) -> (float, float, float, float, float, float):
