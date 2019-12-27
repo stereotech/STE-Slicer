@@ -21,6 +21,11 @@ from UM.Math.Vector import Vector
 from math import degrees
 from UM.Math.Matrix import Matrix
 
+from UM.Settings.DefinitionContainer import DefinitionContainer
+from UM.Settings.InstanceContainer import InstanceContainer
+from cura.Settings.GlobalStack import GlobalStack
+from cura.Settings.ExtruderStack import ExtruderStack
+
 catalog = i18nCatalog("cura")
 
 
@@ -44,7 +49,7 @@ class CliParser:
         self._gcode_position = Position
         # stack to get print settingd via getProperty method
         self._application = CuraApplication.getInstance()
-        self._global_stack = self._application.getGlobalContainerStack()
+        self._global_stack = self._application.getGlobalContainerStack() #type: GlobalStack
 
         self._rot_nwp = Matrix()
         self._rot_nws = Matrix()
@@ -61,6 +66,8 @@ class CliParser:
         #speeds
         self._travel_speed = 0
         self._wall_0_speed = 0
+        self._skin_speed = 0
+        self._infill_speed = 0
         self._support_speed = 0
         self._retraction_speed = 0
         self._prime_speed = 0
@@ -80,6 +87,9 @@ class CliParser:
     _geometry_end_keyword = "$$GEOMETRYEND"
     _body_type_keyword = "//body//"
     _support_type_keyword = "//support//"
+    _skin_type_keyword = "//skin//"
+    _infill_type_keyword = "//infill//"
+    _perimeter_type_keyword = "//perimeter//"
 
     def processCliStream(self, stream: str) -> Optional[CuraSceneNode]:
         Logger.log("d", "Preparing to load CLI")
@@ -159,6 +169,12 @@ class CliParser:
                 self._layer_type = LayerPolygon.Inset0Type
             if line.find(self._support_type_keyword) == 0:
                 self._layer_type = LayerPolygon.SupportType
+            if line.find(self._perimeter_type_keyword) == 0:
+                self._layer_type = LayerPolygon.Inset0Type
+            if line.find(self._skin_type_keyword) == 0:
+                self._layer_type = LayerPolygon.SkinType
+            if line.find(self._infill_type_keyword) == 0:
+                self._layer_type = LayerPolygon.InfillType
 
             # Comment line
             if line.startswith("//"):
@@ -262,6 +278,9 @@ class CliParser:
             "speed_travel", "value")
         self._wall_0_speed = self._global_stack.getProperty(
             "speed_wall_0", "value")
+        self._skin_speed = self._global_stack.getProperty(
+            "speed_topbottom", "value")
+        self._infill_speed = self._global_stack.getProperty("speed_infill", "value")
         self._support_speed = self._global_stack.getProperty(
             "speed_support", "value")
         self._retraction_speed = self._global_stack.getProperty(
@@ -269,6 +288,8 @@ class CliParser:
         self._prime_speed = self._global_stack.getProperty(
             "retraction_prime_speed", "value")
 
+        extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None) #type: Optional[ExtruderStack]
+        
         self._enable_retraction = self._global_stack.getProperty(
             "retraction_enable", "value")
         self._retraction_amount = self._global_stack.getProperty(
@@ -279,11 +300,13 @@ class CliParser:
     def _transformCoordinates(self, x: float, y: float, z: float, i: float, j: float, k: float, position: Position) -> (float, float, float, float, float, float):
         a = position.a
         c = position.c
+        y_matrix = Matrix()
+        y_matrix.setByRotationAxis(math.pi, Vector.Unit_Y)
         # Get coordinate angles
         if abs(self._position.c - k) > 0.00001:
             a = math.acos(k)
             self._rot_nwp = Matrix()
-            self._rot_nwp.setByRotationAxis(a, Vector.Unit_X)
+            self._rot_nwp.setByRotationAxis(-a, Vector.Unit_X)
             a = degrees(a)
         if abs(self._position.a - i) > 0.00001 or abs(self._position.b - j) > 0.00001:
             c = numpy.arctan2(j, i) if x != 0 and y != 0 else 0
@@ -296,7 +319,9 @@ class CliParser:
             self._rot_nws.setByRotationAxis(c, Vector.Unit_Z)
             c = degrees(c)
         
+        #tr = self._rot_nws.multiply(self._rot_nwp, True)
         tr = self._rot_nws.multiply(self._rot_nwp, True)
+        #tr = tr.multiply(self._rot_nwp)
         tr.invert()
         pt = Vector(data=numpy.array([x, y, z, 1]))
         ret = tr.multiply(pt, True).getData()
@@ -420,6 +445,10 @@ class CliParser:
             feedrate = self._wall_0_speed
             if self._layer_type == LayerPolygon.SupportType:
                 feedrate = self._support_speed
+            elif self._layer_type == LayerPolygon.SkinType:
+                feedrate = self._skin_speed
+            elif self._layer_type == LayerPolygon.InfillType:
+                feedrate = self._infill_speed
             x, y, z, a, b, c, f, e = new_position
             self._position = Position(x, y, z, a, b, c, feedrate, e)
             gcode_command = self._generateGCodeCommand(1, new_gcode_position, feedrate)

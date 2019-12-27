@@ -977,8 +977,18 @@ QtObject {
 
                 radius: control.exclusiveGroup ? Math.round(Theme.getSize("checkbox").width / 2) : 4
 
-                border.width: Theme.getSize("default_lining").width;
-                border.color: (control.hovered || control._hovered) ? Theme.getColor("checkbox_border_hover") : Theme.getColor("checkbox_border");
+                //border.width: Theme.getSize("default_lining").width;
+                border.color: {
+                if (control.hovered || control._hovered) {
+                    return Theme.getColor("checkbox_border_hover")
+                }
+                else if (control.checked) {
+                    return Theme.getColor("checkbox_border")
+                }
+                else {
+                    return Theme.getColor("checkbox_border_hover")
+                }
+                }
 
                 UM.RecolorImage {
                     anchors.verticalCenter: parent.verticalCenter

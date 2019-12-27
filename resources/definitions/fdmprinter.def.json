@@ -678,7 +678,7 @@
         "printing_mode_category": {
             "label": "Printing Mode",
             "type": "category",
-            "icon": "format-line-spacing",
+            "icon": "printer-3d",
             "description": "Printing Mode",
             "children": {
                 "printing_mode": {
