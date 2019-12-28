@@ -501,8 +501,8 @@ QtObject {
                 Label {
                         id: button_open_file_label
                         anchors.left:open_file_button_label_item.right
-                        //anchors.horizontalCenter: parent.right
-                        //anchors.verticalCenter: parent.verticalCenter;
+                        anchors.leftMargin: open_file_button_label_item.width / 2
+                        anchors.verticalCenter: parent.verticalCenter;
 
                         text: control.text;
                         font: Theme.getFont("button_tooltip");
