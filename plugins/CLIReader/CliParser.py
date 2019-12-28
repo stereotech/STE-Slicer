@@ -315,7 +315,7 @@ class CliParser:
             if abs(angle - position.c) > 180:
                 self._pi_faction += 1 if (angle - position.c) < 0 else -1
             c += self._pi_faction * 2 * math.pi
-            c += math.pi / 2
+            c -= math.pi / 2
             self._rot_nws = Matrix()
             self._rot_nws.setByRotationAxis(c, Vector.Unit_Z)
             c = degrees(c)
