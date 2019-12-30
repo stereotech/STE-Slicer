@@ -501,8 +501,8 @@ QtObject {
                 Label {
                         id: button_open_file_label
                         anchors.left:open_file_button_label_item.right
-                        //anchors.horizontalCenter: parent.right
-                        //anchors.verticalCenter: parent.verticalCenter;
+                        anchors.leftMargin: open_file_button_label_item.width / 2
+                        anchors.verticalCenter: parent.verticalCenter;
 
                         text: control.text;
                         font: Theme.getFont("button_tooltip");
@@ -977,8 +977,18 @@ QtObject {
 
                 radius: control.exclusiveGroup ? Math.round(Theme.getSize("checkbox").width / 2) : 4
 
-                border.width: Theme.getSize("default_lining").width;
-                border.color: (control.hovered || control._hovered) ? Theme.getColor("checkbox_border_hover") : Theme.getColor("checkbox_border");
+                //border.width: Theme.getSize("default_lining").width;
+                border.color: {
+                if (control.hovered || control._hovered) {
+                    return Theme.getColor("checkbox_border_hover")
+                }
+                else if (control.checked) {
+                    return Theme.getColor("checkbox_border")
+                }
+                else {
+                    return Theme.getColor("checkbox_border_hover")
+                }
+                }
 
                 UM.RecolorImage {
                     anchors.verticalCenter: parent.verticalCenter

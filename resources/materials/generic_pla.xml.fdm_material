@@ -62,7 +62,7 @@ Generic PLA profile. The data in this file may not be correct for your specific 
             <machine_identifier manufacturer="Ultimaker B.V." product="Ultimaker 2 Extended"/>
             <setting key="standby temperature">150</setting>
             <setting key="processing temperature graph">
-                <point \="2" temperature="180"/>
+                <point flow="2" temperature="180"/>
                 <point flow="10" temperature="230"/>
             </setting>
         </machine>

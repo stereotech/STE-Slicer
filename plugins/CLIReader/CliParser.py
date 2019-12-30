@@ -21,6 +21,11 @@ from UM.Math.Vector import Vector
 from math import degrees
 from UM.Math.Matrix import Matrix
 
+from UM.Settings.DefinitionContainer import DefinitionContainer
+from UM.Settings.InstanceContainer import InstanceContainer
+from cura.Settings.GlobalStack import GlobalStack
+from cura.Settings.ExtruderStack import ExtruderStack
+
 catalog = i18nCatalog("cura")
 
 
@@ -44,7 +49,7 @@ class CliParser:
         self._gcode_position = Position
         # stack to get print settingd via getProperty method
         self._application = CuraApplication.getInstance()
-        self._global_stack = self._application.getGlobalContainerStack()
+        self._global_stack = self._application.getGlobalContainerStack() #type: GlobalStack
 
         self._rot_nwp = Matrix()
         self._rot_nws = Matrix()
@@ -61,6 +66,8 @@ class CliParser:
         #speeds
         self._travel_speed = 0
         self._wall_0_speed = 0
+        self._skin_speed = 0
+        self._infill_speed = 0
         self._support_speed = 0
         self._retraction_speed = 0
         self._prime_speed = 0
@@ -69,9 +76,10 @@ class CliParser:
         self._enable_retraction = False
         self._retraction_amount = 0
         self._retraction_min_travel = 1.5
+        self._retraction_hop_enabled = False
+        self._retraction_hop = 1
 
-        self._filament_diameter = self._global_stack.getProperty(
-            "material_diameter", "value")
+        self._filament_diameter = 1.75
         self._line_width = 0.4
         self._layer_thickness = 0.2
         self._clearValues()
@@ -80,6 +88,11 @@ class CliParser:
     _geometry_end_keyword = "$$GEOMETRYEND"
     _body_type_keyword = "//body//"
     _support_type_keyword = "//support//"
+    _skin_type_keyword = "//skin//"
+    _infill_type_keyword = "//infill//"
+    _perimeter_type_keyword = "//perimeter//"
+
+    _type_keyword = ";TYPE:"
 
     def processCliStream(self, stream: str) -> Optional[CuraSceneNode]:
         Logger.log("d", "Preparing to load CLI")
@@ -159,6 +172,12 @@ class CliParser:
                 self._layer_type = LayerPolygon.Inset0Type
             if line.find(self._support_type_keyword) == 0:
                 self._layer_type = LayerPolygon.SupportType
+            if line.find(self._perimeter_type_keyword) == 0:
+                self._layer_type = LayerPolygon.Inset0Type
+            if line.find(self._skin_type_keyword) == 0:
+                self._layer_type = LayerPolygon.SkinType
+            if line.find(self._infill_type_keyword) == 0:
+                self._layer_type = LayerPolygon.InfillType
 
             # Comment line
             if line.startswith("//"):
@@ -262,6 +281,9 @@ class CliParser:
             "speed_travel", "value")
         self._wall_0_speed = self._global_stack.getProperty(
             "speed_wall_0", "value")
+        self._skin_speed = self._global_stack.getProperty(
+            "speed_topbottom", "value")
+        self._infill_speed = self._global_stack.getProperty("speed_infill", "value")
         self._support_speed = self._global_stack.getProperty(
             "speed_support", "value")
         self._retraction_speed = self._global_stack.getProperty(
@@ -269,12 +291,20 @@ class CliParser:
         self._prime_speed = self._global_stack.getProperty(
             "retraction_prime_speed", "value")
 
-        self._enable_retraction = self._global_stack.getProperty(
+        extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None) #type: Optional[ExtruderStack]
+        
+        self._filament_diameter = extruder.getProperty(
+            "material_diameter", "value")
+        self._enable_retraction = extruder.getProperty(
             "retraction_enable", "value")
-        self._retraction_amount = self._global_stack.getProperty(
+        self._retraction_amount = extruder.getProperty(
             "retraction_amount", "value")
-        self._retraction_min_travel = self._global_stack.getProperty(
+        self._retraction_min_travel = extruder.getProperty(
             "retraction_min_travel", "value")
+        self._retraction_hop_enabled = extruder.getProperty(
+            "retraction_hop_enabled", "value")
+        self._retraction_hop = extruder.getProperty(
+            "retraction_hop", "value")
 
     def _transformCoordinates(self, x: float, y: float, z: float, i: float, j: float, k: float, position: Position) -> (float, float, float, float, float, float):
         a = position.a
@@ -283,7 +313,7 @@ class CliParser:
         if abs(self._position.c - k) > 0.00001:
             a = math.acos(k)
             self._rot_nwp = Matrix()
-            self._rot_nwp.setByRotationAxis(a, Vector.Unit_X)
+            self._rot_nwp.setByRotationAxis(-a, Vector.Unit_X)
             a = degrees(a)
         if abs(self._position.a - i) > 0.00001 or abs(self._position.b - j) > 0.00001:
             c = numpy.arctan2(j, i) if x != 0 and y != 0 else 0
@@ -291,12 +321,14 @@ class CliParser:
             if abs(angle - position.c) > 180:
                 self._pi_faction += 1 if (angle - position.c) < 0 else -1
             c += self._pi_faction * 2 * math.pi
-            c += math.pi / 2
+            c -= math.pi / 2
             self._rot_nws = Matrix()
             self._rot_nws.setByRotationAxis(c, Vector.Unit_Z)
             c = degrees(c)
         
+        #tr = self._rot_nws.multiply(self._rot_nwp, True)
         tr = self._rot_nws.multiply(self._rot_nwp, True)
+        #tr = tr.multiply(self._rot_nwp)
         tr.invert()
         pt = Vector(data=numpy.array([x, y, z, 1]))
         ret = tr.multiply(pt, True).getData()
@@ -381,8 +413,7 @@ class CliParser:
         # TODO: add combing to this polyline
         new_position, new_gcode_position = self._cliPointToPosition(
             CliPoint(float(points[0]), float(points[1])), self._position, False)
-        feedrate = self._travel_speed
-        x, y, z, a, b, c, f, e = new_position
+        
         is_retraction = self._enable_retraction and self._positionLength(
             self._position, new_position) > self._retraction_min_travel
         if is_retraction:
@@ -394,13 +425,42 @@ class CliParser:
             path.append([self._position.x, self._position.y, self._position.z, self._position.a, self._position.b,
                          self._position.c, self._retraction_speed, self._position.e, LayerPolygon.MoveRetractionType])
         
+            if self._retraction_hop_enabled:
+                    #add hop movement
+                    gx, gy, gz, ga, gb, gc, gf, ge = self._gcode_position
+                    x, y, z, a, b, c, f, e = self._position
+                    gcode_position = Position(
+                        gx, gy, gz + self._retraction_hop, ga, gb, gc, self._travel_speed, ge)
+                    self._position = Position(
+                        x + a * self._retraction_hop, y + b * self._retraction_hop, z + c * self._retraction_hop, a, b, c, self._travel_speed, e)
+                    gcode_command = self._generateGCodeCommand(
+                        0, gcode_position, self._travel_speed)
+                    if gcode_command is not None:
+                        gcode_list.append(gcode_command)
+                    self._gcode_position = gcode_position
+                    path.append([self._position.x, self._position.y, self._position.z, self._position.a, self._position.b,
+                                 self._position.c, self._prime_speed, self._position.e, LayerPolygon.MoveCombingType])
+                    gx, gy, gz, ga, gb, gc, gf, ge = new_gcode_position
+                    x, y, z, a, b, c, f, e = new_position
+                    gcode_position = Position(
+                        gx, gy, gz + self._retraction_hop, ga, gb, gc, self._travel_speed, ge)
+                    position = Position(
+                        x + a * self._retraction_hop, y + b * self._retraction_hop, z + c * self._retraction_hop, a, b, c, self._travel_speed, e)
+                    gcode_command = self._generateGCodeCommand(
+                        0, gcode_position, self._travel_speed)
+                    if gcode_command is not None:
+                        gcode_list.append(gcode_command)
+                    path.append([position.x, position.y, position.z, position.a, position.b,
+                                 position.c, position.f, position.e, LayerPolygon.MoveCombingType])
+
+        feedrate = self._travel_speed
+        x, y, z, a, b, c, f, e = new_position
         self._position = Position(x, y, z, a, b, c, feedrate, self._position.e)
         gcode_command = self._generateGCodeCommand(0, new_gcode_position, feedrate)
         if gcode_command is not None:
             gcode_list.append(gcode_command)
         gx, gy, gz, ga, gb, gc, gf, ge = new_gcode_position
         self._gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
-        
         path.append([x, y, z, a, b, c, feedrate, e,
                      LayerPolygon.MoveCombingType])
         
@@ -412,6 +472,15 @@ class CliParser:
             self._gcode_position.e[self._extruder_number] = new_extruder_position
             path.append([self._position.x, self._position.y, self._position.z, self._position.a, self._position.b,
                          self._position.c, self._prime_speed, self._position.e, LayerPolygon.MoveRetractionType])
+            
+        if self._layer_type == LayerPolygon.SupportType:
+            gcode_list.append(self._type_keyword + "SUPPORT\n")
+        elif self._layer_type == LayerPolygon.SkinType:
+            gcode_list.append(self._type_keyword + "SKIN\n")
+        elif self._layer_type == LayerPolygon.InfillType:
+            gcode_list.append(self._type_keyword + "FILL\n")
+        else:
+            gcode_list.append(self._type_keyword + "WALL-OUTER\n")
 
         while idx < len(points):
             point = CliPoint(float(points[idx]), float(points[idx + 1]))
@@ -420,6 +489,10 @@ class CliParser:
             feedrate = self._wall_0_speed
             if self._layer_type == LayerPolygon.SupportType:
                 feedrate = self._support_speed
+            elif self._layer_type == LayerPolygon.SkinType:
+                feedrate = self._skin_speed
+            elif self._layer_type == LayerPolygon.InfillType:
+                feedrate = self._infill_speed
             x, y, z, a, b, c, f, e = new_position
             self._position = Position(x, y, z, a, b, c, feedrate, e)
             gcode_command = self._generateGCodeCommand(1, new_gcode_position, feedrate)
