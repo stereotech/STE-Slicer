@@ -237,23 +237,6 @@
             }
         }
     },
-    "MonitorStage": {
-        "package_info": {
-            "package_id": "MonitorStage",
-            "package_type": "plugin",
-            "display_name": "Monitor Stage",
-            "description": "Provides a monitor stage in Cura.",
-            "package_version": "1.0.0",
-            "sdk_version": 5,
-            "website": "https://ultimaker.com",
-            "author": {
-                "author_id": "UltimakerPackages",
-                "display_name": "Ultimaker B.V.",
-                "email": "plugins@ultimaker.com",
-                "website": "https://ultimaker.com"
-            }
-        }
-    },
     "PerObjectSettingsTool": {
         "package_info": {
             "package_id": "PerObjectSettingsTool",
@@ -370,6 +353,23 @@
                 "display_name": "Ultimaker B.V.",
                 "email": "plugins@ultimaker.com",
                 "website": "https://ultimaker.com"
+            }
+        }
+    },
+    "STEAppStage": {
+        "package_info": {
+            "package_id": "STEAppStage",
+            "package_type": "plugin",
+            "display_name": "STE App Stage",
+            "description": "Provides a STE App stage in STE Slicer.",
+            "package_version": "1.0.0",
+            "sdk_version": 5,
+            "website": "https://stereotech.org",
+            "author": {
+                "author_id": "StereotechPackages",
+                "display_name": "Stereotech LLC.",
+                "email": "dev@ste3d.ru",
+                "website": "https://stereotech.org"
             }
         }
     },

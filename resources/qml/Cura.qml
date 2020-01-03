@@ -528,6 +528,7 @@ UM.MainWindow
             JobSpecs
             {
                 id: jobSpecs
+                visible: UM.Controller.activeStage.stageId != "STEAppStage"
                 anchors
                 {
                     bottom: parent.bottom;

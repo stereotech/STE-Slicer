@@ -16,7 +16,7 @@ Rectangle
     anchors.left: parent.left
     anchors.right: parent.right
     height: UM.Theme.getSize("sidebar_header").height
-    color: UM.Controller.activeStage.stageId == "MonitorStage" ? UM.Theme.getColor("topbar_background_color_monitoring") : UM.Theme.getColor("topbar_background_color")
+    color: UM.Controller.activeStage.stageId == "STEAppStage" ? UM.Theme.getColor("topbar_background_color_monitoring") : UM.Theme.getColor("topbar_background_color")
 
     property bool printerConnected: Cura.MachineManager.printerConnected
     property bool printerAcceptsCommands: printerConnected && Cura.MachineManager.printerOutputDevices[0].acceptsCommands
@@ -122,7 +122,7 @@ Rectangle
         height: 30
 
         spacing: 2
-        visible: UM.Controller.activeStage.stageId != "MonitorStage"
+        visible: UM.Controller.activeStage.stageId != "STEAppStage"
 
         anchors
         {
@@ -193,7 +193,7 @@ Rectangle
         }
 
         style: UM.Theme.styles.combobox
-        visible: UM.Controller.activeStage.stageId != "MonitorStage"
+        visible: UM.Controller.activeStage.stageId != "STEAppStage"
 
         model: UM.ViewModel { }
         textRole: "name"

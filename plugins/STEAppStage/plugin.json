@@ -1,0 +1,8 @@
+{
+    "name": "STE App Stage",
+    "author": "Stereotech",
+    "version": "1.0.0",
+    "description": "Provides a STE App stage in STE Slicer",
+    "api": 5,
+    "i18n-catalog": "cura"
+}
