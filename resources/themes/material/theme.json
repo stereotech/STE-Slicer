@@ -1775,8 +1775,8 @@
             0.4
         ],
         "progressbar_radius": [
-            0,
-            0
+            2,
+            2
         ],
         "progressbar_control": [
             8.0,

@@ -6,6 +6,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
+import QtGraphicalEffects 1.0
 
 import UM 1.3 as UM
 import Cura 1.1 as Cura
@@ -282,14 +283,6 @@ UM.MainWindow
 
             Menu
             {
-                id: plugin_menu
-                title: catalog.i18nc("@title:menu menubar:toplevel", "&Marketplace")
-
-                MenuItem { action: Cura.Actions.browsePackages }
-            }
-
-            Menu
-            {
                 id: preferencesMenu
                 title: catalog.i18nc("@title:menu menubar:toplevel","P&references");
 
@@ -437,6 +430,13 @@ UM.MainWindow
             Loader
             {
                 id: sidebar
+
+                layer.effect: DropShadow {
+                    radius: UM.Theme.getSize("monitor_shadow_radius").width;
+                    verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+                    color: "#3F000000"; // 25% shadow
+                }
+                layer.enabled: true    
 
                 property bool collapsed: false;
                 property var initialWidth: UM.Theme.getSize("sidebar").width;

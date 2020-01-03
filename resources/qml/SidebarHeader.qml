@@ -4,6 +4,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
+import QtGraphicalEffects 1.0
 
 import UM 1.2 as UM
 import Cura 1.0 as Cura
@@ -13,6 +14,7 @@ import "Menus"
 Column
 {
     id: base;
+
 
     property int currentExtruderIndex: Cura.ExtruderManager.activeExtruderIndex;
     property bool currentExtruderVisible: extrudersList.visible;

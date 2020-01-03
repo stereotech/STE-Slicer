@@ -4,6 +4,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
+import QtGraphicalEffects 1.0
 
 import UM 1.1 as UM
 
@@ -11,6 +12,7 @@ QtObject {
     property Component sidebar_header_button: Component {
         ButtonStyle {
             background: Rectangle {
+                
                 radius: 6
                 color:
                 {
@@ -262,7 +264,12 @@ QtObject {
             background: Item {
                 implicitWidth: Theme.getSize("button").width;
                 implicitHeight: Theme.getSize("button").height;
-
+                layer.effect: DropShadow {
+                        radius: UM.Theme.getSize("monitor_shadow_radius").width;
+                        verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+                        color: "#3F000000"; // 25% shadow
+                    }
+                layer.enabled: true
                 UM.PointingRectangle {
                     id: button_tooltip
                     anchors.left: parent.right
@@ -404,6 +411,13 @@ QtObject {
                     id: buttonOpenFile;
                     radius:4
                     anchors.fill: parent;
+                    
+                    layer.effect: DropShadow {
+                        radius: UM.Theme.getSize("monitor_shadow_radius").width;
+                        verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+                        color: "#3F000000"; // 25% shadow
+                    }
+                    layer.enabled: true
 
                     property bool down: control.pressed || (control.checkable && control.checked);
                     color:
