@@ -3,16 +3,16 @@
   <metadata>
     <name>
       <brand>Filamentarno!</brand>
-      <material>S-Soft</material>
-      <color>Orange</color>
-      <label>S-Soft Оранжевый</label>
+      <material>M-Soft</material>
+      <color>Graphite</color>
+      <label>M-Soft Графит</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
     <adhesion_info>70-90°C (возможна печать без подогрева с применением адгезивов)</adhesion_info>
-    <description>S-SOFT: группа сплошных (Solid), то есть непрозрачных пластиков. Спектр использования пластиков этой группы довольно широк: печать ударопрочных корпусов, тактильно приятных конечных изделий (накладок, ручек, сувениров) и любых изделий, которые должны переносить ударные нагрузки и нагрузки на скручивание при сохранении конструктивной целостности.</description>
-    <color_code>#ff4500</color_code>
-    <GUID>62f916f3-a59a-40cd-8398-383f58a97f22</GUID>
+    <description>M-SOFT: группа декоративных материалов различных металлических (Metallic) оттенков. Рекомендуется для имитации металлических элементов в декоративных целях.</description>
+    <color_code>#1F1B1E</color_code>
+    <GUID>cbccd53f-31ca-445f-a3fd-5269551d7dab</GUID>
     <definition>fdmprinter</definition>
   </metadata>
   <properties>
