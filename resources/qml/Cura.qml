@@ -17,7 +17,7 @@ UM.MainWindow
 {
     id: base
     //: Cura application window title
-    title: catalog.i18nc("@title:window","Ultimaker Cura");
+    title: catalog.i18nc("@title:window","Stereotech STE Slicer");
     viewportRect: Qt.rect(0, 0, 1.0, 1.0)
     property bool showPrintMonitor: false
 

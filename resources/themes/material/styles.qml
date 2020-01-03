@@ -130,6 +130,7 @@ QtObject {
                     {
                         id: textLabel
                         text: control.text
+                        
                         anchors.right: icon.visible ? icon.left : parent.right
                         anchors.rightMargin: icon.visible ? Math.round(Theme.getSize("default_margin").width / 2) : 0
                         anchors.verticalCenter: parent.verticalCenter;
