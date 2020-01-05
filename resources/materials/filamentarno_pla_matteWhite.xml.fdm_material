@@ -3,9 +3,9 @@
   <metadata>
     <name>
       <brand>Filamentarno!</brand>
-      <material>PRO</material>
-      <color>Whitte</color>
-      <label>PRO Белый</label>
+      <material>STANDART</material>
+      <color>Matte whitte</color>
+      <label>PLA+ Белый матовый</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>

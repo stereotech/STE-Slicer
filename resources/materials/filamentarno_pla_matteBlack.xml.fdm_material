@@ -3,9 +3,9 @@
   <metadata>
     <name>
       <brand>Filamentarno!</brand>
-      <material>PRO</material>
-      <color>Black</color>
-      <label>PRO Черный</label>
+      <material>STANDART</material>
+      <color>Matte black</color>
+      <label>PLA+ Черный матовый</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
