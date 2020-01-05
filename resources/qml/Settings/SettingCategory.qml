@@ -3,6 +3,7 @@
 
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import QtGraphicalEffects 1.0
 
 import UM 1.1 as UM
 import Cura 1.0 as Cura
@@ -17,6 +18,12 @@ Button
     background: Rectangle
     {
         id: backgroundRectangle
+        layer.effect: DropShadow {
+                    radius: UM.Theme.getSize("monitor_shadow_radius").width;
+                    verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+                    color: "#3F000000"; // 25% shadow
+        }
+        layer.enabled: true
         implicitHeight: UM.Theme.getSize("section").height
         color: {
             if (base.color) {

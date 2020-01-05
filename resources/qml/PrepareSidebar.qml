@@ -4,6 +4,8 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
+import QtQuick.Controls.Styles 1.3
+import QtGraphicalEffects 1.0
 
 import UM 1.2 as UM
 import Cura 1.0 as Cura
@@ -13,6 +15,11 @@ import "Menus/ConfigurationMenu"
 Rectangle
 {
     id: base
+
+    
+
+    property var shadowRadius: UM.Theme.getSize("monitor_shadow_radius").width;
+    property var shadowOffset: UM.Theme.getSize("monitor_shadow_offset").width;
 
     property int currentModeIndex: -1
     property bool hideSettings: PrintInformation.preSliced
@@ -99,7 +106,7 @@ Rectangle
         id: separator
         visible: configSelection.visible
         width: visible ? Math.round(UM.Theme.getSize("sidebar_lining_thin").height / 2) : 0
-        height: UM.Theme.getSize("sidebar_header").height
+        height: UM.Theme.getSize("sidebar_header").height / 4
         color: UM.Theme.getColor("sidebar_lining_thin")
         anchors.left: machineSelection.right
     }
@@ -129,7 +136,7 @@ Rectangle
         id: headerSeparator
         width: parent.width
         visible: settingsModeSelection.visible && header.visible
-        height: visible ? UM.Theme.getSize("sidebar_lining").height : 0
+        height: visible ? UM.Theme.getSize("sidebar_lining").height / 4 : 0
         color: UM.Theme.getColor("sidebar_lining")
         anchors.top: header.bottom
         anchors.topMargin: visible ? UM.Theme.getSize("sidebar_margin").height : 0
@@ -313,7 +320,7 @@ Rectangle
     {
         id: footerSeparator
         width: parent.width
-        height: UM.Theme.getSize("sidebar_lining").height
+        height: UM.Theme.getSize("sidebar_lining").height / 4
         color: UM.Theme.getColor("sidebar_lining")
         anchors.bottom: printSpecs.top
         anchors.bottomMargin: Math.round(UM.Theme.getSize("sidebar_margin").height * 2 + UM.Theme.getSize("progressbar").height + UM.Theme.getFont("default_bold").pixelSize)

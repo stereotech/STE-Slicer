@@ -5,13 +5,15 @@
     "fonts": {
         "large": {
             "size": 1.5,
-            "weight": 263,
-            "family": "Roboto"
+            "weight": 75,
+            "family": "Roboto Thin",
+            "capitalize": true
         },
         "large_nonbold": {
             "size": 1.5,
-            "weight": 150,
-            "family": "Roboto"
+            "weight": 50,
+            "family": "Roboto Thin",
+            "capitalize": true
         },
         "medium": {
             "size": 1.16,
@@ -1775,8 +1777,8 @@
             0.4
         ],
         "progressbar_radius": [
-            0,
-            0
+            2,
+            2
         ],
         "progressbar_control": [
             8.0,

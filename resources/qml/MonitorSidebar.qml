@@ -13,7 +13,6 @@ import "Menus/ConfigurationMenu"
 Rectangle
 {
     id: base
-
     property int currentModeIndex
     property bool hideSettings: PrintInformation.preSliced
     property bool hideView: Cura.MachineManager.activeMachineName == ""
