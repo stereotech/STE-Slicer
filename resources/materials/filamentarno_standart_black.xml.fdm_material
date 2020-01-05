@@ -3,9 +3,9 @@
   <metadata>
     <name>
       <brand>Filamentarno!</brand>
-      <material>PRO</material>
+      <material>STANDART</material>
       <color>Black</color>
-      <label>PRO Черный</label>
+      <label>ABS Standart Черный</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
