@@ -6,7 +6,9 @@ from cura.CuraApplication import CuraApplication
 import time
 import struct
 
-from csg.core import CSG, Polygon, BSPNode, Vertex
+import numpy as np
+import trimesh
+import trimesh.primitives
 
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("cura")
@@ -32,20 +34,28 @@ class GlicerWriter(MeshWriter):
                 faces = mesh_data.getVertexCount()
             if faces is None:
                 continue
-            cutting_cylinder = CSG.cylinder()
-            polygons = []
-            for face in faces:
-                v1 = Vertex(verts[face[0]])
-                v2 = Vertex(verts[face[1]])
-                v3 = Vertex(verts[face[2]])
-                polygon = Polygon([[v1[0], -v1[2], v1[1]],
-                                   [v2[0], -v2[2], v2[1]],
-                                   [v3[0], -v3[2], v3[1]], ])
-                polygons.append(polygon)
-            node = BSPNode(polygons)
-            target = CSG.fromPolygons(node)
-            result = target.subtract(cutting_cylinder)
-            result.saveVTK("test.vtk")
+            vertices = []
+            for vert in verts:
+                vertices.append([vert[0], -vert[2], vert[1]])
+            mesh = trimesh.Trimesh(vertices=vertices, faces=faces)
+            cutting_cylinder = trimesh.primitives.Cylinder(
+                radius=radius, height=height)
+            result = mesh.difference(cutting_cylinder, engine="scad")
+            stream.write("Uranium STLWriter {0}".format(time.strftime(
+                "%a %d %b %Y %H:%M:%S")).encode().ljust(80, b"\000"))
+            face_count = len(result.faces)
+            # Write number of faces to STL
+            stream.write(struct.pack("<I", int(face_count)))
+            verts = result.vertices
+            for face in result.faces:
+                v1 = verts[face[0]]
+                v2 = verts[face[1]]
+                v3 = verts[face[2]]
+                stream.write(struct.pack("<fff", 0.0, 0.0, 0.0))
+                stream.write(struct.pack("<fff", v1[0], v1[1], v1[2]))
+                stream.write(struct.pack("<fff", v2[0], v2[1], v2[2]))
+                stream.write(struct.pack("<fff", v3[0], v3[1], v3[2]))
+                stream.write(struct.pack("<H", 0))
             return True
         # except:
         #    Logger.log("e", "There is no mesh to write.")
