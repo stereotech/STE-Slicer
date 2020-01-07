@@ -10,7 +10,7 @@ set(URANIUM_DIR "${CMAKE_SOURCE_DIR}/../Uranium" CACHE DIRECTORY "The location o
 set(URANIUM_SCRIPTS_DIR "${URANIUM_DIR}/scripts" CACHE DIRECTORY "The location of the scripts directory of the Uranium repository")
 
 # Tests
-include(CuraTests)
+include(SteSlicerTests)
 
 option(CURA_DEBUGMODE "Enable debug dialog and other debug features" OFF)
 if(CURA_DEBUGMODE)
