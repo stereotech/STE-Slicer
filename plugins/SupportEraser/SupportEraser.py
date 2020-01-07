@@ -12,7 +12,7 @@ from UM.Mesh.MeshBuilder import MeshBuilder
 from UM.Scene.Selection import Selection
 
 from steslicer.SteSlicerApplication import SteSlicerApplication
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.PickingPass import PickingPass
 
 from UM.Operations.GroupedOperation import GroupedOperation
@@ -93,8 +93,8 @@ class SupportEraser(Tool):
             # Add the anti_overhang_mesh cube at the picked location
             self._createEraserMesh(picked_node, picked_position)
 
-    def _createEraserMesh(self, parent: CuraSceneNode, position: Vector):
-        node = CuraSceneNode()
+    def _createEraserMesh(self, parent: SteSlicerSceneNode, position: Vector):
+        node = SteSlicerSceneNode()
 
         node.setName("Eraser")
         node.setSelectable(True)
@@ -119,11 +119,11 @@ class SupportEraser(Tool):
         op.addOperation(AddSceneNodeOperation(node, self._controller.getScene().getRoot()))
         op.addOperation(SetParentOperation(node, parent))
         op.push()
-        node.setPosition(position, CuraSceneNode.TransformSpace.World)
+        node.setPosition(position, SteSlicerSceneNode.TransformSpace.World)
 
         SteSlicerApplication.getInstance().getController().getScene().sceneChanged.emit(node)
 
-    def _removeEraserMesh(self, node: CuraSceneNode):
+    def _removeEraserMesh(self, node: SteSlicerSceneNode):
         parent = node.getParent()
         if parent == self._controller.getScene().getRoot():
             parent = None

@@ -13,7 +13,7 @@ from UM.Job import Job
 from UM.Logger import Logger
 from .ImageReaderUI import ImageReaderUI
 
-from steslicer.Scene.CuraSceneNode import CuraSceneNode as SceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode as SceneNode
 
 
 class ImageReader(MeshReader):

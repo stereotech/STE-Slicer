@@ -1,5 +1,5 @@
 from UM.Scene.SceneNodeDecorator import SceneNodeDecorator
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 
 
 ##  Make a SceneNode build plate aware CuraSceneNode objects all have this decorator.
@@ -13,7 +13,7 @@ class BuildPlateDecorator(SceneNodeDecorator):
         # Make sure that groups are set correctly
         # setBuildPlateForSelection in CuraActions makes sure that no single childs are set.
         self._build_plate_number = nr
-        if isinstance(self._node, CuraSceneNode):
+        if isinstance(self._node, SteSlicerSceneNode):
             self._node.transformChanged()  # trigger refresh node without introducing a new signal
         if self._node:
             for child in self._node.getChildren():

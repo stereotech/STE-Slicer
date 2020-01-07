@@ -56,9 +56,9 @@ from steslicer.Operations.SetParentOperation import SetParentOperation
 from steslicer.Scene.SliceableObjectDecorator import SliceableObjectDecorator
 from steslicer.Scene.BlockSlicingDecorator import BlockSlicingDecorator
 from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 
-from steslicer.Scene.CuraSceneController import CuraSceneController
+from steslicer.Scene.SteSlicerSceneController import SteSlicerSceneController
 
 from UM.Settings.SettingDefinition import SettingDefinition, DefinitionPropertyType
 from UM.Settings.ContainerRegistry import ContainerRegistry
@@ -874,9 +874,9 @@ class SteSlicerApplication(QtApplication):
             self._build_plate_model = BuildPlateModel(self)
         return self._build_plate_model
 
-    def getCuraSceneController(self, *args) -> CuraSceneController:
+    def getCuraSceneController(self, *args) -> SteSlicerSceneController:
         if self._cura_scene_controller is None:
-            self._cura_scene_controller = CuraSceneController.createCuraSceneController()
+            self._cura_scene_controller = SteSlicerSceneController.createCuraSceneController()
         return self._cura_scene_controller
 
     def getSettingInheritanceManager(self, *args) -> SettingInheritanceManager:
@@ -940,7 +940,7 @@ class SteSlicerApplication(QtApplication):
 
         qmlRegisterUncreatableType(SteSlicerApplication, "Cura", 1, 0, "ResourceTypes", "Just an Enum type")
 
-        qmlRegisterSingletonType(CuraSceneController, "Cura", 1, 0, "SceneController", self.getCuraSceneController)
+        qmlRegisterSingletonType(SteSlicerSceneController, "Cura", 1, 0, "SceneController", self.getCuraSceneController)
         qmlRegisterSingletonType(ExtruderManager, "Cura", 1, 0, "ExtruderManager", self.getExtruderManager)
         qmlRegisterSingletonType(MachineManager, "Cura", 1, 0, "MachineManager", self.getMachineManager)
         qmlRegisterSingletonType(SettingInheritanceManager, "Cura", 1, 0, "SettingInheritanceManager", self.getSettingInheritanceManager)
@@ -1050,7 +1050,7 @@ class SteSlicerApplication(QtApplication):
         print_information = self.getPrintInformation()
         for node in DepthFirstIterator(self.getController().getScene().getRoot()):
             if (
-                not issubclass(type(node), CuraSceneNode) or
+                not issubclass(type(node), SteSlicerSceneNode) or
                 (not node.getMeshData() and not node.callDecoration("getLayerData")) or
                 (node.callDecoration("getBuildPlateNumber") != active_build_plate)):
 
@@ -1301,7 +1301,7 @@ class SteSlicerApplication(QtApplication):
         nodes = []
         has_merged_nodes = False
         for node in DepthFirstIterator(self.getController().getScene().getRoot()):
-            if not isinstance(node, CuraSceneNode) or not node.getMeshData() :
+            if not isinstance(node, SteSlicerSceneNode) or not node.getMeshData() :
                 if node.getName() == "MergedMesh":
                     has_merged_nodes = True
                 continue
@@ -1402,7 +1402,7 @@ class SteSlicerApplication(QtApplication):
     def updateOriginOfMergedMeshes(self, jobNode):
         group_nodes = []
         for node in DepthFirstIterator(self.getController().getScene().getRoot()):
-            if isinstance(node, CuraSceneNode) and node.getName() == "MergedMesh":
+            if isinstance(node, SteSlicerSceneNode) and node.getName() == "MergedMesh":
 
                 #checking by name might be not enough, the merged mesh should has "GroupDecorator" decorator
                 for decorator in node.getDecorators():
@@ -1450,7 +1450,7 @@ class SteSlicerApplication(QtApplication):
     @pyqtSlot()
     def groupSelected(self):
         # Create a group-node
-        group_node = CuraSceneNode()
+        group_node = SteSlicerSceneNode()
         group_decorator = GroupDecorator()
         group_node.addDecorator(group_decorator)
         group_node.addDecorator(ConvexHullDecorator())
@@ -1648,10 +1648,10 @@ class SteSlicerApplication(QtApplication):
         for original_node in nodes:
 
             # Create a CuraSceneNode just if the original node is not that type
-            if isinstance(original_node, CuraSceneNode):
+            if isinstance(original_node, SteSlicerSceneNode):
                 node = original_node
             else:
-                node = CuraSceneNode()
+                node = SteSlicerSceneNode()
                 node.setMeshData(original_node.getMeshData())
 
                 #Setting meshdata does not apply scaling.

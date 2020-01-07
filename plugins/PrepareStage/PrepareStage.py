@@ -3,11 +3,11 @@
 import os.path
 from UM.Application import Application
 from UM.Resources import Resources
-from steslicer.Stages.CuraStage import CuraStage
+from steslicer.Stages.SteSlicerStage import SteSlicerStage
 
 
 ##  Stage for preparing model (slicing).
-class PrepareStage(CuraStage):
+class PrepareStage(SteSlicerStage):
 
     def __init__(self, parent = None):
         super().__init__(parent)

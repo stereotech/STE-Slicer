@@ -12,7 +12,7 @@ from UM.Math.Matrix import Matrix
 from UM.Math.Vector import Vector
 from UM.Mesh.MeshBuilder import MeshBuilder
 from UM.Mesh.MeshReader import MeshReader
-from steslicer.Scene.CuraSceneNode import CuraSceneNode as SceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode as SceneNode
 
 MYPY = False
 try:

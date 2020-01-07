@@ -19,7 +19,7 @@ from UM.Scene.GroupDecorator import GroupDecorator
 from UM.MimeTypeDatabase import MimeTypeDatabase, MimeType
 
 from steslicer.Settings.ExtruderManager import ExtruderManager
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
 from steslicer.Scene.SliceableObjectDecorator import SliceableObjectDecorator
 from steslicer.Scene.ZOffsetDecorator import ZOffsetDecorator
@@ -93,7 +93,7 @@ class ThreeMFReader(MeshReader):
 
         active_build_plate = Application.getInstance().getMultiBuildPlateModel().activeBuildPlate
 
-        um_node = CuraSceneNode() # This adds a SettingOverrideDecorator
+        um_node = SteSlicerSceneNode() # This adds a SettingOverrideDecorator
         um_node.addDecorator(BuildPlateDecorator(active_build_plate))
         um_node.setName(node_name)
         transformation = self._createMatrixFromTransformationString(savitar_node.getTransformation())

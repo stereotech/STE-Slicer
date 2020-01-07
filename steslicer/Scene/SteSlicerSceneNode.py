@@ -16,7 +16,7 @@ from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
 
 ##  Scene nodes that are models are only seen when selecting the corresponding build plate
 #   Note that many other nodes can just be UM SceneNode objects.
-class CuraSceneNode(SceneNode):
+class SteSlicerSceneNode(SceneNode):
     def __init__(self, parent: Optional["SceneNode"] = None, visible: bool = True, name: str = "", no_setting_override: bool = False) -> None:
         super().__init__(parent = parent, visible = visible, name = name)
         if not no_setting_override:
@@ -129,8 +129,8 @@ class CuraSceneNode(SceneNode):
         self._aabb = aabb
 
     ##  Taken from SceneNode, but replaced SceneNode with CuraSceneNode
-    def __deepcopy__(self, memo: Dict[int, object]) -> "CuraSceneNode":
-        copy = CuraSceneNode(no_setting_override = True)  # Setting override will be added later
+    def __deepcopy__(self, memo: Dict[int, object]) -> "SteSlicerSceneNode":
+        copy = SteSlicerSceneNode(no_setting_override = True)  # Setting override will be added later
         copy.setTransformation(self.getLocalTransformation())
         copy.setMeshData(self._mesh_data)
         copy.setVisible(cast(bool, deepcopy(self._visible, memo)))

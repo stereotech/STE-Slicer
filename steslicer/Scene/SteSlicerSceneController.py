@@ -13,7 +13,7 @@ from UM.Scene.Selection import Selection
 from UM.Signal import Signal
 
 
-class CuraSceneController(QObject):
+class SteSlicerSceneController(QObject):
     activeBuildPlateChanged = Signal()
 
     def __init__(self, objects_model: ObjectsModel, multi_build_plate_model: MultiBuildPlateModel) -> None:
@@ -112,4 +112,4 @@ class CuraSceneController(QObject):
     def createCuraSceneController():
         objects_model = Application.getInstance().getObjectsModel()
         multi_build_plate_model = Application.getInstance().getMultiBuildPlateModel()
-        return CuraSceneController(objects_model = objects_model, multi_build_plate_model = multi_build_plate_model)
+        return SteSlicerSceneController(objects_model = objects_model, multi_build_plate_model = multi_build_plate_model)

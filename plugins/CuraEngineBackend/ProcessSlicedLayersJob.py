@@ -16,7 +16,7 @@ from UM.Logger import Logger
 from UM.Math.Vector import Vector
 
 from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer import LayerDataBuilder
 from steslicer import LayerDataDecorator
@@ -82,7 +82,7 @@ class ProcessSlicedLayersJob(Job):
         Application.getInstance().getController().activeViewChanged.connect(self._onActiveViewChanged)
 
         # The no_setting_override is here because adding the SettingOverrideDecorator will trigger a reslice
-        new_node = CuraSceneNode(no_setting_override = True)
+        new_node = SteSlicerSceneNode(no_setting_override = True)
         new_node.addDecorator(BuildPlateDecorator(self._build_plate_number))
 
         # Force garbage collection.

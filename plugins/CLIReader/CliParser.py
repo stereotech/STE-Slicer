@@ -3,7 +3,7 @@ from typing import Dict, List, NamedTuple, Optional, Union
 import re
 import math
 import numpy
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 
 from UM.Logger import Logger
 from UM.Job import Job
@@ -94,13 +94,13 @@ class CliParser:
 
     _type_keyword = ";TYPE:"
 
-    def processCliStream(self, stream: str) -> Optional[CuraSceneNode]:
+    def processCliStream(self, stream: str) -> Optional[SteSlicerSceneNode]:
         Logger.log("d", "Preparing to load CLI")
         self._cancelled = False
         self._setPrintSettings()
         self._is_layers_in_file = False
 
-        scene_node = CuraSceneNode()
+        scene_node = SteSlicerSceneNode()
 
         gcode_list = []
         self._writeStartCode(gcode_list)

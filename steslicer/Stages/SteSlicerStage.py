@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtProperty, QUrl
 from UM.Stage import Stage
 
 
-class CuraStage(Stage):
+class SteSlicerStage(Stage):
 
     def __init__(self, parent = None):
         super().__init__(parent)

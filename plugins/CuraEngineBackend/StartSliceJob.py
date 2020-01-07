@@ -20,7 +20,7 @@ from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
 
 from steslicer.SteSlicerApplication import SteSlicerApplication
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.OneAtATimeIterator import OneAtATimeIterator
 from steslicer.Settings.ExtruderManager import ExtruderManager
 
@@ -143,7 +143,7 @@ class StartSliceJob(Job):
 
         # Don't slice if there is a per object setting with an error value.
         for node in DepthFirstIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
-            if not isinstance(node, CuraSceneNode) or not node.isSelectable():
+            if not isinstance(node, SteSlicerSceneNode) or not node.isSelectable():
                 continue
 
             if self._checkStackForErrors(node.callDecoration("getStack")):
@@ -429,7 +429,7 @@ class StartSliceJob(Job):
     ##  Check if a node has per object settings and ensure that they are set correctly in the message
     #   \param node Node to check.
     #   \param message object_lists message to put the per object settings in
-    def _handlePerObjectSettings(self, node: CuraSceneNode, message: Arcus.PythonMessage):
+    def _handlePerObjectSettings(self, node: SteSlicerSceneNode, message: Arcus.PythonMessage):
         stack = node.callDecoration("getStack")
 
         # Check if the node has a stack attached to it and the stack has any settings in the top container.

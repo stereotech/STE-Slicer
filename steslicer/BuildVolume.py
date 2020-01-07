@@ -1,7 +1,7 @@
 # Copyright (c) 2018 Ultimaker B.V.
 # Cura is released under the terms of the LGPLv3 or higher.
 
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from UM.Application import Application #To modify the maximum zoom level.
 from UM.i18n import i18nCatalog
@@ -265,8 +265,8 @@ class BuildVolume(SceneNode):
                 child_node.setOutsideBuildArea(group_node.isOutsideBuildArea())
 
     ##  Update the outsideBuildArea of a single node, given bounds or current build volume
-    def checkBoundsAndUpdate(self, node: CuraSceneNode, bounds: Optional[AxisAlignedBox] = None):
-        if not isinstance(node, CuraSceneNode):
+    def checkBoundsAndUpdate(self, node: SteSlicerSceneNode, bounds: Optional[AxisAlignedBox] = None):
+        if not isinstance(node, SteSlicerSceneNode):
             return
 
         if bounds is None:

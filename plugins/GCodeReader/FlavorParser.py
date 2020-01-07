@@ -8,7 +8,7 @@ from UM.Math.Vector import Vector
 from UM.Math.Matrix import Matrix
 from UM.Math.Quaternion import Quaternion
 from UM.Message import Message
-from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from UM.i18n import i18nCatalog
 
 catalog = i18nCatalog("steslicer")
@@ -332,7 +332,7 @@ class FlavorParser:
                 extruder.getProperty("machine_nozzle_offset_y", "value")]
         return result
 
-    def processGCodeStream(self, stream: str) -> Optional[CuraSceneNode]:
+    def processGCodeStream(self, stream: str) -> Optional[SteSlicerSceneNode]:
         Logger.log("d", "Preparing to load GCode")
         self._cancelled = False
         # We obtain the filament diameter from the selected extruder to calculate line widths
@@ -343,7 +343,7 @@ class FlavorParser:
 
         self._filament_diameter = global_stack.extruders[str(self._extruder_number)].getProperty("material_diameter", "value")
 
-        scene_node = CuraSceneNode()
+        scene_node = SteSlicerSceneNode()
 
         gcode_list = []
         self._is_layers_in_file = False
