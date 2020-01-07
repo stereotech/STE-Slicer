@@ -28,8 +28,8 @@ from UM.View.GL.ShaderProgram import ShaderProgram
 
 from UM.View.View import View
 from UM.i18n import i18nCatalog
-from cura.Scene.ConvexHullNode import ConvexHullNode
-from cura.CuraApplication import CuraApplication
+from steslicer.Scene.ConvexHullNode import ConvexHullNode
+from steslicer.CuraApplication import CuraApplication
 
 from .NozzleNode import NozzleNode
 from .SimulationPass import SimulationPass
@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from UM.Scene.Scene import Scene
     from UM.Settings.ContainerStack import ContainerStack
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 ## View used to display g-code paths.

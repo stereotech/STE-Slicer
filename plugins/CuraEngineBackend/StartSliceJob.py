@@ -19,10 +19,10 @@ from UM.Scene.Scene import Scene #For typing.
 from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
 
-from cura.CuraApplication import CuraApplication
-from cura.Scene.CuraSceneNode import CuraSceneNode
-from cura.OneAtATimeIterator import OneAtATimeIterator
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.CuraApplication import CuraApplication
+from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.OneAtATimeIterator import OneAtATimeIterator
+from steslicer.Settings.ExtruderManager import ExtruderManager
 
 
 NON_PRINTING_MESH_SETTINGS = ["anti_overhang_mesh", "infill_mesh", "cutting_mesh"]

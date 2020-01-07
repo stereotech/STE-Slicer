@@ -13,7 +13,7 @@ from UM.OutputDevice.OutputDevice import OutputDevice
 from UM.OutputDevice import OutputDeviceError
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 class RemovableDriveOutputDevice(OutputDevice):
     def __init__(self, device_id, device_name):

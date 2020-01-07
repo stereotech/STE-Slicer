@@ -9,10 +9,10 @@ from UM.Application import Application
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.DefinitionContainer import DefinitionContainer
 
-from cura.MachineAction import MachineAction
-from cura.Settings.CuraStackBuilder import CuraStackBuilder
+from steslicer.MachineAction import MachineAction
+from steslicer.Settings.CuraStackBuilder import CuraStackBuilder
 
-catalog = UM.i18n.i18nCatalog("cura")
+catalog = UM.i18n.i18nCatalog("steslicer")
 
 
 ##  This action allows for certain settings that are "machine only") to be modified.
@@ -26,7 +26,7 @@ class MachineSettingsAction(MachineAction):
 
         self._global_container_stack = None
 
-        from cura.Settings.CuraContainerStack import _ContainerIndexes
+        from steslicer.Settings.CuraContainerStack import _ContainerIndexes
         self._container_index = _ContainerIndexes.DefinitionChanges
 
         self._container_registry = ContainerRegistry.getInstance()
@@ -67,7 +67,7 @@ class MachineSettingsAction(MachineAction):
                                                               self._global_container_stack.getName() + "_settings")
 
         # Notify the UI in which container to store the machine settings data
-        from cura.Settings.CuraContainerStack import _ContainerIndexes
+        from steslicer.Settings.CuraContainerStack import _ContainerIndexes
 
         container_index = _ContainerIndexes.DefinitionChanges
         if container_index != self._container_index:

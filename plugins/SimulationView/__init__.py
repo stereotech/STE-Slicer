@@ -6,7 +6,7 @@ from PyQt5.QtQml import qmlRegisterSingletonType
 from UM.i18n import i18nCatalog
 from . import SimulationViewProxy, SimulationView
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 def getMetaData():
     return {

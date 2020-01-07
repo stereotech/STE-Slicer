@@ -2,14 +2,14 @@ from typing import List, Optional
 
 from UM.FileHandler.FileHandler import FileHandler
 from UM.Scene.SceneNode import SceneNode
-from cura.CuraApplication import CuraApplication
-from cura.PrinterOutput.NetworkedPrinterOutputDevice import NetworkedPrinterOutputDevice, AuthState
-from cura.PrinterOutput.PrinterOutputModel import PrinterOutputModel
-from cura.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
-from cura.PrinterOutput.MaterialOutputModel import MaterialOutputModel
+from steslicer.CuraApplication import CuraApplication
+from steslicer.PrinterOutput.NetworkedPrinterOutputDevice import NetworkedPrinterOutputDevice, AuthState
+from steslicer.PrinterOutput.PrinterOutputModel import PrinterOutputModel
+from steslicer.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
+from steslicer.PrinterOutput.MaterialOutputModel import MaterialOutputModel
 
-from cura.Settings.ContainerManager import ContainerManager
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.Settings.ContainerManager import ContainerManager
+from steslicer.Settings.ExtruderManager import ExtruderManager
 
 from UM.Logger import Logger
 from UM.Settings.ContainerRegistry import ContainerRegistry
@@ -28,7 +28,7 @@ import json
 import os
 
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 ##  This is the output device for the "Legacy" API of the UM3. All firmware before 4.0.1 uses this API.

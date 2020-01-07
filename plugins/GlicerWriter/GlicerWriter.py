@@ -1,7 +1,7 @@
 from UM.Mesh.MeshWriter import MeshWriter
 from UM.Logger import Logger
 
-from cura.CuraApplication import CuraApplication
+from steslicer.CuraApplication import CuraApplication
 
 import time
 import struct
@@ -11,7 +11,7 @@ import trimesh
 import trimesh.primitives
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 class GlicerWriter(MeshWriter):

@@ -10,7 +10,7 @@ from UM.View.RenderPass import RenderPass
 from UM.View.RenderBatch import RenderBatch
 from UM.View.GL.OpenGL import OpenGL
 
-from cura.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.CuraSceneNode import CuraSceneNode
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 
 class XRayPass(RenderPass):

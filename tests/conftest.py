@@ -9,8 +9,8 @@ import pytest
 import Arcus #Prevents error: "PyCapsule_GetPointer called with incorrect name" with conflicting SIP configurations between Arcus and PyQt: Import Arcus and Savitar first!
 import Savitar
 from UM.Qt.QtApplication import QtApplication #QtApplication import is required, even though it isn't used.
-from cura.CuraApplication import CuraApplication
-from cura.MachineActionManager import MachineActionManager
+from steslicer.CuraApplication import CuraApplication
+from steslicer.MachineActionManager import MachineActionManager
 
 
 # Create a CuraApplication object that will be shared among all tests. It needs to be initialized.

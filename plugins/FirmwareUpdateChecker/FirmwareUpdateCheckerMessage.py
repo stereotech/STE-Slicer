@@ -4,7 +4,7 @@
 from UM.i18n import i18nCatalog
 from UM.Message import Message
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 # Make a separate class, since we need an extra field: The machine-id that this message is about.

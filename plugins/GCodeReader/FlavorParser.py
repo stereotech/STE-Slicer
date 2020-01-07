@@ -8,17 +8,17 @@ from UM.Math.Vector import Vector
 from UM.Math.Matrix import Matrix
 from UM.Math.Quaternion import Quaternion
 from UM.Message import Message
-from cura.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.CuraSceneNode import CuraSceneNode
 from UM.i18n import i18nCatalog
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
-from cura.CuraApplication import CuraApplication
-from cura.LayerDataBuilder import LayerDataBuilder
-from cura.LayerDataDecorator import LayerDataDecorator
-from cura.LayerPolygon import LayerPolygon
-from cura.Scene.GCodeListDecorator import GCodeListDecorator
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.CuraApplication import CuraApplication
+from steslicer.LayerDataBuilder import LayerDataBuilder
+from steslicer.LayerDataDecorator import LayerDataDecorator
+from steslicer.LayerPolygon import LayerPolygon
+from steslicer.Scene.GCodeListDecorator import GCodeListDecorator
+from steslicer.Settings.ExtruderManager import ExtruderManager
 
 import numpy
 import math

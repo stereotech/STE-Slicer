@@ -6,7 +6,7 @@ from UM.PluginRegistry import PluginRegistry
 from UM.Logger import Logger
 from UM.Settings.ContainerFormatError import ContainerFormatError
 from UM.Settings.InstanceContainer import InstanceContainer  # The new profile to make.
-from cura.ReaderWriters.ProfileReader import ProfileReader
+from steslicer.ReaderWriters.ProfileReader import ProfileReader
 
 import zipfile
 
@@ -15,15 +15,15 @@ import zipfile
 #   It reads a profile from a .curaprofile file, and returns it as a profile
 #   instance.
 class CuraProfileReader(ProfileReader):
-    ##  Initialises the cura profile reader.
+    ##  Initialises the steslicer profile reader.
     #   This does nothing since the only other function is basically stateless.
     def __init__(self):
         super().__init__()
 
-    ##  Reads a cura profile from a file and returns it.
+    ##  Reads a steslicer profile from a file and returns it.
     #
-    #   \param file_name The file to read the cura profile from.
-    #   \return The cura profile that was in the file, if any. If the file could
+    #   \param file_name The file to read the steslicer profile from.
+    #   \return The steslicer profile that was in the file, if any. If the file could
     #   not be read or didn't contain a valid profile, \code None \endcode is
     #   returned.
     def read(self, file_name):

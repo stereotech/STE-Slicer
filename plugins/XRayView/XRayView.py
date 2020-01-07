@@ -16,7 +16,7 @@ from UM.Scene.Iterator.BreadthFirstIterator import BreadthFirstIterator
 from UM.View.RenderBatch import RenderBatch
 from UM.View.GL.OpenGL import OpenGL
 
-from cura.CuraApplication import CuraApplication
+from steslicer.CuraApplication import CuraApplication
 
 from . import XRayPass
 

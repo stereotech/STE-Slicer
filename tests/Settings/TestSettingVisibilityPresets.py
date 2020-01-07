@@ -4,9 +4,9 @@ import os.path
 
 from UM.Preferences import Preferences
 from UM.Resources import Resources
-from cura.CuraApplication import CuraApplication
-from cura.Machines.Models.SettingVisibilityPresetsModel import SettingVisibilityPresetsModel
-from cura.Settings.SettingVisibilityPreset import SettingVisibilityPreset
+from steslicer.CuraApplication import CuraApplication
+from steslicer.Machines.Models.SettingVisibilityPresetsModel import SettingVisibilityPresetsModel
+from steslicer.Settings.SettingVisibilityPreset import SettingVisibilityPreset
 
 setting_visibility_preset_test_settings = {"test", "zomg", "derp", "yay", "whoo"}
 

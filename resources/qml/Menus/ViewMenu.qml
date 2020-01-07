@@ -49,14 +49,14 @@ Menu
 
     MenuSeparator
     {
-        visible: UM.Preferences.getValue("cura/use_multi_build_plate")
+        visible: UM.Preferences.getValue("steslicer/use_multi_build_plate")
     }
 
     Menu
     {
         id: buildPlateMenu;
         title: catalog.i18nc("@action:inmenu menubar:view","&Build plate")
-        visible: UM.Preferences.getValue("cura/use_multi_build_plate")
+        visible: UM.Preferences.getValue("steslicer/use_multi_build_plate")
         Instantiator
         {
             model: base.multiBuildPlateModel
@@ -67,7 +67,7 @@ Menu
                 checkable: true
                 checked: base.multiBuildPlateModel.getItem(index).buildPlateNumber == base.multiBuildPlateModel.activeBuildPlate
                 exclusiveGroup: buildPlateGroup
-                visible: UM.Preferences.getValue("cura/use_multi_build_plate")
+                visible: UM.Preferences.getValue("steslicer/use_multi_build_plate")
             }
             onObjectAdded: buildPlateMenu.insertItem(index, object)
             onObjectRemoved: buildPlateMenu.removeItem(object)

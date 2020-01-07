@@ -1,5 +1,5 @@
 
-from cura import PrintInformation
+from steslicer import PrintInformation
 
 from unittest.mock import MagicMock, patch
 from UM.Application import Application
@@ -36,7 +36,7 @@ def setup_module():
 
      MimeTypeDatabase.addMimeType(
          MimeType(
-             name="application/x-cura-gcode-file",
+             name="application/x-steslicer-gcode-file",
              comment="Cura GCode File",
              suffixes=["gcode"]
          )

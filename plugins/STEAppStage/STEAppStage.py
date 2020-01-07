@@ -2,7 +2,7 @@ import os.path
 from UM.Application import Application
 from UM.PluginRegistry import PluginRegistry
 from UM.Resources import Resources
-from cura.Stages.CuraStage import CuraStage
+from steslicer.Stages.CuraStage import CuraStage
 
 
 class STEAppStage(CuraStage):

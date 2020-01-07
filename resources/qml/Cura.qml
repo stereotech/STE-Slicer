@@ -123,7 +123,7 @@ UM.MainWindow
                     onTriggered:
                     {
                         var args = { "filter_by_machine": false, "file_type": "workspace", "preferred_mimetypes": "application/vnd.ms-package.3dmanufacturing-3dmodel+xml" };
-                        if(UM.Preferences.getValue("cura/dialog_on_project_save"))
+                        if(UM.Preferences.getValue("steslicer/dialog_on_project_save"))
                         {
                             saveWorkspaceDialog.args = args;
                             saveWorkspaceDialog.open()
@@ -410,7 +410,7 @@ UM.MainWindow
             ObjectsList
             {
                 id: objectsList;
-                visible: UM.Preferences.getValue("cura/use_multi_build_plate");
+                visible: UM.Preferences.getValue("steslicer/use_multi_build_plate");
                 anchors
                 {
                     bottom: parent.bottom;
@@ -452,7 +452,7 @@ UM.MainWindow
                         collapseSidebarAnimation.start();
                     }
                     collapsed = !collapsed;
-                    UM.Preferences.setValue("cura/sidebar_collapsed", collapsed);
+                    UM.Preferences.setValue("steslicer/sidebar_collapsed", collapsed);
                 }
 
                 anchors
@@ -483,7 +483,7 @@ UM.MainWindow
 
                 Component.onCompleted:
                 {
-                    var sidebar_collapsed = UM.Preferences.getValue("cura/sidebar_collapsed");
+                    var sidebar_collapsed = UM.Preferences.getValue("steslicer/sidebar_collapsed");
 
                     if (sidebar_collapsed)
                     {
@@ -866,7 +866,7 @@ UM.MainWindow
                 var projectFile = projectFileUrlList[0];
 
                 // check preference
-                var choice = UM.Preferences.getValue("cura/choice_on_open_project");
+                var choice = UM.Preferences.getValue("steslicer/choice_on_open_project");
                 if (choice == "open_as_project")
                 {
                     openFilesIncludingProjectsDialog.loadProjectFile(projectFile);

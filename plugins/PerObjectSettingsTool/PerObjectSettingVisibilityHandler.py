@@ -10,8 +10,8 @@ from UM.Settings.SettingInstance import SettingInstance
 from UM.Logger import Logger
 import UM.Settings.Models.SettingVisibilityHandler
 
-from cura.Settings.ExtruderManager import ExtruderManager #To get global-inherits-stack setting values from different extruders.
-from cura.Settings.SettingOverrideDecorator import SettingOverrideDecorator
+from steslicer.Settings.ExtruderManager import ExtruderManager #To get global-inherits-stack setting values from different extruders.
+from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
 
 ##  The per object setting visibility handler ensures that only setting
 #   definitions that have a matching instance Container are returned as visible.

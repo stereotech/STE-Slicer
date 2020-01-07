@@ -35,7 +35,7 @@ UM.Dialog
 
         // update preference
         if (rememberChoiceCheckBox.checked) {
-            UM.Preferences.setValue("cura/choice_on_open_project", "open_as_project")
+            UM.Preferences.setValue("steslicer/choice_on_open_project", "open_as_project")
         }
 
         UM.WorkspaceFileHandler.readLocalFile(base.fileUrl)
@@ -50,7 +50,7 @@ UM.Dialog
 
         // update preference
         if (rememberChoiceCheckBox.checked) {
-            UM.Preferences.setValue("cura/choice_on_open_project", "open_as_model")
+            UM.Preferences.setValue("steslicer/choice_on_open_project", "open_as_model")
         }
 
         CuraApplication.readLocalFile(base.fileUrl, true)
@@ -62,7 +62,7 @@ UM.Dialog
 
     // override UM.Dialog accept
     function accept () {
-        var openAsPreference = UM.Preferences.getValue("cura/choice_on_open_project")
+        var openAsPreference = UM.Preferences.getValue("steslicer/choice_on_open_project")
 
         // when hitting 'enter', we always open as project unless open_as_model was explicitly stored as preference
         if (openAsPreference == "open_as_model") {
@@ -74,7 +74,7 @@ UM.Dialog
 
     onVisibleChanged: {
         if (visible) {
-            var rememberMyChoice = UM.Preferences.getValue("cura/choice_on_open_project") != "always_ask";
+            var rememberMyChoice = UM.Preferences.getValue("steslicer/choice_on_open_project") != "always_ask";
             rememberChoiceCheckBox.checked = rememberMyChoice;
         }
     }
@@ -101,7 +101,7 @@ UM.Dialog
         {
             id: rememberChoiceCheckBox
             text: catalog.i18nc("@text:window", "Remember my choice")
-            checked: UM.Preferences.getValue("cura/choice_on_open_project") != "always_ask"
+            checked: UM.Preferences.getValue("steslicer/choice_on_open_project") != "always_ask"
             style: CheckBoxStyle {
                 label: Label {
                     text: control.text

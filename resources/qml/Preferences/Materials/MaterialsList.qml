@@ -37,14 +37,14 @@ Item
 
     property var currentType: null
     property var currentBrand: null
-    property var expandedBrands: UM.Preferences.getValue("cura/expanded_brands").split(";")
-    property var expandedTypes: UM.Preferences.getValue("cura/expanded_types").split(";")
+    property var expandedBrands: UM.Preferences.getValue("steslicer/expanded_brands").split(";")
+    property var expandedTypes: UM.Preferences.getValue("steslicer/expanded_types").split(";")
 
     // Store information about which parts of the tree are expanded
     function persistExpandedCategories()
     {
-        UM.Preferences.setValue("cura/expanded_brands", materialList.expandedBrands.join(";"))
-        UM.Preferences.setValue("cura/expanded_types", materialList.expandedTypes.join(";"))
+        UM.Preferences.setValue("steslicer/expanded_brands", materialList.expandedBrands.join(";"))
+        UM.Preferences.setValue("steslicer/expanded_types", materialList.expandedTypes.join(";"))
     }
 
     // Expand the list of materials in order to select the current material

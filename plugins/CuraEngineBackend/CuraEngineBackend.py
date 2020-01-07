@@ -24,21 +24,21 @@ from UM.Settings.SettingInstance import SettingInstance #For typing.
 from UM.Tool import Tool #For typing.
 from UM.Mesh.MeshData import MeshData #For typing.
 
-from cura.CuraApplication import CuraApplication
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.CuraApplication import CuraApplication
+from steslicer.Settings.ExtruderManager import ExtruderManager
 from .ProcessSlicedLayersJob import ProcessSlicedLayersJob
 from .StartSliceJob import StartSliceJob, StartJobResult
 
 import Arcus
 
 if TYPE_CHECKING:
-    from cura.Machines.Models.MultiBuildPlateModel import MultiBuildPlateModel
-    from cura.Machines.MachineErrorChecker import MachineErrorChecker
+    from steslicer.Machines.Models.MultiBuildPlateModel import MultiBuildPlateModel
+    from steslicer.Machines.MachineErrorChecker import MachineErrorChecker
     from UM.Scene.Scene import Scene
     from UM.Settings.ContainerStack import ContainerStack
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 class CuraEngineBackend(QObject, Backend):
@@ -181,7 +181,7 @@ class CuraEngineBackend(QObject, Backend):
     def getEngineCommand(self) -> List[str]:
         command = [self._application.getPreferences().getValue("backend/location"), "connect", "127.0.0.1:{0}".format(self._port), ""]
 
-        parser = argparse.ArgumentParser(prog = "cura", add_help = False)
+        parser = argparse.ArgumentParser(prog = "steslicer", add_help = False)
         parser.add_argument("--debug", action = "store_true", default = False, help = "Turn on the debug mode by setting this option.")
         known_args = vars(parser.parse_known_args()[0])
         if known_args["debug"]:
@@ -271,7 +271,7 @@ class CuraEngineBackend(QObject, Backend):
 
         self.determineAutoSlicing()  # Switch timer on or off if appropriate
 
-        slice_message = self._socket.createMessage("cura.proto.Slice")
+        slice_message = self._socket.createMessage("steslicer.proto.Slice")
         self._start_slice_job = StartSliceJob(slice_message)
         self._start_slice_job_build_plate = build_plate_to_be_sliced
         self._start_slice_job.setBuildPlate(self._start_slice_job_build_plate)

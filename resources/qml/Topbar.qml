@@ -26,7 +26,7 @@ Rectangle
 
     function updateMarginsAndSizes() {
         rightMargin = UM.Theme.getSize("default_margin").width;
-        //if (UM.Preferences.getValue("cura/sidebar_collapsed"))
+        //if (UM.Preferences.getValue("steslicer/sidebar_collapsed"))
         //{
         //    
         //}

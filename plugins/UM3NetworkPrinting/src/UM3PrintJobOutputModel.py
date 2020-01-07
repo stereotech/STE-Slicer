@@ -6,7 +6,7 @@ from typing import Optional, TYPE_CHECKING, List
 from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QImage
 
-from cura.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
+from steslicer.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
 
 from .ConfigurationChangeModel import ConfigurationChangeModel
 

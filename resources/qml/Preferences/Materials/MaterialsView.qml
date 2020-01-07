@@ -20,11 +20,11 @@ TabView
     property var currentMaterialNode: null
 
     property bool editingEnabled: false;
-    property string currency: UM.Preferences.getValue("cura/currency") ? UM.Preferences.getValue("cura/currency") : "€"
+    property string currency: UM.Preferences.getValue("steslicer/currency") ? UM.Preferences.getValue("steslicer/currency") : "€"
     property real firstColumnWidth: (width * 0.50) | 0
     property real secondColumnWidth: (width * 0.40) | 0
     property string containerId: ""
-    property var materialPreferenceValues: UM.Preferences.getValue("cura/material_settings") ? JSON.parse(UM.Preferences.getValue("cura/material_settings")) : {}
+    property var materialPreferenceValues: UM.Preferences.getValue("steslicer/material_settings") ? JSON.parse(UM.Preferences.getValue("steslicer/material_settings")) : {}
 
     property double spoolLength: calculateSpoolLength()
     property real costPerMeter: calculateCostPerMeter()
@@ -549,7 +549,7 @@ TabView
         }
 
         // store preference
-        UM.Preferences.setValue("cura/material_settings", JSON.stringify(materialPreferenceValues));
+        UM.Preferences.setValue("steslicer/material_settings", JSON.stringify(materialPreferenceValues));
     }
 
     function getMaterialPreferenceValue(material_guid, entry_name, default_value)

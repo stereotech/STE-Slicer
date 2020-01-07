@@ -10,7 +10,7 @@ import sys
 
 from UM.Platform import Platform
 
-parser = argparse.ArgumentParser(prog = "cura",
+parser = argparse.ArgumentParser(prog = "steslicer",
                                  add_help = False)
 parser.add_argument("--debug",
                     action="store_true",
@@ -28,11 +28,11 @@ known_args = vars(parser.parse_known_args()[0])
 if not known_args["debug"]:
     def get_cura_dir_path():
         if Platform.isWindows():
-            return os.path.expanduser("~/AppData/Roaming/cura")
+            return os.path.expanduser("~/AppData/Roaming/steslicer")
         elif Platform.isLinux():
-            return os.path.expanduser("~/.local/share/cura")
+            return os.path.expanduser("~/.local/share/steslicer")
         elif Platform.isOSX():
-            return os.path.expanduser("~/Library/Logs/cura")
+            return os.path.expanduser("~/Library/Logs/steslicer")
 
     if hasattr(sys, "frozen"):
         dirpath = get_cura_dir_path()
@@ -79,8 +79,8 @@ if "PYTHONPATH" in os.environ.keys():                       # If PYTHONPATH is u
 
 
 def exceptHook(hook_type, value, traceback):
-    from cura.CrashHandler import CrashHandler
-    from cura.CuraApplication import CuraApplication
+    from steslicer.CrashHandler import CrashHandler
+    from steslicer.CuraApplication import CuraApplication
     has_started = False
     if CuraApplication.Created:
         has_started = CuraApplication.getInstance().started
@@ -132,7 +132,7 @@ faulthandler.enable(all_threads = True)
 # tries to create PyQt objects on a non-main thread.
 import Arcus #@UnusedImport
 import Savitar #@UnusedImport
-from cura.CuraApplication import CuraApplication
+from steslicer.CuraApplication import CuraApplication
 
 app = CuraApplication()
 app.run()

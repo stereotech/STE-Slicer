@@ -13,7 +13,7 @@ from UM.i18n import i18nCatalog
 from UM.PluginRegistry import PluginRegistry
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 class ModelChecker(QObject, Extension):

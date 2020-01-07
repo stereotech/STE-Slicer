@@ -3,18 +3,18 @@ from typing import Dict, List, NamedTuple, Optional, Union
 import re
 import math
 import numpy
-from cura.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.CuraSceneNode import CuraSceneNode
 
 from UM.Logger import Logger
 from UM.Job import Job
 from UM.Message import Message
 from UM.i18n import i18nCatalog
-from cura.CuraApplication import CuraApplication
-from cura.LayerDataBuilder import LayerDataBuilder
-from cura.LayerDataDecorator import LayerDataDecorator
-from cura.LayerPolygon import LayerPolygon
-from cura.Scene.GCodeListDecorator import GCodeListDecorator
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.CuraApplication import CuraApplication
+from steslicer.LayerDataBuilder import LayerDataBuilder
+from steslicer.LayerDataDecorator import LayerDataDecorator
+from steslicer.LayerPolygon import LayerPolygon
+from steslicer.Scene.GCodeListDecorator import GCodeListDecorator
+from steslicer.Settings.ExtruderManager import ExtruderManager
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Backend import Backend
 from UM.Math.Vector import Vector
@@ -23,10 +23,10 @@ from UM.Math.Matrix import Matrix
 
 from UM.Settings.DefinitionContainer import DefinitionContainer
 from UM.Settings.InstanceContainer import InstanceContainer
-from cura.Settings.GlobalStack import GlobalStack
-from cura.Settings.ExtruderStack import ExtruderStack
+from steslicer.Settings.GlobalStack import GlobalStack
+from steslicer.Settings.ExtruderStack import ExtruderStack
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 CliPoint = NamedTuple(

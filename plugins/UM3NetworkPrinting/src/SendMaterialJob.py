@@ -14,7 +14,7 @@ from UM.MimeTypeDatabase import MimeTypeDatabase #To strip the extensions of the
 from UM.Resources import Resources
 from UM.Settings.ContainerRegistry import ContainerRegistry #To find the GUIDs of materials.
 
-from cura.CuraApplication import CuraApplication #For the resource types.
+from steslicer.CuraApplication import CuraApplication #For the resource types.
 
 if TYPE_CHECKING:
     from .ClusterUM3OutputDevice import ClusterUM3OutputDevice

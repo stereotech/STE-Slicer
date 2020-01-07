@@ -3,7 +3,7 @@
 import os.path
 from UM.Application import Application
 from UM.Resources import Resources
-from cura.Stages.CuraStage import CuraStage
+from steslicer.Stages.CuraStage import CuraStage
 
 
 ##  Stage for preparing model (slicing).

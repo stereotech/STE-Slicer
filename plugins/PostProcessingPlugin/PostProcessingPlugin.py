@@ -18,9 +18,9 @@ import sys
 import importlib.util
 
 from UM.i18n import i18nCatalog
-from cura.CuraApplication import CuraApplication
+from steslicer.CuraApplication import CuraApplication
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 if TYPE_CHECKING:
     from .Script import Script

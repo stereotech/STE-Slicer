@@ -5,8 +5,8 @@ import os #To find the directory with test files and find the test files.
 import unittest.mock #To mock and monkeypatch stuff.
 
 from UM.Settings.DefinitionContainer import DefinitionContainer
-from cura.Settings.ExtruderStack import ExtruderStack #Testing for returning the correct types of stacks.
-from cura.Settings.GlobalStack import GlobalStack #Testing for returning the correct types of stacks.
+from steslicer.Settings.ExtruderStack import ExtruderStack #Testing for returning the correct types of stacks.
+from steslicer.Settings.GlobalStack import GlobalStack #Testing for returning the correct types of stacks.
 import UM.Settings.InstanceContainer #Creating instance containers to register.
 import UM.Settings.ContainerRegistry #Making empty container stacks.
 import UM.Settings.ContainerStack #Setting the container registry here properly.
@@ -54,7 +54,7 @@ def test_addContainerGlobalStack(container_registry, definition_container, defin
     assert type(mock_super_add_container.call_args_list[0][0][0]) == GlobalStack
 
 def test_addContainerGoodSettingVersion(container_registry, definition_container):
-    from cura.CuraApplication import CuraApplication
+    from steslicer.CuraApplication import CuraApplication
     definition_container.getMetaData()["setting_version"] = CuraApplication.SettingVersion
     container_registry.addContainer(definition_container)
 
@@ -69,7 +69,7 @@ def test_addContainerGoodSettingVersion(container_registry, definition_container
     mock_super_add_container.assert_called_once_with(instance) #The instance must have been registered now.
 
 def test_addContainerNoSettingVersion(container_registry, definition_container):
-    from cura.CuraApplication import CuraApplication
+    from steslicer.CuraApplication import CuraApplication
     definition_container.getMetaData()["setting_version"] = CuraApplication.SettingVersion
     container_registry.addContainer(definition_container)
 
@@ -84,7 +84,7 @@ def test_addContainerNoSettingVersion(container_registry, definition_container):
     mock_super_add_container.assert_not_called() #Should not get passed on to UM.Settings.ContainerRegistry.addContainer, because the setting_version is interpreted as 0!
 
 def test_addContainerBadSettingVersion(container_registry, definition_container):
-    from cura.CuraApplication import CuraApplication
+    from steslicer.CuraApplication import CuraApplication
     definition_container.getMetaData()["setting_version"] = CuraApplication.SettingVersion
     container_registry.addContainer(definition_container)
 

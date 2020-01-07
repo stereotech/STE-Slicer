@@ -1,14 +1,14 @@
 # Copyright (c) 2017 Ultimaker B.V.
 # Cura is released under the terms of the LGPLv3 or higher.
 
-from cura.PrinterOutput.PrinterOutputController import PrinterOutputController
+from steslicer.PrinterOutput.PrinterOutputController import PrinterOutputController
 from PyQt5.QtCore import QTimer
 from UM.Version import Version
 
 MYPY = False
 if MYPY:
-    from cura.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
-    from cura.PrinterOutput.PrinterOutputModel import PrinterOutputModel
+    from steslicer.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
+    from steslicer.PrinterOutput.PrinterOutputModel import PrinterOutputModel
 
 
 class LegacyUM3PrinterOutputController(PrinterOutputController):

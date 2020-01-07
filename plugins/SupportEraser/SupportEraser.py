@@ -11,17 +11,17 @@ from UM.Event import Event, MouseEvent
 from UM.Mesh.MeshBuilder import MeshBuilder
 from UM.Scene.Selection import Selection
 
-from cura.CuraApplication import CuraApplication
-from cura.Scene.CuraSceneNode import CuraSceneNode
-from cura.PickingPass import PickingPass
+from steslicer.CuraApplication import CuraApplication
+from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.PickingPass import PickingPass
 
 from UM.Operations.GroupedOperation import GroupedOperation
 from UM.Operations.AddSceneNodeOperation import AddSceneNodeOperation
 from UM.Operations.RemoveSceneNodeOperation import RemoveSceneNodeOperation
-from cura.Operations.SetParentOperation import SetParentOperation
+from steslicer.Operations.SetParentOperation import SetParentOperation
 
-from cura.Scene.SliceableObjectDecorator import SliceableObjectDecorator
-from cura.Scene.BuildPlateDecorator import BuildPlateDecorator
+from steslicer.Scene.SliceableObjectDecorator import SliceableObjectDecorator
+from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
 
 from UM.Settings.SettingInstance import SettingInstance
 

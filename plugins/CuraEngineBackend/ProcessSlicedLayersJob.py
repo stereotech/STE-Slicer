@@ -15,17 +15,17 @@ from UM.Logger import Logger
 
 from UM.Math.Vector import Vector
 
-from cura.Scene.BuildPlateDecorator import BuildPlateDecorator
-from cura.Scene.CuraSceneNode import CuraSceneNode
-from cura.Settings.ExtruderManager import ExtruderManager
-from cura import LayerDataBuilder
-from cura import LayerDataDecorator
-from cura import LayerPolygon
+from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
+from steslicer.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Settings.ExtruderManager import ExtruderManager
+from steslicer import LayerDataBuilder
+from steslicer import LayerDataDecorator
+from steslicer import LayerPolygon
 
 import numpy
 from time import time
-from cura.Settings.ExtrudersModel import ExtrudersModel
-catalog = i18nCatalog("cura")
+from steslicer.Settings.ExtrudersModel import ExtrudersModel
+catalog = i18nCatalog("steslicer")
 
 
 ##  Return a 4-tuple with floats 0-1 representing the html color code

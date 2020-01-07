@@ -4,7 +4,7 @@
 from . import GCodeWriter
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 def getMetaData():
     return {

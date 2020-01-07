@@ -15,7 +15,7 @@ from .FirmwareUpdateCheckerLookup import FirmwareUpdateCheckerLookup, getSetting
 from .FirmwareUpdateCheckerMessage import FirmwareUpdateCheckerMessage
 
 from UM.i18n import i18nCatalog
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 ##  This job checks if there is an update available on the provided URL.

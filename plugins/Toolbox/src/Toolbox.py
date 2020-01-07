@@ -17,16 +17,16 @@ from UM.Qt.ListModel import ListModel
 from UM.i18n import i18nCatalog
 from UM.Version import Version
 
-import cura
-from cura.CuraApplication import CuraApplication
+import steslicer
+from steslicer.CuraApplication import CuraApplication
 
 from .AuthorsModel import AuthorsModel
 from .PackagesModel import PackagesModel
 
 if TYPE_CHECKING:
-    from cura.Settings.GlobalStack import GlobalStack
+    from steslicer.Settings.GlobalStack import GlobalStack
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 ##  The Toolbox class is responsible of communicating with the server through the API
@@ -171,7 +171,7 @@ class Toolbox(QObject, Extension):
         self._sdk_version = self._getSDKVersion()
         self._cloud_api_version = self._getCloudAPIVersion()
         self._cloud_api_root = self._getCloudAPIRoot()
-        self._api_url = "{cloud_api_root}/cura-packages/v{cloud_api_version}/cura/v{sdk_version}".format(
+        self._api_url = "{cloud_api_root}/steslicer-packages/v{cloud_api_version}/steslicer/v{sdk_version}".format(
             cloud_api_root=self._cloud_api_root,
             cloud_api_version=self._cloud_api_version,
             sdk_version=self._sdk_version
@@ -188,33 +188,33 @@ class Toolbox(QObject, Extension):
 
     # Get the API root for the packages API depending on Cura version settings.
     def _getCloudAPIRoot(self) -> str:
-        if not hasattr(cura, "CuraVersion"):
+        if not hasattr(steslicer, "CuraVersion"):
             return self.DEFAULT_CLOUD_API_ROOT
-        if not hasattr(cura.CuraVersion, "CuraCloudAPIRoot"): # type: ignore
+        if not hasattr(steslicer.CuraVersion, "CuraCloudAPIRoot"): # type: ignore
             return self.DEFAULT_CLOUD_API_ROOT
-        if not cura.CuraVersion.CuraCloudAPIRoot: # type: ignore
+        if not steslicer.CuraVersion.CuraCloudAPIRoot: # type: ignore
             return self.DEFAULT_CLOUD_API_ROOT
-        return cura.CuraVersion.CuraCloudAPIRoot # type: ignore
+        return steslicer.CuraVersion.CuraCloudAPIRoot # type: ignore
 
     # Get the cloud API version from CuraVersion
     def _getCloudAPIVersion(self) -> int:
-        if not hasattr(cura, "CuraVersion"):
+        if not hasattr(steslicer, "CuraVersion"):
             return self.DEFAULT_CLOUD_API_VERSION
-        if not hasattr(cura.CuraVersion, "CuraCloudAPIVersion"): # type: ignore
+        if not hasattr(steslicer.CuraVersion, "CuraCloudAPIVersion"): # type: ignore
             return self.DEFAULT_CLOUD_API_VERSION
-        if not cura.CuraVersion.CuraCloudAPIVersion: # type: ignore
+        if not steslicer.CuraVersion.CuraCloudAPIVersion: # type: ignore
             return self.DEFAULT_CLOUD_API_VERSION
-        return cura.CuraVersion.CuraCloudAPIVersion # type: ignore
+        return steslicer.CuraVersion.CuraCloudAPIVersion # type: ignore
 
     # Get the packages version depending on Cura version settings.
     def _getSDKVersion(self) -> Union[int, str]:
-        if not hasattr(cura, "CuraVersion"):
+        if not hasattr(steslicer, "CuraVersion"):
             return self._plugin_registry.APIVersion
-        if not hasattr(cura.CuraVersion, "CuraSDKVersion"):  # type: ignore
+        if not hasattr(steslicer.CuraVersion, "CuraSDKVersion"):  # type: ignore
             return self._plugin_registry.APIVersion
-        if not cura.CuraVersion.CuraSDKVersion:  # type: ignore
+        if not steslicer.CuraVersion.CuraSDKVersion:  # type: ignore
             return self._plugin_registry.APIVersion
-        return cura.CuraVersion.CuraSDKVersion  # type: ignore
+        return steslicer.CuraVersion.CuraSDKVersion  # type: ignore
 
     @pyqtSlot()
     def browsePackages(self) -> None:

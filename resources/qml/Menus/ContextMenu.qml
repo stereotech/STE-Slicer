@@ -42,7 +42,7 @@ Menu
     }
 
     MenuSeparator {
-        visible: UM.Preferences.getValue("cura/use_multi_build_plate")
+        visible: UM.Preferences.getValue("steslicer/use_multi_build_plate")
     }
 
     Instantiator
@@ -54,7 +54,7 @@ Menu
             onTriggered: CuraActions.setBuildPlateForSelection(base.multiBuildPlateModel.getItem(index).buildPlateNumber);
             checkable: true
             checked: base.multiBuildPlateModel.selectionBuildPlates.indexOf(base.multiBuildPlateModel.getItem(index).buildPlateNumber) != -1;
-            visible: UM.Preferences.getValue("cura/use_multi_build_plate")
+            visible: UM.Preferences.getValue("steslicer/use_multi_build_plate")
         }
         onObjectAdded: base.insertItem(index, object);
         onObjectRemoved: base.removeItem(object);
@@ -69,7 +69,7 @@ Menu
         }
         checkable: true
         checked: false
-        visible: UM.Preferences.getValue("cura/use_multi_build_plate")
+        visible: UM.Preferences.getValue("steslicer/use_multi_build_plate")
     }
 
     // Global actions

@@ -3,7 +3,7 @@
 # Uranium is released under the terms of the LGPLv3 or higher.
 
 from UM.Logger import Logger
-from cura.ReaderWriters.ProfileWriter import ProfileWriter
+from steslicer.ReaderWriters.ProfileWriter import ProfileWriter
 import zipfile
 
 ##  Writes profiles to Cura's own profile format with config files.

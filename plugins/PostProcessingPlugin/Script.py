@@ -17,7 +17,7 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 import re
 import json
 import collections
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 if TYPE_CHECKING:
     from UM.Settings.Interfaces import DefinitionContainerInterface

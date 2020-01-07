@@ -11,12 +11,12 @@ from UM.PluginRegistry import PluginRegistry
 from UM.Logger import Logger
 from UM.i18n import i18nCatalog
 
-from cura.CuraApplication import CuraApplication
-from cura.MachineAction import MachineAction
+from steslicer.CuraApplication import CuraApplication
+from steslicer.MachineAction import MachineAction
 
 from .UM3OutputDevicePlugin import UM3OutputDevicePlugin
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 class DiscoverUM3Action(MachineAction):

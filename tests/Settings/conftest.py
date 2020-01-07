@@ -9,10 +9,10 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.ContainerStack import setContainerRegistry
 from UM.Settings.DefinitionContainer import DefinitionContainer #To provide definition containers in the registry fixtures.
 from UM.Settings.InstanceContainer import InstanceContainer
-from cura.Settings.CuraContainerRegistry import CuraContainerRegistry
-from cura.Settings.ExtruderStack import ExtruderStack
-from cura.Settings.GlobalStack import GlobalStack
-import cura.Settings.CuraContainerStack
+from steslicer.Settings.CuraContainerRegistry import CuraContainerRegistry
+from steslicer.Settings.ExtruderStack import ExtruderStack
+from steslicer.Settings.GlobalStack import GlobalStack
+import steslicer.Settings.CuraContainerStack
 
 # Returns the CuraContainerRegistry instance with some empty containers.
 @pytest.fixture()
@@ -33,7 +33,7 @@ def definition_changes_container() -> InstanceContainer:
     definition_changes_container = InstanceContainer(container_id = "Test Definition Changes")
     definition_changes_container.setMetaDataEntry("type", "definition_changes")
     # Add current setting version to the instance container
-    from cura.CuraApplication import CuraApplication
+    from steslicer.CuraApplication import CuraApplication
     definition_changes_container.getMetaData()["setting_version"] = CuraApplication.SettingVersion
     return definition_changes_container
 
@@ -42,7 +42,7 @@ def definition_changes_container() -> InstanceContainer:
 @pytest.fixture()
 def global_stack(definition_changes_container) -> GlobalStack:
     global_stack = GlobalStack("TestGlobalStack")
-    global_stack._containers[cura.Settings.CuraContainerStack._ContainerIndexes.DefinitionChanges] = definition_changes_container
+    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.DefinitionChanges] = definition_changes_container
     return global_stack
 
 # An empty extruder stack to test with.
@@ -50,5 +50,5 @@ def global_stack(definition_changes_container) -> GlobalStack:
 @pytest.fixture()
 def extruder_stack(definition_changes_container) -> ExtruderStack:
     extruder_stack= ExtruderStack("TestExtruderStack")
-    extruder_stack._containers[cura.Settings.CuraContainerStack._ContainerIndexes.DefinitionChanges] = definition_changes_container
+    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.DefinitionChanges] = definition_changes_container
     return extruder_stack

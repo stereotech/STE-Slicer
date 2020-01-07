@@ -16,8 +16,8 @@ from UM.Settings.InstanceContainer import InstanceContainer
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.ConfigurationErrorMessage import ConfigurationErrorMessage
 
-from cura.CuraApplication import CuraApplication
-from cura.Machines.VariantType import VariantType
+from steslicer.CuraApplication import CuraApplication
+from steslicer.Machines.VariantType import VariantType
 
 from .XmlMaterialValidator import XmlMaterialValidator
 
@@ -131,7 +131,7 @@ class XmlMaterialProfile(InstanceContainer):
 
         root = builder.start("fdmmaterial",
                              {"xmlns": "http://www.ultimaker.com/material",
-                              "xmlns:cura": "http://www.ultimaker.com/cura",
+                              "xmlns:steslicer": "http://www.ultimaker.com/cura",
                               "version": self.CurrentFdmMaterialVersion})
 
         ## Begin Metadata Block
@@ -580,7 +580,7 @@ class XmlMaterialProfile(InstanceContainer):
                     common_compatibility = self._parseCompatibleValue(entry.text)
 
         # Add namespaced Cura-specific settings
-        settings = data.iterfind("./um:settings/cura:setting", self.__namespaces)
+        settings = data.iterfind("./um:settings/steslicer:setting", self.__namespaces)
         for entry in settings:
             value = entry.text
             if value.lower() == "yes":
@@ -624,7 +624,7 @@ class XmlMaterialProfile(InstanceContainer):
                     Logger.log("d", "Unsupported material setting %s", key)
 
             # Add namespaced Cura-specific settings
-            settings = machine.iterfind("./cura:setting", self.__namespaces)
+            settings = machine.iterfind("./steslicer:setting", self.__namespaces)
             for entry in settings:
                 value = entry.text
                 if value.lower() == "yes":
@@ -853,8 +853,8 @@ class XmlMaterialProfile(InstanceContainer):
             else:
                 Logger.log("w", "Unsupported material setting %s", setting_key)
 
-        # Fetch settings in the "cura" namespace
-        cura_settings = node.iterfind("./cura:setting", cls.__namespaces)
+        # Fetch settings in the "steslicer" namespace
+        cura_settings = node.iterfind("./steslicer:setting", cls.__namespaces)
         for cura_setting_entry in cura_settings:
             value = cura_setting_entry.text
             if value.lower() == "yes":
@@ -1106,7 +1106,7 @@ class XmlMaterialProfile(InstanceContainer):
 
         elif key not in self.__material_properties_setting_map.values() and key not in self.__material_metadata_setting_map.values():
             # Setting is not in the standard namespace, and not a material property (eg diameter) or metadata (eg GUID)
-            tag_name = "cura:setting"
+            tag_name = "steslicer:setting"
         else:
             # Skip material properties (eg diameter) or metadata (eg GUID)
             return
@@ -1203,7 +1203,7 @@ class XmlMaterialProfile(InstanceContainer):
     # Map of recognised namespaces with a proper prefix.
     __namespaces = {
         "um": "http://www.ultimaker.com/material",
-        "cura": "http://www.ultimaker.com/cura"
+        "steslicer": "http://www.ultimaker.com/cura"
     }
 
 ##  Helper function for pretty-printing XML because ETree is stupid

@@ -8,7 +8,7 @@ from UM.Math.Matrix import Matrix
 from UM.Application import Application
 from UM.Scene.SceneNode import SceneNode
 
-from cura.CuraApplication import CuraApplication
+from steslicer.CuraApplication import CuraApplication
 
 import Savitar
 
@@ -26,7 +26,7 @@ import zipfile
 import UM.Application
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 class ThreeMFWriter(MeshWriter):
@@ -36,7 +36,7 @@ class ThreeMFWriter(MeshWriter):
             "3mf": "http://schemas.microsoft.com/3dmanufacturing/core/2015/02",
             "content-types": "http://schemas.openxmlformats.org/package/2006/content-types",
             "relationships": "http://schemas.openxmlformats.org/package/2006/relationships",
-            "cura": "http://software.ultimaker.com/xml/cura/3mf/2015/10"
+            "steslicer": "http://software.ultimaker.com/xml/cura/3mf/2015/10"
         }
 
         self._unit_matrix_string = self._convertMatrixToString(Matrix())
@@ -146,7 +146,7 @@ class ThreeMFWriter(MeshWriter):
             transformation_matrix._data[2, 2] = 0
 
             global_container_stack = Application.getInstance().getGlobalContainerStack()
-            # Second step: 3MF defines the left corner of the machine as center, whereas cura uses the center of the
+            # Second step: 3MF defines the left corner of the machine as center, whereas steslicer uses the center of the
             # build volume.
             if global_container_stack:
                 translation_vector = Vector(x=global_container_stack.getProperty("machine_width", "value") / 2,

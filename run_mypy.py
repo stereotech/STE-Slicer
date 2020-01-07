@@ -60,7 +60,7 @@ def main():
     plugins = findModules("plugins")
     plugins.sort()
 
-    mods = ["cura"] + plugins + findModules("plugins/VersionUpgrade")
+    mods = ["steslicer"] + plugins + findModules("plugins/VersionUpgrade")
 
     for mod in mods:
         print("------------- Checking module {mod}".format(**locals()))

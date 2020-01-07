@@ -37,7 +37,7 @@ def register(app):
     MimeTypeDatabase.addMimeType(mime_type)
 
     # add upgrade version
-    from cura.CuraApplication import CuraApplication
+    from steslicer.CuraApplication import CuraApplication
     from UM.VersionUpgradeManager import VersionUpgradeManager
     VersionUpgradeManager.getInstance().registerCurrentVersion(
         ("materials", XmlMaterialProfile.XmlMaterialProfile.Version * 1000000 + CuraApplication.SettingVersion),

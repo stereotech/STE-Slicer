@@ -33,7 +33,7 @@ Menu
 
                 if (CuraApplication.checkIsValidProjectFile(modelData)) {
                     // check preference
-                    var choice = UM.Preferences.getValue("cura/choice_on_open_project");
+                    var choice = UM.Preferences.getValue("steslicer/choice_on_open_project");
 
                     if (choice == "open_as_project")
                     {

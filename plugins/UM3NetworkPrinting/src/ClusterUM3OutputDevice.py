@@ -16,12 +16,12 @@ from UM.OutputDevice import OutputDeviceError  # To show that something went wro
 from UM.Scene.SceneNode import SceneNode  # For typing.
 from UM.Version import Version  # To check against firmware versions for support.
 
-from cura.CuraApplication import CuraApplication
-from cura.PrinterOutput.ConfigurationModel import ConfigurationModel
-from cura.PrinterOutput.ExtruderConfigurationModel import ExtruderConfigurationModel
-from cura.PrinterOutput.NetworkedPrinterOutputDevice import NetworkedPrinterOutputDevice, AuthState
-from cura.PrinterOutput.PrinterOutputModel import PrinterOutputModel
-from cura.PrinterOutput.MaterialOutputModel import MaterialOutputModel
+from steslicer.CuraApplication import CuraApplication
+from steslicer.PrinterOutput.ConfigurationModel import ConfigurationModel
+from steslicer.PrinterOutput.ExtruderConfigurationModel import ExtruderConfigurationModel
+from steslicer.PrinterOutput.NetworkedPrinterOutputDevice import NetworkedPrinterOutputDevice, AuthState
+from steslicer.PrinterOutput.PrinterOutputModel import PrinterOutputModel
+from steslicer.PrinterOutput.MaterialOutputModel import MaterialOutputModel
 
 from .ClusterUM3PrinterOutputController import ClusterUM3PrinterOutputController
 from .SendMaterialJob import SendMaterialJob
@@ -40,7 +40,7 @@ import io  # To create the correct buffers for sending data to the printer.
 import json
 import os
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 class ClusterUM3OutputDevice(NetworkedPrinterOutputDevice):

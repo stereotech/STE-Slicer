@@ -96,7 +96,7 @@ Rectangle
                 materialList.expandedBrands.push(sectionName)
                 brand_section.expanded = true
             }
-            UM.Preferences.setValue("cura/expanded_brands", materialList.expandedBrands.join(";"));
+            UM.Preferences.setValue("steslicer/expanded_brands", materialList.expandedBrands.join(";"));
         }
     }
     Column

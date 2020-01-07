@@ -31,14 +31,14 @@ UM.Dialog
 
     onClosing:
     {
-        UM.Preferences.setValue("cura/dialog_on_project_save", !dontShowAgainCheckbox.checked)
+        UM.Preferences.setValue("steslicer/dialog_on_project_save", !dontShowAgainCheckbox.checked)
     }
 
     onVisibleChanged:
     {
         if(visible)
         {
-            dontShowAgain = !UM.Preferences.getValue("cura/dialog_on_project_save")
+            dontShowAgain = !UM.Preferences.getValue("steslicer/dialog_on_project_save")
         }
     }
 

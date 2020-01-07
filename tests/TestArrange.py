@@ -3,8 +3,8 @@
 
 import numpy
 
-from cura.Arranging.Arrange import Arrange
-from cura.Arranging.ShapeArray import ShapeArray
+from steslicer.Arranging.Arrange import Arrange
+from steslicer.Arranging.ShapeArray import ShapeArray
 
 ##  Triangle of area 12
 def gimmeTriangle():

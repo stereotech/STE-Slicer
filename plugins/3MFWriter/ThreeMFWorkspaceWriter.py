@@ -10,7 +10,7 @@ from UM.Preferences import Preferences
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
 
-from cura.Utils.Threading import call_on_qt_thread
+from steslicer.Utils.Threading import call_on_qt_thread
 
 
 class ThreeMFWorkspaceWriter(WorkspaceWriter):
@@ -53,7 +53,7 @@ class ThreeMFWorkspaceWriter(WorkspaceWriter):
         # Write preferences to archive
         original_preferences = Application.getInstance().getPreferences() #Copy only the preferences that we use to the workspace.
         temp_preferences = Preferences()
-        for preference in {"general/visible_settings", "cura/active_mode", "cura/categories_expanded"}:
+        for preference in {"general/visible_settings", "steslicer/active_mode", "steslicer/categories_expanded"}:
             temp_preferences.addPreference(preference, None)
             temp_preferences.setValue(preference, original_preferences.getValue(preference))
         preferences_string = StringIO()

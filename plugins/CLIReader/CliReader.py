@@ -5,7 +5,7 @@ from UM.Application import Application
 from UM.MimeTypeDatabase import MimeTypeDatabase, MimeType
 from . import CliParser
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 class CliReader(MeshReader):
