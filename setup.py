@@ -46,9 +46,9 @@ setup(name="Cura",
         author_email="a.hiemstra@ultimaker.com",
         url="http://software.ultimaker.com/",
         license="GNU LESSER GENERAL PUBLIC LICENSE (LGPL)",
-        scripts=["cura_app.py"],
-        windows=[{"script": "cura_app.py", "dest_name": "Cura", "icon_resources": [(1, "icons/steslicer.ico")]}],
-        #console=[{"script": "cura_app.py"}],
+        scripts=["steslicer_app.py"],
+        windows=[{"script": "steslicer_app.py", "dest_name": "Cura", "icon_resources": [(1, "icons/steslicer.ico")]}],
+        #console=[{"script": "steslicer_app.py"}],
         options={"py2exe": {"skip_archive": False, "includes": includes}})
 
 print("Copying Cura plugins.")
