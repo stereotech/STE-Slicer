@@ -93,9 +93,9 @@ from . import PlatformPhysics
 from . import BuildVolume
 from . import CameraAnimation
 from . import PrintInformation
-from . import CuraActions
+from . import SteSlicerActions
 from steslicer.Scene import ZOffsetDecorator
-from . import CuraSplashScreen
+from . import SteSlicerSplashScreen
 from . import PrintJobPreviewImageProvider
 from . import MachineActionManager
 
@@ -128,7 +128,7 @@ if TYPE_CHECKING:
 numpy.seterr(all = "ignore")
 
 try:
-    from steslicer.CuraVersion import CuraVersion, CuraBuildType, CuraDebugMode, CuraSDKVersion  # type: ignore
+    from steslicer.SteSlicerVersion import CuraVersion, CuraBuildType, CuraDebugMode, CuraSDKVersion  # type: ignore
 except ImportError:
     CuraVersion = "master"  # [CodeStyle: Reflecting imported value]
     CuraBuildType = ""
@@ -136,7 +136,7 @@ except ImportError:
     CuraSDKVersion = ""
 
 
-class CuraApplication(QtApplication):
+class SteSlicerApplication(QtApplication):
     # SettingVersion represents the set of settings available in the machine/extruder definitions.
     # You need to make sure that this version number needs to be increased if there is any non-backwards-compatible
     # changes of the settings.
@@ -254,8 +254,8 @@ class CuraApplication(QtApplication):
         self._container_registry_class = CuraContainerRegistry
         # Redefined here in order to please the typing.
         self._container_registry = None # type: CuraContainerRegistry
-        from steslicer.CuraPackageManager import CuraPackageManager
-        self._package_manager_class = CuraPackageManager
+        from steslicer.SteSlicerPackageManager import SteSlicerPackageManager
+        self._package_manager_class = SteSlicerPackageManager
 
     # Adds command line options to the command line parser. This should be called after the application is created and
     # before the pre-start.
@@ -521,7 +521,7 @@ class CuraApplication(QtApplication):
 
         self.getCuraSceneController().setActiveBuildPlate(0)  # Initialize
 
-        CuraApplication.Created = True
+        SteSlicerApplication.Created = True
 
     def _onEngineCreated(self):
         self._qml_engine.addImageProvider("print_job_preview", PrintJobPreviewImageProvider.PrintJobPreviewImageProvider())
@@ -722,7 +722,7 @@ class CuraApplication(QtApplication):
 
         # initialize info objects
         self._print_information = PrintInformation.PrintInformation(self)
-        self._cura_actions = CuraActions.CuraActions(self)
+        self._cura_actions = SteSlicerActions.SteSlicerActions(self)
 
         # Initialize setting visibility presets model.
         self._setting_visibility_presets_model = SettingVisibilityPresetsModel(self.getPreferences(), parent = self)
@@ -938,7 +938,7 @@ class CuraApplication(QtApplication):
         engine.rootContext().setContextProperty("CuraActions", self._cura_actions)
         engine.rootContext().setContextProperty("CuraSDKVersion", CuraSDKVersion)
 
-        qmlRegisterUncreatableType(CuraApplication, "Cura", 1, 0, "ResourceTypes", "Just an Enum type")
+        qmlRegisterUncreatableType(SteSlicerApplication, "Cura", 1, 0, "ResourceTypes", "Just an Enum type")
 
         qmlRegisterSingletonType(CuraSceneController, "Cura", 1, 0, "SceneController", self.getCuraSceneController)
         qmlRegisterSingletonType(ExtruderManager, "Cura", 1, 0, "ExtruderManager", self.getExtruderManager)
@@ -979,10 +979,10 @@ class CuraApplication(QtApplication):
         qmlRegisterSingletonType(CuraAPI, "Cura", 1, 1, "API", self.getCuraAPI)
 
         # As of Qt5.7, it is necessary to get rid of any ".." in the path for the singleton to work.
-        actions_url = QUrl.fromLocalFile(os.path.abspath(Resources.getPath(CuraApplication.ResourceTypes.QmlFiles, "Actions.qml")))
+        actions_url = QUrl.fromLocalFile(os.path.abspath(Resources.getPath(SteSlicerApplication.ResourceTypes.QmlFiles, "Actions.qml")))
         qmlRegisterSingletonType(actions_url, "Cura", 1, 0, "Actions")
 
-        for path in Resources.getAllResourcesOfType(CuraApplication.ResourceTypes.QmlFiles):
+        for path in Resources.getAllResourcesOfType(SteSlicerApplication.ResourceTypes.QmlFiles):
             type_name = os.path.splitext(os.path.basename(path))[0]
             if type_name in ("Cura", "Actions"):
                 continue
@@ -1502,7 +1502,7 @@ class CuraApplication(QtApplication):
     def _createSplashScreen(self):
         if self._is_headless:
             return None
-        return CuraSplashScreen.CuraSplashScreen()
+        return SteSlicerSplashScreen.SteSlicerSplashScreen()
 
     def _onActiveMachineChanged(self):
         pass

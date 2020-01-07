@@ -29,7 +29,7 @@ from steslicer.Settings.CuraStackBuilder import CuraStackBuilder
 from steslicer.Settings.ExtruderStack import ExtruderStack
 from steslicer.Settings.GlobalStack import GlobalStack
 from steslicer.Settings.CuraContainerStack import _ContainerIndexes
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Utils.Threading import call_on_qt_thread
 
 from .WorkspaceDialog import WorkspaceDialog
@@ -575,7 +575,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
             return self._read(file_name)
 
     def _read(self, file_name):
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         material_manager = application.getMaterialManager()
 
         archive = zipfile.ZipFile(file_name, "r")
@@ -726,7 +726,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
         if self._machine_info.quality_changes_info is None:
             return
 
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         quality_manager = application.getQualityManager()
 
         # If we have custom profiles, load them
@@ -821,7 +821,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
         self._machine_info.quality_changes_info.name = quality_changes_name
 
     def _clearStack(self, stack):
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
 
         stack.definitionChanges.clear()
         stack.variant = application.empty_variant_container
@@ -879,7 +879,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
                         extruder_stack.userChanges.setProperty(key, "value", value)
 
     def _applyVariants(self, global_stack, extruder_stack_dict):
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         variant_manager = application.getVariantManager()
 
         if self._machine_info.variant_info is not None:
@@ -908,7 +908,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
                 extruder_stack.variant = node.getContainer()
 
     def _applyMaterials(self, global_stack, extruder_stack_dict):
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         material_manager = application.getMaterialManager()
 
         # Force update lookup tables first

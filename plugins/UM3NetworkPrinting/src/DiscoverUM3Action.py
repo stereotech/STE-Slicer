@@ -11,7 +11,7 @@ from UM.PluginRegistry import PluginRegistry
 from UM.Logger import Logger
 from UM.i18n import i18nCatalog
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.MachineAction import MachineAction
 
 from .UM3OutputDevicePlugin import UM3OutputDevicePlugin
@@ -30,7 +30,7 @@ class DiscoverUM3Action(MachineAction):
 
         self.__additional_components_view = None #type: Optional[QObject]
 
-        CuraApplication.getInstance().engineCreatedSignal.connect(self._createAdditionalComponentsView)
+        SteSlicerApplication.getInstance().engineCreatedSignal.connect(self._createAdditionalComponentsView)
 
         self._last_zero_conf_event_time = time.time() #type: float
 
@@ -41,7 +41,7 @@ class DiscoverUM3Action(MachineAction):
     def startDiscovery(self):
         if not self._network_plugin:
             Logger.log("d", "Starting device discovery.")
-            self._network_plugin = CuraApplication.getInstance().getOutputDeviceManager().getOutputDevicePlugin("UM3NetworkPrinting")
+            self._network_plugin = SteSlicerApplication.getInstance().getOutputDeviceManager().getOutputDevicePlugin("UM3NetworkPrinting")
             self._network_plugin.discoveredDevicesChanged.connect(self._onDeviceDiscoveryChanged)
             self.discoveredDevicesChanged.emit()
 
@@ -99,14 +99,14 @@ class DiscoverUM3Action(MachineAction):
     @pyqtSlot(str)
     def setGroupName(self, group_name: str) -> None:
         Logger.log("d", "Attempting to set the group name of the active machine to %s", group_name)
-        global_container_stack = CuraApplication.getInstance().getGlobalContainerStack()
+        global_container_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if global_container_stack:
             meta_data = global_container_stack.getMetaData()
             if "connect_group_name" in meta_data:
                 previous_connect_group_name = meta_data["connect_group_name"]
                 global_container_stack.setMetaDataEntry("connect_group_name", group_name)
                 # Find all the places where there is the same group name and change it accordingly
-                CuraApplication.getInstance().getMachineManager().replaceContainersMetadata(key = "connect_group_name", value = previous_connect_group_name, new_value = group_name)
+                SteSlicerApplication.getInstance().getMachineManager().replaceContainersMetadata(key ="connect_group_name", value = previous_connect_group_name, new_value = group_name)
             else:
                 global_container_stack.setMetaDataEntry("connect_group_name", group_name)
             # Set the default value for "hidden", which is used when you have a group with multiple types of printers
@@ -119,7 +119,7 @@ class DiscoverUM3Action(MachineAction):
     @pyqtSlot(str)
     def setKey(self, key: str) -> None:
         Logger.log("d", "Attempting to set the network key of the active machine to %s", key)
-        global_container_stack = CuraApplication.getInstance().getGlobalContainerStack()
+        global_container_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if global_container_stack:
             meta_data = global_container_stack.getMetaData()
             if "um_network_key" in meta_data:
@@ -129,7 +129,7 @@ class DiscoverUM3Action(MachineAction):
                 Logger.log("d", "Removing old authentication id %s for device %s", global_container_stack.getMetaDataEntry("network_authentication_id", None), key)
                 global_container_stack.removeMetaDataEntry("network_authentication_id")
                 global_container_stack.removeMetaDataEntry("network_authentication_key")
-                CuraApplication.getInstance().getMachineManager().replaceContainersMetadata(key = "um_network_key", value = previous_network_key, new_value = key)
+                SteSlicerApplication.getInstance().getMachineManager().replaceContainersMetadata(key ="um_network_key", value = previous_network_key, new_value = key)
             else:
                 global_container_stack.setMetaDataEntry("um_network_key", key)
 
@@ -139,7 +139,7 @@ class DiscoverUM3Action(MachineAction):
 
     @pyqtSlot(result = str)
     def getStoredKey(self) -> str:
-        global_container_stack = CuraApplication.getInstance().getGlobalContainerStack()
+        global_container_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if global_container_stack:
             meta_data = global_container_stack.getMetaData()
             if "um_network_key" in meta_data:
@@ -155,11 +155,11 @@ class DiscoverUM3Action(MachineAction):
 
     @pyqtSlot(str, result = bool)
     def existsKey(self, key: str) -> bool:
-        return CuraApplication.getInstance().getMachineManager().existNetworkInstances(network_key = key)
+        return SteSlicerApplication.getInstance().getMachineManager().existNetworkInstances(network_key = key)
 
     @pyqtSlot()
     def loadConfigurationFromPrinter(self) -> None:
-        machine_manager = CuraApplication.getInstance().getMachineManager()
+        machine_manager = SteSlicerApplication.getInstance().getMachineManager()
         hotend_ids = machine_manager.printerOutputDevices[0].hotendIds
         for index in range(len(hotend_ids)):
             machine_manager.printerOutputDevices[0].hotendIdChanged.emit(index, hotend_ids[index])
@@ -175,11 +175,11 @@ class DiscoverUM3Action(MachineAction):
         if not plugin_path:
             return
         path = os.path.join(plugin_path, "resources/qml/UM3InfoComponents.qml")
-        self.__additional_components_view = CuraApplication.getInstance().createQmlComponent(path, {"manager": self})
+        self.__additional_components_view = SteSlicerApplication.getInstance().createQmlComponent(path, {"manager": self})
         if not self.__additional_components_view:
             Logger.log("w", "Could not create ui components for UM3.")
             return
 
         # Create extra components
-        CuraApplication.getInstance().addAdditionalComponent("monitorButtons", self.__additional_components_view.findChild(QObject, "networkPrinterConnectButton"))
-        CuraApplication.getInstance().addAdditionalComponent("machinesDetailPane", self.__additional_components_view.findChild(QObject, "networkPrinterConnectionInfo"))
+        SteSlicerApplication.getInstance().addAdditionalComponent("monitorButtons", self.__additional_components_view.findChild(QObject, "networkPrinterConnectButton"))
+        SteSlicerApplication.getInstance().addAdditionalComponent("machinesDetailPane", self.__additional_components_view.findChild(QObject, "networkPrinterConnectionInfo"))

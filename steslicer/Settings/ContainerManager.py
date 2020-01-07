@@ -23,7 +23,7 @@ from UM.Settings.InstanceContainer import InstanceContainer
 
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
     from steslicer.Machines.ContainerNode import ContainerNode
     from steslicer.Machines.MaterialNode import MaterialNode
     from steslicer.Machines.QualityChangesGroup import QualityChangesGroup
@@ -43,14 +43,14 @@ catalog = i18nCatalog("steslicer")
 #   when a certain action happens. This can be done through this class.
 class ContainerManager(QObject):
 
-    def __init__(self, application: "CuraApplication") -> None:
+    def __init__(self, application: "SteSlicerApplication") -> None:
         if ContainerManager.__instance is not None:
             raise RuntimeError("Try to create singleton '%s' more than once" % self.__class__.__name__)
         ContainerManager.__instance = self
 
         super().__init__(parent = application)
 
-        self._application = application # type: CuraApplication
+        self._application = application # type: SteSlicerApplication
         self._plugin_registry = self._application.getPluginRegistry()  # type: PluginRegistry
         self._container_registry = self._application.getContainerRegistry()  # type: CuraContainerRegistry
         self._machine_manager = self._application.getMachineManager()  # type: MachineManager

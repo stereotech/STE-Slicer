@@ -33,8 +33,8 @@ def definition_changes_container() -> InstanceContainer:
     definition_changes_container = InstanceContainer(container_id = "Test Definition Changes")
     definition_changes_container.setMetaDataEntry("type", "definition_changes")
     # Add current setting version to the instance container
-    from steslicer.CuraApplication import CuraApplication
-    definition_changes_container.getMetaData()["setting_version"] = CuraApplication.SettingVersion
+    from steslicer.SteSlicerApplication import SteSlicerApplication
+    definition_changes_container.getMetaData()["setting_version"] = SteSlicerApplication.SettingVersion
     return definition_changes_container
 
 # An empty global stack to test with.

@@ -54,12 +54,12 @@ def test_addContainerGlobalStack(container_registry, definition_container, defin
     assert type(mock_super_add_container.call_args_list[0][0][0]) == GlobalStack
 
 def test_addContainerGoodSettingVersion(container_registry, definition_container):
-    from steslicer.CuraApplication import CuraApplication
-    definition_container.getMetaData()["setting_version"] = CuraApplication.SettingVersion
+    from steslicer.SteSlicerApplication import SteSlicerApplication
+    definition_container.getMetaData()["setting_version"] = SteSlicerApplication.SettingVersion
     container_registry.addContainer(definition_container)
 
     instance = UM.Settings.InstanceContainer.InstanceContainer(container_id = "Test Instance Right Version")
-    instance.setMetaDataEntry("setting_version", CuraApplication.SettingVersion)
+    instance.setMetaDataEntry("setting_version", SteSlicerApplication.SettingVersion)
     instance.setDefinition(definition_container.getId())
 
     mock_super_add_container = unittest.mock.MagicMock() #Take the role of the Uranium-ContainerRegistry where the resulting containers get registered.
@@ -69,8 +69,8 @@ def test_addContainerGoodSettingVersion(container_registry, definition_container
     mock_super_add_container.assert_called_once_with(instance) #The instance must have been registered now.
 
 def test_addContainerNoSettingVersion(container_registry, definition_container):
-    from steslicer.CuraApplication import CuraApplication
-    definition_container.getMetaData()["setting_version"] = CuraApplication.SettingVersion
+    from steslicer.SteSlicerApplication import SteSlicerApplication
+    definition_container.getMetaData()["setting_version"] = SteSlicerApplication.SettingVersion
     container_registry.addContainer(definition_container)
 
     instance = UM.Settings.InstanceContainer.InstanceContainer(container_id = "Test Instance No Version")
@@ -84,8 +84,8 @@ def test_addContainerNoSettingVersion(container_registry, definition_container):
     mock_super_add_container.assert_not_called() #Should not get passed on to UM.Settings.ContainerRegistry.addContainer, because the setting_version is interpreted as 0!
 
 def test_addContainerBadSettingVersion(container_registry, definition_container):
-    from steslicer.CuraApplication import CuraApplication
-    definition_container.getMetaData()["setting_version"] = CuraApplication.SettingVersion
+    from steslicer.SteSlicerApplication import SteSlicerApplication
+    definition_container.getMetaData()["setting_version"] = SteSlicerApplication.SettingVersion
     container_registry.addContainer(definition_container)
 
     instance = UM.Settings.InstanceContainer.InstanceContainer(container_id = "Test Instance Wrong Version")

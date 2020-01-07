@@ -36,17 +36,17 @@ class ConvexHullDecorator(SceneNodeDecorator):
 
         # Make sure the timer is created on the main thread
         self._recompute_convex_hull_timer = None  # type: Optional[QTimer]
-        from steslicer.CuraApplication import CuraApplication
-        if CuraApplication.getInstance() is not None:
-            CuraApplication.getInstance().callLater(self.createRecomputeConvexHullTimer)
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        if SteSlicerApplication.getInstance() is not None:
+            SteSlicerApplication.getInstance().callLater(self.createRecomputeConvexHullTimer)
 
         self._raft_thickness = 0.0
-        self._build_volume = CuraApplication.getInstance().getBuildVolume()
+        self._build_volume = SteSlicerApplication.getInstance().getBuildVolume()
         self._build_volume.raftThicknessChanged.connect(self._onChanged)
 
-        CuraApplication.getInstance().globalContainerStackChanged.connect(self._onGlobalStackChanged)
-        CuraApplication.getInstance().getController().toolOperationStarted.connect(self._onChanged)
-        CuraApplication.getInstance().getController().toolOperationStopped.connect(self._onChanged)
+        SteSlicerApplication.getInstance().globalContainerStackChanged.connect(self._onGlobalStackChanged)
+        SteSlicerApplication.getInstance().getController().toolOperationStarted.connect(self._onChanged)
+        SteSlicerApplication.getInstance().getController().toolOperationStopped.connect(self._onChanged)
 
         self._onGlobalStackChanged()
 

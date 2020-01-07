@@ -7,7 +7,7 @@ from UM.Settings.PropertyEvaluationContext import PropertyEvaluationContext
 from UM.Settings.SettingFunction import SettingFunction
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
     from steslicer.Settings.CuraContainerStack import CuraContainerStack
 
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 #
 class CuraFormulaFunctions:
 
-    def __init__(self, application: "CuraApplication") -> None:
+    def __init__(self, application: "SteSlicerApplication") -> None:
         self._application = application
 
     # ================

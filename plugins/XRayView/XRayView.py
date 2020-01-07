@@ -16,7 +16,7 @@ from UM.Scene.Iterator.BreadthFirstIterator import BreadthFirstIterator
 from UM.View.RenderBatch import RenderBatch
 from UM.View.GL.OpenGL import OpenGL
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
 from . import XRayPass
 
@@ -71,7 +71,7 @@ class XRayView(View):
             if Platform.isOSX():
                 if QOpenGLContext.currentContext() is None:
                     Logger.log("d", "current context of OpenGL is empty on Mac OS X, will try to create shaders later")
-                    CuraApplication.getInstance().callLater(lambda e = event: self.event(e))
+                    SteSlicerApplication.getInstance().callLater(lambda e = event: self.event(e))
                     return
 
             if not self._xray_pass:

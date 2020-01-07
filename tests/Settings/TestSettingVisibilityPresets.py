@@ -4,14 +4,14 @@ import os.path
 
 from UM.Preferences import Preferences
 from UM.Resources import Resources
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Machines.Models.SettingVisibilityPresetsModel import SettingVisibilityPresetsModel
 from steslicer.Settings.SettingVisibilityPreset import SettingVisibilityPreset
 
 setting_visibility_preset_test_settings = {"test", "zomg", "derp", "yay", "whoo"}
 
 Resources.addSearchPath(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "resources")))
-Resources.addStorageType(CuraApplication.ResourceTypes.SettingVisibilityPreset, "setting_visibility")
+Resources.addStorageType(SteSlicerApplication.ResourceTypes.SettingVisibilityPreset, "setting_visibility")
 
 
 def test_createVisibilityPresetFromLocalFile():

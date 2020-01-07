@@ -73,8 +73,8 @@ class MachineAction(QObject, PluginObject):
             return
         path = os.path.join(plugin_path, self._qml_url)
 
-        from steslicer.CuraApplication import CuraApplication
-        self._view = CuraApplication.getInstance().createQmlComponent(path, {"manager": self})
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        self._view = SteSlicerApplication.getInstance().createQmlComponent(path, {"manager": self})
 
     @pyqtProperty(QObject, constant = True)
     def displayItem(self):

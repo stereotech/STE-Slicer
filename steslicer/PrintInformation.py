@@ -20,7 +20,7 @@ from UM.MimeTypeDatabase import MimeTypeDatabase
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 catalog = i18nCatalog("steslicer")
 
@@ -33,7 +33,7 @@ class PrintInformation(QObject):
 
     UNTITLED_JOB_NAME = "Untitled"
 
-    def __init__(self, application: "CuraApplication", parent = None) -> None:
+    def __init__(self, application: "SteSlicerApplication", parent = None) -> None:
         super().__init__(parent)
         self._application = application
 

@@ -16,9 +16,9 @@ class BaseMaterialsModel(ListModel):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        from steslicer.CuraApplication import CuraApplication
+        from steslicer.SteSlicerApplication import SteSlicerApplication
 
-        self._application = CuraApplication.getInstance()
+        self._application = SteSlicerApplication.getInstance()
 
         # Make these managers available to all material models
         self._container_registry = self._application.getInstance().getContainerRegistry()

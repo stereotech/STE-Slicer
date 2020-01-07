@@ -12,7 +12,7 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.Interfaces import ContainerInterface, PropertyEvaluationContext
 from UM.Util import parseBool
 
-import steslicer.CuraApplication
+import steslicer.SteSlicerApplication
 
 from . import Exceptions
 from .CuraContainerStack import CuraContainerStack, _ContainerIndexes
@@ -133,7 +133,7 @@ class ExtruderStack(CuraContainerStack):
         limit_to_extruder = super().getProperty(key, "limit_to_extruder", context)
         if limit_to_extruder is not None:
             if limit_to_extruder == -1:
-                limit_to_extruder = int(steslicer.CuraApplication.CuraApplication.getInstance().getMachineManager().defaultExtruderPosition)
+                limit_to_extruder = int(steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getMachineManager().defaultExtruderPosition)
             limit_to_extruder = str(limit_to_extruder)
         if (limit_to_extruder is not None and limit_to_extruder != "-1") and self.getMetaDataEntry("position") != str(limit_to_extruder):
             if str(limit_to_extruder) in self.getNextStack().extruders:

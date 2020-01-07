@@ -26,7 +26,7 @@ from UM.Resources import Resources
 from . import ExtruderStack
 from . import GlobalStack
 
-import steslicer.CuraApplication
+import steslicer.SteSlicerApplication
 from steslicer.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
 from steslicer.ReaderWriters.ProfileReader import NoProfileException
 
@@ -57,7 +57,7 @@ class CuraContainerRegistry(ContainerRegistry):
 
         if isinstance(container, InstanceContainer) and type(container) != type(self.getEmptyInstanceContainer()):
             # Check against setting version of the definition.
-            required_setting_version = steslicer.CuraApplication.CuraApplication.SettingVersion
+            required_setting_version = steslicer.SteSlicerApplication.SteSlicerApplication.SettingVersion
             actual_setting_version = int(container.getMetaDataEntry("setting_version", default = 0))
             if required_setting_version != actual_setting_version:
                 Logger.log("w", "Instance container {container_id} is outdated. Its setting version is {actual_setting_version} but it should be {required_setting_version}.".format(container_id = container.getId(), actual_setting_version = actual_setting_version, required_setting_version = required_setting_version))
@@ -260,7 +260,7 @@ class CuraContainerRegistry(ContainerRegistry):
                         profile_id = ContainerRegistry.getInstance().uniqueName(global_stack.getId() + "_extruder_" + str(idx + 1))
                         profile = InstanceContainer(profile_id)
                         profile.setName(quality_name)
-                        profile.setMetaDataEntry("setting_version", steslicer.CuraApplication.CuraApplication.SettingVersion)
+                        profile.setMetaDataEntry("setting_version", steslicer.SteSlicerApplication.SteSlicerApplication.SettingVersion)
                         profile.setMetaDataEntry("type", "quality_changes")
                         profile.setMetaDataEntry("definition", expected_machine_definition)
                         profile.setMetaDataEntry("quality_type", quality_type)
@@ -363,7 +363,7 @@ class CuraContainerRegistry(ContainerRegistry):
         # Check to make sure the imported profile actually makes sense in context of the current configuration.
         # This prevents issues where importing a "draft" profile for a machine without "draft" qualities would report as
         # successfully imported but then fail to show up.
-        quality_manager = steslicer.CuraApplication.CuraApplication.getInstance()._quality_manager
+        quality_manager = steslicer.SteSlicerApplication.SteSlicerApplication.getInstance()._quality_manager
         quality_group_dict = quality_manager.getQualityGroupsForMachineDefinition(global_stack)
         if quality_type not in quality_group_dict:
             return catalog.i18nc("@info:status", "Could not find a quality type {0} for the current configuration.", quality_type)
@@ -466,7 +466,7 @@ class CuraContainerRegistry(ContainerRegistry):
     def addExtruderStackForSingleExtrusionMachine(self, machine, extruder_id, new_global_quality_changes = None, create_new_ids = True):
         new_extruder_id = extruder_id
 
-        application = steslicer.CuraApplication.CuraApplication.getInstance()
+        application = steslicer.SteSlicerApplication.SteSlicerApplication.getInstance()
 
         extruder_definitions = self.findDefinitionContainers(id = new_extruder_id)
         if not extruder_definitions:
@@ -676,7 +676,7 @@ class CuraContainerRegistry(ContainerRegistry):
         return extruder_stack
 
     def _findQualityChangesContainerInCuraFolder(self, name):
-        quality_changes_dir = Resources.getPath(steslicer.CuraApplication.CuraApplication.ResourceTypes.QualityChangesInstanceContainer)
+        quality_changes_dir = Resources.getPath(steslicer.SteSlicerApplication.SteSlicerApplication.ResourceTypes.QualityChangesInstanceContainer)
 
         instance_container = None
 

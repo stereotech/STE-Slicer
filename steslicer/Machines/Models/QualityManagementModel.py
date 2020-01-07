@@ -23,11 +23,11 @@ class QualityManagementModel(ListModel):
         self.addRoleName(self.QualityGroupRole, "quality_group")
         self.addRoleName(self.QualityChangesGroupRole, "quality_changes_group")
 
-        from steslicer.CuraApplication import CuraApplication
-        self._container_registry = CuraApplication.getInstance().getContainerRegistry()
-        self._machine_manager = CuraApplication.getInstance().getMachineManager()
-        self._extruder_manager = CuraApplication.getInstance().getExtruderManager()
-        self._quality_manager = CuraApplication.getInstance().getQualityManager()
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        self._container_registry = SteSlicerApplication.getInstance().getContainerRegistry()
+        self._machine_manager = SteSlicerApplication.getInstance().getMachineManager()
+        self._extruder_manager = SteSlicerApplication.getInstance().getExtruderManager()
+        self._quality_manager = SteSlicerApplication.getInstance().getQualityManager()
 
         self._machine_manager.globalContainerChanged.connect(self._update)
         self._quality_manager.qualitiesUpdated.connect(self._update)

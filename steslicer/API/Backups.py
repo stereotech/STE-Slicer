@@ -5,7 +5,7 @@ from typing import Tuple, Optional, TYPE_CHECKING
 from steslicer.Backups.BackupsManager import BackupsManager
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 ##  The back-ups API provides a version-proof bridge between Cura's
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 #       api.backups.restoreBackup(my_zip_file, {"cura_release": "3.1"})``
 class Backups:
 
-    def __init__(self, application: "CuraApplication") -> None:
+    def __init__(self, application: "SteSlicerApplication") -> None:
         self.manager = BackupsManager(application)
 
     ##  Create a new back-up using the BackupsManager.

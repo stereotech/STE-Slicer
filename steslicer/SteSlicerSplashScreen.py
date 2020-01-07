@@ -9,7 +9,7 @@ from UM.Resources import Resources
 from UM.Application import Application
 
 
-class CuraSplashScreen(QSplashScreen):
+class SteSlicerSplashScreen(QSplashScreen):
     def __init__(self):
         super().__init__()
         self._scale = 0.7

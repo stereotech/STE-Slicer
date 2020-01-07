@@ -10,7 +10,7 @@ from steslicer.API.Interface import Interface
 from steslicer.API.Account import Account
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 ##  The official Cura API that plug-ins can use to interact with Cura.
@@ -24,12 +24,12 @@ class CuraAPI(QObject):
     # For now we use the same API version to be consistent.
     VERSION = PluginRegistry.APIVersion
     __instance = None  # type: "CuraAPI"
-    _application = None  # type: CuraApplication
+    _application = None  # type: SteSlicerApplication
 
     #   This is done to ensure that the first time an instance is created, it's forced that the application is set.
     #   The main reason for this is that we want to prevent consumers of API to have a dependency on CuraApplication.
     #   Since the API is intended to be used by plugins, the steslicer application should have already created this.
-    def __new__(cls, application: Optional["CuraApplication"] = None):
+    def __new__(cls, application: Optional["SteSlicerApplication"] = None):
         if cls.__instance is None:
             if application is None:
                 raise Exception("Upon first time creation, the application must be set.")
@@ -37,7 +37,7 @@ class CuraAPI(QObject):
             cls._application = application
         return cls.__instance
 
-    def __init__(self, application: Optional["CuraApplication"] = None) -> None:
+    def __init__(self, application: Optional["SteSlicerApplication"] = None) -> None:
         super().__init__(parent = CuraAPI._application)
 
         # Accounts API

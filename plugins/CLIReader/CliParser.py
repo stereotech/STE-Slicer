@@ -9,7 +9,7 @@ from UM.Logger import Logger
 from UM.Job import Job
 from UM.Message import Message
 from UM.i18n import i18nCatalog
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.LayerDataBuilder import LayerDataBuilder
 from steslicer.LayerDataDecorator import LayerDataDecorator
 from steslicer.LayerPolygon import LayerPolygon
@@ -38,7 +38,7 @@ Position = NamedTuple("Position", [("x", float), ("y", float), ("z", float), (
 class CliParser:
 
     def __init__(self) -> None:
-        CuraApplication.getInstance().hideMessageSignal.connect(self._onHideMessage)
+        SteSlicerApplication.getInstance().hideMessageSignal.connect(self._onHideMessage)
         self._is_layers_in_file = False
         self._cancelled = False
         self._message = None
@@ -48,7 +48,7 @@ class CliParser:
         self._position = Position
         self._gcode_position = Position
         # stack to get print settingd via getProperty method
-        self._application = CuraApplication.getInstance()
+        self._application = SteSlicerApplication.getInstance()
         self._global_stack = self._application.getGlobalContainerStack() #type: GlobalStack
 
         self._rot_nwp = Matrix()
@@ -219,11 +219,11 @@ class CliParser:
         scene_node.addDecorator(gcode_list_decorator)
 
         # gcode_dict stores gcode_lists for a number of build plates.
-        active_build_plate_id = CuraApplication.getInstance(
+        active_build_plate_id = SteSlicerApplication.getInstance(
         ).getMultiBuildPlateModel().activeBuildPlate
         gcode_dict = {active_build_plate_id: gcode_list}
         # type: ignore #Because gcode_dict is generated dynamically.
-        CuraApplication.getInstance().getController().getScene().gcode_dict = gcode_dict
+        SteSlicerApplication.getInstance().getController().getScene().gcode_dict = gcode_dict
 
         Logger.log("d", "Finished parsing CLI file")
         self._message.hide()
@@ -241,7 +241,7 @@ class CliParser:
 
         Logger.log("d", "CLI loading finished")
 
-        if CuraApplication.getInstance().getPreferences().getValue("gcodereader/show_caution"):
+        if SteSlicerApplication.getInstance().getPreferences().getValue("gcodereader/show_caution"):
             caution_message = Message(catalog.i18nc(
                 "@info:generic",
                 "Make sure the g-code is suitable for your printer and printer configuration before sending the file to it. The g-code representation may not be accurate."),
@@ -249,7 +249,7 @@ class CliParser:
                 title=catalog.i18nc("@info:title", "G-code Details"))
             caution_message.show()
 
-        backend = CuraApplication.getInstance().getBackend()
+        backend = SteSlicerApplication.getInstance().getBackend()
         backend.backendStateChange.emit(Backend.BackendState.Disabled)
 
         return scene_node

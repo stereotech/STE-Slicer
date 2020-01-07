@@ -16,7 +16,7 @@ from UM.Settings.InstanceContainer import InstanceContainer
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.ConfigurationErrorMessage import ConfigurationErrorMessage
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Machines.VariantType import VariantType
 
 from .XmlMaterialValidator import XmlMaterialValidator
@@ -43,7 +43,7 @@ class XmlMaterialProfile(InstanceContainer):
     @classmethod
     def xmlVersionToSettingVersion(cls, xml_version: str) -> int:
         if xml_version == "1.3":
-            return CuraApplication.SettingVersion
+            return SteSlicerApplication.SettingVersion
         return 0 #Older than 1.3.
 
     def getInheritedFiles(self):
@@ -68,7 +68,7 @@ class XmlMaterialProfile(InstanceContainer):
             return
 
         # Get the MaterialGroup
-        material_manager = CuraApplication.getInstance().getMaterialManager()
+        material_manager = SteSlicerApplication.getInstance().getMaterialManager()
         root_material_id = self.getMetaDataEntry("base_file")  #if basefile is self.getId, this is a basefile.
         material_group = material_manager.getMaterialGroup(root_material_id)
 
@@ -213,7 +213,7 @@ class XmlMaterialProfile(InstanceContainer):
         machine_container_map = {} # type: Dict[str, InstanceContainer]
         machine_variant_map = {} # type: Dict[str, Dict[str, Any]]
 
-        variant_manager = CuraApplication.getInstance().getVariantManager()
+        variant_manager = SteSlicerApplication.getInstance().getVariantManager()
 
         root_material_id = self.getMetaDataEntry("base_file")  # if basefile is self.getId, this is a basefile.
         all_containers = registry.findInstanceContainers(base_file = root_material_id)
@@ -349,7 +349,7 @@ class XmlMaterialProfile(InstanceContainer):
         return xml
 
     def _loadFile(self, file_name):
-        path = Resources.getPath(CuraApplication.getInstance().ResourceTypes.MaterialInstanceContainer, file_name + ".xml.fdm_material")
+        path = Resources.getPath(SteSlicerApplication.getInstance().ResourceTypes.MaterialInstanceContainer, file_name + ".xml.fdm_material")
 
         with open(path, encoding = "utf-8") as f:
             contents = f.read()
@@ -693,7 +693,7 @@ class XmlMaterialProfile(InstanceContainer):
                         if buildplate_id is None:
                             continue
 
-                        variant_manager = CuraApplication.getInstance().getVariantManager()
+                        variant_manager = SteSlicerApplication.getInstance().getVariantManager()
                         variant_node = variant_manager.getVariantNode(machine_id, buildplate_id,
                                                                       variant_type = VariantType.BUILD_PLATE)
                         if not variant_node:
@@ -716,7 +716,7 @@ class XmlMaterialProfile(InstanceContainer):
                         if hotend_name is None:
                             continue
 
-                        variant_manager = CuraApplication.getInstance().getVariantManager()
+                        variant_manager = SteSlicerApplication.getInstance().getVariantManager()
                         variant_node = variant_manager.getVariantNode(machine_id, hotend_name, VariantType.NOZZLE)
                         if not variant_node:
                             continue
@@ -768,7 +768,7 @@ class XmlMaterialProfile(InstanceContainer):
                             if buildplate_name is None:
                                 continue
 
-                            variant_manager = CuraApplication.getInstance().getVariantManager()
+                            variant_manager = SteSlicerApplication.getInstance().getVariantManager()
                             variant_node = variant_manager.getVariantNode(machine_id, buildplate_name, VariantType.BUILD_PLATE)
                             if not variant_node:
                                 continue

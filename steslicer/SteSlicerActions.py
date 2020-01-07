@@ -14,7 +14,7 @@ from UM.Operations.GroupedOperation import GroupedOperation
 from UM.Operations.RemoveSceneNodeOperation import RemoveSceneNodeOperation
 from UM.Operations.TranslateOperation import TranslateOperation
 
-import steslicer.CuraApplication
+import steslicer.SteSlicerApplication
 from steslicer.Operations.SetParentOperation import SetParentOperation
 from steslicer.MultiplyObjectsJob import MultiplyObjectsJob
 from steslicer.Settings.SetObjectExtruderOperation import SetObjectExtruderOperation
@@ -27,7 +27,7 @@ from UM.Logger import Logger
 if TYPE_CHECKING:
     from UM.Scene.SceneNode import SceneNode
 
-class CuraActions(QObject):
+class SteSlicerActions(QObject):
     def __init__(self, parent: QObject = None) -> None:
         super().__init__(parent)
 
@@ -37,20 +37,20 @@ class CuraActions(QObject):
         # So instead, defer the call to the next run of the event loop, since that does work.
         # Note that weirdly enough, only signal handlers that open a web browser fail like that.
         event = CallFunctionEvent(self._openUrl, [QUrl("http://ultimaker.com/en/support/software")], {})
-        steslicer.CuraApplication.CuraApplication.getInstance().functionEvent(event)
+        steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().functionEvent(event)
 
     @pyqtSlot()
     def openBugReportPage(self) -> None:
         event = CallFunctionEvent(self._openUrl, [QUrl("http://github.com/Ultimaker/Cura/issues")], {})
-        steslicer.CuraApplication.CuraApplication.getInstance().functionEvent(event)
+        steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().functionEvent(event)
 
     ##  Reset camera position and direction to default
     @pyqtSlot()
     def homeCamera(self) -> None:
-        scene = steslicer.CuraApplication.CuraApplication.getInstance().getController().getScene()
+        scene = steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getController().getScene()
         camera = scene.getActiveCamera()
         if camera:
-            diagonal_size = steslicer.CuraApplication.CuraApplication.getInstance().getBuildVolume().getDiagonalSize()
+            diagonal_size = steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getBuildVolume().getDiagonalSize()
             camera.setPosition(Vector(-80, 250, 700) * diagonal_size / 375)
             camera.setPerspective(True)
             camera.lookAt(Vector(0, 0, 0))
@@ -77,14 +77,14 @@ class CuraActions(QObject):
     #   \param count The number of times to multiply the selection.
     @pyqtSlot(int)
     def multiplySelection(self, count: int) -> None:
-        min_offset = steslicer.CuraApplication.CuraApplication.getInstance().getBuildVolume().getEdgeDisallowedSize() + 2  # Allow for some rounding errors
+        min_offset = steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getBuildVolume().getEdgeDisallowedSize() + 2  # Allow for some rounding errors
         job = MultiplyObjectsJob(Selection.getAllSelectedObjects(), count, min_offset = max(min_offset, 8))
         job.start()
 
     ##  Delete all selected objects.
     @pyqtSlot()
     def deleteSelection(self) -> None:
-        if not steslicer.CuraApplication.CuraApplication.getInstance().getController().getToolsEnabled():
+        if not steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getController().getToolsEnabled():
             return
 
         removed_group_nodes = [] #type: List[SceneNode]
@@ -101,7 +101,7 @@ class CuraActions(QObject):
                     op.addOperation(RemoveSceneNodeOperation(group_node))
 
             # Reset the print information
-            steslicer.CuraApplication.CuraApplication.getInstance().getController().getScene().sceneChanged.emit(node)
+            steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getController().getScene().sceneChanged.emit(node)
 
         op.push()
 
@@ -148,7 +148,7 @@ class CuraActions(QObject):
         Logger.log("d", "Setting build plate number... %d" % build_plate_nr)
         operation = GroupedOperation()
 
-        root = steslicer.CuraApplication.CuraApplication.getInstance().getController().getScene().getRoot()
+        root = steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getController().getScene().getRoot()
 
         nodes_to_change = []
         for node in Selection.getAllSelectedObjects():

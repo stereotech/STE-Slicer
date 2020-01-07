@@ -34,8 +34,8 @@ from UM.Scene.SceneNode import SceneNode
 class OneAtATimeIterator(Iterator):
 
     def __init__(self, scene_node):
-        from steslicer.CuraApplication import CuraApplication
-        self._global_stack = CuraApplication.getInstance().getGlobalContainerStack()
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        self._global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         self._original_node_list = []
 
         super().__init__(scene_node)  # Call super to make multiple inheritance work.

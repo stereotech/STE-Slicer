@@ -24,7 +24,7 @@ from UM.Settings.SettingInstance import SettingInstance #For typing.
 from UM.Tool import Tool #For typing.
 from UM.Mesh.MeshData import MeshData #For typing.
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from .ProcessSlicedLayersJob import ProcessSlicedLayersJob
 from .StartSliceJob import StartSliceJob, StartJobResult
@@ -57,8 +57,8 @@ class CuraEngineBackend(QObject, Backend):
         if Platform.isWindows():
             executable_name += ".exe"
         default_engine_location = executable_name
-        if os.path.exists(os.path.join(CuraApplication.getInstallPrefix(), "bin", executable_name)):
-            default_engine_location = os.path.join(CuraApplication.getInstallPrefix(), "bin", executable_name)
+        if os.path.exists(os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)):
+            default_engine_location = os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)
         if hasattr(sys, "frozen"):
             default_engine_location = os.path.join(os.path.dirname(os.path.abspath(sys.executable)), executable_name)
         if Platform.isLinux() and not default_engine_location:
@@ -70,7 +70,7 @@ class CuraEngineBackend(QObject, Backend):
                     default_engine_location = execpath
                     break
 
-        self._application = CuraApplication.getInstance() #type: CuraApplication
+        self._application = SteSlicerApplication.getInstance() #type: SteSlicerApplication
         self._multi_build_plate_model = None #type: Optional[MultiBuildPlateModel]
         self._machine_error_checker = None #type: Optional[MachineErrorChecker]
 

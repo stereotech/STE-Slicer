@@ -4,7 +4,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 ##  The Interface.Settings API provides a version-proof bridge between Cura's
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 class Settings:
 
-    def __init__(self, application: "CuraApplication") -> None:
+    def __init__(self, application: "SteSlicerApplication") -> None:
         self.application = application
 
     ##  Add items to the sidebar context menu.

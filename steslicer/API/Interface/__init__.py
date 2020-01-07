@@ -7,7 +7,7 @@ from UM.PluginRegistry import PluginRegistry
 from steslicer.API.Interface.Settings import Settings
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 ##  The Interface class serves as a common root for the specific API
@@ -26,6 +26,6 @@ class Interface:
     # For now we use the same API version to be consistent.
     VERSION = PluginRegistry.APIVersion
 
-    def __init__(self, application: "CuraApplication") -> None:
+    def __init__(self, application: "SteSlicerApplication") -> None:
         # API methods specific to the settings portion of the UI
         self.settings = Settings(application)

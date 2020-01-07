@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from UM.Settings.DefinitionContainer import DefinitionContainer
     from steslicer.Settings.GlobalStack import GlobalStack
     from .QualityChangesGroup import QualityChangesGroup
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 #
@@ -36,7 +36,7 @@ class QualityManager(QObject):
 
     qualitiesUpdated = pyqtSignal()
 
-    def __init__(self, application: "CuraApplication", parent = None) -> None:
+    def __init__(self, application: "SteSlicerApplication", parent = None) -> None:
         super().__init__(parent)
         self._application = application
         self._material_manager = self._application.getMaterialManager()

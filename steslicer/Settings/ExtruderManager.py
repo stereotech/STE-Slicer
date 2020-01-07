@@ -4,7 +4,7 @@
 from PyQt5.QtCore import pyqtSignal, pyqtProperty, QObject, QVariant  # For communicating data and events to Qt.
 from UM.FlameProfiler import pyqtSlot
 
-import steslicer.CuraApplication # To get the global container stack to find the current machine.
+import steslicer.SteSlicerApplication # To get the global container stack to find the current machine.
 from steslicer.Settings.GlobalStack import GlobalStack
 from UM.Logger import Logger
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
@@ -33,7 +33,7 @@ class ExtruderManager(QObject):
 
         super().__init__(parent)
 
-        self._application = steslicer.CuraApplication.CuraApplication.getInstance()
+        self._application = steslicer.SteSlicerApplication.SteSlicerApplication.getInstance()
 
         # Per machine, a dictionary of extruder container stack IDs. Only for separately defined extruders.
         self._extruder_trains = {}  # type: Dict[str, Dict[str, "ExtruderStack"]]
@@ -394,7 +394,7 @@ class ExtruderManager(QObject):
     #   \return The effective value
     @staticmethod
     def getResolveOrValue(key: str) -> Any:
-        global_stack = cast(GlobalStack, steslicer.CuraApplication.CuraApplication.getInstance().getGlobalContainerStack())
+        global_stack = cast(GlobalStack, steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getGlobalContainerStack())
         resolved_value = global_stack.getProperty(key, "value")
 
         return resolved_value

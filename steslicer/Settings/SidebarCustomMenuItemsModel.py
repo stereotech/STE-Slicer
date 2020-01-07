@@ -22,8 +22,8 @@ class SidebarCustomMenuItemsModel(ListModel):
         self._updateExtensionList()
 
     def _updateExtensionList(self)-> None:
-        from steslicer.CuraApplication import CuraApplication
-        for menu_item in CuraApplication.getInstance().getSidebarCustomMenuItems():
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        for menu_item in SteSlicerApplication.getInstance().getSidebarCustomMenuItems():
 
             self.appendItem({
                 "name": menu_item["name"],

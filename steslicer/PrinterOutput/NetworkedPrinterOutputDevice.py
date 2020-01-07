@@ -4,7 +4,7 @@
 from UM.FileHandler.FileHandler import FileHandler #For typing.
 from UM.Logger import Logger
 from UM.Scene.SceneNode import SceneNode #For typing.
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
 from steslicer.PrinterOutputDevice import PrinterOutputDevice, ConnectionState
 
@@ -41,7 +41,7 @@ class NetworkedPrinterOutputDevice(PrinterOutputDevice):
         self._api_prefix = ""
         self._address = address
         self._properties = properties
-        self._user_agent = "%s/%s " % (CuraApplication.getInstance().getApplicationName(), CuraApplication.getInstance().getVersion())
+        self._user_agent = "%s/%s " % (SteSlicerApplication.getInstance().getApplicationName(), SteSlicerApplication.getInstance().getVersion())
 
         self._onFinishedCallbacks = {}      # type: Dict[str, Callable[[QNetworkReply], None]]
         self._authentication_state = AuthState.NotAuthenticated
@@ -264,7 +264,7 @@ class NetworkedPrinterOutputDevice(PrinterOutputDevice):
         self._manager.authenticationRequired.connect(self._onAuthenticationRequired)
 
         if self._properties.get(b"temporary", b"false") != b"true":
-            CuraApplication.getInstance().getMachineManager().checkCorrectGroupName(self.getId(), self.name)
+            SteSlicerApplication.getInstance().getMachineManager().checkCorrectGroupName(self.getId(), self.name)
 
     def _registerOnFinishedCallback(self, reply: QNetworkReply, on_finished: Optional[Callable[[QNetworkReply], None]]) -> None:
         if on_finished is not None:

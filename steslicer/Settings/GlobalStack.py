@@ -17,7 +17,7 @@ from UM.Resources import Resources
 from UM.Platform import Platform
 from UM.Util import parseBool
 
-import steslicer.CuraApplication
+import steslicer.SteSlicerApplication
 
 from . import Exceptions
 from .CuraContainerStack import CuraContainerStack
@@ -126,7 +126,7 @@ class GlobalStack(CuraContainerStack):
         limit_to_extruder = super().getProperty(key, "limit_to_extruder", context)
         if limit_to_extruder is not None:
             if limit_to_extruder == -1:
-                limit_to_extruder = int(steslicer.CuraApplication.CuraApplication.getInstance().getMachineManager().defaultExtruderPosition)
+                limit_to_extruder = int(steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getMachineManager().defaultExtruderPosition)
             limit_to_extruder = str(limit_to_extruder)
         if limit_to_extruder is not None and limit_to_extruder != "-1" and limit_to_extruder in self._extruders:
             if super().getProperty(key, "settable_per_extruder", context):
@@ -223,7 +223,7 @@ class GlobalStack(CuraContainerStack):
             return ""
 
         try:
-            return Resources.getPath(steslicer.CuraApplication.CuraApplication.ResourceTypes.Firmware, hex_file.format(baudrate=baudrate))
+            return Resources.getPath(steslicer.SteSlicerApplication.SteSlicerApplication.ResourceTypes.Firmware, hex_file.format(baudrate=baudrate))
         except FileNotFoundError:
             Logger.log("w", "Firmware file %s not found.", hex_file)
             return ""

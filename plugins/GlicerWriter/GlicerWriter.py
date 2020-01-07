@@ -1,7 +1,7 @@
 from UM.Mesh.MeshWriter import MeshWriter
 from UM.Logger import Logger
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
 import time
 import struct
@@ -16,9 +16,9 @@ catalog = i18nCatalog("steslicer")
 
 class GlicerWriter(MeshWriter):
     def write(self, stream, nodes, mode=MeshWriter.OutputMode.BinaryMode):
-        radius = CuraApplication.getInstance().getGlobalContainerStack(
+        radius = SteSlicerApplication.getInstance().getGlobalContainerStack(
         ).getProperty("cylindrical_mode_base_diameter", "value") / 2
-        height = CuraApplication.getInstance().getGlobalContainerStack(
+        height = SteSlicerApplication.getInstance().getGlobalContainerStack(
         ).getProperty("machine_height", "value")
         # try:
         MeshWriter._meshNodes(nodes).__next__()

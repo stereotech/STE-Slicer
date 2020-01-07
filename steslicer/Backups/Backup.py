@@ -15,7 +15,7 @@ from UM.Platform import Platform
 from UM.Resources import Resources
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 ##  The back-up class holds all data about a back-up.
@@ -29,7 +29,7 @@ class Backup:
     # Re-use translation catalog.
     catalog = i18nCatalog("steslicer")
 
-    def __init__(self, application: "CuraApplication", zip_file: bytes = None, meta_data: Dict[str, str] = None) -> None:
+    def __init__(self, application: "SteSlicerApplication", zip_file: bytes = None, meta_data: Dict[str, str] = None) -> None:
         self._application = application
         self.zip_file = zip_file  # type: Optional[bytes]
         self.meta_data = meta_data  # type: Optional[Dict[str, str]]

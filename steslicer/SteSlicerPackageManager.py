@@ -3,20 +3,20 @@
 
 from typing import List, Tuple
 
-from steslicer.CuraApplication import CuraApplication #To find some resource types.
+from steslicer.SteSlicerApplication import SteSlicerApplication #To find some resource types.
 from steslicer.Settings.GlobalStack import GlobalStack
 
 from UM.PackageManager import PackageManager #The class we're extending.
 from UM.Resources import Resources #To find storage paths for some resource types.
 
 
-class CuraPackageManager(PackageManager):
+class SteSlicerPackageManager(PackageManager):
     def __init__(self, application, parent = None):
         super().__init__(application, parent)
 
     def initialize(self):
-        self._installation_dirs_dict["materials"] = Resources.getStoragePath(CuraApplication.ResourceTypes.MaterialInstanceContainer)
-        self._installation_dirs_dict["qualities"] = Resources.getStoragePath(CuraApplication.ResourceTypes.QualityInstanceContainer)
+        self._installation_dirs_dict["materials"] = Resources.getStoragePath(SteSlicerApplication.ResourceTypes.MaterialInstanceContainer)
+        self._installation_dirs_dict["qualities"] = Resources.getStoragePath(SteSlicerApplication.ResourceTypes.QualityInstanceContainer)
 
         super().initialize()
 

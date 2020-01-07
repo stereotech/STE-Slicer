@@ -11,7 +11,7 @@ from steslicer.OAuth2.AuthorizationService import AuthorizationService
 from steslicer.OAuth2.Models import OAuth2Settings
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 i18n_catalog = i18nCatalog("steslicer")
 
@@ -29,7 +29,7 @@ class Account(QObject):
     # Signal emitted when user logged in or out.
     loginStateChanged = pyqtSignal(bool)
 
-    def __init__(self, application: "CuraApplication", parent = None) -> None:
+    def __init__(self, application: "SteSlicerApplication", parent = None) -> None:
         super().__init__(parent)
         self._application = application
 

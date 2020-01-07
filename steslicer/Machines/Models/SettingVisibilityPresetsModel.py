@@ -57,12 +57,12 @@ class SettingVisibilityPresetsModel(QObject):
         return result
 
     def _populate(self) -> None:
-        from steslicer.CuraApplication import CuraApplication
+        from steslicer.SteSlicerApplication import SteSlicerApplication
         items = []  # type: List[SettingVisibilityPreset]
 
         custom_preset = SettingVisibilityPreset(preset_id="custom", name ="Custom selection", weight = -100)
         items.append(custom_preset)
-        for file_path in Resources.getAllResourcesOfType(CuraApplication.ResourceTypes.SettingVisibilityPreset):
+        for file_path in Resources.getAllResourcesOfType(SteSlicerApplication.ResourceTypes.SettingVisibilityPreset):
             setting_visibility_preset = SettingVisibilityPreset()
             try:
                 setting_visibility_preset.loadFromFile(file_path)

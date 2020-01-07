@@ -55,8 +55,8 @@ class CuraContainerStack(ContainerStack):
 
         self.containersChanged.connect(self._onContainersChanged)
 
-        import steslicer.CuraApplication #Here to prevent circular imports.
-        self.setMetaDataEntry("setting_version", steslicer.CuraApplication.CuraApplication.SettingVersion)
+        import steslicer.SteSlicerApplication #Here to prevent circular imports.
+        self.setMetaDataEntry("setting_version", steslicer.SteSlicerApplication.SteSlicerApplication.SettingVersion)
 
     # This is emitted whenever the containersChanged signal from the ContainerStack base class is emitted.
     pyqtContainersChanged = pyqtSignal()

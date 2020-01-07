@@ -1,6 +1,6 @@
 import threading
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 #
@@ -28,7 +28,7 @@ def call_on_qt_thread(func):
             ico.finish_event.set()
         inter_call_object = InterCallObject()
         new_args = tuple([inter_call_object] + list(args)[:])
-        CuraApplication.getInstance().callLater(_handle_call, *new_args, **kwargs)
+        SteSlicerApplication.getInstance().callLater(_handle_call, *new_args, **kwargs)
         inter_call_object.finish_event.wait()
         return inter_call_object.result
     return _call_on_qt_thread_wrapper

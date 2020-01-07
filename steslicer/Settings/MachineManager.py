@@ -38,7 +38,7 @@ from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
     from steslicer.Settings.CuraContainerStack import CuraContainerStack
     from steslicer.Settings.GlobalStack import GlobalStack
     from steslicer.Machines.MaterialManager import MaterialManager
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
 
 
 class MachineManager(QObject):
-    def __init__(self, application: "CuraApplication", parent: Optional["QObject"] = None) -> None:
+    def __init__(self, application: "SteSlicerApplication", parent: Optional["QObject"] = None) -> None:
         super().__init__(parent)
 
         self._active_container_stack = None     # type: Optional[ExtruderStack]

@@ -10,7 +10,7 @@ from UM.Logger import Logger
 from UM.PluginRegistry import PluginRegistry  # So MachineAction can be added as plugin type
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
     from steslicer.Settings.GlobalStack import GlobalStack
     from .MachineAction import MachineAction
 
@@ -26,7 +26,7 @@ class NotUniqueMachineActionError(Exception):
 
 
 class MachineActionManager(QObject):
-    def __init__(self, application: "CuraApplication", parent: Optional["QObject"] = None) -> None:
+    def __init__(self, application: "SteSlicerApplication", parent: Optional["QObject"] = None) -> None:
         super().__init__(parent = parent)
         self._application = application
         self._container_registry = self._application.getContainerRegistry()

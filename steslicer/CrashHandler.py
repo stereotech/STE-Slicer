@@ -32,7 +32,7 @@ if MYPY:
     CuraDebugMode = False
 else:
     try:
-        from steslicer.CuraVersion import CuraDebugMode
+        from steslicer.SteSlicerVersion import CuraDebugMode
     except ImportError:
         CuraDebugMode = False  # [CodeStyle: Reflecting imported value]
 

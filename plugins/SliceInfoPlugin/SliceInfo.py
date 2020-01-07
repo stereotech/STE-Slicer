@@ -102,8 +102,8 @@ class SliceInfo(QObject, Extension):
         Application.getInstance().getPreferences().setValue("info/send_slice_info", enabled)
 
     def _getUserModifiedSettingKeys(self) -> list:
-        from steslicer.CuraApplication import CuraApplication
-        application = cast(CuraApplication, Application.getInstance())
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        application = cast(SteSlicerApplication, Application.getInstance())
         machine_manager = application.getMachineManager()
         global_stack = machine_manager.activeMachine
 
@@ -122,8 +122,8 @@ class SliceInfo(QObject, Extension):
                 Logger.log("d", "'info/send_slice_info' is turned off.")
                 return  # Do nothing, user does not want to send data
 
-            from steslicer.CuraApplication import CuraApplication
-            application = cast(CuraApplication, Application.getInstance())
+            from steslicer.SteSlicerApplication import SteSlicerApplication
+            application = cast(SteSlicerApplication, Application.getInstance())
             machine_manager = application.getMachineManager()
             print_information = application.getPrintInformation()
 

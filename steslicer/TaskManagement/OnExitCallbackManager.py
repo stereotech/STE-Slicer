@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Callable, List
 from UM.Logger import Logger
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 #
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 #
 class OnExitCallbackManager:
 
-    def __init__(self, application: "CuraApplication") -> None:
+    def __init__(self, application: "SteSlicerApplication") -> None:
         self._application = application
         self._on_exit_callback_list = list()  # type: List[Callable]
         self._current_callback_idx = 0

@@ -24,8 +24,8 @@ class CuraStackBuilder:
     #   \return The new global stack or None if an error occurred.
     @classmethod
     def createMachine(cls, name: str, definition_id: str) -> Optional[GlobalStack]:
-        from steslicer.CuraApplication import CuraApplication
-        application = CuraApplication.getInstance()
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        application = SteSlicerApplication.getInstance()
         variant_manager = application.getVariantManager()
         quality_manager = application.getQualityManager()
         registry = application.getContainerRegistry()
@@ -106,8 +106,8 @@ class CuraStackBuilder:
     #   \param extruder_position The position of the current extruder.
     @classmethod
     def createExtruderStackWithDefaultSetup(cls, global_stack: "GlobalStack", extruder_position: int) -> None:
-        from steslicer.CuraApplication import CuraApplication
-        application = CuraApplication.getInstance()
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        application = SteSlicerApplication.getInstance()
         variant_manager = application.getVariantManager()
         material_manager = application.getMaterialManager()
         registry = application.getContainerRegistry()
@@ -167,8 +167,8 @@ class CuraStackBuilder:
                             material_container: "InstanceContainer",
                             quality_container: "InstanceContainer") -> ExtruderStack:
 
-        from steslicer.CuraApplication import CuraApplication
-        application = CuraApplication.getInstance()
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        application = SteSlicerApplication.getInstance()
         registry = application.getContainerRegistry()
 
         stack = ExtruderStack(new_stack_id)
@@ -217,8 +217,8 @@ class CuraStackBuilder:
                           material_container: "InstanceContainer",
                           quality_container: "InstanceContainer") -> GlobalStack:
 
-        from steslicer.CuraApplication import CuraApplication
-        application = CuraApplication.getInstance()
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        application = SteSlicerApplication.getInstance()
         registry = application.getContainerRegistry()
 
         stack = GlobalStack(new_stack_id)
@@ -242,8 +242,8 @@ class CuraStackBuilder:
     @classmethod
     def createUserChangesContainer(cls, container_name: str, definition_id: str, stack_id: str,
                                    is_global_stack: bool) -> "InstanceContainer":
-        from steslicer.CuraApplication import CuraApplication
-        application = CuraApplication.getInstance()
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        application = SteSlicerApplication.getInstance()
         registry = application.getContainerRegistry()
 
         unique_container_name = registry.uniqueName(container_name)
@@ -251,7 +251,7 @@ class CuraStackBuilder:
         container = InstanceContainer(unique_container_name)
         container.setDefinition(definition_id)
         container.setMetaDataEntry("type", "user")
-        container.setMetaDataEntry("setting_version", CuraApplication.SettingVersion)
+        container.setMetaDataEntry("setting_version", SteSlicerApplication.SettingVersion)
 
         metadata_key_to_add = "machine" if is_global_stack else "extruder"
         container.setMetaDataEntry(metadata_key_to_add, stack_id)
@@ -260,8 +260,8 @@ class CuraStackBuilder:
 
     @classmethod
     def createDefinitionChangesContainer(cls, container_stack, container_name):
-        from steslicer.CuraApplication import CuraApplication
-        application = CuraApplication.getInstance()
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        application = SteSlicerApplication.getInstance()
         registry = application.getContainerRegistry()
 
         unique_container_name = registry.uniqueName(container_name)
@@ -269,7 +269,7 @@ class CuraStackBuilder:
         definition_changes_container = InstanceContainer(unique_container_name)
         definition_changes_container.setDefinition(container_stack.getBottom().getId())
         definition_changes_container.setMetaDataEntry("type", "definition_changes")
-        definition_changes_container.setMetaDataEntry("setting_version", CuraApplication.SettingVersion)
+        definition_changes_container.setMetaDataEntry("setting_version", SteSlicerApplication.SettingVersion)
 
         registry.addContainer(definition_changes_container)
         container_stack.definitionChanges = definition_changes_container

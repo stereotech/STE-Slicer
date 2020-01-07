@@ -80,10 +80,10 @@ if "PYTHONPATH" in os.environ.keys():                       # If PYTHONPATH is u
 
 def exceptHook(hook_type, value, traceback):
     from steslicer.CrashHandler import CrashHandler
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
     has_started = False
-    if CuraApplication.Created:
-        has_started = CuraApplication.getInstance().started
+    if SteSlicerApplication.Created:
+        has_started = SteSlicerApplication.getInstance().started
 
     #
     # When the exception hook is triggered, the QApplication may not have been initialized yet. In this case, we don't
@@ -100,14 +100,14 @@ def exceptHook(hook_type, value, traceback):
     # we run the old routine to show the Crash Dialog.
     #
     from PyQt5.Qt import QApplication
-    if CuraApplication.Created:
+    if SteSlicerApplication.Created:
         _crash_handler = CrashHandler(hook_type, value, traceback, has_started)
-        if CuraApplication.splash is not None:
-            CuraApplication.splash.close()
+        if SteSlicerApplication.splash is not None:
+            SteSlicerApplication.splash.close()
         if not has_started:
-            CuraApplication.getInstance().removePostedEvents(None)
+            SteSlicerApplication.getInstance().removePostedEvents(None)
             _crash_handler.early_crash_dialog.show()
-            sys.exit(CuraApplication.getInstance().exec_())
+            sys.exit(SteSlicerApplication.getInstance().exec_())
         else:
             _crash_handler.show()
     else:
@@ -115,8 +115,8 @@ def exceptHook(hook_type, value, traceback):
         application.removePostedEvents(None)
         _crash_handler = CrashHandler(hook_type, value, traceback, has_started)
         # This means the QtApplication could be created and so the splash screen. Then Cura closes it
-        if CuraApplication.splash is not None:
-            CuraApplication.splash.close()
+        if SteSlicerApplication.splash is not None:
+            SteSlicerApplication.splash.close()
         _crash_handler.early_crash_dialog.show()
         sys.exit(application.exec_())
 
@@ -132,7 +132,7 @@ faulthandler.enable(all_threads = True)
 # tries to create PyQt objects on a non-main thread.
 import Arcus #@UnusedImport
 import Savitar #@UnusedImport
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
-app = CuraApplication()
+app = SteSlicerApplication()
 app.run()

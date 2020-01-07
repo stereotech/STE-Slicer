@@ -10,7 +10,7 @@ from UM.Math.Polygon import Polygon #For typing.
 from UM.Scene.SceneNode import SceneNode
 from UM.Scene.SceneNodeDecorator import SceneNodeDecorator #To cast the deepcopy of every decorator back to SceneNodeDecorator.
 
-import steslicer.CuraApplication #To get the build plate.
+import steslicer.SteSlicerApplication #To get the build plate.
 from steslicer.Settings.ExtruderStack import ExtruderStack #For typing.
 from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator #For per-object settings.
 
@@ -30,10 +30,10 @@ class CuraSceneNode(SceneNode):
         return self._outside_buildarea or self.callDecoration("getBuildPlateNumber") < 0
 
     def isVisible(self) -> bool:
-        return super().isVisible() and self.callDecoration("getBuildPlateNumber") == steslicer.CuraApplication.CuraApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
+        return super().isVisible() and self.callDecoration("getBuildPlateNumber") == steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
 
     def isSelectable(self) -> bool:
-        return super().isSelectable() and self.callDecoration("getBuildPlateNumber") == steslicer.CuraApplication.CuraApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
+        return super().isSelectable() and self.callDecoration("getBuildPlateNumber") == steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
 
     ##  Get the extruder used to print this node. If there is no active node, then the extruder in position zero is returned
     #   TODO The best way to do it is by adding the setActiveExtruder decorator to every node when is loaded

@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 
 from UM.VersionUpgrade import VersionUpgrade
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from .XmlMaterialProfile import XmlMaterialProfile
 
 

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from UM.FileHandler.FileHandler import FileHandler
 from UM.Scene.SceneNode import SceneNode
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.PrinterOutput.NetworkedPrinterOutputDevice import NetworkedPrinterOutputDevice, AuthState
 from steslicer.PrinterOutput.PrinterOutputModel import PrinterOutputModel
 from steslicer.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
@@ -127,7 +127,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
     def connect(self):
         super().connect()
         self._setupMessages()
-        global_container = CuraApplication.getInstance().getGlobalContainerStack()
+        global_container = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if global_container:
             self._authentication_id = global_container.getMetaDataEntry("network_authentication_id", None)
             self._authentication_key = global_container.getMetaDataEntry("network_authentication_key", None)
@@ -185,8 +185,8 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
 
         self.writeStarted.emit(self)
 
-        gcode_dict = getattr(CuraApplication.getInstance().getController().getScene(), "gcode_dict", [])
-        active_build_plate_id = CuraApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
+        gcode_dict = getattr(SteSlicerApplication.getInstance().getController().getScene(), "gcode_dict", [])
+        active_build_plate_id = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
         gcode_list = gcode_dict[active_build_plate_id]
 
         if not gcode_list:
@@ -205,14 +205,14 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
             for error in errors:
                 detailed_text += error + "\n"
 
-            CuraApplication.getInstance().messageBox(i18n_catalog.i18nc("@window:title", "Mismatched configuration"),
-                                                 text,
-                                                 informative_text,
-                                                 detailed_text,
-                                                 buttons=QMessageBox.Ok,
-                                                 icon=QMessageBox.Critical,
-                                                callback = self._messageBoxCallback
-                                                 )
+            SteSlicerApplication.getInstance().messageBox(i18n_catalog.i18nc("@window:title", "Mismatched configuration"),
+                                                          text,
+                                                          informative_text,
+                                                          detailed_text,
+                                                          buttons=QMessageBox.Ok,
+                                                          icon=QMessageBox.Critical,
+                                                          callback = self._messageBoxCallback
+                                                          )
             return  # Don't continue; Errors must block sending the job to the printer.
 
         # There might be multiple things wrong with the configuration. Check these before starting.
@@ -227,21 +227,21 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
             for warning in warnings:
                 detailed_text += warning + "\n"
 
-            CuraApplication.getInstance().messageBox(i18n_catalog.i18nc("@window:title", "Mismatched configuration"),
-                                                 text,
-                                                 informative_text,
-                                                 detailed_text,
-                                                 buttons=QMessageBox.Yes + QMessageBox.No,
-                                                 icon=QMessageBox.Question,
-                                                 callback=self._messageBoxCallback
-                                                 )
+            SteSlicerApplication.getInstance().messageBox(i18n_catalog.i18nc("@window:title", "Mismatched configuration"),
+                                                          text,
+                                                          informative_text,
+                                                          detailed_text,
+                                                          buttons=QMessageBox.Yes + QMessageBox.No,
+                                                          icon=QMessageBox.Question,
+                                                          callback=self._messageBoxCallback
+                                                          )
             return
 
         # No warnings or errors, so we're good to go.
         self._startPrint()
 
         # Notify the UI that a switch to the print monitor should happen
-        CuraApplication.getInstance().getController().setActiveStage("MonitorStage")
+        SteSlicerApplication.getInstance().getController().setActiveStage("MonitorStage")
 
     def _startPrint(self):
         Logger.log("i", "Sending print job to printer.")
@@ -266,7 +266,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
             # Abort was called.
             return
 
-        file_name = "%s.gcode.gz" % CuraApplication.getInstance().getPrintInformation().jobName
+        file_name = "%s.gcode.gz" % SteSlicerApplication.getInstance().getPrintInformation().jobName
         self.postForm("print_job", "form-data; name=\"file\";filename=\"%s\"" % file_name, compressed_gcode,
                       on_finished=self._onPostPrintJobFinished)
 
@@ -278,7 +278,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
             self._progress_message.hide()
             self._compressing_gcode = False
             self._sending_gcode = False
-            CuraApplication.getInstance().getController().setActiveStage("PrepareStage")
+            SteSlicerApplication.getInstance().getController().setActiveStage("PrepareStage")
 
     def _onPostPrintJobFinished(self, reply):
         self._progress_message.hide()
@@ -303,7 +303,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
             if button == QMessageBox.Yes:
                 self._startPrint()
             else:
-                CuraApplication.getInstance().getController().setActiveStage("PrepareStage")
+                SteSlicerApplication.getInstance().getController().setActiveStage("PrepareStage")
                 # For some unknown reason Cura on OSX will hang if we do the call back code
                 # immediately without first returning and leaving QML's event system.
 
@@ -311,7 +311,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
 
     def _checkForErrors(self):
         errors = []
-        print_information = CuraApplication.getInstance().getPrintInformation()
+        print_information = SteSlicerApplication.getInstance().getPrintInformation()
         if not print_information.materialLengths:
             Logger.log("w", "There is no material length information. Unable to check for errors.")
             return errors
@@ -331,7 +331,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
 
     def _checkForWarnings(self):
         warnings = []
-        print_information = CuraApplication.getInstance().getPrintInformation()
+        print_information = SteSlicerApplication.getInstance().getPrintInformation()
 
         if not print_information.materialLengths:
             Logger.log("w", "There is no material length information. Unable to check for warnings.")
@@ -454,7 +454,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
             self._authentication_failed_message.show()
 
     def _saveAuthentication(self) -> None:
-        global_container_stack = CuraApplication.getInstance().getGlobalContainerStack()
+        global_container_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if self._authentication_key is None:
             Logger.log("e", "Authentication key is None, nothing to save.")
             return
@@ -467,7 +467,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
             global_container_stack.setMetaDataEntry("network_authentication_id", self._authentication_id)
 
             # Force save so we are sure the data is not lost.
-            CuraApplication.getInstance().saveStack(global_container_stack)
+            SteSlicerApplication.getInstance().saveStack(global_container_stack)
             Logger.log("i", "Authentication succeeded for id %s and key %s", self._authentication_id,
                        self._getSafeAuthKey())
         else:
@@ -498,7 +498,7 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
         self._authentication_id = None
 
         self.post("auth/request",
-                  json.dumps({"application": "Cura-" + CuraApplication.getInstance().getVersion(),
+                  json.dumps({"application": "Cura-" + SteSlicerApplication.getInstance().getVersion(),
                               "user": self._getUserName()}),
                   on_finished=self._onRequestAuthenticationFinished)
 
@@ -544,15 +544,15 @@ class LegacyUM3OutputDevice(NetworkedPrinterOutputDevice):
                        "Got status code {status_code} while trying to get printer data".format(status_code=status_code))
 
     def materialHotendChangedMessage(self, callback):
-        CuraApplication.getInstance().messageBox(i18n_catalog.i18nc("@window:title", "Sync with your printer"),
-                                             i18n_catalog.i18nc("@label",
+        SteSlicerApplication.getInstance().messageBox(i18n_catalog.i18nc("@window:title", "Sync with your printer"),
+                                                      i18n_catalog.i18nc("@label",
                                                                 "Would you like to use your current printer configuration in Cura?"),
-                                             i18n_catalog.i18nc("@label",
+                                                      i18n_catalog.i18nc("@label",
                                                                 "The PrintCores and/or materials on your printer differ from those within your current project. For the best result, always slice for the PrintCores and materials that are inserted in your printer."),
-                                             buttons=QMessageBox.Yes + QMessageBox.No,
-                                             icon=QMessageBox.Question,
-                                             callback=callback
-                                             )
+                                                      buttons=QMessageBox.Yes + QMessageBox.No,
+                                                      icon=QMessageBox.Question,
+                                                      callback=callback
+                                                      )
 
     def _onGetPrinterDataFinished(self, reply):
         status_code = reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)

@@ -8,7 +8,7 @@ from UM.Math.Matrix import Matrix
 from UM.Application import Application
 from UM.Scene.SceneNode import SceneNode
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
 import Savitar
 
@@ -71,7 +71,7 @@ class ThreeMFWriter(MeshWriter):
         if not isinstance(um_node, SceneNode):
             return None
 
-        active_build_plate_nr = CuraApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
+        active_build_plate_nr = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
         if um_node.callDecoration("getBuildPlateNumber") != active_build_plate_nr:
             return
 

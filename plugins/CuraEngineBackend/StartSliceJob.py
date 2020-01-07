@@ -19,7 +19,7 @@ from UM.Scene.Scene import Scene #For typing.
 from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
 
-from steslicer.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.CuraSceneNode import CuraSceneNode
 from steslicer.OneAtATimeIterator import OneAtATimeIterator
 from steslicer.Settings.ExtruderManager import ExtruderManager
@@ -78,7 +78,7 @@ class StartSliceJob(Job):
     def __init__(self, slice_message: Arcus.PythonMessage) -> None:
         super().__init__()
 
-        self._scene = CuraApplication.getInstance().getController().getScene() #type: Scene
+        self._scene = SteSlicerApplication.getInstance().getController().getScene() #type: Scene
         self._slice_message = slice_message #type: Arcus.PythonMessage
         self._is_cancelled = False #type: bool
         self._build_plate_number = None #type: Optional[int]
@@ -111,23 +111,23 @@ class StartSliceJob(Job):
             self.setResult(StartJobResult.Error)
             return
 
-        stack = CuraApplication.getInstance().getGlobalContainerStack()
+        stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if not stack:
             self.setResult(StartJobResult.Error)
             return
 
         # Don't slice if there is a setting with an error value.
-        if CuraApplication.getInstance().getMachineManager().stacksHaveErrors:
+        if SteSlicerApplication.getInstance().getMachineManager().stacksHaveErrors:
             self.setResult(StartJobResult.SettingError)
             return
 
-        if CuraApplication.getInstance().getBuildVolume().hasErrors():
+        if SteSlicerApplication.getInstance().getBuildVolume().hasErrors():
             self.setResult(StartJobResult.BuildPlateError)
             return
 
         # Don't slice if the buildplate or the nozzle type is incompatible with the materials
-        if not CuraApplication.getInstance().getMachineManager().variantBuildplateCompatible and \
-                not CuraApplication.getInstance().getMachineManager().variantBuildplateUsable:
+        if not SteSlicerApplication.getInstance().getMachineManager().variantBuildplateCompatible and \
+                not SteSlicerApplication.getInstance().getMachineManager().variantBuildplateUsable:
             self.setResult(StartJobResult.MaterialIncompatible)
             return
 
@@ -213,7 +213,7 @@ class StartSliceJob(Job):
                 if temp_list:
                     object_groups.append(temp_list)
 
-            global_stack = CuraApplication.getInstance().getGlobalContainerStack()
+            global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
             if not global_stack:
                 return
             extruders_enabled = {position: stack.isEnabled for position, stack in global_stack.extruders.items()}
@@ -322,7 +322,7 @@ class StartSliceJob(Job):
         result["date"] = time.strftime("%d-%m-%Y")
         result["day"] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
 
-        initial_extruder_stack = CuraApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
+        initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
         result["initial_extruder_nr"] = initial_extruder_nr
 
@@ -333,7 +333,7 @@ class StartSliceJob(Job):
     #   \param default_extruder_nr Stack nr to use when no stack nr is specified, defaults to the global stack
     def _expandGcodeTokens(self, value: str, default_extruder_nr: int = -1) -> str:
         if not self._all_extruders_settings:
-            global_stack = cast(ContainerStack, CuraApplication.getInstance().getGlobalContainerStack())
+            global_stack = cast(ContainerStack, SteSlicerApplication.getInstance().getGlobalContainerStack())
 
             # NB: keys must be strings for the string formatter
             self._all_extruders_settings = {
@@ -396,7 +396,7 @@ class StartSliceJob(Job):
 
         # Replace the setting tokens in start and end g-code.
         # Use values from the first used extruder by default so we get the expected temperatures
-        initial_extruder_stack = CuraApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
+        initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
 
         settings["machine_start_gcode"] = self._expandGcodeTokens(settings["machine_start_gcode"], initial_extruder_nr)

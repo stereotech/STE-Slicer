@@ -7,7 +7,7 @@ from UM.Logger import Logger
 from steslicer.Backups.Backup import Backup
 
 if TYPE_CHECKING:
-    from steslicer.CuraApplication import CuraApplication
+    from steslicer.SteSlicerApplication import SteSlicerApplication
 
 
 ##  The BackupsManager is responsible for managing the creating and restoring of
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 #
 #   Back-ups themselves are represented in a different class.
 class BackupsManager:
-    def __init__(self, application: "CuraApplication") -> None:
+    def __init__(self, application: "SteSlicerApplication") -> None:
         self._application = application
 
     ##  Get a back-up of the current configuration.
