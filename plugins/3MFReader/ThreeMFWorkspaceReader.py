@@ -25,10 +25,10 @@ from UM.Job import Job
 from UM.Preferences import Preferences
 
 from steslicer.Machines.VariantType import VariantType
-from steslicer.Settings.CuraStackBuilder import CuraStackBuilder
+from steslicer.Settings.SteSlicerStackBuilder import SteSlicerStackBuilder
 from steslicer.Settings.ExtruderStack import ExtruderStack
 from steslicer.Settings.GlobalStack import GlobalStack
-from steslicer.Settings.CuraContainerStack import _ContainerIndexes
+from steslicer.Settings.SteSlicerContainerStack import _ContainerIndexes
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Utils.Threading import call_on_qt_thread
 
@@ -611,7 +611,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
             # We need to create a new machine
             machine_name = self._container_registry.uniqueName(self._machine_info.name)
 
-            global_stack = CuraStackBuilder.createMachine(machine_name, self._machine_info.definition_id)
+            global_stack = SteSlicerStackBuilder.createMachine(machine_name, self._machine_info.definition_id)
             if global_stack: #Only switch if creating the machine was successful.
                 extruder_stack_dict = global_stack.extruders
 

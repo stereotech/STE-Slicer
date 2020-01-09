@@ -8,11 +8,11 @@ from UM.Decorators import override
 from UM.Settings.Interfaces import PropertyEvaluationContext
 from UM.Settings.SettingInstance import InstanceState
 
-from .CuraContainerStack import CuraContainerStack
+from .SteSlicerContainerStack import SteSlicerContainerStack
 
 
-class PerObjectContainerStack(CuraContainerStack):
-    @override(CuraContainerStack)
+class PerObjectContainerStack(SteSlicerContainerStack):
+    @override(SteSlicerContainerStack)
     def getProperty(self, key: str, property_name: str, context: Optional[PropertyEvaluationContext] = None) -> Any:
         if context is None:
             context = PropertyEvaluationContext()
@@ -56,8 +56,8 @@ class PerObjectContainerStack(CuraContainerStack):
         context.popContainer()
         return result
 
-    @override(CuraContainerStack)
-    def setNextStack(self, stack: CuraContainerStack) -> None:
+    @override(SteSlicerContainerStack)
+    def setNextStack(self, stack: SteSlicerContainerStack) -> None:
         super().setNextStack(stack)
 
         # trigger signal to re-evaluate all default settings

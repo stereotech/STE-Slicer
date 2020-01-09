@@ -25,21 +25,21 @@ from steslicer.PrinterOutputDevice import PrinterOutputDevice
 from steslicer.PrinterOutput.ConfigurationModel import ConfigurationModel
 from steslicer.PrinterOutput.ExtruderConfigurationModel import ExtruderConfigurationModel
 from steslicer.PrinterOutput.MaterialOutputModel import MaterialOutputModel
-from steslicer.Settings.CuraContainerRegistry import CuraContainerRegistry
+from steslicer.Settings.SteSlicerContainerRegistry import SteSlicerContainerRegistry
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.Settings.ExtruderStack import ExtruderStack
-from steslicer.Settings.cura_empty_instance_containers import (empty_definition_changes_container, empty_variant_container,
-                                                               empty_material_container, empty_quality_container,
-                                                               empty_quality_changes_container)
+from steslicer.Settings.steslicer_empty_instance_containers import (empty_definition_changes_container, empty_variant_container,
+                                                                    empty_material_container, empty_quality_container,
+                                                                    empty_quality_changes_container)
 
-from .CuraStackBuilder import CuraStackBuilder
+from .SteSlicerStackBuilder import SteSlicerStackBuilder
 
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
 
 if TYPE_CHECKING:
     from steslicer.SteSlicerApplication import SteSlicerApplication
-    from steslicer.Settings.CuraContainerStack import CuraContainerStack
+    from steslicer.Settings.SteSlicerContainerStack import SteSlicerContainerStack
     from steslicer.Settings.GlobalStack import GlobalStack
     from steslicer.Machines.MaterialManager import MaterialManager
     from steslicer.Machines.QualityManager import QualityManager
@@ -117,7 +117,7 @@ class MachineManager(QObject):
                                                 "The selected material is incompatible with the selected machine or configuration."),
                                                 title = catalog.i18nc("@info:title", "Incompatible Material")) #type: Message
 
-        containers = CuraContainerRegistry.getInstance().findInstanceContainers(id = self.activeMaterialId) #type: List[InstanceContainer]
+        containers = SteSlicerContainerRegistry.getInstance().findInstanceContainers(id = self.activeMaterialId) #type: List[InstanceContainer]
         if containers:
             containers[0].nameChanged.connect(self._onMaterialNameChanged)
 
@@ -163,7 +163,7 @@ class MachineManager(QObject):
 
     def setInitialActiveMachine(self) -> None:
         active_machine_id = self._application.getPreferences().getValue("steslicer/active_machine")
-        if active_machine_id != "" and CuraContainerRegistry.getInstance().findContainerStacksMetadata(id = active_machine_id):
+        if active_machine_id != "" and SteSlicerContainerRegistry.getInstance().findContainerStacksMetadata(id = active_machine_id):
             # An active machine was saved, so restore it.
             self.setActiveMachine(active_machine_id)
 
@@ -216,7 +216,7 @@ class MachineManager(QObject):
 
     @pyqtProperty(int, constant=True)
     def totalNumberOfSettings(self) -> int:
-        general_definition_containers = CuraContainerRegistry.getInstance().findDefinitionContainers(id = "fdmprinter")
+        general_definition_containers = SteSlicerContainerRegistry.getInstance().findDefinitionContainers(id ="fdmprinter")
         if not general_definition_containers:
             return 0
         return len(general_definition_containers[0].getAllKeys())
@@ -305,7 +305,7 @@ class MachineManager(QObject):
             self.activeStackValueChanged.emit()
 
     ## Given a global_stack, make sure that it's all valid by searching for this quality group and applying it again
-    def _initMachineState(self, global_stack: "CuraContainerStack") -> None:
+    def _initMachineState(self, global_stack: "SteSlicerContainerStack") -> None:
         material_dict = {}
         for position, extruder in global_stack.extruders.items():
             material_dict[position] = extruder.material.getMetaDataEntry("base_file")
@@ -359,7 +359,7 @@ class MachineManager(QObject):
     def setActiveMachine(self, stack_id: str) -> None:
         self.blurSettings.emit()  # Ensure no-one has focus.
 
-        container_registry = CuraContainerRegistry.getInstance()
+        container_registry = SteSlicerContainerRegistry.getInstance()
 
         containers = container_registry.findContainerStacks(id = stack_id)
         if not containers:
@@ -392,7 +392,7 @@ class MachineManager(QObject):
     def getMachine(definition_id: str, metadata_filter: Optional[Dict[str, str]] = None) -> Optional["GlobalStack"]:
         if metadata_filter is None:
             metadata_filter = {}
-        machines = CuraContainerRegistry.getInstance().findContainerStacks(type = "machine", **metadata_filter)
+        machines = SteSlicerContainerRegistry.getInstance().findContainerStacks(type ="machine", **metadata_filter)
         for machine in machines:
             if machine.definition.getId() == definition_id:
                 return machine
@@ -400,7 +400,7 @@ class MachineManager(QObject):
 
     @pyqtSlot(str, str)
     def addMachine(self, name: str, definition_id: str) -> None:
-        new_stack = CuraStackBuilder.createMachine(name, definition_id)
+        new_stack = SteSlicerStackBuilder.createMachine(name, definition_id)
         if new_stack:
             # Instead of setting the global container stack here, we set the active machine and so the signals are emitted
             self.setActiveMachine(new_stack.getId())
@@ -636,7 +636,7 @@ class MachineManager(QObject):
     ## Check if a container is read_only
     @pyqtSlot(str, result = bool)
     def isReadOnly(self, container_id: str) -> bool:
-        return CuraContainerRegistry.getInstance().isReadOnly(container_id)
+        return SteSlicerContainerRegistry.getInstance().isReadOnly(container_id)
 
     ## Copy the value of the setting of the current extruder to all other extruders as well as the global container.
     @pyqtSlot(str)
@@ -719,7 +719,7 @@ class MachineManager(QObject):
 
     @pyqtSlot(str, str)
     def renameMachine(self, machine_id: str, new_name: str) -> None:
-        container_registry = CuraContainerRegistry.getInstance()
+        container_registry = SteSlicerContainerRegistry.getInstance()
         machine_stack = container_registry.findContainerStacks(id = machine_id)
         if machine_stack:
             new_name = container_registry.createUniqueName("machine", machine_stack[0].getName(), new_name, machine_stack[0].definition.getName())
@@ -733,23 +733,23 @@ class MachineManager(QObject):
 
         # activate a new machine before removing a machine because this is safer
         if activate_new_machine:
-            machine_stacks = CuraContainerRegistry.getInstance().findContainerStacksMetadata(type = "machine")
+            machine_stacks = SteSlicerContainerRegistry.getInstance().findContainerStacksMetadata(type ="machine")
             other_machine_stacks = [s for s in machine_stacks if s["id"] != machine_id]
             if other_machine_stacks:
                 self.setActiveMachine(other_machine_stacks[0]["id"])
 
-        metadata = CuraContainerRegistry.getInstance().findContainerStacksMetadata(id = machine_id)[0]
+        metadata = SteSlicerContainerRegistry.getInstance().findContainerStacksMetadata(id = machine_id)[0]
         network_key = metadata["um_network_key"] if "um_network_key" in metadata else None
         ExtruderManager.getInstance().removeMachineExtruders(machine_id)
-        containers = CuraContainerRegistry.getInstance().findInstanceContainersMetadata(type = "user", machine = machine_id)
+        containers = SteSlicerContainerRegistry.getInstance().findInstanceContainersMetadata(type ="user", machine = machine_id)
         for container in containers:
-            CuraContainerRegistry.getInstance().removeContainer(container["id"])
-        CuraContainerRegistry.getInstance().removeContainer(machine_id)
+            SteSlicerContainerRegistry.getInstance().removeContainer(container["id"])
+        SteSlicerContainerRegistry.getInstance().removeContainer(machine_id)
 
         # If the printer that is being removed is a network printer, the hidden printers have to be also removed
         if network_key:
             metadata_filter = {"um_network_key": network_key}
-            hidden_containers = CuraContainerRegistry.getInstance().findContainerStacks(type = "machine", **metadata_filter)
+            hidden_containers = SteSlicerContainerRegistry.getInstance().findContainerStacks(type ="machine", **metadata_filter)
             if hidden_containers:
                 # This reuses the method and remove all printers recursively
                 self.removeMachine(hidden_containers[0].getId())
@@ -820,7 +820,7 @@ class MachineManager(QObject):
     #   \returns DefinitionID if found, None otherwise
     @pyqtSlot(str, result = str)
     def getDefinitionByMachineId(self, machine_id: str) -> Optional[str]:
-        containers = CuraContainerRegistry.getInstance().findContainerStacks(id = machine_id)
+        containers = SteSlicerContainerRegistry.getInstance().findContainerStacks(id = machine_id)
         if containers:
             return containers[0].definition.getId()
         return None
@@ -1308,12 +1308,12 @@ class MachineManager(QObject):
         if self._global_container_stack is None or self.activeMachineDefinitionName == machine_name:
             return
         # Get the definition id corresponding to this machine name
-        machine_definition_id = CuraContainerRegistry.getInstance().findDefinitionContainers(name = machine_name)[0].getId()
+        machine_definition_id = SteSlicerContainerRegistry.getInstance().findDefinitionContainers(name = machine_name)[0].getId()
         # Try to find a machine with the same network key
         new_machine = self.getMachine(machine_definition_id, metadata_filter = {"um_network_key": self.activeMachineNetworkKey})
         # If there is no machine, then create a new one and set it to the non-hidden instance
         if not new_machine:
-            new_machine = CuraStackBuilder.createMachine(machine_definition_id + "_sync", machine_definition_id)
+            new_machine = SteSlicerStackBuilder.createMachine(machine_definition_id + "_sync", machine_definition_id)
             if not new_machine:
                 return
             new_machine.setMetaDataEntry("um_network_key", self.activeMachineNetworkKey)
@@ -1371,7 +1371,7 @@ class MachineManager(QObject):
 
     ##  Find all container stacks that has the pair 'key = value' in its metadata and replaces the value with 'new_value'
     def replaceContainersMetadata(self, key: str, value: str, new_value: str) -> None:
-        machines = CuraContainerRegistry.getInstance().findContainerStacks(type = "machine")
+        machines = SteSlicerContainerRegistry.getInstance().findContainerStacks(type ="machine")
         for machine in machines:
             if machine.getMetaDataEntry(key) == value:
                 machine.setMetaDataEntry(key, new_value)
@@ -1384,14 +1384,14 @@ class MachineManager(QObject):
             # Check if the connect_group_name is correct. If not, update all the containers connected to the same printer
             if self.activeMachineNetworkGroupName != group_name:
                 metadata_filter = {"um_network_key": self.activeMachineNetworkKey}
-                containers = CuraContainerRegistry.getInstance().findContainerStacks(type = "machine", **metadata_filter)
+                containers = SteSlicerContainerRegistry.getInstance().findContainerStacks(type ="machine", **metadata_filter)
                 for container in containers:
                     container.setMetaDataEntry("connect_group_name", group_name)
 
     ##  This method checks if there is an instance connected to the given network_key
     def existNetworkInstances(self, network_key: str) -> bool:
         metadata_filter = {"um_network_key": network_key}
-        containers = CuraContainerRegistry.getInstance().findContainerStacks(type = "machine", **metadata_filter)
+        containers = SteSlicerContainerRegistry.getInstance().findContainerStacks(type ="machine", **metadata_filter)
         return bool(containers)
 
     @pyqtSlot("QVariant")

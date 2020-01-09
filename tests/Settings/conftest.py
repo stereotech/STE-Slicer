@@ -9,16 +9,16 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.ContainerStack import setContainerRegistry
 from UM.Settings.DefinitionContainer import DefinitionContainer #To provide definition containers in the registry fixtures.
 from UM.Settings.InstanceContainer import InstanceContainer
-from steslicer.Settings.CuraContainerRegistry import CuraContainerRegistry
+from steslicer.Settings.SteSlicerContainerRegistry import SteSlicerContainerRegistry
 from steslicer.Settings.ExtruderStack import ExtruderStack
 from steslicer.Settings.GlobalStack import GlobalStack
-import steslicer.Settings.CuraContainerStack
+import steslicer.Settings.SteSlicerContainerStack
 
 # Returns the CuraContainerRegistry instance with some empty containers.
 @pytest.fixture()
-def container_registry(application) -> CuraContainerRegistry:
+def container_registry(application) -> SteSlicerContainerRegistry:
     ContainerRegistry._ContainerRegistry__instance= None    # Need to reset since we only allow one instance
-    registry = CuraContainerRegistry(application)
+    registry = SteSlicerContainerRegistry(application)
     setContainerRegistry(registry)
     return registry
 
@@ -42,7 +42,7 @@ def definition_changes_container() -> InstanceContainer:
 @pytest.fixture()
 def global_stack(definition_changes_container) -> GlobalStack:
     global_stack = GlobalStack("TestGlobalStack")
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.DefinitionChanges] = definition_changes_container
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.DefinitionChanges] = definition_changes_container
     return global_stack
 
 # An empty extruder stack to test with.
@@ -50,5 +50,5 @@ def global_stack(definition_changes_container) -> GlobalStack:
 @pytest.fixture()
 def extruder_stack(definition_changes_container) -> ExtruderStack:
     extruder_stack= ExtruderStack("TestExtruderStack")
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.DefinitionChanges] = definition_changes_container
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.DefinitionChanges] = definition_changes_container
     return extruder_stack

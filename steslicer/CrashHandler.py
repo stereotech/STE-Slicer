@@ -180,11 +180,11 @@ class CrashHandler:
 
         try:
             from UM.Application import Application
-            self.cura_version = Application.getInstance().getVersion()
+            self.steslicer_version = Application.getInstance().getVersion()
         except:
-            self.cura_version = catalog.i18nc("@label unknown version of Cura", "Unknown")
+            self.steslicer_version = catalog.i18nc("@label unknown version of Cura", "Unknown")
 
-        crash_info = "<b>" + catalog.i18nc("@label Cura version number", "Cura version") + ":</b> " + str(self.cura_version) + "<br/>"
+        crash_info = "<b>" + catalog.i18nc("@label Cura version number", "Cura version") + ":</b> " + str(self.steslicer_version) + "<br/>"
         crash_info += "<b>" + catalog.i18nc("@label Type of platform", "Platform") + ":</b> " + str(platform.platform()) + "<br/>"
         crash_info += "<b>" + catalog.i18nc("@label", "Qt version") + ":</b> " + str(QT_VERSION_STR) + "<br/>"
         crash_info += "<b>" + catalog.i18nc("@label", "PyQt version") + ":</b> " + str(PYQT_VERSION_STR) + "<br/>"
@@ -194,7 +194,7 @@ class CrashHandler:
         layout.addWidget(label)
         group.setLayout(layout)
 
-        self.data["cura_version"] = self.cura_version
+        self.data["steslicer_version"] = self.steslicer_version
         self.data["os"] = {"type": platform.system(), "version": platform.version()}
         self.data["qt_version"] = QT_VERSION_STR
         self.data["pyqt_version"] = PYQT_VERSION_STR
@@ -267,7 +267,7 @@ class CrashHandler:
 
         # Look for plugins. If it's not a plugin, the current steslicer version is set
         isPlugin = False
-        module_version = self.cura_version
+        module_version = self.steslicer_version
         module_name = "Cura"
         if split_path.__contains__("plugins"):
             isPlugin = True

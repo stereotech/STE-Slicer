@@ -20,7 +20,7 @@ from UM.Util import parseBool
 import steslicer.SteSlicerApplication
 
 from . import Exceptions
-from .CuraContainerStack import CuraContainerStack
+from .SteSlicerContainerStack import SteSlicerContainerStack
 
 if TYPE_CHECKING:
     from steslicer.Settings.ExtruderStack import ExtruderStack
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 ##  Represents the Global or Machine stack and its related containers.
 #
-class GlobalStack(CuraContainerStack):
+class GlobalStack(SteSlicerContainerStack):
     def __init__(self, container_id: str) -> None:
         super().__init__(container_id)
 
@@ -145,7 +145,7 @@ class GlobalStack(CuraContainerStack):
     #
     #   This will simply raise an exception since the Global stack cannot have a next stack.
     @override(ContainerStack)
-    def setNextStack(self, stack: CuraContainerStack, connect_signals: bool = True) -> None:
+    def setNextStack(self, stack: SteSlicerContainerStack, connect_signals: bool = True) -> None:
         raise Exceptions.InvalidOperationError("Global stack cannot have a next stack!")
 
     # protected:

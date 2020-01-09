@@ -8,14 +8,14 @@ from UM.Settings.SettingFunction import SettingFunction
 
 if TYPE_CHECKING:
     from steslicer.SteSlicerApplication import SteSlicerApplication
-    from steslicer.Settings.CuraContainerStack import CuraContainerStack
+    from steslicer.Settings.SteSlicerContainerStack import SteSlicerContainerStack
 
 
 #
 # This class contains all Cura-related custom functions that can be used in formulas. Some functions requires
 # information such as the currently active machine, so this is made into a class instead of standalone functions.
 #
-class CuraFormulaFunctions:
+class SteSlicerFormulaFunctions:
 
     def __init__(self, application: "SteSlicerApplication") -> None:
         self._application = application
@@ -119,7 +119,7 @@ class CuraFormulaFunctions:
         return self.getResolveOrValue(property_key, context = context)
 
     # Creates a context for evaluating default values (skip the user_changes container).
-    def createContextForDefaultValueEvaluation(self, source_stack: "CuraContainerStack") -> "PropertyEvaluationContext":
+    def createContextForDefaultValueEvaluation(self, source_stack: "SteSlicerContainerStack") -> "PropertyEvaluationContext":
         context = PropertyEvaluationContext(source_stack)
         context.context["evaluate_from_container_index"] = 1  # skip the user settings container
         context.context["override_operators"] = {

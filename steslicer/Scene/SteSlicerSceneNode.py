@@ -128,7 +128,7 @@ class SteSlicerSceneNode(SceneNode):
                 aabb = aabb + child.getBoundingBox()
         self._aabb = aabb
 
-    ##  Taken from SceneNode, but replaced SceneNode with CuraSceneNode
+    ##  Taken from SceneNode, but replaced SceneNode with SteSlicerSceneNode
     def __deepcopy__(self, memo: Dict[int, object]) -> "SteSlicerSceneNode":
         copy = SteSlicerSceneNode(no_setting_override = True)  # Setting override will be added later
         copy.setTransformation(self.getLocalTransformation())

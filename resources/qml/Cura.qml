@@ -9,7 +9,7 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 
 import UM 1.3 as UM
-import Cura 1.1 as Cura
+import Cura 1.0 as Cura
 
 import "Menus"
 

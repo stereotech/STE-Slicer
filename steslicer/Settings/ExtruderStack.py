@@ -15,7 +15,7 @@ from UM.Util import parseBool
 import steslicer.SteSlicerApplication
 
 from . import Exceptions
-from .CuraContainerStack import CuraContainerStack, _ContainerIndexes
+from .SteSlicerContainerStack import SteSlicerContainerStack, _ContainerIndexes
 from .ExtruderManager import ExtruderManager
 
 if TYPE_CHECKING:
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 ##  Represents an Extruder and its related containers.
 #
 #
-class ExtruderStack(CuraContainerStack):
+class ExtruderStack(SteSlicerContainerStack):
     def __init__(self, container_id: str) -> None:
         super().__init__(container_id)
 
@@ -39,7 +39,7 @@ class ExtruderStack(CuraContainerStack):
     #
     #   This will set the next stack and ensure that we register this stack as an extruder.
     @override(ContainerStack)
-    def setNextStack(self, stack: CuraContainerStack, connect_signals: bool = True) -> None:
+    def setNextStack(self, stack: SteSlicerContainerStack, connect_signals: bool = True) -> None:
         super().setNextStack(stack)
         stack.addExtruder(self)
         self.setMetaDataEntry("machine", stack.id)
@@ -146,14 +146,14 @@ class ExtruderStack(CuraContainerStack):
         context.popContainer()
         return result
 
-    @override(CuraContainerStack)
+    @override(SteSlicerContainerStack)
     def _getMachineDefinition(self) -> ContainerInterface:
         if not self.getNextStack():
             raise Exceptions.NoGlobalStackError("Extruder {id} is missing the next stack!".format(id = self.id))
 
         return self.getNextStack()._getMachineDefinition()
 
-    @override(CuraContainerStack)
+    @override(SteSlicerContainerStack)
     def deserialize(self, contents: str, file_name: Optional[str] = None) -> None:
         super().deserialize(contents, file_name)
         if "enabled" not in self.getMetaData():

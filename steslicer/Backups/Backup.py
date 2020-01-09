@@ -36,10 +36,10 @@ class Backup:
 
     ##  Create a back-up from the current user config folder.
     def makeFromCurrent(self) -> None:
-        cura_release = self._application.getVersion()
+        steslicer_release = self._application.getVersion()
         version_data_dir = Resources.getDataStoragePath()
 
-        Logger.log("d", "Creating backup for Cura %s, using folder %s", cura_release, version_data_dir)
+        Logger.log("d", "Creating backup for Cura %s, using folder %s", steslicer_release, version_data_dir)
 
         # Ensure all current settings are saved.
         self._application.saveSettings()
@@ -69,7 +69,7 @@ class Backup:
         # Store the archive and metadata so the BackupManager can fetch them when needed.
         self.zip_file = buffer.getvalue()
         self.meta_data = {
-            "cura_release": cura_release,
+            "steslicer_release": steslicer_release,
             "machine_count": str(machine_count),
             "material_count": str(material_count),
             "profile_count": str(profile_count),
@@ -105,7 +105,7 @@ class Backup:
     ##  Restore this back-up.
     #   \return Whether we had success or not.
     def restore(self) -> bool:
-        if not self.zip_file or not self.meta_data or not self.meta_data.get("cura_release", None):
+        if not self.zip_file or not self.meta_data or not self.meta_data.get("steslicer_release", None):
             # We can restore without the minimum required information.
             Logger.log("w", "Tried to restore a Cura backup without having proper data or meta data.")
             self._showMessage(
@@ -114,7 +114,7 @@ class Backup:
             return False
 
         current_version = self._application.getVersion()
-        version_to_restore = self.meta_data.get("cura_release", "master")
+        version_to_restore = self.meta_data.get("steslicer_release", "master")
         if current_version != version_to_restore:
             # Cannot restore version older or newer than current because settings might have changed.
             # Restoring this will cause a lot of issues so we don't allow this for now.

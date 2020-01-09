@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from steslicer.Settings.MachineManager import MachineManager
     from steslicer.Machines.MaterialManager import MaterialManager
     from steslicer.Machines.QualityManager import QualityManager
-    from steslicer.Settings.CuraContainerRegistry import CuraContainerRegistry
+    from steslicer.Settings.SteSlicerContainerRegistry import SteSlicerContainerRegistry
 
 catalog = i18nCatalog("steslicer")
 
@@ -52,7 +52,7 @@ class ContainerManager(QObject):
 
         self._application = application # type: SteSlicerApplication
         self._plugin_registry = self._application.getPluginRegistry()  # type: PluginRegistry
-        self._container_registry = self._application.getContainerRegistry()  # type: CuraContainerRegistry
+        self._container_registry = self._application.getContainerRegistry()  # type: SteSlicerContainerRegistry
         self._machine_manager = self._application.getMachineManager()  # type: MachineManager
         self._material_manager = self._application.getMaterialManager()  # type: MaterialManager
         self._quality_manager = self._application.getQualityManager()  # type: QualityManager

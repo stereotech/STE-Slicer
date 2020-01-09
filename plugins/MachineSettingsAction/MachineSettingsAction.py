@@ -10,7 +10,7 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.DefinitionContainer import DefinitionContainer
 
 from steslicer.MachineAction import MachineAction
-from steslicer.Settings.CuraStackBuilder import CuraStackBuilder
+from steslicer.Settings.SteSlicerStackBuilder import SteSlicerStackBuilder
 
 catalog = UM.i18n.i18nCatalog("steslicer")
 
@@ -26,7 +26,7 @@ class MachineSettingsAction(MachineAction):
 
         self._global_container_stack = None
 
-        from steslicer.Settings.CuraContainerStack import _ContainerIndexes
+        from steslicer.Settings.SteSlicerContainerStack import _ContainerIndexes
         self._container_index = _ContainerIndexes.DefinitionChanges
 
         self._container_registry = ContainerRegistry.getInstance()
@@ -63,11 +63,11 @@ class MachineSettingsAction(MachineAction):
         # Make sure there is a definition_changes container to store the machine settings
         definition_changes_id = self._global_container_stack.definitionChanges.getId()
         if self._isEmptyDefinitionChanges(definition_changes_id):
-            CuraStackBuilder.createDefinitionChangesContainer(self._global_container_stack,
-                                                              self._global_container_stack.getName() + "_settings")
+            SteSlicerStackBuilder.createDefinitionChangesContainer(self._global_container_stack,
+                                                                   self._global_container_stack.getName() + "_settings")
 
         # Notify the UI in which container to store the machine settings data
-        from steslicer.Settings.CuraContainerStack import _ContainerIndexes
+        from steslicer.Settings.SteSlicerContainerStack import _ContainerIndexes
 
         container_index = _ContainerIndexes.DefinitionChanges
         if container_index != self._container_index:
