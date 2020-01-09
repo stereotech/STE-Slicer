@@ -11,8 +11,8 @@ from UM.Settings.Validator import ValidatorState
 from UM.Math.Color import Color
 from UM.View.GL.OpenGL import OpenGL
 
-from cura.Settings.ExtruderManager import ExtruderManager
-from cura.Settings.ExtrudersModel import ExtrudersModel
+from steslicer.Settings.ExtruderManager import ExtruderManager
+from steslicer.Settings.ExtrudersModel import ExtrudersModel
 
 import math
 

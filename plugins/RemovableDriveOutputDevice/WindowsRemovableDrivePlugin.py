@@ -8,7 +8,7 @@ import ctypes
 from ctypes import wintypes  # Using ctypes.wintypes in the code below does not seem to work
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 # Ignore windows error popups. Fixes the whole "Can't open drive X" when user has an SD card reader.
 ctypes.windll.kernel32.SetErrorMode(1) #type: ignore

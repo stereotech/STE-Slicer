@@ -24,17 +24,17 @@ from UM.MimeTypeDatabase import MimeTypeDatabase, MimeType
 from UM.Job import Job
 from UM.Preferences import Preferences
 
-from cura.Machines.VariantType import VariantType
-from cura.Settings.CuraStackBuilder import CuraStackBuilder
-from cura.Settings.ExtruderStack import ExtruderStack
-from cura.Settings.GlobalStack import GlobalStack
-from cura.Settings.CuraContainerStack import _ContainerIndexes
-from cura.CuraApplication import CuraApplication
-from cura.Utils.Threading import call_on_qt_thread
+from steslicer.Machines.VariantType import VariantType
+from steslicer.Settings.CuraStackBuilder import CuraStackBuilder
+from steslicer.Settings.ExtruderStack import ExtruderStack
+from steslicer.Settings.GlobalStack import GlobalStack
+from steslicer.Settings.CuraContainerStack import _ContainerIndexes
+from steslicer.SteSlicerApplication import SteSlicerApplication
+from steslicer.Utils.Threading import call_on_qt_thread
 
 from .WorkspaceDialog import WorkspaceDialog
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 class ContainerInfo:
@@ -454,9 +454,9 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
             has_visible_settings_string = visible_settings_string is not None
             if visible_settings_string is not None:
                 num_visible_settings = len(visible_settings_string.split(";"))
-            active_mode = temp_preferences.getValue("cura/active_mode")
+            active_mode = temp_preferences.getValue("steslicer/active_mode")
             if not active_mode:
-                active_mode = Application.getInstance().getPreferences().getValue("cura/active_mode")
+                active_mode = Application.getInstance().getPreferences().getValue("steslicer/active_mode")
         except KeyError:
             # If there is no preferences file, it's not a workspace, so notify user of failure.
             Logger.log("w", "File %s is not a valid workspace.", file_name)
@@ -575,7 +575,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
             return self._read(file_name)
 
     def _read(self, file_name):
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         material_manager = application.getMaterialManager()
 
         archive = zipfile.ZipFile(file_name, "r")
@@ -596,13 +596,13 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
             Logger.log("w", "Workspace did not contain visible settings. Leaving visibility unchanged")
         else:
             global_preferences.setValue("general/visible_settings", visible_settings)
-            global_preferences.setValue("cura/active_setting_visibility_preset", "custom")
+            global_preferences.setValue("steslicer/active_setting_visibility_preset", "custom")
 
-        categories_expanded = temp_preferences.getValue("cura/categories_expanded")
+        categories_expanded = temp_preferences.getValue("steslicer/categories_expanded")
         if categories_expanded is None:
             Logger.log("w", "Workspace did not contain expanded categories. Leaving them unchanged")
         else:
-            global_preferences.setValue("cura/categories_expanded", categories_expanded)
+            global_preferences.setValue("steslicer/categories_expanded", categories_expanded)
 
         application.expandedCategoriesChanged.emit()  # Notify the GUI of the change
 
@@ -726,7 +726,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
         if self._machine_info.quality_changes_info is None:
             return
 
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         quality_manager = application.getQualityManager()
 
         # If we have custom profiles, load them
@@ -736,7 +736,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
                        self._machine_info.quality_changes_info.name)
 
             # Get the correct extruder definition IDs for quality changes
-            from cura.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
+            from steslicer.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
             machine_definition_id_for_quality = getMachineDefinitionIDForQualitySearch(global_stack.definition)
             machine_definition_for_quality = self._container_registry.findDefinitionContainers(id = machine_definition_id_for_quality)[0]
 
@@ -821,7 +821,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
         self._machine_info.quality_changes_info.name = quality_changes_name
 
     def _clearStack(self, stack):
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
 
         stack.definitionChanges.clear()
         stack.variant = application.empty_variant_container
@@ -879,7 +879,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
                         extruder_stack.userChanges.setProperty(key, "value", value)
 
     def _applyVariants(self, global_stack, extruder_stack_dict):
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         variant_manager = application.getVariantManager()
 
         if self._machine_info.variant_info is not None:
@@ -908,7 +908,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
                 extruder_stack.variant = node.getContainer()
 
     def _applyMaterials(self, global_stack, extruder_stack_dict):
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         material_manager = application.getMaterialManager()
 
         # Force update lookup tables first

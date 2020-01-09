@@ -11,17 +11,17 @@ from UM.Event import Event, MouseEvent
 from UM.Mesh.MeshBuilder import MeshBuilder
 from UM.Scene.Selection import Selection
 
-from cura.CuraApplication import CuraApplication
-from cura.Scene.CuraSceneNode import CuraSceneNode
-from cura.PickingPass import PickingPass
+from steslicer.SteSlicerApplication import SteSlicerApplication
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
+from steslicer.PickingPass import PickingPass
 
 from UM.Operations.GroupedOperation import GroupedOperation
 from UM.Operations.AddSceneNodeOperation import AddSceneNodeOperation
 from UM.Operations.RemoveSceneNodeOperation import RemoveSceneNodeOperation
-from cura.Operations.SetParentOperation import SetParentOperation
+from steslicer.Operations.SetParentOperation import SetParentOperation
 
-from cura.Scene.SliceableObjectDecorator import SliceableObjectDecorator
-from cura.Scene.BuildPlateDecorator import BuildPlateDecorator
+from steslicer.Scene.SliceableObjectDecorator import SliceableObjectDecorator
+from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
 
 from UM.Settings.SettingInstance import SettingInstance
 
@@ -34,7 +34,7 @@ class SupportEraser(Tool):
         self._controller = self.getController()
 
         self._selection_pass = None
-        CuraApplication.getInstance().globalContainerStackChanged.connect(self._updateEnabled)
+        SteSlicerApplication.getInstance().globalContainerStackChanged.connect(self._updateEnabled)
 
         # Note: if the selection is cleared with this tool active, there is no way to switch to
         # another tool than to reselect an object (by clicking it) because the tool buttons in the
@@ -93,15 +93,15 @@ class SupportEraser(Tool):
             # Add the anti_overhang_mesh cube at the picked location
             self._createEraserMesh(picked_node, picked_position)
 
-    def _createEraserMesh(self, parent: CuraSceneNode, position: Vector):
-        node = CuraSceneNode()
+    def _createEraserMesh(self, parent: SteSlicerSceneNode, position: Vector):
+        node = SteSlicerSceneNode()
 
         node.setName("Eraser")
         node.setSelectable(True)
         mesh = self._createCube(10)
         node.setMeshData(mesh.build())
 
-        active_build_plate = CuraApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
+        active_build_plate = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
         node.addDecorator(BuildPlateDecorator(active_build_plate))
         node.addDecorator(SliceableObjectDecorator())
 
@@ -119,11 +119,11 @@ class SupportEraser(Tool):
         op.addOperation(AddSceneNodeOperation(node, self._controller.getScene().getRoot()))
         op.addOperation(SetParentOperation(node, parent))
         op.push()
-        node.setPosition(position, CuraSceneNode.TransformSpace.World)
+        node.setPosition(position, SteSlicerSceneNode.TransformSpace.World)
 
-        CuraApplication.getInstance().getController().getScene().sceneChanged.emit(node)
+        SteSlicerApplication.getInstance().getController().getScene().sceneChanged.emit(node)
 
-    def _removeEraserMesh(self, node: CuraSceneNode):
+    def _removeEraserMesh(self, node: SteSlicerSceneNode):
         parent = node.getParent()
         if parent == self._controller.getScene().getRoot():
             parent = None
@@ -134,16 +134,16 @@ class SupportEraser(Tool):
         if parent and not Selection.isSelected(parent):
             Selection.add(parent)
 
-        CuraApplication.getInstance().getController().getScene().sceneChanged.emit(node)
+        SteSlicerApplication.getInstance().getController().getScene().sceneChanged.emit(node)
 
     def _updateEnabled(self):
         plugin_enabled = False
 
-        global_container_stack = CuraApplication.getInstance().getGlobalContainerStack()
+        global_container_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if global_container_stack:
             plugin_enabled = global_container_stack.getProperty("anti_overhang_mesh", "enabled")
 
-        CuraApplication.getInstance().getController().toolEnabledChanged.emit(self._plugin_id, plugin_enabled)
+        SteSlicerApplication.getInstance().getController().toolEnabledChanged.emit(self._plugin_id, plugin_enabled)
 
     def _onSelectionChanged(self):
         # When selection is passed from one object to another object, first the selection is cleared

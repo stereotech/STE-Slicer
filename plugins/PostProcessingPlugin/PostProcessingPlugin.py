@@ -18,9 +18,9 @@ import sys
 import importlib.util
 
 from UM.i18n import i18nCatalog
-from cura.CuraApplication import CuraApplication
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 if TYPE_CHECKING:
     from .Script import Script
@@ -46,7 +46,7 @@ class PostProcessingPlugin(QObject, Extension):
 
         Application.getInstance().getOutputDeviceManager().writeStarted.connect(self.execute)
         Application.getInstance().globalContainerStackChanged.connect(self._onGlobalContainerStackChanged)  # When the current printer changes, update the list of scripts.
-        CuraApplication.getInstance().mainWindowChanged.connect(self._createView)  # When the main window is created, create the view so that we can display the post-processing icon if necessary.
+        SteSlicerApplication.getInstance().mainWindowChanged.connect(self._createView)  # When the main window is created, create the view so that we can display the post-processing icon if necessary.
 
     selectedIndexChanged = pyqtSignal()
 
@@ -75,7 +75,7 @@ class PostProcessingPlugin(QObject, Extension):
             return
 
         # get gcode list for the active build plate
-        active_build_plate_id = CuraApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
+        active_build_plate_id = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
         gcode_list = gcode_dict[active_build_plate_id]
         if not gcode_list:
             return
@@ -282,14 +282,14 @@ class PostProcessingPlugin(QObject, Extension):
 
         # Create the plugin dialog component
         path = os.path.join(cast(str, PluginRegistry.getInstance().getPluginPath("PostProcessingPlugin")), "PostProcessingPlugin.qml")
-        self._view = CuraApplication.getInstance().createQmlComponent(path, {"manager": self})
+        self._view = SteSlicerApplication.getInstance().createQmlComponent(path, {"manager": self})
         if self._view is None:
             Logger.log("e", "Not creating PostProcessing button near save button because the QML component failed to be created.")
             return
         Logger.log("d", "Post processing view created.")
 
         # Create the save button component
-        CuraApplication.getInstance().addAdditionalComponent("saveButton", self._view.findChild(QObject, "postProcessingSaveAreaButton"))
+        SteSlicerApplication.getInstance().addAdditionalComponent("saveButton", self._view.findChild(QObject, "postProcessingSaveAreaButton"))
 
     ##  Show the (GUI) popup of the post processing plugin.
     def showPopup(self) -> None:

@@ -13,12 +13,12 @@ from UM.Logger import Logger
 from UM.i18n import i18nCatalog
 from UM.Settings.ContainerRegistry import ContainerRegistry
 
-from cura.Settings.GlobalStack import GlobalStack
+from steslicer.Settings.GlobalStack import GlobalStack
 
 from .FirmwareUpdateCheckerJob import FirmwareUpdateCheckerJob
 from .FirmwareUpdateCheckerMessage import FirmwareUpdateCheckerMessage
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 ## This Extension checks for new versions of the firmware based on the latest checked version number.

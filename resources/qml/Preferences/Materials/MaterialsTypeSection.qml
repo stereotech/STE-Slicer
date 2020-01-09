@@ -108,7 +108,7 @@ Rectangle
                 materialList.expandedTypes.push(identifier)
                 material_type_section.expanded = true
             }
-            UM.Preferences.setValue("cura/expanded_types", materialList.expandedTypes.join(";"));
+            UM.Preferences.setValue("steslicer/expanded_types", materialList.expandedTypes.join(";"));
         }
     }
     Column

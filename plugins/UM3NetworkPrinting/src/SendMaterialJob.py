@@ -14,7 +14,7 @@ from UM.MimeTypeDatabase import MimeTypeDatabase #To strip the extensions of the
 from UM.Resources import Resources
 from UM.Settings.ContainerRegistry import ContainerRegistry #To find the GUIDs of materials.
 
-from cura.CuraApplication import CuraApplication #For the resource types.
+from steslicer.SteSlicerApplication import SteSlicerApplication #For the resource types.
 
 if TYPE_CHECKING:
     from .ClusterUM3OutputDevice import ClusterUM3OutputDevice
@@ -71,7 +71,7 @@ class SendMaterialJob(Job):
                 Logger.log("e", "Current material storage on printer was an invalid reply (missing version).")
                 return
 
-        for file_path in Resources.getAllResourcesOfType(CuraApplication.ResourceTypes.MaterialInstanceContainer):
+        for file_path in Resources.getAllResourcesOfType(SteSlicerApplication.ResourceTypes.MaterialInstanceContainer):
             try:
                 mime_type = MimeTypeDatabase.getMimeTypeForFile(file_path)
             except MimeTypeDatabase.MimeTypeNotFoundError:

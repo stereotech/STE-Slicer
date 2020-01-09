@@ -620,7 +620,7 @@ Item
                         // Update value only if the Recomended mode is Active,
                         // Otherwise if I change the value in the Custom mode the Recomended view will try to repeat
                         // same operation
-                        var active_mode = UM.Preferences.getValue("cura/active_mode")
+                        var active_mode = UM.Preferences.getValue("steslicer/active_mode")
 
                         if (active_mode == 0 || active_mode == "simple")
                         {

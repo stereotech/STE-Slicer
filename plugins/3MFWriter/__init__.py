@@ -12,7 +12,7 @@ from . import ThreeMFWorkspaceWriter
 from UM.i18n import i18nCatalog
 from UM.Platform import Platform
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 def getMetaData():
     workspace_extension = "3mf"

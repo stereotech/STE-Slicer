@@ -8,17 +8,17 @@ from UM.Math.Vector import Vector
 from UM.Math.Matrix import Matrix
 from UM.Math.Quaternion import Quaternion
 from UM.Message import Message
-from cura.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from UM.i18n import i18nCatalog
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
-from cura.CuraApplication import CuraApplication
-from cura.LayerDataBuilder import LayerDataBuilder
-from cura.LayerDataDecorator import LayerDataDecorator
-from cura.LayerPolygon import LayerPolygon
-from cura.Scene.GCodeListDecorator import GCodeListDecorator
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.SteSlicerApplication import SteSlicerApplication
+from steslicer.LayerDataBuilder import LayerDataBuilder
+from steslicer.LayerDataDecorator import LayerDataDecorator
+from steslicer.LayerPolygon import LayerPolygon
+from steslicer.Scene.GCodeListDecorator import GCodeListDecorator
+from steslicer.Settings.ExtruderManager import ExtruderManager
 
 import numpy
 import math
@@ -34,7 +34,7 @@ Position = NamedTuple("Position", [("x", float), ("y", float), ("z", float), ("a
 class FlavorParser:
 
     def __init__(self) -> None:
-        CuraApplication.getInstance().hideMessageSignal.connect(self._onHideMessage)
+        SteSlicerApplication.getInstance().hideMessageSignal.connect(self._onHideMessage)
         self._cancelled = False
         self._message = None
         self._layer_number = 0
@@ -49,7 +49,7 @@ class FlavorParser:
         self._filament_diameter = 1.75       # default
         self._previous_extrusion_value = 0.0  # keep track of the filament retractions
 
-        CuraApplication.getInstance().getPreferences().addPreference("gcodereader/show_caution", True)
+        SteSlicerApplication.getInstance().getPreferences().addPreference("gcodereader/show_caution", True)
 
     def _clearValues(self) -> None:
         self._extruder_number = 0
@@ -332,18 +332,18 @@ class FlavorParser:
                 extruder.getProperty("machine_nozzle_offset_y", "value")]
         return result
 
-    def processGCodeStream(self, stream: str) -> Optional[CuraSceneNode]:
+    def processGCodeStream(self, stream: str) -> Optional[SteSlicerSceneNode]:
         Logger.log("d", "Preparing to load GCode")
         self._cancelled = False
         # We obtain the filament diameter from the selected extruder to calculate line widths
-        global_stack = CuraApplication.getInstance().getGlobalContainerStack()
+        global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
 
         if not global_stack:
             return None
 
         self._filament_diameter = global_stack.extruders[str(self._extruder_number)].getProperty("material_diameter", "value")
 
-        scene_node = CuraSceneNode()
+        scene_node = SteSlicerSceneNode()
 
         gcode_list = []
         self._is_layers_in_file = False
@@ -492,9 +492,9 @@ class FlavorParser:
         scene_node.addDecorator(gcode_list_decorator)
 
         # gcode_dict stores gcode_lists for a number of build plates.
-        active_build_plate_id = CuraApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
+        active_build_plate_id = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
         gcode_dict = {active_build_plate_id: gcode_list}
-        CuraApplication.getInstance().getController().getScene().gcode_dict = gcode_dict #type: ignore #Because gcode_dict is generated dynamically.
+        SteSlicerApplication.getInstance().getController().getScene().gcode_dict = gcode_dict #type: ignore #Because gcode_dict is generated dynamically.
 
         Logger.log("d", "Finished parsing Gcode")
         self._message.hide()
@@ -502,7 +502,7 @@ class FlavorParser:
         if self._layer_number == 0:
             Logger.log("w", "File doesn't contain any valid layers")
 
-        settings = CuraApplication.getInstance().getGlobalContainerStack()
+        settings = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if not settings.getProperty("machine_center_is_zero", "value"):
             machine_width = settings.getProperty("machine_width", "value")
             machine_depth = settings.getProperty("machine_depth", "value")
@@ -510,7 +510,7 @@ class FlavorParser:
 
         Logger.log("d", "GCode loading finished")
 
-        if CuraApplication.getInstance().getPreferences().getValue("gcodereader/show_caution"):
+        if SteSlicerApplication.getInstance().getPreferences().getValue("gcodereader/show_caution"):
             caution_message = Message(catalog.i18nc(
                 "@info:generic",
                 "Make sure the g-code is suitable for your printer and printer configuration before sending the file to it. The g-code representation may not be accurate."),
@@ -519,7 +519,7 @@ class FlavorParser:
             caution_message.show()
 
         # The "save/print" button's state is bound to the backend state.
-        backend = CuraApplication.getInstance().getBackend()
+        backend = SteSlicerApplication.getInstance().getBackend()
         backend.backendStateChange.emit(Backend.BackendState.Disabled)
 
         return scene_node

@@ -8,7 +8,7 @@ from UM.i18n import i18nCatalog
 from UM.Application import Application
 from UM.MimeTypeDatabase import MimeTypeDatabase, MimeType
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 from . import MarlinFlavorParser, RepRapFlavorParser
 
 
@@ -26,7 +26,7 @@ class GCodeReader(MeshReader):
         super().__init__()
         MimeTypeDatabase.addMimeType(
             MimeType(
-                name = "application/x-cura-gcode-file",
+                name = "application/x-steslicer-gcode-file",
                 comment = "Cura GCode File",
                 suffixes = ["gcode"]
             )

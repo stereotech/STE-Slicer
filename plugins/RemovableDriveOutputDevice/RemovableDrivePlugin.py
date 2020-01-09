@@ -14,7 +14,7 @@ from . import RemovableDriveOutputDevice
 
 # Uranium/l18n
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 class RemovableDrivePlugin(OutputDevicePlugin):
     def __init__(self):

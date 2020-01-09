@@ -27,7 +27,7 @@ UM.Dialog
             for (var i = 0; i < discardOrKeepProfileChangesDropDownButton.model.count; ++i)
             {
                 var code = discardOrKeepProfileChangesDropDownButton.model.get(i).code;
-                if (code == UM.Preferences.getValue("cura/choice_on_profile_override"))
+                if (code == UM.Preferences.getValue("steslicer/choice_on_profile_override"))
                 {
                     discardOrKeepProfileChangesDropDownButton.currentIndex = i;
                     break;
@@ -163,7 +163,7 @@ UM.Dialog
             onActivated:
             {
                 var code = model.get(index).code;
-                UM.Preferences.setValue("cura/choice_on_profile_override", code);
+                UM.Preferences.setValue("steslicer/choice_on_profile_override", code);
 
                 if (code == "always_keep") {
                     keepButton.enabled = true;

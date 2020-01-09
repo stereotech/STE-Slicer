@@ -11,7 +11,7 @@ from UM.PluginRegistry import PluginRegistry
 from UM.Logger import Logger
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 class ImageReaderUI(QObject):

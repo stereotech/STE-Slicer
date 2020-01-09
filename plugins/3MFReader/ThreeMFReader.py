@@ -18,12 +18,12 @@ from UM.Mesh.MeshReader import MeshReader
 from UM.Scene.GroupDecorator import GroupDecorator
 from UM.MimeTypeDatabase import MimeTypeDatabase, MimeType
 
-from cura.Settings.ExtruderManager import ExtruderManager
-from cura.Scene.CuraSceneNode import CuraSceneNode
-from cura.Scene.BuildPlateDecorator import BuildPlateDecorator
-from cura.Scene.SliceableObjectDecorator import SliceableObjectDecorator
-from cura.Scene.ZOffsetDecorator import ZOffsetDecorator
-from cura.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
+from steslicer.Settings.ExtruderManager import ExtruderManager
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
+from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
+from steslicer.Scene.SliceableObjectDecorator import SliceableObjectDecorator
+from steslicer.Scene.ZOffsetDecorator import ZOffsetDecorator
+from steslicer.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
 
 MYPY = False
 
@@ -93,7 +93,7 @@ class ThreeMFReader(MeshReader):
 
         active_build_plate = Application.getInstance().getMultiBuildPlateModel().activeBuildPlate
 
-        um_node = CuraSceneNode() # This adds a SettingOverrideDecorator
+        um_node = SteSlicerSceneNode() # This adds a SettingOverrideDecorator
         um_node.addDecorator(BuildPlateDecorator(active_build_plate))
         um_node.setName(node_name)
         transformation = self._createMatrixFromTransformationString(savitar_node.getTransformation())
@@ -196,7 +196,7 @@ class ThreeMFReader(MeshReader):
                 transformation_matrix._data[2, 1] = -1
                 transformation_matrix._data[2, 2] = 0
 
-                # Second step: 3MF defines the left corner of the machine as center, whereas cura uses the center of the
+                # Second step: 3MF defines the left corner of the machine as center, whereas steslicer uses the center of the
                 # build volume.
                 if global_container_stack:
                     translation_vector = Vector(x = -global_container_stack.getProperty("machine_width", "value") / 2,

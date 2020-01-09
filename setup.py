@@ -5,7 +5,7 @@ from distutils.core import setup
 import py2exe
 import UM
 import UM.Qt #@UnusedImport
-import cura  #@UnusedImport
+import steslicer  #@UnusedImport
 import os
 import shutil
 import site
@@ -22,7 +22,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
         else:
             shutil.copy2(s, d)
 
-includes = ["sip", "ctypes", "UM", "PyQt5.QtNetwork", "PyQt5._QOpenGLFunctions_2_0", "serial", "Arcus", "google", "google.protobuf", "google.protobuf.descriptor", "xml.etree", "xml.etree.ElementTree", "cura", "cura.OneAtATimeIterator"]
+includes = ["sip", "ctypes", "UM", "PyQt5.QtNetwork", "PyQt5._QOpenGLFunctions_2_0", "serial", "Arcus", "google", "google.protobuf", "google.protobuf.descriptor", "xml.etree", "xml.etree.ElementTree", "steslicer", "steslicer.OneAtATimeIterator"]
 # Include all the UM modules in the includes. As py2exe fails to properly find all the dependencies due to the plugin architecture.
 for dirpath, dirnames, filenames in os.walk(os.path.dirname(UM.__file__)):
     if "__" in dirpath:
@@ -46,9 +46,9 @@ setup(name="Cura",
         author_email="a.hiemstra@ultimaker.com",
         url="http://software.ultimaker.com/",
         license="GNU LESSER GENERAL PUBLIC LICENSE (LGPL)",
-        scripts=["cura_app.py"],
-        windows=[{"script": "cura_app.py", "dest_name": "Cura", "icon_resources": [(1, "icons/cura.ico")]}],
-        #console=[{"script": "cura_app.py"}],
+        scripts=["steslicer_app.py"],
+        windows=[{"script": "steslicer_app.py", "dest_name": "Cura", "icon_resources": [(1, "icons/steslicer.ico")]}],
+        #console=[{"script": "steslicer_app.py"}],
         options={"py2exe": {"skip_archive": False, "includes": includes}})
 
 print("Copying Cura plugins.")

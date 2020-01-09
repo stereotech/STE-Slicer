@@ -28,8 +28,8 @@ from UM.View.GL.ShaderProgram import ShaderProgram
 
 from UM.View.View import View
 from UM.i18n import i18nCatalog
-from cura.Scene.ConvexHullNode import ConvexHullNode
-from cura.CuraApplication import CuraApplication
+from steslicer.Scene.ConvexHullNode import ConvexHullNode
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
 from .NozzleNode import NozzleNode
 from .SimulationPass import SimulationPass
@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from UM.Scene.Scene import Scene
     from UM.Settings.ContainerStack import ContainerStack
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 ## View used to display g-code paths.
@@ -203,7 +203,7 @@ class SimulationView(View):
 
         if not self._ghost_shader:
             self._ghost_shader = OpenGL.getInstance().createShaderProgram(Resources.getPath(Resources.Shaders, "color.shader"))
-            theme = CuraApplication.getInstance().getTheme()
+            theme = SteSlicerApplication.getInstance().getTheme()
             if theme is not None:
                 self._ghost_shader.setUniformValue("u_color", Color(*theme.getColor("layerview_ghost").getRgb()))
 
@@ -459,7 +459,7 @@ class SimulationView(View):
             if Platform.isOSX():
                 if QOpenGLContext.currentContext() is None:
                     Logger.log("d", "current context of OpenGL is empty on Mac OS X, will try to create shaders later")
-                    CuraApplication.getInstance().callLater(lambda e=event: self.event(e))
+                    SteSlicerApplication.getInstance().callLater(lambda e=event: self.event(e))
                     return False
 
             # Make sure the SimulationPass is created
@@ -477,7 +477,7 @@ class SimulationView(View):
             if not self._simulationview_composite_shader:
                 plugin_path = cast(str, PluginRegistry.getInstance().getPluginPath("SimulationView"))
                 self._simulationview_composite_shader = OpenGL.getInstance().createShaderProgram(os.path.join(plugin_path, "simulationview_composite.shader"))
-                theme = CuraApplication.getInstance().getTheme()
+                theme = SteSlicerApplication.getInstance().getTheme()
                 if theme is not None:
                     self._simulationview_composite_shader.setUniformValue("u_background_color", Color(*theme.getColor("viewport_background").getRgb()))
                     self._simulationview_composite_shader.setUniformValue("u_outline_color", Color(*theme.getColor("model_selection_outline").getRgb()))

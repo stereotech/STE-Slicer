@@ -144,7 +144,7 @@ Rectangle
 
     onCurrentModeIndexChanged:
     {
-        UM.Preferences.setValue("cura/active_mode", currentModeIndex);
+        UM.Preferences.setValue("steslicer/active_mode", currentModeIndex);
         if(modesListModel.count > base.currentModeIndex)
         {
             sidebarContents.replace(modesListModel.get(base.currentModeIndex).item, { "replace": true })
@@ -451,7 +451,7 @@ Rectangle
                         "%1:".arg(names[index]),
                         catalog.i18nc("@label m for meter", "%1m").arg(lengths[index]),
                         catalog.i18nc("@label g for grams", "%1g").arg(weights[index]),
-                        "%1&nbsp;%2".arg(UM.Preferences.getValue("cura/currency")).arg(costs[index]),
+                        "%1&nbsp;%2".arg(UM.Preferences.getValue("steslicer/currency")).arg(costs[index]),
                     ]);
                 }
                 if(lengths.length > 1)
@@ -460,7 +460,7 @@ Rectangle
                         catalog.i18nc("@label", "Total:"),
                         catalog.i18nc("@label m for meter", "%1m").arg(total_length.toFixed(2)),
                         catalog.i18nc("@label g for grams", "%1g").arg(Math.round(total_weight)),
-                        "%1 %2".arg(UM.Preferences.getValue("cura/currency")).arg(total_cost.toFixed(2)),
+                        "%1 %2".arg(UM.Preferences.getValue("steslicer/currency")).arg(total_cost.toFixed(2)),
                     ]);
                 }
                 tooltip_html += "</table>";
@@ -509,7 +509,7 @@ Rectangle
                 var result = lengths.join(" + ") + "m / ~ " + weights.join(" + ") + "g";
                 if(someCostsKnown)
                 {
-                    result += " / ~ " + costs.join(" + ") + " " + UM.Preferences.getValue("cura/currency");
+                    result += " / ~ " + costs.join(" + ") + " " + UM.Preferences.getValue("steslicer/currency");
                 }
                 return result;
             }
@@ -589,7 +589,7 @@ Rectangle
             item: sidebarAdvanced
         })
 
-        var index = Math.round(UM.Preferences.getValue("cura/active_mode"))
+        var index = Math.round(UM.Preferences.getValue("steslicer/active_mode"))
 
         if(index != null && !isNaN(index))
         {

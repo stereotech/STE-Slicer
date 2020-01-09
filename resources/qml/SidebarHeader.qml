@@ -589,7 +589,7 @@ Column
     //        //        hoverEnabled: true
     //        //        onClicked: {
     //        //            // open the material URL with web browser
-    //        //            var url = "https://ultimaker.com/incoming-links/cura/material-compatibilty"
+    //        //            var url = "https://ultimaker.com/incoming-links/steslicer/material-compatibilty"
     //        //            Qt.openUrlExternally(url);
     //        //        }
     //        //        onEntered: {

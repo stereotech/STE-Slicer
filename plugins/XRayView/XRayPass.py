@@ -10,7 +10,7 @@ from UM.View.RenderPass import RenderPass
 from UM.View.RenderBatch import RenderBatch
 from UM.View.GL.OpenGL import OpenGL
 
-from cura.Scene.CuraSceneNode import CuraSceneNode
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 
 class XRayPass(RenderPass):
@@ -27,7 +27,7 @@ class XRayPass(RenderPass):
 
         batch = RenderBatch(self._shader, type = RenderBatch.RenderType.NoType, backface_cull = False, blend_mode = RenderBatch.BlendMode.Additive)
         for node in DepthFirstIterator(self._scene.getRoot()):
-            if isinstance(node, CuraSceneNode) and node.getMeshData() and node.isVisible():
+            if isinstance(node, SteSlicerSceneNode) and node.getMeshData() and node.isVisible():
                 batch.addItem(node.getWorldTransformation(), node.getMeshData())
 
         self.bind()

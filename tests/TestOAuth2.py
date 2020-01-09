@@ -2,10 +2,10 @@ import webbrowser
 from unittest.mock import MagicMock, patch
 
 from UM.Preferences import Preferences
-from cura.OAuth2.AuthorizationHelpers import AuthorizationHelpers
-from cura.OAuth2.AuthorizationService import AuthorizationService
-from cura.OAuth2.LocalAuthorizationServer import LocalAuthorizationServer
-from cura.OAuth2.Models import OAuth2Settings, AuthenticationResponse, UserProfile
+from steslicer.OAuth2.AuthorizationHelpers import AuthorizationHelpers
+from steslicer.OAuth2.AuthorizationService import AuthorizationService
+from steslicer.OAuth2.LocalAuthorizationServer import LocalAuthorizationServer
+from steslicer.OAuth2.Models import OAuth2Settings, AuthenticationResponse, UserProfile
 
 CALLBACK_PORT = 32118
 OAUTH_ROOT = "https://account.ultimaker.com"

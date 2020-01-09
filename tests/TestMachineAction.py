@@ -3,9 +3,9 @@
 
 import pytest
 
-from cura.MachineAction import MachineAction
-from cura.MachineActionManager import NotUniqueMachineActionError, UnknownMachineActionError
-from cura.Settings.GlobalStack import GlobalStack
+from steslicer.MachineAction import MachineAction
+from steslicer.MachineActionManager import NotUniqueMachineActionError, UnknownMachineActionError
+from steslicer.Settings.GlobalStack import GlobalStack
 
 
 @pytest.fixture()

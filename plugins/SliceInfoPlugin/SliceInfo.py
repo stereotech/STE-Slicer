@@ -21,7 +21,7 @@ from UM.Qt.Duration import DurationFormat
 from .SliceInfoJob import SliceInfoJob
 
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 ##      This Extension runs in the background and sends several bits of information to the Ultimaker servers.
@@ -102,8 +102,8 @@ class SliceInfo(QObject, Extension):
         Application.getInstance().getPreferences().setValue("info/send_slice_info", enabled)
 
     def _getUserModifiedSettingKeys(self) -> list:
-        from cura.CuraApplication import CuraApplication
-        application = cast(CuraApplication, Application.getInstance())
+        from steslicer.SteSlicerApplication import SteSlicerApplication
+        application = cast(SteSlicerApplication, Application.getInstance())
         machine_manager = application.getMachineManager()
         global_stack = machine_manager.activeMachine
 
@@ -122,8 +122,8 @@ class SliceInfo(QObject, Extension):
                 Logger.log("d", "'info/send_slice_info' is turned off.")
                 return  # Do nothing, user does not want to send data
 
-            from cura.CuraApplication import CuraApplication
-            application = cast(CuraApplication, Application.getInstance())
+            from steslicer.SteSlicerApplication import SteSlicerApplication
+            application = cast(SteSlicerApplication, Application.getInstance())
             machine_manager = application.getMachineManager()
             print_information = application.getPrintInformation()
 
@@ -134,7 +134,7 @@ class SliceInfo(QObject, Extension):
             data["schema_version"] = 0
             data["cura_version"] = application.getVersion()
 
-            active_mode = Application.getInstance().getPreferences().getValue("cura/active_mode")
+            active_mode = Application.getInstance().getPreferences().getValue("steslicer/active_mode")
             if active_mode == 0:
                 data["active_mode"] = "recommended"
             else:

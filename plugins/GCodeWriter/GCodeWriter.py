@@ -10,10 +10,10 @@ from UM.Logger import Logger
 from UM.Application import Application
 from UM.Settings.InstanceContainer import InstanceContainer
 
-from cura.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
+from steslicer.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 ##  Writes g-code to a file.
 #

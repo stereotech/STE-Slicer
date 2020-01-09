@@ -11,7 +11,7 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 import os
 import threading
 import time
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 class WorkspaceDialog(QObject):

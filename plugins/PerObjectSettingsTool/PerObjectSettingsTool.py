@@ -5,8 +5,8 @@ from UM.Tool import Tool
 from UM.Scene.Selection import Selection
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 from UM.Application import Application
-from cura.Settings.SettingOverrideDecorator import SettingOverrideDecorator
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
+from steslicer.Settings.ExtruderManager import ExtruderManager
 from UM.Settings.SettingInstance import SettingInstance
 from UM.Event import Event
 
@@ -27,7 +27,7 @@ class PerObjectSettingsTool(Tool):
         Selection.selectionChanged.connect(self.propertyChanged)
 
         Application.getInstance().getPreferences().preferenceChanged.connect(self._onPreferenceChanged)
-        self._onPreferenceChanged("cura/active_mode")
+        self._onPreferenceChanged("steslicer/active_mode")
 
         Application.getInstance().globalContainerStackChanged.connect(self._onGlobalContainerChanged)
         self._onGlobalContainerChanged()
@@ -104,7 +104,7 @@ class PerObjectSettingsTool(Tool):
         return ""
 
     def _onPreferenceChanged(self, preference):
-        if preference == "cura/active_mode":
+        if preference == "steslicer/active_mode":
             self._advanced_mode = Application.getInstance().getPreferences().getValue(preference) == 1
             self._updateEnabled()
 

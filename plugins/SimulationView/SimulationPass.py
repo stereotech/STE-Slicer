@@ -15,7 +15,7 @@ from UM.View.RenderPass import RenderPass
 from UM.View.RenderBatch import RenderBatch
 from UM.View.GL.OpenGL import OpenGL
 
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.Settings.ExtruderManager import ExtruderManager
 
 
 import os.path

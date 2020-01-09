@@ -80,10 +80,10 @@ UM.PreferencesPage
         scaleToFitCheckbox.checked = boolCheck(UM.Preferences.getValue("mesh/scale_to_fit"))
         UM.Preferences.resetPreference("mesh/scale_tiny_meshes")
         scaleTinyCheckbox.checked = boolCheck(UM.Preferences.getValue("mesh/scale_tiny_meshes"))
-        UM.Preferences.resetPreference("cura/select_models_on_load")
-        selectModelsOnLoadCheckbox.checked = boolCheck(UM.Preferences.getValue("cura/select_models_on_load"))
-        UM.Preferences.resetPreference("cura/jobname_prefix")
-        prefixJobNameCheckbox.checked = boolCheck(UM.Preferences.getValue("cura/jobname_prefix"))
+        UM.Preferences.resetPreference("steslicer/select_models_on_load")
+        selectModelsOnLoadCheckbox.checked = boolCheck(UM.Preferences.getValue("steslicer/select_models_on_load"))
+        UM.Preferences.resetPreference("steslicer/jobname_prefix")
+        prefixJobNameCheckbox.checked = boolCheck(UM.Preferences.getValue("steslicer/jobname_prefix"))
         UM.Preferences.resetPreference("view/show_overhang");
         showOverhangCheckbox.checked = boolCheck(UM.Preferences.getValue("view/show_overhang"))
         UM.Preferences.resetPreference("view/center_on_select");
@@ -95,11 +95,11 @@ UM.PreferencesPage
         UM.Preferences.resetPreference("view/top_layer_count");
         topLayerCountCheckbox.checked = boolCheck(UM.Preferences.getValue("view/top_layer_count"))
 
-        UM.Preferences.resetPreference("cura/choice_on_profile_override")
-        setDefaultDiscardOrKeepProfile(UM.Preferences.getValue("cura/choice_on_profile_override"))
+        UM.Preferences.resetPreference("steslicer/choice_on_profile_override")
+        setDefaultDiscardOrKeepProfile(UM.Preferences.getValue("steslicer/choice_on_profile_override"))
 
-        UM.Preferences.resetPreference("cura/choice_on_open_project")
-        setDefaultOpenProjectOption(UM.Preferences.getValue("cura/choice_on_open_project"))
+        UM.Preferences.resetPreference("steslicer/choice_on_open_project")
+        setDefaultOpenProjectOption(UM.Preferences.getValue("steslicer/choice_on_open_project"))
 
         if (pluginExistsAndEnabled("SliceInfoPlugin")) {
             UM.Preferences.resetPreference("info/send_slice_info")
@@ -211,8 +211,8 @@ UM.PreferencesPage
                 TextField
                 {
                     id: currencyField
-                    text: UM.Preferences.getValue("cura/currency")
-                    onTextChanged: UM.Preferences.setValue("cura/currency", text)
+                    text: UM.Preferences.getValue("steslicer/currency")
+                    onTextChanged: UM.Preferences.setValue("steslicer/currency", text)
                 }
 
                 Label
@@ -494,8 +494,8 @@ UM.PreferencesPage
                 {
                     id: selectModelsOnLoadCheckbox
                     text: catalog.i18nc("@option:check","Select models when loaded")
-                    checked: boolCheck(UM.Preferences.getValue("cura/select_models_on_load"))
-                    onCheckedChanged: UM.Preferences.setValue("cura/select_models_on_load", checked)
+                    checked: boolCheck(UM.Preferences.getValue("steslicer/select_models_on_load"))
+                    onCheckedChanged: UM.Preferences.setValue("steslicer/select_models_on_load", checked)
                 }
             }
 
@@ -509,8 +509,8 @@ UM.PreferencesPage
                 {
                     id: prefixJobNameCheckbox
                     text: catalog.i18nc("@option:check", "Add machine prefix to job name")
-                    checked: boolCheck(UM.Preferences.getValue("cura/jobname_prefix"))
-                    onCheckedChanged: UM.Preferences.setValue("cura/jobname_prefix", checked)
+                    checked: boolCheck(UM.Preferences.getValue("steslicer/jobname_prefix"))
+                    onCheckedChanged: UM.Preferences.setValue("steslicer/jobname_prefix", checked)
                 }
             }
 
@@ -523,8 +523,8 @@ UM.PreferencesPage
                 CheckBox
                 {
                     text: catalog.i18nc("@option:check", "Show summary dialog when saving project")
-                    checked: boolCheck(UM.Preferences.getValue("cura/dialog_on_project_save"))
-                    onCheckedChanged: UM.Preferences.setValue("cura/dialog_on_project_save", checked)
+                    checked: boolCheck(UM.Preferences.getValue("steslicer/dialog_on_project_save"))
+                    onCheckedChanged: UM.Preferences.setValue("steslicer/dialog_on_project_save", checked)
                 }
             }
 
@@ -563,7 +563,7 @@ UM.PreferencesPage
                         currentIndex:
                         {
                             var index = 0;
-                            var currentChoice = UM.Preferences.getValue("cura/choice_on_open_project");
+                            var currentChoice = UM.Preferences.getValue("steslicer/choice_on_open_project");
                             for (var i = 0; i < model.count; ++i)
                             {
                                 if (model.get(i).code == currentChoice)
@@ -575,7 +575,7 @@ UM.PreferencesPage
                             return index;
                         }
 
-                        onActivated: UM.Preferences.setValue("cura/choice_on_open_project", model.get(index).code)
+                        onActivated: UM.Preferences.setValue("steslicer/choice_on_open_project", model.get(index).code)
                     }
                 }
             }
@@ -629,7 +629,7 @@ UM.PreferencesPage
                         currentIndex:
                         {
                             var index = 0;
-                            var code = UM.Preferences.getValue("cura/choice_on_profile_override");
+                            var code = UM.Preferences.getValue("steslicer/choice_on_profile_override");
                             for (var i = 0; i < model.count; ++i)
                             {
                                 if (model.get(i).code == code)
@@ -640,7 +640,7 @@ UM.PreferencesPage
                             }
                             return index;
                         }
-                        onActivated: UM.Preferences.setValue("cura/choice_on_profile_override", model.get(index).code)
+                        onActivated: UM.Preferences.setValue("steslicer/choice_on_profile_override", model.get(index).code)
                     }
                 }
             }
@@ -725,8 +725,8 @@ UM.PreferencesPage
                 {
                     id: useMultiBuildPlateCheckbox
                     text: catalog.i18nc("@option:check","Use multi build plate functionality (restart required)")
-                    checked: boolCheck(UM.Preferences.getValue("cura/use_multi_build_plate"))
-                    onCheckedChanged: UM.Preferences.setValue("cura/use_multi_build_plate", checked)
+                    checked: boolCheck(UM.Preferences.getValue("steslicer/use_multi_build_plate"))
+                    onCheckedChanged: UM.Preferences.setValue("steslicer/use_multi_build_plate", checked)
                 }
             }
 

@@ -16,12 +16,12 @@ from UM.OutputDevice import OutputDeviceError  # To show that something went wro
 from UM.Scene.SceneNode import SceneNode  # For typing.
 from UM.Version import Version  # To check against firmware versions for support.
 
-from cura.CuraApplication import CuraApplication
-from cura.PrinterOutput.ConfigurationModel import ConfigurationModel
-from cura.PrinterOutput.ExtruderConfigurationModel import ExtruderConfigurationModel
-from cura.PrinterOutput.NetworkedPrinterOutputDevice import NetworkedPrinterOutputDevice, AuthState
-from cura.PrinterOutput.PrinterOutputModel import PrinterOutputModel
-from cura.PrinterOutput.MaterialOutputModel import MaterialOutputModel
+from steslicer.SteSlicerApplication import SteSlicerApplication
+from steslicer.PrinterOutput.ConfigurationModel import ConfigurationModel
+from steslicer.PrinterOutput.ExtruderConfigurationModel import ExtruderConfigurationModel
+from steslicer.PrinterOutput.NetworkedPrinterOutputDevice import NetworkedPrinterOutputDevice, AuthState
+from steslicer.PrinterOutput.PrinterOutputModel import PrinterOutputModel
+from steslicer.PrinterOutput.MaterialOutputModel import MaterialOutputModel
 
 from .ClusterUM3PrinterOutputController import ClusterUM3PrinterOutputController
 from .SendMaterialJob import SendMaterialJob
@@ -40,7 +40,7 @@ import io  # To create the correct buffers for sending data to the printer.
 import json
 import os
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 class ClusterUM3OutputDevice(NetworkedPrinterOutputDevice):
@@ -110,9 +110,9 @@ class ClusterUM3OutputDevice(NetworkedPrinterOutputDevice):
         if file_handler:
             file_formats = file_handler.getSupportedFileTypesWrite()
         else:
-            file_formats = CuraApplication.getInstance().getMeshFileHandler().getSupportedFileTypesWrite()
+            file_formats = SteSlicerApplication.getInstance().getMeshFileHandler().getSupportedFileTypesWrite()
 
-        global_stack = CuraApplication.getInstance().getGlobalContainerStack()
+        global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         # Create a list from the supported file formats string.
         if not global_stack:
             Logger.log("e", "Missing global stack!")
@@ -137,7 +137,7 @@ class ClusterUM3OutputDevice(NetworkedPrinterOutputDevice):
         if file_handler is not None:
             writer = file_handler.getWriterByMimeType(cast(str, preferred_format["mime_type"]))
         else:
-            writer = CuraApplication.getInstance().getMeshFileHandler().getWriterByMimeType(cast(str, preferred_format["mime_type"]))
+            writer = SteSlicerApplication.getInstance().getMeshFileHandler().getWriterByMimeType(cast(str, preferred_format["mime_type"]))
 
         if not writer:
             Logger.log("e", "Unexpected error when trying to get the FileWriter")
@@ -161,7 +161,7 @@ class ClusterUM3OutputDevice(NetworkedPrinterOutputDevice):
     def _spawnPrinterSelectionDialog(self):
         if self._printer_selection_dialog is None:
             path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../resources/qml/PrintWindow.qml")
-            self._printer_selection_dialog = CuraApplication.getInstance().createQmlComponent(path, {"OutputDevice": self})
+            self._printer_selection_dialog = SteSlicerApplication.getInstance().createQmlComponent(path, {"OutputDevice": self})
         if self._printer_selection_dialog is not None:
             self._printer_selection_dialog.show()
 
@@ -248,7 +248,7 @@ class ClusterUM3OutputDevice(NetworkedPrinterOutputDevice):
         # Add user name to the print_job
         parts.append(self._createFormPart("name=owner", bytes(self._getUserName(), "utf-8"), "text/plain"))
 
-        file_name = CuraApplication.getInstance().getPrintInformation().jobName + "." + preferred_format["extension"]
+        file_name = SteSlicerApplication.getInstance().getPrintInformation().jobName + "." + preferred_format["extension"]
 
         output = stream.getvalue()  # Either str or bytes depending on the output mode.
         if isinstance(stream, io.StringIO):
@@ -319,7 +319,7 @@ class ClusterUM3OutputDevice(NetworkedPrinterOutputDevice):
                 self._progress_message.hide()
             self._compressing_gcode = False
             self._sending_gcode = False
-            CuraApplication.getInstance().getController().setActiveStage("PrepareStage")
+            SteSlicerApplication.getInstance().getController().setActiveStage("PrepareStage")
 
             # After compressing the sliced model Cura sends data to printer, to stop receiving updates from the request
             # the "reply" should be disconnected
@@ -329,7 +329,7 @@ class ClusterUM3OutputDevice(NetworkedPrinterOutputDevice):
 
     def _successMessageActionTriggered(self, message_id: Optional[str] = None, action_id: Optional[str] = None) -> None:
         if action_id == "View":
-            CuraApplication.getInstance().getController().setActiveStage("MonitorStage")
+            SteSlicerApplication.getInstance().getController().setActiveStage("MonitorStage")
 
     @pyqtSlot()
     def openPrintJobControlPanel(self) -> None:

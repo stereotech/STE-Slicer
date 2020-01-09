@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     found_duplicates = False
     for dirname in all_dirnames:
-        file_name = "cura.pot" if not dirname else "cura.po"
+        file_name = "steslicer.pot" if not dirname else "steslicer.po"
         file_path = os.path.join(SCRIPT_DIR, "..", "resources", "i18n", dirname, file_name)
         found_duplicates = found_duplicates or checker.has_duplicates(file_path)
 

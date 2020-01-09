@@ -12,7 +12,7 @@ from PyQt5.QtCore import pyqtSlot, QObject
 import os.path
 import collections
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 class ChangeLog(Extension, QObject,):
     def __init__(self, parent = None):

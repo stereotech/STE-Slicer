@@ -17,16 +17,16 @@ from UM.Qt.ListModel import ListModel
 from UM.i18n import i18nCatalog
 from UM.Version import Version
 
-import cura
-from cura.CuraApplication import CuraApplication
+import steslicer
+from steslicer.SteSlicerApplication import SteSlicerApplication
 
 from .AuthorsModel import AuthorsModel
 from .PackagesModel import PackagesModel
 
 if TYPE_CHECKING:
-    from cura.Settings.GlobalStack import GlobalStack
+    from steslicer.Settings.GlobalStack import GlobalStack
 
-i18n_catalog = i18nCatalog("cura")
+i18n_catalog = i18nCatalog("steslicer")
 
 
 ##  The Toolbox class is responsible of communicating with the server through the API
@@ -34,10 +34,10 @@ class Toolbox(QObject, Extension):
     DEFAULT_CLOUD_API_ROOT = "https://api.ultimaker.com" #type: str
     DEFAULT_CLOUD_API_VERSION = 1 #type: int
 
-    def __init__(self, application: CuraApplication) -> None:
+    def __init__(self, application: SteSlicerApplication) -> None:
         super().__init__()
 
-        self._application = application  # type: CuraApplication
+        self._application = application  # type: SteSlicerApplication
 
         self._sdk_version = None  # type: Optional[Union[str, int]]
         self._cloud_api_version = None  # type: Optional[int]
@@ -171,7 +171,7 @@ class Toolbox(QObject, Extension):
         self._sdk_version = self._getSDKVersion()
         self._cloud_api_version = self._getCloudAPIVersion()
         self._cloud_api_root = self._getCloudAPIRoot()
-        self._api_url = "{cloud_api_root}/cura-packages/v{cloud_api_version}/cura/v{sdk_version}".format(
+        self._api_url = "{cloud_api_root}/steslicer-packages/v{cloud_api_version}/steslicer/v{sdk_version}".format(
             cloud_api_root=self._cloud_api_root,
             cloud_api_version=self._cloud_api_version,
             sdk_version=self._sdk_version
@@ -188,33 +188,33 @@ class Toolbox(QObject, Extension):
 
     # Get the API root for the packages API depending on Cura version settings.
     def _getCloudAPIRoot(self) -> str:
-        if not hasattr(cura, "CuraVersion"):
+        if not hasattr(steslicer, "CuraVersion"):
             return self.DEFAULT_CLOUD_API_ROOT
-        if not hasattr(cura.CuraVersion, "CuraCloudAPIRoot"): # type: ignore
+        if not hasattr(steslicer.SteSlicerVersion, "CuraCloudAPIRoot"): # type: ignore
             return self.DEFAULT_CLOUD_API_ROOT
-        if not cura.CuraVersion.CuraCloudAPIRoot: # type: ignore
+        if not steslicer.SteSlicerVersion.CuraCloudAPIRoot: # type: ignore
             return self.DEFAULT_CLOUD_API_ROOT
-        return cura.CuraVersion.CuraCloudAPIRoot # type: ignore
+        return steslicer.SteSlicerVersion.CuraCloudAPIRoot # type: ignore
 
     # Get the cloud API version from CuraVersion
     def _getCloudAPIVersion(self) -> int:
-        if not hasattr(cura, "CuraVersion"):
+        if not hasattr(steslicer, "CuraVersion"):
             return self.DEFAULT_CLOUD_API_VERSION
-        if not hasattr(cura.CuraVersion, "CuraCloudAPIVersion"): # type: ignore
+        if not hasattr(steslicer.SteSlicerVersion, "CuraCloudAPIVersion"): # type: ignore
             return self.DEFAULT_CLOUD_API_VERSION
-        if not cura.CuraVersion.CuraCloudAPIVersion: # type: ignore
+        if not steslicer.SteSlicerVersion.CuraCloudAPIVersion: # type: ignore
             return self.DEFAULT_CLOUD_API_VERSION
-        return cura.CuraVersion.CuraCloudAPIVersion # type: ignore
+        return steslicer.SteSlicerVersion.CuraCloudAPIVersion # type: ignore
 
     # Get the packages version depending on Cura version settings.
     def _getSDKVersion(self) -> Union[int, str]:
-        if not hasattr(cura, "CuraVersion"):
+        if not hasattr(steslicer, "CuraVersion"):
             return self._plugin_registry.APIVersion
-        if not hasattr(cura.CuraVersion, "CuraSDKVersion"):  # type: ignore
+        if not hasattr(steslicer.SteSlicerVersion, "CuraSDKVersion"):  # type: ignore
             return self._plugin_registry.APIVersion
-        if not cura.CuraVersion.CuraSDKVersion:  # type: ignore
+        if not steslicer.SteSlicerVersion.CuraSDKVersion:  # type: ignore
             return self._plugin_registry.APIVersion
-        return cura.CuraVersion.CuraSDKVersion  # type: ignore
+        return steslicer.SteSlicerVersion.CuraSDKVersion  # type: ignore
 
     @pyqtSlot()
     def browsePackages(self) -> None:
@@ -382,7 +382,7 @@ class Toolbox(QObject, Extension):
     #   It's used as an action on Confirm reset on Uninstall
     @pyqtSlot()
     def resetMaterialsQualitiesAndUninstall(self) -> None:
-        application = CuraApplication.getInstance()
+        application = SteSlicerApplication.getInstance()
         material_manager = application.getMaterialManager()
         quality_manager = application.getQualityManager()
         machine_manager = application.getMachineManager()

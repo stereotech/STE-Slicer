@@ -24,21 +24,21 @@ from UM.Settings.SettingInstance import SettingInstance #For typing.
 from UM.Tool import Tool #For typing.
 from UM.Mesh.MeshData import MeshData #For typing.
 
-from cura.CuraApplication import CuraApplication
-from cura.Settings.ExtruderManager import ExtruderManager
+from steslicer.SteSlicerApplication import SteSlicerApplication
+from steslicer.Settings.ExtruderManager import ExtruderManager
 from .ProcessSlicedLayersJob import ProcessSlicedLayersJob
 from .StartSliceJob import StartSliceJob, StartJobResult
 
 import Arcus
 
 if TYPE_CHECKING:
-    from cura.Machines.Models.MultiBuildPlateModel import MultiBuildPlateModel
-    from cura.Machines.MachineErrorChecker import MachineErrorChecker
+    from steslicer.Machines.Models.MultiBuildPlateModel import MultiBuildPlateModel
+    from steslicer.Machines.MachineErrorChecker import MachineErrorChecker
     from UM.Scene.Scene import Scene
     from UM.Settings.ContainerStack import ContainerStack
 
 from UM.i18n import i18nCatalog
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("steslicer")
 
 
 class CuraEngineBackend(QObject, Backend):
@@ -57,8 +57,8 @@ class CuraEngineBackend(QObject, Backend):
         if Platform.isWindows():
             executable_name += ".exe"
         default_engine_location = executable_name
-        if os.path.exists(os.path.join(CuraApplication.getInstallPrefix(), "bin", executable_name)):
-            default_engine_location = os.path.join(CuraApplication.getInstallPrefix(), "bin", executable_name)
+        if os.path.exists(os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)):
+            default_engine_location = os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)
         if hasattr(sys, "frozen"):
             default_engine_location = os.path.join(os.path.dirname(os.path.abspath(sys.executable)), executable_name)
         if Platform.isLinux() and not default_engine_location:
@@ -70,7 +70,7 @@ class CuraEngineBackend(QObject, Backend):
                     default_engine_location = execpath
                     break
 
-        self._application = CuraApplication.getInstance() #type: CuraApplication
+        self._application = SteSlicerApplication.getInstance() #type: SteSlicerApplication
         self._multi_build_plate_model = None #type: Optional[MultiBuildPlateModel]
         self._machine_error_checker = None #type: Optional[MachineErrorChecker]
 
@@ -181,7 +181,7 @@ class CuraEngineBackend(QObject, Backend):
     def getEngineCommand(self) -> List[str]:
         command = [self._application.getPreferences().getValue("backend/location"), "connect", "127.0.0.1:{0}".format(self._port), ""]
 
-        parser = argparse.ArgumentParser(prog = "cura", add_help = False)
+        parser = argparse.ArgumentParser(prog = "steslicer", add_help = False)
         parser.add_argument("--debug", action = "store_true", default = False, help = "Turn on the debug mode by setting this option.")
         known_args = vars(parser.parse_known_args()[0])
         if known_args["debug"]:
@@ -271,7 +271,7 @@ class CuraEngineBackend(QObject, Backend):
 
         self.determineAutoSlicing()  # Switch timer on or off if appropriate
 
-        slice_message = self._socket.createMessage("cura.proto.Slice")
+        slice_message = self._socket.createMessage("steslicer.proto.Slice")
         self._start_slice_job = StartSliceJob(slice_message)
         self._start_slice_job_build_plate = build_plate_to_be_sliced
         self._start_slice_job.setBuildPlate(self._start_slice_job_build_plate)

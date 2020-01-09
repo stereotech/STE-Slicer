@@ -8,7 +8,7 @@ from PyQt5.QtCore import Qt, pyqtProperty, pyqtSignal
 
 from UM.Qt.ListModel import ListModel
 
-##  Model that holds cura packages. By setting the filter property the instances held by this model can be changed.
+##  Model that holds steslicer packages. By setting the filter property the instances held by this model can be changed.
 class AuthorsModel(ListModel):
     def __init__(self, parent = None):
         super().__init__(parent)

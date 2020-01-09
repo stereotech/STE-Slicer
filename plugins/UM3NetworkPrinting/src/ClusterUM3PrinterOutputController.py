@@ -1,11 +1,11 @@
 # Copyright (c) 2017 Ultimaker B.V.
 # Cura is released under the terms of the LGPLv3 or higher.
 
-from cura.PrinterOutput.PrinterOutputController import PrinterOutputController
+from steslicer.PrinterOutput.PrinterOutputController import PrinterOutputController
 
 MYPY = False
 if MYPY:
-    from cura.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
+    from steslicer.PrinterOutput.PrintJobOutputModel import PrintJobOutputModel
 
 class ClusterUM3PrinterOutputController(PrinterOutputController):
     def __init__(self, output_device):

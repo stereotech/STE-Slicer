@@ -16,8 +16,8 @@ from UM.Settings.InstanceContainer import InstanceContainer
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.ConfigurationErrorMessage import ConfigurationErrorMessage
 
-from cura.CuraApplication import CuraApplication
-from cura.Machines.VariantType import VariantType
+from steslicer.SteSlicerApplication import SteSlicerApplication
+from steslicer.Machines.VariantType import VariantType
 
 from .XmlMaterialValidator import XmlMaterialValidator
 
@@ -43,7 +43,7 @@ class XmlMaterialProfile(InstanceContainer):
     @classmethod
     def xmlVersionToSettingVersion(cls, xml_version: str) -> int:
         if xml_version == "1.3":
-            return CuraApplication.SettingVersion
+            return SteSlicerApplication.SettingVersion
         return 0 #Older than 1.3.
 
     def getInheritedFiles(self):
@@ -68,7 +68,7 @@ class XmlMaterialProfile(InstanceContainer):
             return
 
         # Get the MaterialGroup
-        material_manager = CuraApplication.getInstance().getMaterialManager()
+        material_manager = SteSlicerApplication.getInstance().getMaterialManager()
         root_material_id = self.getMetaDataEntry("base_file")  #if basefile is self.getId, this is a basefile.
         material_group = material_manager.getMaterialGroup(root_material_id)
 
@@ -131,7 +131,7 @@ class XmlMaterialProfile(InstanceContainer):
 
         root = builder.start("fdmmaterial",
                              {"xmlns": "http://www.ultimaker.com/material",
-                              "xmlns:cura": "http://www.ultimaker.com/cura",
+                              "xmlns:steslicer": "http://www.ultimaker.com/cura",
                               "version": self.CurrentFdmMaterialVersion})
 
         ## Begin Metadata Block
@@ -213,7 +213,7 @@ class XmlMaterialProfile(InstanceContainer):
         machine_container_map = {} # type: Dict[str, InstanceContainer]
         machine_variant_map = {} # type: Dict[str, Dict[str, Any]]
 
-        variant_manager = CuraApplication.getInstance().getVariantManager()
+        variant_manager = SteSlicerApplication.getInstance().getVariantManager()
 
         root_material_id = self.getMetaDataEntry("base_file")  # if basefile is self.getId, this is a basefile.
         all_containers = registry.findInstanceContainers(base_file = root_material_id)
@@ -349,7 +349,7 @@ class XmlMaterialProfile(InstanceContainer):
         return xml
 
     def _loadFile(self, file_name):
-        path = Resources.getPath(CuraApplication.getInstance().ResourceTypes.MaterialInstanceContainer, file_name + ".xml.fdm_material")
+        path = Resources.getPath(SteSlicerApplication.getInstance().ResourceTypes.MaterialInstanceContainer, file_name + ".xml.fdm_material")
 
         with open(path, encoding = "utf-8") as f:
             contents = f.read()
@@ -580,7 +580,7 @@ class XmlMaterialProfile(InstanceContainer):
                     common_compatibility = self._parseCompatibleValue(entry.text)
 
         # Add namespaced Cura-specific settings
-        settings = data.iterfind("./um:settings/cura:setting", self.__namespaces)
+        settings = data.iterfind("./um:settings/steslicer:setting", self.__namespaces)
         for entry in settings:
             value = entry.text
             if value.lower() == "yes":
@@ -624,7 +624,7 @@ class XmlMaterialProfile(InstanceContainer):
                     Logger.log("d", "Unsupported material setting %s", key)
 
             # Add namespaced Cura-specific settings
-            settings = machine.iterfind("./cura:setting", self.__namespaces)
+            settings = machine.iterfind("./steslicer:setting", self.__namespaces)
             for entry in settings:
                 value = entry.text
                 if value.lower() == "yes":
@@ -693,7 +693,7 @@ class XmlMaterialProfile(InstanceContainer):
                         if buildplate_id is None:
                             continue
 
-                        variant_manager = CuraApplication.getInstance().getVariantManager()
+                        variant_manager = SteSlicerApplication.getInstance().getVariantManager()
                         variant_node = variant_manager.getVariantNode(machine_id, buildplate_id,
                                                                       variant_type = VariantType.BUILD_PLATE)
                         if not variant_node:
@@ -716,7 +716,7 @@ class XmlMaterialProfile(InstanceContainer):
                         if hotend_name is None:
                             continue
 
-                        variant_manager = CuraApplication.getInstance().getVariantManager()
+                        variant_manager = SteSlicerApplication.getInstance().getVariantManager()
                         variant_node = variant_manager.getVariantNode(machine_id, hotend_name, VariantType.NOZZLE)
                         if not variant_node:
                             continue
@@ -768,7 +768,7 @@ class XmlMaterialProfile(InstanceContainer):
                             if buildplate_name is None:
                                 continue
 
-                            variant_manager = CuraApplication.getInstance().getVariantManager()
+                            variant_manager = SteSlicerApplication.getInstance().getVariantManager()
                             variant_node = variant_manager.getVariantNode(machine_id, buildplate_name, VariantType.BUILD_PLATE)
                             if not variant_node:
                                 continue
@@ -853,8 +853,8 @@ class XmlMaterialProfile(InstanceContainer):
             else:
                 Logger.log("w", "Unsupported material setting %s", setting_key)
 
-        # Fetch settings in the "cura" namespace
-        cura_settings = node.iterfind("./cura:setting", cls.__namespaces)
+        # Fetch settings in the "steslicer" namespace
+        cura_settings = node.iterfind("./steslicer:setting", cls.__namespaces)
         for cura_setting_entry in cura_settings:
             value = cura_setting_entry.text
             if value.lower() == "yes":
@@ -1106,7 +1106,7 @@ class XmlMaterialProfile(InstanceContainer):
 
         elif key not in self.__material_properties_setting_map.values() and key not in self.__material_metadata_setting_map.values():
             # Setting is not in the standard namespace, and not a material property (eg diameter) or metadata (eg GUID)
-            tag_name = "cura:setting"
+            tag_name = "steslicer:setting"
         else:
             # Skip material properties (eg diameter) or metadata (eg GUID)
             return
@@ -1203,7 +1203,7 @@ class XmlMaterialProfile(InstanceContainer):
     # Map of recognised namespaces with a proper prefix.
     __namespaces = {
         "um": "http://www.ultimaker.com/material",
-        "cura": "http://www.ultimaker.com/cura"
+        "steslicer": "http://www.ultimaker.com/cura"
     }
 
 ##  Helper function for pretty-printing XML because ETree is stupid
