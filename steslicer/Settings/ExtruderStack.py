@@ -178,7 +178,7 @@ class ExtruderStack(SteSlicerContainerStack):
 
 
 extruder_stack_mime = MimeType(
-    name = "application/x-steslicer-extruderstack",
+    name = "application/x-cura-extruderstack",
     comment = "Cura Extruder Stack",
     suffixes = ["extruder.cfg"]
 )

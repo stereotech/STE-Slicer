@@ -230,7 +230,7 @@ class GlobalStack(SteSlicerContainerStack):
 
 ## private:
 global_stack_mime = MimeType(
-    name = "application/x-steslicer-globalstack",
+    name = "application/x-cura-globalstack",
     comment = "Cura Global Stack",
     suffixes = ["global.cfg"]
 )

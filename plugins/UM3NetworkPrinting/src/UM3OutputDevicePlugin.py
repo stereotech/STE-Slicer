@@ -94,7 +94,7 @@ class UM3OutputDevicePlugin(OutputDevicePlugin):
             self._onRemoveDevice(instance_name)
 
         self._zero_conf = Zeroconf()
-        self._zero_conf_browser = ServiceBrowser(self._zero_conf, u'_ultimaker._tcp.local.',
+        self._zero_conf_browser = ServiceBrowser(self._zero_conf, u'_stereotech._tcp.local.',
                                                  [self._appendServiceChangedRequest])
 
         # Look for manual instances from preference
