@@ -58,32 +58,33 @@ class SteSlicerSplashScreen(QSplashScreen):
 
         # draw version text
         font = QFont()  # Using system-default font here
-        font.setPixelSize(37)
+        font.setPixelSize(24)
         painter.setFont(font)
-        painter.drawText(215, 66, 330 * self._scale, 230 * self._scale, Qt.AlignLeft | Qt.AlignTop, version[0])
+        painter.setPen(QColor(38, 50, 56, 255))
+        painter.drawText(400, 5, 330 * self._scale, 230 * self._scale, Qt.AlignRight | Qt.AlignTop, version[0])
         if len(version) > 1:
             font.setPixelSize(16)
             painter.setFont(font)
             painter.setPen(QColor(200, 200, 200, 255))
-            painter.drawText(247, 105, 330 * self._scale, 255 * self._scale, Qt.AlignLeft | Qt.AlignTop, version[1])
+            painter.drawText(432, 39, 330 * self._scale, 255 * self._scale, Qt.AlignRight | Qt.AlignTop, version[1])
         painter.setPen(QColor(255, 255, 255, 255))
 
         # draw the loading image
         pen = QPen()
         pen.setWidth(6 * self._scale)
-        pen.setColor(QColor(32, 166, 219, 255))
+        pen.setColor(QColor(20, 24, 56, 255))
         painter.setPen(pen)
-        painter.drawArc(60, 150, 32 * self._scale, 32 * self._scale, self._loading_image_rotation_angle * 16, 300 * 16)
+        painter.drawArc(10, 208, 32 * self._scale, 32 * self._scale, self._loading_image_rotation_angle * 16, 300 * 16)
 
         # draw message text
         if self._current_message:
             font = QFont()  # Using system-default font here
             font.setPixelSize(13)
             pen = QPen()
-            pen.setColor(QColor(255, 255, 255, 255))
+            pen.setColor(QColor(38, 50, 56, 255))
             painter.setPen(pen)
             painter.setFont(font)
-            painter.drawText(100, 128, 170, 64,
+            painter.drawText(40, 186, 170, 64,
                              Qt.AlignLeft | Qt.AlignVCenter | Qt.TextWordWrap,
                              self._current_message)
 

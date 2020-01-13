@@ -130,7 +130,7 @@ numpy.seterr(all = "ignore")
 try:
     from steslicer.SteSlicerVersion import CuraVersion, CuraBuildType, CuraDebugMode, CuraSDKVersion  # type: ignore
 except ImportError:
-    CuraVersion = "master"  # [CodeStyle: Reflecting imported value]
+    CuraVersion = "0.0"  # [CodeStyle: Reflecting imported value]
     CuraBuildType = ""
     CuraDebugMode = False
     CuraSDKVersion = ""
