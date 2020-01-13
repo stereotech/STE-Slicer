@@ -34,8 +34,8 @@ class BackupsManager:
     #   \param meta_data A dict containing some metadata that is needed to
     #   restore the back-up correctly.
     def restoreBackup(self, zip_file: bytes, meta_data: Dict[str, str]) -> None:
-        if not meta_data.get("cura_release", None):
-            # If there is no "cura_release" specified in the meta data, we don't execute a backup restore.
+        if not meta_data.get("steslicer_release", None):
+            # If there is no "steslicer_release" specified in the meta data, we don't execute a backup restore.
             Logger.log("w", "Tried to restore a backup without specifying a Cura version number.")
             return
 

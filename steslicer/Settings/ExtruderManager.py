@@ -365,8 +365,8 @@ class ExtruderManager(QObject):
         if extruder_stack_0 is None:
             Logger.log("i", "No extruder stack for global stack [%s], create one", global_stack.getId())
             # Single extrusion machine without an ExtruderStack, create it
-            from steslicer.Settings.CuraStackBuilder import CuraStackBuilder
-            CuraStackBuilder.createExtruderStackWithDefaultSetup(global_stack, 0)
+            from steslicer.Settings.SteSlicerStackBuilder import SteSlicerStackBuilder
+            SteSlicerStackBuilder.createExtruderStackWithDefaultSetup(global_stack, 0)
 
         elif extruder_stack_0.definition.getId() != expected_extruder_definition_0_id:
             Logger.log("e", "Single extruder printer [{printer}] expected extruder [{expected}], but got [{got}]. I'm making it [{expected}].".format(

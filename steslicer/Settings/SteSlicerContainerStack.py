@@ -13,7 +13,7 @@ from UM.Settings.InstanceContainer import InstanceContainer
 from UM.Settings.DefinitionContainer import DefinitionContainer
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.Interfaces import ContainerInterface, DefinitionContainerInterface
-from steslicer.Settings import cura_empty_instance_containers
+from steslicer.Settings import steslicer_empty_instance_containers
 
 from . import Exceptions
 
@@ -36,16 +36,16 @@ from . import Exceptions
 #   Internally, this class ensures the mentioned containers are always there and kept in a specific order.
 #   This also means that operations on the stack that modifies the container ordering is prohibited and
 #   will raise an exception.
-class CuraContainerStack(ContainerStack):
+class SteSlicerContainerStack(ContainerStack):
     def __init__(self, container_id: str) -> None:
         super().__init__(container_id)
 
-        self._empty_instance_container = cura_empty_instance_containers.empty_container #type: InstanceContainer
+        self._empty_instance_container = steslicer_empty_instance_containers.empty_container #type: InstanceContainer
 
-        self._empty_quality_changes = cura_empty_instance_containers.empty_quality_changes_container #type: InstanceContainer
-        self._empty_quality = cura_empty_instance_containers.empty_quality_container #type: InstanceContainer
-        self._empty_material = cura_empty_instance_containers.empty_material_container #type: InstanceContainer
-        self._empty_variant = cura_empty_instance_containers.empty_variant_container #type: InstanceContainer
+        self._empty_quality_changes = steslicer_empty_instance_containers.empty_quality_changes_container #type: InstanceContainer
+        self._empty_quality = steslicer_empty_instance_containers.empty_quality_container #type: InstanceContainer
+        self._empty_material = steslicer_empty_instance_containers.empty_material_container #type: InstanceContainer
+        self._empty_variant = steslicer_empty_instance_containers.empty_variant_container #type: InstanceContainer
 
         self._containers = [self._empty_instance_container for i in range(len(_ContainerIndexes.IndexTypeMap))] #type: List[ContainerInterface]
         self._containers[_ContainerIndexes.QualityChanges] = self._empty_quality_changes
@@ -279,8 +279,8 @@ class CuraContainerStack(ContainerStack):
         # Some stacks can have empty definition_changes containers which will cause problems.
         # Make sure that all stacks here have non-empty definition_changes containers.
         if isinstance(new_containers[_ContainerIndexes.DefinitionChanges], type(self._empty_instance_container)):
-            from steslicer.Settings.CuraStackBuilder import CuraStackBuilder
-            CuraStackBuilder.createDefinitionChangesContainer(self, self.getId() + "_settings")
+            from steslicer.Settings.SteSlicerStackBuilder import SteSlicerStackBuilder
+            SteSlicerStackBuilder.createDefinitionChangesContainer(self, self.getId() + "_settings")
 
         ## TODO; Deserialize the containers.
         return serialized

@@ -23,25 +23,26 @@ class DiscoverUM3Action(MachineAction):
     discoveredDevicesChanged = pyqtSignal()
 
     def __init__(self) -> None:
-        super().__init__("DiscoverUM3Action", catalog.i18nc("@action","Connect via Network"))
+        super().__init__("DiscoverUM3Action", catalog.i18nc("@action", "Connect via Network"))
         self._qml_url = "resources/qml/DiscoverUM3Action.qml"
 
-        self._network_plugin = None #type: Optional[UM3OutputDevicePlugin]
+        self._network_plugin = None  # type: Optional[UM3OutputDevicePlugin]
 
-        self.__additional_components_view = None #type: Optional[QObject]
+        self.__additional_components_view = None  # type: Optional[QObject]
 
         SteSlicerApplication.getInstance().engineCreatedSignal.connect(self._createAdditionalComponentsView)
 
-        self._last_zero_conf_event_time = time.time() #type: float
+        self._last_zero_conf_event_time = time.time()  # type: float
 
         # Time to wait after a zero-conf service change before allowing a zeroconf reset
-        self._zero_conf_change_grace_period = 0.25 #type: float
+        self._zero_conf_change_grace_period = 0.25  # type: float
 
     @pyqtSlot()
     def startDiscovery(self):
         if not self._network_plugin:
             Logger.log("d", "Starting device discovery.")
-            self._network_plugin = SteSlicerApplication.getInstance().getOutputDeviceManager().getOutputDevicePlugin("UM3NetworkPrinting")
+            self._network_plugin = SteSlicerApplication.getInstance().getOutputDeviceManager().getOutputDevicePlugin(
+                "UM3NetworkPrinting")
             self._network_plugin.discoveredDevicesChanged.connect(self._onDeviceDiscoveryChanged)
             self.discoveredDevicesChanged.emit()
 
@@ -86,12 +87,12 @@ class DiscoverUM3Action(MachineAction):
         self._last_zero_conf_event_time = time.time()
         self.discoveredDevicesChanged.emit()
 
-    @pyqtProperty("QVariantList", notify = discoveredDevicesChanged)
+    @pyqtProperty("QVariantList", notify=discoveredDevicesChanged)
     def foundDevices(self):
         if self._network_plugin:
 
             printers = list(self._network_plugin.getDiscoveredDevices().values())
-            printers.sort(key = lambda k: k.name)
+            printers.sort(key=lambda k: k.name)
             return printers
         else:
             return []
@@ -106,7 +107,8 @@ class DiscoverUM3Action(MachineAction):
                 previous_connect_group_name = meta_data["connect_group_name"]
                 global_container_stack.setMetaDataEntry("connect_group_name", group_name)
                 # Find all the places where there is the same group name and change it accordingly
-                SteSlicerApplication.getInstance().getMachineManager().replaceContainersMetadata(key ="connect_group_name", value = previous_connect_group_name, new_value = group_name)
+                SteSlicerApplication.getInstance().getMachineManager().replaceContainersMetadata(
+                    key="connect_group_name", value=previous_connect_group_name, new_value=group_name)
             else:
                 global_container_stack.setMetaDataEntry("connect_group_name", group_name)
             # Set the default value for "hidden", which is used when you have a group with multiple types of printers
@@ -123,13 +125,16 @@ class DiscoverUM3Action(MachineAction):
         if global_container_stack:
             meta_data = global_container_stack.getMetaData()
             if "um_network_key" in meta_data:
-                previous_network_key= meta_data["um_network_key"]
+                previous_network_key = meta_data["um_network_key"]
                 global_container_stack.setMetaDataEntry("um_network_key", key)
                 # Delete old authentication data.
-                Logger.log("d", "Removing old authentication id %s for device %s", global_container_stack.getMetaDataEntry("network_authentication_id", None), key)
+                Logger.log("d", "Removing old authentication id %s for device %s",
+                           global_container_stack.getMetaDataEntry("network_authentication_id", None), key)
                 global_container_stack.removeMetaDataEntry("network_authentication_id")
                 global_container_stack.removeMetaDataEntry("network_authentication_key")
-                SteSlicerApplication.getInstance().getMachineManager().replaceContainersMetadata(key ="um_network_key", value = previous_network_key, new_value = key)
+                SteSlicerApplication.getInstance().getMachineManager().replaceContainersMetadata(key="um_network_key",
+                                                                                                 value=previous_network_key,
+                                                                                                 new_value=key)
             else:
                 global_container_stack.setMetaDataEntry("um_network_key", key)
 
@@ -137,7 +142,7 @@ class DiscoverUM3Action(MachineAction):
             # Ensure that the connection states are refreshed.
             self._network_plugin.reCheckConnections()
 
-    @pyqtSlot(result = str)
+    @pyqtSlot(result=str)
     def getStoredKey(self) -> str:
         global_container_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if global_container_stack:
@@ -147,15 +152,15 @@ class DiscoverUM3Action(MachineAction):
 
         return ""
 
-    @pyqtSlot(result = str)
+    @pyqtSlot(result=str)
     def getLastManualEntryKey(self) -> str:
         if self._network_plugin:
             return self._network_plugin.getLastManualDevice()
         return ""
 
-    @pyqtSlot(str, result = bool)
+    @pyqtSlot(str, result=bool)
     def existsKey(self, key: str) -> bool:
-        return SteSlicerApplication.getInstance().getMachineManager().existNetworkInstances(network_key = key)
+        return SteSlicerApplication.getInstance().getMachineManager().existNetworkInstances(network_key=key)
 
     @pyqtSlot()
     def loadConfigurationFromPrinter(self) -> None:
@@ -175,11 +180,16 @@ class DiscoverUM3Action(MachineAction):
         if not plugin_path:
             return
         path = os.path.join(plugin_path, "resources/qml/UM3InfoComponents.qml")
-        self.__additional_components_view = SteSlicerApplication.getInstance().createQmlComponent(path, {"manager": self})
+        self.__additional_components_view = SteSlicerApplication.getInstance().createQmlComponent(path,
+                                                                                                  {"manager": self})
         if not self.__additional_components_view:
             Logger.log("w", "Could not create ui components for UM3.")
             return
 
         # Create extra components
-        SteSlicerApplication.getInstance().addAdditionalComponent("monitorButtons", self.__additional_components_view.findChild(QObject, "networkPrinterConnectButton"))
-        SteSlicerApplication.getInstance().addAdditionalComponent("machinesDetailPane", self.__additional_components_view.findChild(QObject, "networkPrinterConnectionInfo"))
+        SteSlicerApplication.getInstance().addAdditionalComponent("monitorButtons",
+                                                                  self.__additional_components_view.findChild(QObject,
+                                                                                                              "networkPrinterConnectButton"))
+        SteSlicerApplication.getInstance().addAdditionalComponent("machinesDetailPane",
+                                                                  self.__additional_components_view.findChild(QObject,
+                                                                                                              "networkPrinterConnectionInfo"))

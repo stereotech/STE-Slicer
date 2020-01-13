@@ -36,7 +36,7 @@ def setup_module():
 
      MimeTypeDatabase.addMimeType(
          MimeType(
-             name="application/x-steslicer-gcode-file",
+             name="application/x-cura-gcode-file",
              comment="Cura GCode File",
              suffixes=["gcode"]
          )

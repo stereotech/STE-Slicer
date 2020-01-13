@@ -34,7 +34,7 @@ from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
 
 
-class CuraContainerRegistry(ContainerRegistry):
+class SteSlicerContainerRegistry(ContainerRegistry):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -736,5 +736,5 @@ class CuraContainerRegistry(ContainerRegistry):
     #Override just for the type.
     @classmethod
     @override(ContainerRegistry)
-    def getInstance(cls, *args, **kwargs) -> "CuraContainerRegistry":
-        return cast(CuraContainerRegistry, super().getInstance(*args, **kwargs))
+    def getInstance(cls, *args, **kwargs) -> "SteSlicerContainerRegistry":
+        return cast(SteSlicerContainerRegistry, super().getInstance(*args, **kwargs))

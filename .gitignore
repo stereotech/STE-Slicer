@@ -53,6 +53,8 @@ plugins/GodMode
 plugins/OctoPrintPlugin
 plugins/ProfileFlattener
 plugins/X3GWriter
+plugins/CliReader
+plugins/GlicerWriter
 
 #Build stuff
 CMakeCache.txt

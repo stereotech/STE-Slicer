@@ -12,7 +12,7 @@ from UM.PluginRegistry import PluginRegistry
 
 ##  Machine actions are actions that are added to a specific machine type. Examples of such actions are
 #   updating the firmware, connecting with remote devices or doing bed leveling. A machine action can also have a
-#   qml, which should contain a "Cura.MachineAction" item. When activated, the item will be displayed in a dialog
+#   qml, which should contain a "SteSlicer.MachineAction" item. When activated, the item will be displayed in a dialog
 #   and this object will be added as "manager" (so all pyqtSlot() functions can be called by calling manager.func())
 class MachineAction(QObject, PluginObject):
 

@@ -4,7 +4,7 @@
 import pytest #This module contains unit tests.
 import unittest.mock #To monkeypatch some mocks in place of dependencies.
 
-import steslicer.Settings.CuraContainerStack #To get the list of container types.
+import steslicer.Settings.SteSlicerContainerStack #To get the list of container types.
 from steslicer.Settings.Exceptions import InvalidContainerError, InvalidOperationError #To test raising these errors.
 from UM.Settings.DefinitionContainer import DefinitionContainer #To test against the class DefinitionContainer.
 from UM.Settings.InstanceContainer import InstanceContainer #To test against the class InstanceContainer.
@@ -13,7 +13,7 @@ import UM.Settings.ContainerRegistry
 import UM.Settings.ContainerStack
 import UM.Settings.SettingDefinition #To add settings to the definition.
 
-from steslicer.Settings.cura_empty_instance_containers import empty_container
+from steslicer.Settings.steslicer_empty_instance_containers import empty_container
 
 
 ##  Gets an instance container with a specified container type.
@@ -51,24 +51,24 @@ def test_addExtruder(global_stack):
     mock_definition = unittest.mock.MagicMock()
     mock_definition.getProperty = lambda key, property, context = None: 2 if key == "machine_extruder_count" and property == "value" else None
 
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock):
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock):
         global_stack.definition = mock_definition
 
     assert len(global_stack.extruders) == 0
     first_extruder = unittest.mock.MagicMock()
     first_extruder.getMetaDataEntry = lambda key: 0 if key == "position" else None
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock):
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock):
         global_stack.addExtruder(first_extruder)
     assert len(global_stack.extruders) == 1
     assert global_stack.extruders[0] == first_extruder
     second_extruder = unittest.mock.MagicMock()
     second_extruder.getMetaDataEntry = lambda key: 1 if key == "position" else None
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock):
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock):
         global_stack.addExtruder(second_extruder)
     assert len(global_stack.extruders) == 2
     assert global_stack.extruders[1] == second_extruder
     # Disabled for now for Custom FDM Printer
-    # with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock):
+    # with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock):
     #     with pytest.raises(TooManyExtrudersError): #Should be limited to 2 extruders because of machine_extruder_count.
     #         global_stack.addExtruder(unittest.mock.MagicMock())
     assert len(global_stack.extruders) == 2 #Didn't add the faulty extruder.
@@ -221,18 +221,18 @@ def test_deserializeCompletesEmptyContainers(global_stack):
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         global_stack.deserialize("")
 
-    assert len(global_stack.getContainers()) == len(steslicer.Settings.CuraContainerStack._ContainerIndexes.IndexTypeMap) #Needs a slot for every type.
-    for container_type_index in steslicer.Settings.CuraContainerStack._ContainerIndexes.IndexTypeMap:
+    assert len(global_stack.getContainers()) == len(steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.IndexTypeMap) #Needs a slot for every type.
+    for container_type_index in steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.IndexTypeMap:
         if container_type_index in \
-                (steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition, steslicer.Settings.CuraContainerStack._ContainerIndexes.DefinitionChanges): #We're not checking the definition or definition_changes
+                (steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition, steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.DefinitionChanges): #We're not checking the definition or definition_changes
             continue
         assert global_stack.getContainer(container_type_index) == empty_container #All others need to be empty.
 
 
 ##  Tests whether an instance container with the wrong type gets removed when deserialising.
 def test_deserializeRemovesWrongInstanceContainer(global_stack):
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Quality] = getInstanceContainer(container_type ="wrong type")
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Quality] = getInstanceContainer(container_type ="wrong type")
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         global_stack.deserialize("")
@@ -242,8 +242,8 @@ def test_deserializeRemovesWrongInstanceContainer(global_stack):
 
 ##  Tests whether a container with the wrong class gets removed when deserialising.
 def test_deserializeRemovesWrongContainerClass(global_stack):
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Quality] = DefinitionContainer(container_id ="wrong class")
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Quality] = DefinitionContainer(container_id ="wrong class")
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         global_stack.deserialize("")
@@ -253,7 +253,7 @@ def test_deserializeRemovesWrongContainerClass(global_stack):
 
 ##  Tests whether an instance container in the definition spot results in an error.
 def test_deserializeWrongDefinitionClass(global_stack):
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition] = getInstanceContainer(container_type ="definition") #Correct type but wrong class.
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition] = getInstanceContainer(container_type ="definition") #Correct type but wrong class.
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         with pytest.raises(UM.Settings.ContainerStack.InvalidContainerStackError): #Must raise an error that there is no definition container.
@@ -262,8 +262,8 @@ def test_deserializeWrongDefinitionClass(global_stack):
 
 ##  Tests whether an instance container with the wrong type is moved into the correct slot by deserialising.
 def test_deserializeMoveInstanceContainer(global_stack):
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Quality] = getInstanceContainer(container_type ="material") #Not in the correct spot.
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Quality] = getInstanceContainer(container_type ="material") #Not in the correct spot.
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         global_stack.deserialize("")
@@ -274,7 +274,7 @@ def test_deserializeMoveInstanceContainer(global_stack):
 
 ##  Tests whether a definition container in the wrong spot is moved into the correct spot by deserialising.
 def test_deserializeMoveDefinitionContainer(global_stack):
-    global_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Material] = DefinitionContainer(container_id ="some definition") #Not in the correct spot.
+    global_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Material] = DefinitionContainer(container_id ="some definition") #Not in the correct spot.
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         global_stack.deserialize("")
@@ -288,7 +288,7 @@ def test_getPropertyFallThrough(global_stack):
     #A few instance container mocks to put in the stack.
     mock_layer_heights = {} #For each container type, a mock container that defines layer height to something unique.
     mock_no_settings = {} #For each container type, a mock container that has no settings at all.
-    container_indexes = steslicer.Settings.CuraContainerStack._ContainerIndexes #Cache.
+    container_indexes = steslicer.Settings.SteSlicerContainerStack._ContainerIndexes #Cache.
     for type_id, type_name in container_indexes.IndexTypeMap.items():
         container = unittest.mock.MagicMock()
         container.getProperty = lambda key, property, context = None, type_id = type_id: type_id if (key == "layer_height" and property == "value") else None #Returns the container type ID as layer height, in order to identify it.
@@ -308,7 +308,7 @@ def test_getPropertyFallThrough(global_stack):
     global_stack.material = mock_no_settings[container_indexes.Material]
     global_stack.variant = mock_no_settings[container_indexes.Variant]
     global_stack.definitionChanges = mock_no_settings[container_indexes.DefinitionChanges]
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
         global_stack.definition = mock_layer_heights[container_indexes.Definition] #There's a layer height in here!
 
     assert global_stack.getProperty("layer_height", "value") == container_indexes.Definition
@@ -331,7 +331,7 @@ def test_getPropertyNoResolveInDefinition(global_stack):
     value = unittest.mock.MagicMock() #Just sets the value for bed temperature.
     value.getProperty = lambda key, property, context = None: 10 if (key == "material_bed_temperature" and property == "value") else None
 
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
         global_stack.definition = value
     assert global_stack.getProperty("material_bed_temperature", "value") == 10 #No resolve, so fall through to value.
 
@@ -341,21 +341,21 @@ def test_getPropertyResolveInDefinition(global_stack):
     resolve_and_value = unittest.mock.MagicMock() #Sets the resolve and value for bed temperature.
     resolve_and_value.getProperty = lambda key, property, context = None: (7.5 if property == "resolve" else 5) if (key == "material_bed_temperature" and property in ("resolve", "value")) else None #7.5 resolve, 5 value.
 
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
         global_stack.definition = resolve_and_value
     assert global_stack.getProperty("material_bed_temperature", "value") == 7.5 #Resolve wins in the definition.
 
 
 ##  In instance containers, when the value is asked and there is a resolve function, it must get the value first.
 def test_getPropertyResolveInInstance(global_stack):
-    container_indices = steslicer.Settings.CuraContainerStack._ContainerIndexes
+    container_indices = steslicer.Settings.SteSlicerContainerStack._ContainerIndexes
     instance_containers = {}
     for container_type in container_indices.IndexTypeMap:
         instance_containers[container_type] = unittest.mock.MagicMock() #Sets the resolve and value for bed temperature.
         instance_containers[container_type].getProperty = lambda key, property, context = None: (7.5 if property == "resolve" else (InstanceState.User if property == "state" else (5 if property != "limit_to_extruder" else "-1"))) if (key == "material_bed_temperature") else None #7.5 resolve, 5 value.
         instance_containers[container_type].getMetaDataEntry = unittest.mock.MagicMock(return_value = container_indices.IndexTypeMap[container_type]) #Make queries for the type return the desired type.
     instance_containers[container_indices.Definition].getProperty = lambda key, property, context = None: 10 if (key == "material_bed_temperature" and property == "value") else None #Definition only has value.
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
         global_stack.definition = instance_containers[container_indices.Definition] #Stack must have a definition.
 
     #For all instance container slots, the value reigns over resolve.
@@ -381,7 +381,7 @@ def test_getPropertyInstancesBeforeResolve(global_stack):
     resolve = unittest.mock.MagicMock() #Sets just the resolve.
     resolve.getProperty = lambda key, property, context = None: 7.5 if (key == "material_bed_temperature" and property == "resolve") else None
 
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
         global_stack.definition = resolve
     global_stack.quality = value
 

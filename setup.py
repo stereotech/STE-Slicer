@@ -73,4 +73,4 @@ for site_package in site.getsitepackages():
         print("Copying Angle libraries from %s" % qt_origin_path)
         shutil.copy(os.path.join(qt_origin_path, "libEGL.dll"), "dist/libEGL.dll")
         shutil.copy(os.path.join(qt_origin_path, "libGLESv2.dll"), "dist/libGLESv2.dll")
-os.rename("dist/cura_app.exe", "dist/Cura.exe")
+os.rename("dist/steslicer_app.exe", "dist/Cura.exe")

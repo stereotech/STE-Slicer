@@ -26,7 +26,7 @@ class GCodeReader(MeshReader):
         super().__init__()
         MimeTypeDatabase.addMimeType(
             MimeType(
-                name = "application/x-steslicer-gcode-file",
+                name = "application/x-cura-gcode-file",
                 comment = "Cura GCode File",
                 suffixes = ["gcode"]
             )

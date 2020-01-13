@@ -26,7 +26,7 @@ parser.add_argument("--trigger-early-crash",
 known_args = vars(parser.parse_known_args()[0])
 
 if not known_args["debug"]:
-    def get_cura_dir_path():
+    def get_steslicer_dir_path():
         if Platform.isWindows():
             return os.path.expanduser("~/AppData/Roaming/steslicer")
         elif Platform.isLinux():
@@ -35,7 +35,7 @@ if not known_args["debug"]:
             return os.path.expanduser("~/Library/Logs/steslicer")
 
     if hasattr(sys, "frozen"):
-        dirpath = get_cura_dir_path()
+        dirpath = get_steslicer_dir_path()
         os.makedirs(dirpath, exist_ok = True)
         sys.stdout = open(os.path.join(dirpath, "stdout.log"), "w", encoding = "utf-8")
         sys.stderr = open(os.path.join(dirpath, "stderr.log"), "w", encoding = "utf-8")

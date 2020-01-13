@@ -4,14 +4,14 @@
 import pytest #This module contains automated tests.
 import unittest.mock #For the mocking and monkeypatching functionality.
 
-import steslicer.Settings.CuraContainerStack #To get the list of container types.
+import steslicer.Settings.SteSlicerContainerStack #To get the list of container types.
 import UM.Settings.ContainerRegistry #To create empty instance containers.
 import UM.Settings.ContainerStack #To set the container registry the container stacks use.
 from UM.Settings.DefinitionContainer import DefinitionContainer #To check against the class of DefinitionContainer.
 from UM.Settings.InstanceContainer import InstanceContainer #To check against the class of InstanceContainer.
 from steslicer.Settings.Exceptions import InvalidContainerError, InvalidOperationError #To check whether the correct exceptions are raised.
 from steslicer.Settings.ExtruderManager import ExtruderManager
-from steslicer.Settings.cura_empty_instance_containers import empty_container
+from steslicer.Settings.steslicer_empty_instance_containers import empty_container
 
 ##  Gets an instance container with a specified container type.
 #
@@ -170,18 +170,18 @@ def test_deserializeCompletesEmptyContainers(extruder_stack):
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         extruder_stack.deserialize("")
 
-    assert len(extruder_stack.getContainers()) == len(steslicer.Settings.CuraContainerStack._ContainerIndexes.IndexTypeMap) #Needs a slot for every type.
-    for container_type_index in steslicer.Settings.CuraContainerStack._ContainerIndexes.IndexTypeMap:
+    assert len(extruder_stack.getContainers()) == len(steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.IndexTypeMap) #Needs a slot for every type.
+    for container_type_index in steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.IndexTypeMap:
         if container_type_index in \
-                (steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition,
-                 steslicer.Settings.CuraContainerStack._ContainerIndexes.DefinitionChanges):  # We're not checking the definition or definition_changes
+                (steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition,
+                 steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.DefinitionChanges):  # We're not checking the definition or definition_changes
             continue
         assert extruder_stack.getContainer(container_type_index) == empty_container #All others need to be empty.
 
 ##  Tests whether an instance container with the wrong type gets removed when deserialising.
 def test_deserializeRemovesWrongInstanceContainer(extruder_stack):
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Quality] = getInstanceContainer(container_type ="wrong type")
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Quality] = getInstanceContainer(container_type ="wrong type")
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         extruder_stack.deserialize("")
@@ -190,8 +190,8 @@ def test_deserializeRemovesWrongInstanceContainer(extruder_stack):
 
 ##  Tests whether a container with the wrong class gets removed when deserialising.
 def test_deserializeRemovesWrongContainerClass(extruder_stack):
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Quality] = DefinitionContainer(container_id ="wrong class")
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Quality] = DefinitionContainer(container_id ="wrong class")
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         extruder_stack.deserialize("")
@@ -200,7 +200,7 @@ def test_deserializeRemovesWrongContainerClass(extruder_stack):
 
 ##  Tests whether an instance container in the definition spot results in an error.
 def test_deserializeWrongDefinitionClass(extruder_stack):
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition] = getInstanceContainer(container_type ="definition") #Correct type but wrong class.
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition] = getInstanceContainer(container_type ="definition") #Correct type but wrong class.
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         with pytest.raises(UM.Settings.ContainerStack.InvalidContainerStackError): #Must raise an error that there is no definition container.
@@ -208,8 +208,8 @@ def test_deserializeWrongDefinitionClass(extruder_stack):
 
 ##  Tests whether an instance container with the wrong type is moved into the correct slot by deserialising.
 def test_deserializeMoveInstanceContainer(extruder_stack):
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Quality] = getInstanceContainer(container_type ="material") #Not in the correct spot.
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Quality] = getInstanceContainer(container_type ="material") #Not in the correct spot.
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Definition] = DefinitionContainer(container_id ="some definition")
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         extruder_stack.deserialize("")
@@ -219,7 +219,7 @@ def test_deserializeMoveInstanceContainer(extruder_stack):
 
 ##  Tests whether a definition container in the wrong spot is moved into the correct spot by deserialising.
 def test_deserializeMoveDefinitionContainer(extruder_stack):
-    extruder_stack._containers[steslicer.Settings.CuraContainerStack._ContainerIndexes.Material] = DefinitionContainer(container_id ="some definition") #Not in the correct spot.
+    extruder_stack._containers[steslicer.Settings.SteSlicerContainerStack._ContainerIndexes.Material] = DefinitionContainer(container_id ="some definition") #Not in the correct spot.
 
     with unittest.mock.patch("UM.Settings.ContainerStack.ContainerStack.deserialize", unittest.mock.MagicMock()): #Prevent calling super().deserialize.
         extruder_stack.deserialize("")
@@ -235,7 +235,7 @@ def test_getPropertyFallThrough(global_stack, extruder_stack):
     #A few instance container mocks to put in the stack.
     mock_layer_heights = {} #For each container type, a mock container that defines layer height to something unique.
     mock_no_settings = {} #For each container type, a mock container that has no settings at all.
-    container_indices = steslicer.Settings.CuraContainerStack._ContainerIndexes #Cache.
+    container_indices = steslicer.Settings.SteSlicerContainerStack._ContainerIndexes #Cache.
     for type_id, type_name in container_indices.IndexTypeMap.items():
         container = unittest.mock.MagicMock()
         # Return type_id when asking for value and -1 when asking for settable_per_extruder
@@ -255,7 +255,7 @@ def test_getPropertyFallThrough(global_stack, extruder_stack):
     extruder_stack.quality = mock_no_settings[container_indices.Quality]
     extruder_stack.material = mock_no_settings[container_indices.Material]
     extruder_stack.variant = mock_no_settings[container_indices.Variant]
-    with unittest.mock.patch("steslicer.Settings.CuraContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
+    with unittest.mock.patch("steslicer.Settings.SteSlicerContainerStack.DefinitionContainer", unittest.mock.MagicMock): #To guard against the type checking.
         extruder_stack.definition = mock_layer_heights[container_indices.Definition] #There's a layer height in here!
 
     extruder_stack.setNextStack(global_stack)

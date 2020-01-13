@@ -9,7 +9,7 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 
 import UM 1.3 as UM
-import Cura 1.1 as Cura
+import Cura 1.0 as Cura
 
 import "Menus"
 
@@ -421,8 +421,8 @@ UM.MainWindow
             Topbar
             {
                 id: topbar
-                //anchors.left: parent.left
-                anchors.left: sidebar.right
+                anchors.left: parent.left
+                //anchors.left: sidebar.right
                 anchors.right: parent.right
                 anchors.top: parent.top
             }
@@ -457,7 +457,7 @@ UM.MainWindow
 
                 anchors
                 {
-                    top: topbar.top
+                    top: topbar.bottom
                     bottom: parent.bottom
                 }
 

@@ -45,7 +45,6 @@ from UM.Operations.RemoveSceneNodeOperation import RemoveSceneNodeOperation
 from UM.Operations.GroupedOperation import GroupedOperation
 from UM.Operations.SetTransformOperation import SetTransformOperation
 
-from steslicer.API import CuraAPI
 from steslicer.Arranging.Arrange import Arrange
 from steslicer.Arranging.ArrangeObjectsJob import ArrangeObjectsJob
 from steslicer.Arranging.ArrangeObjectsAllBuildPlatesJob import ArrangeObjectsAllBuildPlatesJob
@@ -63,7 +62,7 @@ from steslicer.Scene.SteSlicerSceneController import SteSlicerSceneController
 from UM.Settings.SettingDefinition import SettingDefinition, DefinitionPropertyType
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.SettingFunction import SettingFunction
-from steslicer.Settings.CuraContainerRegistry import CuraContainerRegistry
+from steslicer.Settings.SteSlicerContainerRegistry import SteSlicerContainerRegistry
 from steslicer.Settings.MachineNameValidator import MachineNameValidator
 
 from steslicer.Machines.Models.BuildPlateModel import BuildPlateModel
@@ -108,8 +107,8 @@ from steslicer.Settings.ExtrudersModel import ExtrudersModel
 from steslicer.Settings.MaterialSettingsVisibilityHandler import MaterialSettingsVisibilityHandler
 from steslicer.Settings.ContainerManager import ContainerManager
 from steslicer.Settings.SidebarCustomMenuItemsModel import SidebarCustomMenuItemsModel
-import steslicer.Settings.cura_empty_instance_containers
-from steslicer.Settings.CuraFormulaFunctions import CuraFormulaFunctions
+import steslicer.Settings.steslicer_empty_instance_containers
+from steslicer.Settings.SteSlicerFormulaFunctions import SteSlicerFormulaFunctions
 
 from steslicer.ObjectsModel import ObjectsModel
 
@@ -182,9 +181,9 @@ class SteSlicerApplication(QtApplication):
 
         self._single_instance = None
 
-        self._cura_formula_functions = None  # type: Optional[CuraFormulaFunctions]
+        self._steslicer_formula_functions = None  # type: Optional[SteSlicerFormulaFunctions]
 
-        self._cura_package_manager = None
+        self._steslicer_package_manager = None
 
         self._machine_action_manager = None
 
@@ -208,12 +207,11 @@ class SteSlicerApplication(QtApplication):
         self._setting_visibility_presets_model = None
         self._setting_inheritance_manager = None
         self._simple_mode_settings_manager = None
-        self._cura_scene_controller = None
+        self._steslicer_scene_controller = None
         self._machine_error_checker = None
 
         self._quality_profile_drop_down_menu_model = None
         self._custom_quality_profile_drop_down_menu_model = None
-        self._cura_API = CuraAPI(self)
 
         self._physics = None
         self._volume = None
@@ -225,7 +223,7 @@ class SteSlicerApplication(QtApplication):
 
         self._center_after_select = False
         self._camera_animation = None
-        self._cura_actions = None
+        self._steslicer_actions = None
         self.started = False
 
         self._message_box_callback = None
@@ -250,10 +248,10 @@ class SteSlicerApplication(QtApplication):
         self._auto_save = None
         self._save_data_enabled = True
 
-        from steslicer.Settings.CuraContainerRegistry import CuraContainerRegistry
-        self._container_registry_class = CuraContainerRegistry
+        from steslicer.Settings.SteSlicerContainerRegistry import SteSlicerContainerRegistry
+        self._container_registry_class = SteSlicerContainerRegistry
         # Redefined here in order to please the typing.
-        self._container_registry = None # type: CuraContainerRegistry
+        self._container_registry = None # type: SteSlicerContainerRegistry
         from steslicer.SteSlicerPackageManager import SteSlicerPackageManager
         self._package_manager_class = SteSlicerPackageManager
 
@@ -278,7 +276,7 @@ class SteSlicerApplication(QtApplication):
                                       help = "FOR TESTING ONLY. Trigger an early crash to show the crash dialog.")
         self._cli_parser.add_argument("file", nargs = "*", help = "Files to load after starting the application.")
 
-    def getContainerRegistry(self) -> "CuraContainerRegistry":
+    def getContainerRegistry(self) -> "SteSlicerContainerRegistry":
         return self._container_registry
 
     def parseCliOptions(self):
@@ -331,7 +329,7 @@ class SteSlicerApplication(QtApplication):
     # Adds custom property types, settings types, and extra operators (functions) that need to be registered in
     # SettingDefinition and SettingFunction.
     def __initializeSettingDefinitionsAndFunctions(self):
-        self._cura_formula_functions = CuraFormulaFunctions(self)
+        self._steslicer_formula_functions = SteSlicerFormulaFunctions(self)
 
         # Need to do this before ContainerRegistry tries to load the machines
         SettingDefinition.addSupportedProperty("settable_per_mesh", DefinitionPropertyType.Any, default = True, read_only = True)
@@ -353,10 +351,10 @@ class SteSlicerApplication(QtApplication):
         SettingDefinition.addSettingType("optional_extruder", None, str, None)
         SettingDefinition.addSettingType("[int]", None, str, None)
 
-        SettingFunction.registerOperator("extruderValue", self._cura_formula_functions.getValueInExtruder)
-        SettingFunction.registerOperator("extruderValues", self._cura_formula_functions.getValuesInAllExtruders)
-        SettingFunction.registerOperator("resolveOrValue", self._cura_formula_functions.getResolveOrValue)
-        SettingFunction.registerOperator("defaultExtruderPosition", self._cura_formula_functions.getDefaultExtruderPosition)
+        SettingFunction.registerOperator("extruderValue", self._steslicer_formula_functions.getValueInExtruder)
+        SettingFunction.registerOperator("extruderValues", self._steslicer_formula_functions.getValuesInAllExtruders)
+        SettingFunction.registerOperator("resolveOrValue", self._steslicer_formula_functions.getResolveOrValue)
+        SettingFunction.registerOperator("defaultExtruderPosition", self._steslicer_formula_functions.getDefaultExtruderPosition)
 
     # Adds all resources and container related resources.
     def __addAllResourcesAndContainerResources(self) -> None:
@@ -387,23 +385,23 @@ class SteSlicerApplication(QtApplication):
         # Add empty variant, material and quality containers.
         # Since they are empty, they should never be serialized and instead just programmatically created.
         # We need them to simplify the switching between materials.
-        self.empty_container = steslicer.Settings.cura_empty_instance_containers.empty_container  # type: EmptyInstanceContainer
+        self.empty_container = steslicer.Settings.steslicer_empty_instance_containers.empty_container  # type: EmptyInstanceContainer
 
         self._container_registry.addContainer(
-            steslicer.Settings.cura_empty_instance_containers.empty_definition_changes_container)
-        self.empty_definition_changes_container = steslicer.Settings.cura_empty_instance_containers.empty_definition_changes_container
+            steslicer.Settings.steslicer_empty_instance_containers.empty_definition_changes_container)
+        self.empty_definition_changes_container = steslicer.Settings.steslicer_empty_instance_containers.empty_definition_changes_container
 
-        self._container_registry.addContainer(steslicer.Settings.cura_empty_instance_containers.empty_variant_container)
-        self.empty_variant_container = steslicer.Settings.cura_empty_instance_containers.empty_variant_container
+        self._container_registry.addContainer(steslicer.Settings.steslicer_empty_instance_containers.empty_variant_container)
+        self.empty_variant_container = steslicer.Settings.steslicer_empty_instance_containers.empty_variant_container
 
-        self._container_registry.addContainer(steslicer.Settings.cura_empty_instance_containers.empty_material_container)
-        self.empty_material_container = steslicer.Settings.cura_empty_instance_containers.empty_material_container
+        self._container_registry.addContainer(steslicer.Settings.steslicer_empty_instance_containers.empty_material_container)
+        self.empty_material_container = steslicer.Settings.steslicer_empty_instance_containers.empty_material_container
 
-        self._container_registry.addContainer(steslicer.Settings.cura_empty_instance_containers.empty_quality_container)
-        self.empty_quality_container = steslicer.Settings.cura_empty_instance_containers.empty_quality_container
+        self._container_registry.addContainer(steslicer.Settings.steslicer_empty_instance_containers.empty_quality_container)
+        self.empty_quality_container = steslicer.Settings.steslicer_empty_instance_containers.empty_quality_container
 
-        self._container_registry.addContainer(steslicer.Settings.cura_empty_instance_containers.empty_quality_changes_container)
-        self.empty_quality_changes_container = steslicer.Settings.cura_empty_instance_containers.empty_quality_changes_container
+        self._container_registry.addContainer(steslicer.Settings.steslicer_empty_instance_containers.empty_quality_changes_container)
+        self.empty_quality_changes_container = steslicer.Settings.steslicer_empty_instance_containers.empty_quality_changes_container
 
     # Initializes the version upgrade manager with by providing the paths for each resource type and the latest
     # versions.
@@ -722,13 +720,10 @@ class SteSlicerApplication(QtApplication):
 
         # initialize info objects
         self._print_information = PrintInformation.PrintInformation(self)
-        self._cura_actions = SteSlicerActions.SteSlicerActions(self)
+        self._steslicer_actions = SteSlicerActions.SteSlicerActions(self)
 
         # Initialize setting visibility presets model.
         self._setting_visibility_presets_model = SettingVisibilityPresetsModel(self.getPreferences(), parent = self)
-
-        # Initialize Cura API
-        self._cura_API.initialize()
 
         # Detect in which mode to run and execute that mode
         if self._is_headless:
@@ -829,9 +824,9 @@ class SteSlicerApplication(QtApplication):
         return self._setting_visibility_presets_model
 
     def getCuraFormulaFunctions(self, *args) -> "CuraFormulaFunctions":
-        if self._cura_formula_functions is None:
-            self._cura_formula_functions = CuraFormulaFunctions(self)
-        return self._cura_formula_functions
+        if self._steslicer_formula_functions is None:
+            self._steslicer_formula_functions = SteSlicerFormulaFunctions(self)
+        return self._steslicer_formula_functions
 
     def getMachineErrorChecker(self, *args) -> MachineErrorChecker:
         return self._machine_error_checker
@@ -875,9 +870,9 @@ class SteSlicerApplication(QtApplication):
         return self._build_plate_model
 
     def getCuraSceneController(self, *args) -> SteSlicerSceneController:
-        if self._cura_scene_controller is None:
-            self._cura_scene_controller = SteSlicerSceneController.createCuraSceneController()
-        return self._cura_scene_controller
+        if self._steslicer_scene_controller is None:
+            self._steslicer_scene_controller = SteSlicerSceneController.createCuraSceneController()
+        return self._steslicer_scene_controller
 
     def getSettingInheritanceManager(self, *args) -> SettingInheritanceManager:
         if self._setting_inheritance_manager is None:
@@ -922,9 +917,6 @@ class SteSlicerApplication(QtApplication):
             self._custom_quality_profile_drop_down_menu_model = CustomQualityProfilesDropDownMenuModel(self)
         return self._custom_quality_profile_drop_down_menu_model
 
-    def getCuraAPI(self, *args, **kwargs) -> "CuraAPI":
-        return self._cura_API
-
     ##  Registers objects for the QML engine to use.
     #
     #   \param engine The QML engine.
@@ -935,7 +927,7 @@ class SteSlicerApplication(QtApplication):
         engine.rootContext().setContextProperty("Printer", self)
         engine.rootContext().setContextProperty("CuraApplication", self)
         engine.rootContext().setContextProperty("PrintInformation", self._print_information)
-        engine.rootContext().setContextProperty("CuraActions", self._cura_actions)
+        engine.rootContext().setContextProperty("CuraActions", self._steslicer_actions)
         engine.rootContext().setContextProperty("CuraSDKVersion", CuraSDKVersion)
 
         qmlRegisterUncreatableType(SteSlicerApplication, "Cura", 1, 0, "ResourceTypes", "Just an Enum type")
@@ -974,9 +966,6 @@ class SteSlicerApplication(QtApplication):
         qmlRegisterType(UserChangesModel, "Cura", 1, 0, "UserChangesModel")
         qmlRegisterSingletonType(ContainerManager, "Cura", 1, 0, "ContainerManager", ContainerManager.getInstance)
         qmlRegisterType(SidebarCustomMenuItemsModel, "Cura", 1, 0, "SidebarCustomMenuItemsModel")
-
-        from steslicer.API import CuraAPI
-        qmlRegisterSingletonType(CuraAPI, "Cura", 1, 1, "API", self.getCuraAPI)
 
         # As of Qt5.7, it is necessary to get rid of any ".." in the path for the singleton to work.
         actions_url = QUrl.fromLocalFile(os.path.abspath(Resources.getPath(SteSlicerApplication.ResourceTypes.QmlFiles, "Actions.qml")))

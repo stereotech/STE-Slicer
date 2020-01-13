@@ -14,7 +14,7 @@ from .ExtruderStack import ExtruderStack
 
 
 ##  Contains helper functions to create new machines.
-class CuraStackBuilder:
+class SteSlicerStackBuilder:
 
     ##  Create a new instance of a machine.
     #
