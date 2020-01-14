@@ -127,12 +127,12 @@ if TYPE_CHECKING:
 numpy.seterr(all = "ignore")
 
 try:
-    from steslicer.SteSlicerVersion import CuraVersion, CuraBuildType, CuraDebugMode, CuraSDKVersion  # type: ignore
+    from steslicer.SteSlicerVersion import SteSlicerVersion, SteSlicerBuildType, SteSlicerDebugMode, SteSlicerSDKVersion  # type: ignore
 except ImportError:
-    CuraVersion = "0.0"  # [CodeStyle: Reflecting imported value]
-    CuraBuildType = ""
-    CuraDebugMode = False
-    CuraSDKVersion = ""
+    SteSlicerVersion = "0.0"  # [CodeStyle: Reflecting imported value]
+    SteSlicerBuildType = ""
+    SteSlicerDebugMode = False
+    SteSlicerSDKVersion = ""
 
 
 class SteSlicerApplication(QtApplication):
@@ -160,9 +160,9 @@ class SteSlicerApplication(QtApplication):
 
     def __init__(self, *args, **kwargs):
         super().__init__(name = "steslicer",
-                         version = CuraVersion,
-                         buildtype = CuraBuildType,
-                         is_debug_mode = CuraDebugMode,
+                         version = SteSlicerVersion,
+                         buildtype = SteSlicerBuildType,
+                         is_debug_mode = SteSlicerDebugMode,
                          tray_icon_name = "steslicer-icon-32.png",
                          **kwargs)
 
@@ -928,7 +928,7 @@ class SteSlicerApplication(QtApplication):
         engine.rootContext().setContextProperty("CuraApplication", self)
         engine.rootContext().setContextProperty("PrintInformation", self._print_information)
         engine.rootContext().setContextProperty("CuraActions", self._steslicer_actions)
-        engine.rootContext().setContextProperty("CuraSDKVersion", CuraSDKVersion)
+        engine.rootContext().setContextProperty("CuraSDKVersion", SteSlicerSDKVersion)
 
         qmlRegisterUncreatableType(SteSlicerApplication, "Cura", 1, 0, "ResourceTypes", "Just an Enum type")
 
