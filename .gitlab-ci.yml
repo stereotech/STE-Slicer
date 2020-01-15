@@ -11,3 +11,9 @@ buildSteSlicer:
   artifacts:
     paths:
       - build
+
+testSteSlicer:
+  stage: test
+  script:
+    - cd build
+    - ctest3 --output-on-failure -T Test
