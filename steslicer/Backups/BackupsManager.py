@@ -36,7 +36,7 @@ class BackupsManager:
     def restoreBackup(self, zip_file: bytes, meta_data: Dict[str, str]) -> None:
         if not meta_data.get("steslicer_release", None):
             # If there is no "steslicer_release" specified in the meta data, we don't execute a backup restore.
-            Logger.log("w", "Tried to restore a backup without specifying a Cura version number.")
+            Logger.log("w", "Tried to restore a backup without specifying a STE Slicer version number.")
             return
 
         self._disableAutoSave()
