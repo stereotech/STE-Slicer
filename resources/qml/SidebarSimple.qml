@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.3
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item
 {
@@ -19,14 +19,14 @@ Item
     property Action configureSettings;
     property variant minimumPrintTime: PrintInformation.minimumPrintTime;
     property variant maximumPrintTime: PrintInformation.maximumPrintTime;
-    property bool settingsEnabled: Cura.ExtruderManager.activeExtruderStackId || extrudersEnabledCount.properties.value == 1
+    property bool settingsEnabled: SteSlicer.ExtruderManager.activeExtruderStackId || extrudersEnabledCount.properties.value == 1
     Component.onCompleted: PrintInformation.enabled = true
     Component.onDestruction: PrintInformation.enabled = false
-    UM.I18nCatalog { id: catalog; name: "cura" }
+    UM.I18nCatalog { id: catalog; name: "steslicer" }
 
     ScrollView
     {
-        visible: Cura.MachineManager.activeMachineName != "" // If no printers added then the view is invisible
+        visible: SteSlicer.MachineManager.activeMachineName != "" // If no printers added then the view is invisible
         anchors.fill: parent
         style: UM.Theme.styles.scrollview
         flickableItem.flickableDirection: Flickable.VerticalFlick
@@ -58,8 +58,8 @@ Item
                     repeat: false
                     onTriggered:
                     {
-                        var item = Cura.QualityProfilesDropDownMenuModel.getItem(qualitySlider.value);
-                        Cura.MachineManager.activeQualityGroup = item.quality_group;
+                        var item = SteSlicer.QualityProfilesDropDownMenuModel.getItem(qualitySlider.value);
+                        SteSlicer.MachineManager.activeQualityGroup = item.quality_group;
                     }
                 }
 
@@ -67,7 +67,7 @@ Item
 
                 Connections
                 {
-                    target: Cura.QualityProfilesDropDownMenuModel
+                    target: SteSlicer.QualityProfilesDropDownMenuModel
                     onItemsChanged: qualityModel.update()
                 }
 
@@ -105,18 +105,18 @@ Item
                         var availableMin = -1
                         var availableMax = -1
 
-                        for (var i = 0; i < Cura.QualityProfilesDropDownMenuModel.rowCount(); i++)
+                        for (var i = 0; i < SteSlicer.QualityProfilesDropDownMenuModel.rowCount(); i++)
                         {
-                            var qualityItem = Cura.QualityProfilesDropDownMenuModel.getItem(i)
+                            var qualityItem = SteSlicer.QualityProfilesDropDownMenuModel.getItem(i)
 
                             // Add each quality item to the UI quality model
                             qualityModel.append(qualityItem)
 
                             // Set selected value
-                            if (Cura.MachineManager.activeQualityType == qualityItem.quality_type)
+                            if (SteSlicer.MachineManager.activeQualityType == qualityItem.quality_type)
                             {
                                 // set to -1 when switching to user created profile so all ticks are clickable
-                                if (Cura.SimpleModeSettingsManager.isProfileUserCreated)
+                                if (SteSlicer.SimpleModeSettingsManager.isProfileUserCreated)
                                 {
                                     qualityModel.qualitySliderActiveIndex = -1
                                 }
@@ -182,7 +182,7 @@ Item
                         qualityModel.existingQualityProfile = 0
 
                         // check, the ticks count cannot be less than zero
-                        qualityModel.totalTicks = Math.max(0, Cura.QualityProfilesDropDownMenuModel.rowCount() - 1)
+                        qualityModel.totalTicks = Math.max(0, SteSlicer.QualityProfilesDropDownMenuModel.rowCount() - 1)
                     }
                 }
 
@@ -208,13 +208,13 @@ Item
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.top: parent.top
                             anchors.topMargin: Math.round(UM.Theme.getSize("sidebar_margin").height / 2)
-                            color: (Cura.MachineManager.activeMachine != null && Cura.QualityProfilesDropDownMenuModel.getItem(index).available) ? UM.Theme.getColor("quality_slider_available") : UM.Theme.getColor("quality_slider_unavailable")
+                            color: (SteSlicer.MachineManager.activeMachine != null && SteSlicer.QualityProfilesDropDownMenuModel.getItem(index).available) ? UM.Theme.getColor("quality_slider_available") : UM.Theme.getColor("quality_slider_unavailable")
                             text:
                             {
                                 var result = ""
-                                if(Cura.MachineManager.activeMachine != null)
+                                if(SteSlicer.MachineManager.activeMachine != null)
                                 {
-                                    result = Cura.QualityProfilesDropDownMenuModel.getItem(index).layer_height
+                                    result = SteSlicer.QualityProfilesDropDownMenuModel.getItem(index).layer_height
 
                                     if(result == undefined)
                                     {
@@ -307,7 +307,7 @@ Item
                             {
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                enabled: Cura.SimpleModeSettingsManager.isProfileUserCreated == false
+                                enabled: SteSlicer.SimpleModeSettingsManager.isProfileUserCreated == false
                                 onEntered: unavailableLineToolTip.showTooltip(true)
                                 onExited: unavailableLineToolTip.showTooltip(false)
                             }
@@ -342,7 +342,7 @@ Item
                             {
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                enabled: Cura.SimpleModeSettingsManager.isProfileUserCreated == false
+                                enabled: SteSlicer.SimpleModeSettingsManager.isProfileUserCreated == false
                                 onEntered: unavailableLineToolTip.showTooltip(true)
                                 onExited: unavailableLineToolTip.showTooltip(false)
                             }
@@ -369,7 +369,7 @@ Item
                         Rectangle
                         {
                             anchors.verticalCenter: parent.verticalCenter
-                            color: Cura.QualityProfilesDropDownMenuModel.getItem(index).available ? UM.Theme.getColor("quality_slider_available") : UM.Theme.getColor("quality_slider_unavailable")
+                            color: SteSlicer.QualityProfilesDropDownMenuModel.getItem(index).available ? UM.Theme.getColor("quality_slider_available") : UM.Theme.getColor("quality_slider_unavailable")
                             width: 1 * screenScaleFactor
                             height: 6 * screenScaleFactor
                             y: 0
@@ -382,7 +382,7 @@ Item
                         id: qualitySlider
                         height: UM.Theme.getSize("sidebar_margin").height
                         anchors.bottom: speedSlider.bottom
-                        enabled: qualityModel.totalTicks > 0 && !Cura.SimpleModeSettingsManager.isProfileCustomized
+                        enabled: qualityModel.totalTicks > 0 && !SteSlicer.SimpleModeSettingsManager.isProfileCustomized
                         visible: qualityModel.availableTotalTicks > 0
                         updateValueWhileDragging : false
 
@@ -418,7 +418,7 @@ Item
                                     implicitWidth: 10 * screenScaleFactor
                                     implicitHeight: implicitWidth
                                     radius: Math.round(implicitWidth / 2)
-                                    visible: !Cura.SimpleModeSettingsManager.isProfileCustomized && !Cura.SimpleModeSettingsManager.isProfileUserCreated && qualityModel.existingQualityProfile
+                                    visible: !SteSlicer.SimpleModeSettingsManager.isProfileCustomized && !SteSlicer.SimpleModeSettingsManager.isProfileUserCreated && qualityModel.existingQualityProfile
                                 }
                             }
                         }
@@ -426,7 +426,7 @@ Item
                         onValueChanged:
                         {
                             // only change if an active machine is set and the slider is visible at all.
-                            if (Cura.MachineManager.activeMachine != null && visible)
+                            if (SteSlicer.MachineManager.activeMachine != null && visible)
                             {
                                 // prevent updating during view initializing. Trigger only if the value changed by user
                                 if (qualitySlider.value != qualityModel.qualitySliderActiveIndex && qualityModel.qualitySliderActiveIndex != -1)
@@ -443,7 +443,7 @@ Item
                         id: speedSliderMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        enabled: Cura.SimpleModeSettingsManager.isProfileUserCreated
+                        enabled: SteSlicer.SimpleModeSettingsManager.isProfileUserCreated
 
                         onEntered:
                         {
@@ -497,7 +497,7 @@ Item
                 {
                     id: customisedSettings
 
-                    visible: Cura.SimpleModeSettingsManager.isProfileCustomized || Cura.SimpleModeSettingsManager.isProfileUserCreated
+                    visible: SteSlicer.SimpleModeSettingsManager.isProfileCustomized || SteSlicer.SimpleModeSettingsManager.isProfileUserCreated
                     height: Math.round(speedSlider.height * 0.8)
                     width: Math.round(speedSlider.height * 0.8)
 
@@ -511,7 +511,7 @@ Item
                     onClicked:
                     {
                         // if the current profile is user-created, switch to a built-in quality
-                        Cura.MachineManager.resetToUseDefaultQuality()
+                        SteSlicer.MachineManager.resetToUseDefaultQuality()
                     }
                     onEntered:
                     {
@@ -624,8 +624,8 @@ Item
 
                         if (active_mode == 0 || active_mode == "simple")
                         {
-                            Cura.MachineManager.setSettingForAllExtruders("infill_sparse_density", "value", roundedSliderValue)
-                            Cura.MachineManager.resetSettingForAllExtruders("infill_line_distance")
+                            SteSlicer.MachineManager.setSettingForAllExtruders("infill_sparse_density", "value", roundedSliderValue)
+                            SteSlicer.MachineManager.resetSettingForAllExtruders("infill_line_distance")
                         }
                     }
 
@@ -763,13 +763,13 @@ Item
                             } else {
                                 newInfillDensity = previousInfillDensity;
                             }
-                            Cura.MachineManager.setSettingForAllExtruders("infill_sparse_density", "value", String(newInfillDensity))
+                            SteSlicer.MachineManager.setSettingForAllExtruders("infill_sparse_density", "value", String(newInfillDensity))
 
                             var infill_steps_value = 0;
                             if (parseInt(infillSteps.properties.value) == 0)
                                 infill_steps_value = 5;
 
-                            Cura.MachineManager.setSettingForAllExtruders("gradual_infill_steps", "value", infill_steps_value)
+                            SteSlicer.MachineManager.setSettingForAllExtruders("gradual_infill_steps", "value", infill_steps_value)
                         }
 
                         onEntered: {
@@ -913,7 +913,7 @@ Item
                     return (current_extruder.color) ? current_extruder.color : "";
                 }
 
-                textRole: "text"  // this solves that the combobox isn't populated in the first time Cura is started
+                textRole: "text"  // this solves that the combobox isn't populated in the first time STE Slicer is started
 
                 anchors.top: enableSupportCheckBox.top
                 //anchors.topMargin: ((supportEnabled.properties.value === "True") && (machineExtruderCount.properties.value > 1)) ? UM.Theme.getSize("sidebar_margin").height : 0
@@ -933,14 +933,14 @@ Item
                 {
                     if (supportExtruderNr.properties == null)
                     {
-                        return Cura.MachineManager.defaultExtruderPosition;
+                        return SteSlicer.MachineManager.defaultExtruderPosition;
                     }
                     else
                     {
                         var extruder = parseInt(supportExtruderNr.properties.value);
                         if ( extruder === -1)
                         {
-                            return Cura.MachineManager.defaultExtruderPosition;
+                            return SteSlicer.MachineManager.defaultExtruderPosition;
                         }
                         return extruder;
                     }
@@ -1055,7 +1055,7 @@ Item
             }
 
             //: Model used to populate the extrudelModel
-            Cura.ExtrudersModel
+            SteSlicer.ExtrudersModel
             {
                 id: extruders
                 onModelChanged: populateExtruderModel()
@@ -1066,7 +1066,7 @@ Item
             UM.SettingPropertyProvider
             {
                 id: infillExtruderNumber
-                containerStackId: Cura.MachineManager.activeStackId
+                containerStackId: SteSlicer.MachineManager.activeStackId
                 key: "infill_extruder_nr"
                 watchedProperties: [ "value" ]
                 storeIndex: 0
@@ -1075,7 +1075,7 @@ Item
             UM.SettingPropertyProvider
             {
                 id: infillDensity
-                containerStackId: Cura.MachineManager.activeStackId
+                containerStackId: SteSlicer.MachineManager.activeStackId
                 key: "infill_sparse_density"
                 watchedProperties: [ "value" ]
                 storeIndex: 0
@@ -1084,7 +1084,7 @@ Item
             UM.SettingPropertyProvider
             {
                 id: infillSteps
-                containerStackId: Cura.MachineManager.activeStackId
+                containerStackId: SteSlicer.MachineManager.activeStackId
                 key: "gradual_infill_steps"
                 watchedProperties: ["value", "enabled"]
                 storeIndex: 0
@@ -1093,7 +1093,7 @@ Item
             UM.SettingPropertyProvider
             {
                 id: platformAdhesionType
-                containerStack: Cura.MachineManager.activeMachine
+                containerStack: SteSlicer.MachineManager.activeMachine
                 removeUnusedValue: false //Doesn't work with settings that are resolved.
                 key: "adhesion_type"
                 watchedProperties: [ "value", "enabled" ]
@@ -1103,7 +1103,7 @@ Item
             UM.SettingPropertyProvider
             {
                 id: supportEnabled
-                containerStack: Cura.MachineManager.activeMachine
+                containerStack: SteSlicer.MachineManager.activeMachine
                 key: "support_enable"
                 watchedProperties: [ "value", "enabled", "description" ]
                 storeIndex: 0
@@ -1112,7 +1112,7 @@ Item
             UM.SettingPropertyProvider
             {
                 id: extrudersEnabledCount
-                containerStack: Cura.MachineManager.activeMachine
+                containerStack: SteSlicer.MachineManager.activeMachine
                 key: "extruders_enabled_count"
                 watchedProperties: [ "value" ]
                 storeIndex: 0
@@ -1121,7 +1121,7 @@ Item
             UM.SettingPropertyProvider
             {
                 id: supportExtruderNr
-                containerStack: Cura.MachineManager.activeMachine
+                containerStack: SteSlicer.MachineManager.activeMachine
                 key: "support_extruder_nr"
                 watchedProperties: [ "value" ]
                 storeIndex: 0

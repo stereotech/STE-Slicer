@@ -21,7 +21,7 @@ class SingleInstance:
     # Starts a client that checks for a single instance server and sends the files that need to opened if the server
     # exists. Returns True if the single instance server is found, otherwise False.
     def startClient(self) -> bool:
-        Logger.log("i", "Checking for the presence of an ready running Cura instance.")
+        Logger.log("i", "Checking for the presence of an ready running STE Slicer instance.")
         single_instance_socket = QLocalSocket(self._application)
         Logger.log("d", "Full single instance server name: %s", single_instance_socket.fullServerName())
         single_instance_socket.connectToServer("ultimaker-steslicer")
@@ -36,7 +36,7 @@ class SingleInstance:
             return True
 
         if single_instance_socket.state() == QLocalSocket.ConnectedState:
-            Logger.log("i", "Connection has been made to the single-instance Cura socket.")
+            Logger.log("i", "Connection has been made to the single-instance STE Slicer socket.")
 
             # Protocol is one line of JSON terminated with a carriage return.
             # "command" field is required and holds the name of the command to execute.

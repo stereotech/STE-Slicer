@@ -5,14 +5,14 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
     id: menu
     title: "Build plate"
 
-    property var buildPlateModel: CuraApplication.getBuildPlateModel()
+    property var buildPlateModel: SteSlicerApplication.getBuildPlateModel()
 
     Instantiator
     {
@@ -21,10 +21,10 @@ Menu
         MenuItem {
             text: model.name
             checkable: true
-            checked: model.name == Cura.MachineManager.globalVariantName
+            checked: model.name == SteSlicer.MachineManager.globalVariantName
             exclusiveGroup: group
             onTriggered: {
-                Cura.MachineManager.setGlobalVariant(model.container_node);
+                SteSlicer.MachineManager.setGlobalVariant(model.container_node);
             }
         }
 

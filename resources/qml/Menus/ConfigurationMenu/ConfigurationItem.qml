@@ -5,7 +5,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Rectangle
 {
@@ -125,16 +125,16 @@ Rectangle
 
     Connections
     {
-        target: Cura.MachineManager
+        target: SteSlicer.MachineManager
         onCurrentConfigurationChanged: {
-            configurationItem.selected = Cura.MachineManager.matchesConfiguration(configuration)
+            configurationItem.selected = SteSlicer.MachineManager.matchesConfiguration(configuration)
             updateBorderColor()
         }
     }
 
     Component.onCompleted:
     {
-        configurationItem.selected = Cura.MachineManager.matchesConfiguration(configuration)
+        configurationItem.selected = SteSlicer.MachineManager.matchesConfiguration(configuration)
         updateBorderColor()
     }
 

@@ -12,7 +12,7 @@ UM.Dialog
     id: base
 
     //: About dialog title
-    title: catalog.i18nc("@title:window","About Cura")
+    title: catalog.i18nc("@title:window","About STE Slicer")
 
     minimumWidth: 500 * screenScaleFactor
     minimumHeight: 650 * screenScaleFactor
@@ -45,7 +45,7 @@ UM.Dialog
         anchors.topMargin: ((base.minimumWidth - width) / 2) | 0
         anchors.horizontalCenter: parent.horizontalCenter
 
-        UM.I18nCatalog{id: catalog; name:"cura"}
+        UM.I18nCatalog{id: catalog; name:"steslicer"}
     }
 
     Label
@@ -79,7 +79,7 @@ UM.Dialog
         width: parent.width
 
         //: About dialog application author note
-        text: catalog.i18nc("@info:credit","Cura is developed by Ultimaker B.V. in cooperation with the community.\nCura proudly uses the following open source projects:")
+        text: catalog.i18nc("@info:credit","STE Slicer is developed by Stereotech LLC.\nStereotech STE Slicer uses the following open source projects:")
         font: UM.Theme.getFont("system")
         wrapMode: Text.WordWrap
         anchors.top: description.bottom
@@ -129,7 +129,7 @@ UM.Dialog
             }
             Component.onCompleted:
             {
-                projectsModel.append({ name:"Cura", description: catalog.i18nc("@label", "Graphical user interface"), license: "LGPLv3", url: "https://github.com/Ultimaker/Cura" });
+                projectsModel.append({ name:"STE Slicer", description: catalog.i18nc("@label", "Graphical user interface"), license: "LGPLv3", url: "https://gitlab.com/stereotech/steslicer/ste-slicer" });
                 projectsModel.append({ name:"Uranium", description: catalog.i18nc("@label", "Application framework"), license: "LGPLv3", url: "https://github.com/Ultimaker/Uranium" });
                 projectsModel.append({ name:"CuraEngine", description: catalog.i18nc("@label", "G-code generator"), license: "AGPLv3", url: "https://github.com/Ultimaker/CuraEngine" });
                 projectsModel.append({ name:"libArcus", description: catalog.i18nc("@label", "Interprocess communication library"), license: "LGPLv3", url: "https://github.com/Ultimaker/libArcus" });
@@ -152,9 +152,8 @@ UM.Dialog
                 projectsModel.append({ name:"Clipper", description: catalog.i18nc("@label", "Polygon clipping library"), license: "Boost", url: "http://www.angusj.com/delphi/clipper.php" });
                 projectsModel.append({ name:"Requests", description: catalog.i18nc("@Label", "Python HTTP library"), license: "GPL", url: "http://docs.python-requests.org" });
 
-                projectsModel.append({ name:"Noto Sans", description: catalog.i18nc("@label", "Font"), license: "Apache 2.0", url: "https://www.google.com/get/noto/" });
-                projectsModel.append({ name:"Font-Awesome-SVG-PNG", description: catalog.i18nc("@label", "SVG icons"), license: "SIL OFL 1.1", url: "https://github.com/encharm/Font-Awesome-SVG-PNG" });
-                projectsModel.append({ name:"AppImageKit", description: catalog.i18nc("@label", "Linux cross-distribution application deployment"), license: "MIT", url: "https://github.com/AppImage/AppImageKit" });
+                projectsModel.append({ name:"Roboto Font", description: catalog.i18nc("@label", "Font"), license: "Apache 2.0", url: "https://github.com/google/roboto/" });
+                projectsModel.append({ name:"Material Design Icons", description: catalog.i18nc("@label", "SVG icons"), license: "SIL OFL 1.1", url: "https://materialdesignicons.com/" });
             }
         }
     }

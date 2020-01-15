@@ -5,7 +5,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Instantiator {
     model: UM.ContainerStacksModel {
@@ -16,9 +16,9 @@ Instantiator {
 //        iconSource: UM.Theme.getIcon("printer_single")
         text: model.metadata["connect_group_name"]
         checkable: true;
-        checked: Cura.MachineManager.activeMachineNetworkGroupName == model.metadata["connect_group_name"]
+        checked: SteSlicer.MachineManager.activeMachineNetworkGroupName == model.metadata["connect_group_name"]
         exclusiveGroup: group;
-        onTriggered: Cura.MachineManager.setActiveMachine(model.id);
+        onTriggered: SteSlicer.MachineManager.setActiveMachine(model.id);
     }
     onObjectAdded: menu.insertItem(index, object)
     onObjectRemoved: menu.removeItem(object)

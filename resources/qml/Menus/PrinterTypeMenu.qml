@@ -5,13 +5,13 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
     id: menu
     title: "Printer type"
-    property var outputDevice: Cura.MachineManager.printerOutputDevices[0]
+    property var outputDevice: SteSlicer.MachineManager.printerOutputDevices[0]
 
     Instantiator
     {
@@ -22,11 +22,11 @@ Menu
         {
             text: modelData.machine_type
             checkable: true
-            checked: Cura.MachineManager.activeMachineDefinitionName == modelData.machine_type
+            checked: SteSlicer.MachineManager.activeMachineDefinitionName == modelData.machine_type
             exclusiveGroup: group
             onTriggered:
             {
-                Cura.MachineManager.switchPrinterType(modelData.machine_type)
+                SteSlicer.MachineManager.switchPrinterType(modelData.machine_type)
             }
         }
         onObjectAdded: menu.insertItem(index, object)

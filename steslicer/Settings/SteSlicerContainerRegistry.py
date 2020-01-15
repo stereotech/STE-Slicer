@@ -576,7 +576,7 @@ class SteSlicerContainerRegistry(ContainerRegistry):
                 # Some extruder quality_changes containers can be created at runtime as files in the qualities
                 # folder. Those files won't be loaded in the registry immediately. So we also need to search
                 # the folder to see if the quality_changes exists.
-                extruder_quality_changes_container = self._findQualityChangesContainerInCuraFolder(machine_quality_changes.getName())
+                extruder_quality_changes_container = self._findQualityChangesContainerInSteSlicerFolder(machine_quality_changes.getName())
                 if extruder_quality_changes_container:
                     quality_changes_id = extruder_quality_changes_container.getId()
                     extruder_quality_changes_container.setMetaDataEntry("position", extruder_definition.getMetaDataEntry("position"))
@@ -642,7 +642,7 @@ class SteSlicerContainerRegistry(ContainerRegistry):
                 qc_groups[qc_name] = []
             qc_groups[qc_name].append(qc)
             # try to find from the quality changes steslicer directory too
-            quality_changes_container = self._findQualityChangesContainerInCuraFolder(machine_quality_changes.getName())
+            quality_changes_container = self._findQualityChangesContainerInSteSlicerFolder(machine_quality_changes.getName())
             if quality_changes_container:
                 qc_groups[qc_name].append(quality_changes_container)
 
@@ -675,7 +675,7 @@ class SteSlicerContainerRegistry(ContainerRegistry):
 
         return extruder_stack
 
-    def _findQualityChangesContainerInCuraFolder(self, name):
+    def _findQualityChangesContainerInSteSlicerFolder(self, name):
         quality_changes_dir = Resources.getPath(steslicer.SteSlicerApplication.SteSlicerApplication.ResourceTypes.QualityChangesInstanceContainer)
 
         instance_container = None

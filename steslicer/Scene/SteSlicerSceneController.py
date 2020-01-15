@@ -109,7 +109,7 @@ class SteSlicerSceneController(QObject):
         self.activeBuildPlateChanged.emit()
 
     @staticmethod
-    def createCuraSceneController():
+    def createSteSlicerSceneController():
         objects_model = Application.getInstance().getObjectsModel()
         multi_build_plate_model = Application.getInstance().getMultiBuildPlateModel()
         return SteSlicerSceneController(objects_model = objects_model, multi_build_plate_model = multi_build_plate_model)

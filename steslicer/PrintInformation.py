@@ -37,7 +37,7 @@ class PrintInformation(QObject):
         super().__init__(parent)
         self._application = application
 
-        self.initializeCuraMessagePrintTimeProperties()
+        self.initializeSteSlicerMessagePrintTimeProperties()
 
         # Indexed by build plate number
         self._material_lengths = {}  # type: Dict[int, List[float]]
@@ -75,7 +75,7 @@ class PrintInformation(QObject):
 
         self._material_amounts = []  # type: List[float]
 
-    def initializeCuraMessagePrintTimeProperties(self) -> None:
+    def initializeSteSlicerMessagePrintTimeProperties(self) -> None:
         self._current_print_time = {}  # type: Dict[int, Duration]
 
         self._print_time_message_translations = {
@@ -369,15 +369,7 @@ class PrintInformation(QObject):
             else:
                 self._base_name = ""
 
-            # Strip the old "curaproject" extension from the name
-            OLD_CURA_PROJECT_EXT = ".curaproject"
-            if self._base_name.lower().endswith(OLD_CURA_PROJECT_EXT):
-                self._base_name = self._base_name[:len(self._base_name) - len(OLD_CURA_PROJECT_EXT)]
 
-            # CURA-5896 Try to strip extra extensions with an infinite amount of ".curaproject.3mf".
-            OLD_CURA_PROJECT_3MF_EXT = ".curaproject.3mf"
-            while self._base_name.lower().endswith(OLD_CURA_PROJECT_3MF_EXT):
-                self._base_name = self._base_name[:len(self._base_name) - len(OLD_CURA_PROJECT_3MF_EXT)]
 
             self._updateJobName()
 

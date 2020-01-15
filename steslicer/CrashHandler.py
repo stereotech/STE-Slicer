@@ -29,12 +29,12 @@ catalog = i18nCatalog("steslicer")
 
 MYPY = False
 if MYPY:
-    CuraDebugMode = False
+    SteSlicerDebugMode = False
 else:
     try:
-        from steslicer.SteSlicerVersion import CuraDebugMode
+        from steslicer.SteSlicerVersion import SteSlicerDebugMode
     except ImportError:
-        CuraDebugMode = False  # [CodeStyle: Reflecting imported value]
+        SteSlicerDebugMode = False  # [CodeStyle: Reflecting imported value]
 
 # List of exceptions that should be considered "fatal" and abort the program.
 # These are primarily some exception types that we simply cannot really recover from
@@ -49,7 +49,7 @@ fatal_exception_types = [
 
 
 class CrashHandler:
-    crash_url = "https://stats.ultimaker.com/api/cura"
+    crash_url = "https://statistics.stereotech.org/api/steslicer"
 
     def __init__(self, exception_type, value, tb, has_started = True):
         self.exception_type = exception_type
@@ -84,13 +84,13 @@ class CrashHandler:
         dialog = QDialog()
         dialog.setMinimumWidth(500)
         dialog.setMinimumHeight(170)
-        dialog.setWindowTitle(catalog.i18nc("@title:window", "Cura can't start"))
+        dialog.setWindowTitle(catalog.i18nc("@title:window", "STE Slicer can't start"))
         dialog.finished.connect(self._closeEarlyCrashDialog)
 
         layout = QVBoxLayout(dialog)
 
         label = QLabel()
-        label.setText(catalog.i18nc("@label crash message", """<p><b>Oops, Ultimaker Cura has encountered something that doesn't seem right.</p></b>
+        label.setText(catalog.i18nc("@label crash message", """<p><b>Oops, STE Slicer has encountered something that doesn't seem right.</p></b>
                     <p>We encountered an unrecoverable error during start up. It was possibly caused by some incorrect configuration files. We suggest to backup and reset your configuration.</p>
                     <p>Backups can be found in the configuration folder.</p>
                     <p>Please send us this Crash Report to fix the problem.</p>
@@ -166,7 +166,7 @@ class CrashHandler:
 
     def _messageWidget(self):
         label = QLabel()
-        label.setText(catalog.i18nc("@label crash message", """<p><b>A fatal error has occurred in Cura. Please send us this Crash Report to fix the problem</p></b>
+        label.setText(catalog.i18nc("@label crash message", """<p><b>A fatal error has occurred in STE Slicer. Please send us this Crash Report to fix the problem</p></b>
             <p>Please use the "Send report" button to post a bug report automatically to our servers</p>
         """))
 
@@ -182,9 +182,9 @@ class CrashHandler:
             from UM.Application import Application
             self.steslicer_version = Application.getInstance().getVersion()
         except:
-            self.steslicer_version = catalog.i18nc("@label unknown version of Cura", "Unknown")
+            self.steslicer_version = catalog.i18nc("@label unknown version of STE Slicer", "Unknown")
 
-        crash_info = "<b>" + catalog.i18nc("@label Cura version number", "Cura version") + ":</b> " + str(self.steslicer_version) + "<br/>"
+        crash_info = "<b>" + catalog.i18nc("@label STE Slicer version number", "STE Slicer version") + ":</b> " + str(self.steslicer_version) + "<br/>"
         crash_info += "<b>" + catalog.i18nc("@label Type of platform", "Platform") + ":</b> " + str(platform.platform()) + "<br/>"
         crash_info += "<b>" + catalog.i18nc("@label", "Qt version") + ":</b> " + str(QT_VERSION_STR) + "<br/>"
         crash_info += "<b>" + catalog.i18nc("@label", "PyQt version") + ":</b> " + str(PYQT_VERSION_STR) + "<br/>"
@@ -268,7 +268,7 @@ class CrashHandler:
         # Look for plugins. If it's not a plugin, the current steslicer version is set
         isPlugin = False
         module_version = self.steslicer_version
-        module_name = "Cura"
+        module_name = "STE Slicer"
         if split_path.__contains__("plugins"):
             isPlugin = True
             # Look backwards until plugin.json is found

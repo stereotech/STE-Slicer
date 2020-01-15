@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item
 {
@@ -69,18 +69,6 @@ Item
                 }
             }
         }
-
-        //Item { height: UM.Theme.getSize("default_margin").height; width: UM.Theme.getSize("default_lining").width; visible: extruders.count > 0 }
-//
-        //Repeater
-        //{
-        //    id: extruders
-        //    width: childrenRect.width
-        //    height: childrenRect.height
-        //    property var _model: Cura.ExtrudersModel { id: extrudersModel }
-        //    model: _model.items.length > 1 ? _model : 0
-        //    ExtruderButton { extruder: model }
-        //}
     }
 
     UM.PointingRectangle

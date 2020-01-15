@@ -5,7 +5,7 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
@@ -14,7 +14,7 @@ Menu
 
     property int extruderIndex: 0
 
-    Cura.NozzleModel
+    SteSlicer.NozzleModel
     {
         id: nozzleModel
     }
@@ -28,11 +28,11 @@ Menu
             text: model.hotend_name
             checkable: true
             checked: {
-                return Cura.MachineManager.activeVariantNames[extruderIndex] == model.hotend_name
+                return SteSlicer.MachineManager.activeVariantNames[extruderIndex] == model.hotend_name
             }
             exclusiveGroup: group
             onTriggered: {
-                Cura.MachineManager.setVariant(menu.extruderIndex, model.container_node);
+                SteSlicer.MachineManager.setVariant(menu.extruderIndex, model.container_node);
             }
         }
 

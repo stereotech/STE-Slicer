@@ -5,7 +5,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.1
 
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
@@ -13,11 +13,11 @@ Menu
     title: catalog.i18nc("@title:menu menubar:file", "Open &Recent")
     iconName: "document-open-recent";
 
-    enabled: CuraApplication.recentFiles.length > 0;
+    enabled: SteSlicerApplication.recentFiles.length > 0;
 
     Instantiator
     {
-        model: CuraApplication.recentFiles
+        model: SteSlicerApplication.recentFiles
         MenuItem
         {
             text:
@@ -31,7 +31,7 @@ Menu
                 var toOpenAsProject = false;
                 var toOpenAsModel = false;
 
-                if (CuraApplication.checkIsValidProjectFile(modelData)) {
+                if (SteSlicerApplication.checkIsValidProjectFile(modelData)) {
                     // check preference
                     var choice = UM.Preferences.getValue("steslicer/choice_on_open_project");
 
@@ -61,7 +61,7 @@ Menu
                 }
                 else if (toOpenAsModel)
                 {
-                    CuraApplication.readLocalFile(modelData, true);
+                    SteSlicerApplication.readLocalFile(modelData, true);
                 }
                 var meshName = backgroundItem.getMeshName(modelData.toString())
                 backgroundItem.hasMesh(decodeURIComponent(meshName))
@@ -71,7 +71,7 @@ Menu
         onObjectRemoved: menu.removeItem(object)
     }
 
-    Cura.AskOpenAsProjectOrModelsDialog
+    SteSlicer.AskOpenAsProjectOrModelsDialog
     {
         id: askOpenAsProjectOrModelsDialog
     }

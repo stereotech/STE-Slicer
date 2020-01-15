@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 
 import UM 1.1 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 UM.PreferencesPage
 {
@@ -134,7 +134,7 @@ UM.PreferencesPage
             UM.PluginsModel { id: plugins }
 
             //: Language selection label
-            UM.I18nCatalog{id: catalog; name:"cura"}
+            UM.I18nCatalog{id: catalog; name:"steslicer"}
 
             Label
             {
@@ -352,7 +352,7 @@ UM.PreferencesPage
             UM.TooltipArea {
                 width: childrenRect.width;
                 height: childrenRect.height;
-                text: catalog.i18nc("@info:tooltip", "Should the default zoom behavior of cura be inverted?")
+                text: catalog.i18nc("@info:tooltip", "Should the default zoom behavior of STE Slicer be inverted?")
 
                 CheckBox
                 {
@@ -664,7 +664,7 @@ UM.PreferencesPage
                 visible: pluginExistsAndEnabled("UpdateChecker")
                 width: childrenRect.width
                 height: visible ? childrenRect.height : 0
-                text: catalog.i18nc("@info:tooltip","Should Cura check for updates when the program is started?")
+                text: catalog.i18nc("@info:tooltip","Should STE Slicer check for updates when the program is started?")
 
                 CheckBox
                 {
@@ -697,7 +697,7 @@ UM.PreferencesPage
                     text: catalog.i18nc("@action:button", "More information")
                     onClicked:
                     {
-                        CuraApplication.showMoreInformationDialogForAnonymousDataCollection();
+                        SteSlicerApplication.showMoreInformationDialogForAnonymousDataCollection();
                     }
                 }
             }

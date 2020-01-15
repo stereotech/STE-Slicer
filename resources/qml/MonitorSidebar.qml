@@ -6,7 +6,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 import "Menus"
 import "Menus/ConfigurationMenu"
 
@@ -15,13 +15,13 @@ Rectangle
     id: base
     property int currentModeIndex
     property bool hideSettings: PrintInformation.preSliced
-    property bool hideView: Cura.MachineManager.activeMachineName == ""
+    property bool hideView: SteSlicer.MachineManager.activeMachineName == ""
 
     // Is there an output device for this printer?
-    property bool isNetworkPrinter: Cura.MachineManager.activeMachineNetworkKey != ""
-    property bool printerConnected: Cura.MachineManager.printerConnected
-    property bool printerAcceptsCommands: printerConnected && Cura.MachineManager.printerOutputDevices[0].acceptsCommands
-    property var connectedPrinter: Cura.MachineManager.printerOutputDevices.length >= 1 ? Cura.MachineManager.printerOutputDevices[0] : null
+    property bool isNetworkPrinter: SteSlicer.MachineManager.activeMachineNetworkKey != ""
+    property bool printerConnected: SteSlicer.MachineManager.printerConnected
+    property bool printerAcceptsCommands: printerConnected && SteSlicer.MachineManager.printerOutputDevices[0].acceptsCommands
+    property var connectedPrinter: SteSlicer.MachineManager.printerOutputDevices.length >= 1 ? SteSlicer.MachineManager.printerOutputDevices[0] : null
 
     property variant printDuration: PrintInformation.currentPrintTime
     property variant printMaterialLengths: PrintInformation.materialLengths
@@ -30,7 +30,7 @@ Rectangle
     property variant printMaterialNames: PrintInformation.materialNames
 
     color: UM.Theme.getColor("sidebar")
-    UM.I18nCatalog { id: catalog; name:"cura"}
+    UM.I18nCatalog { id: catalog; name:"steslicer"}
 
     Timer {
         id: tooltipDelayTimer
@@ -180,7 +180,7 @@ Rectangle
     {
         id: machineExtruderCount
 
-        containerStack: Cura.MachineManager.activeMachine
+        containerStack: SteSlicer.MachineManager.activeMachine
         key: "machine_extruder_count"
         watchedProperties: [ "value" ]
         storeIndex: 0
@@ -190,21 +190,21 @@ Rectangle
     {
         id: machineHeatedBed
 
-        containerStack: Cura.MachineManager.activeMachine
+        containerStack: SteSlicer.MachineManager.activeMachine
         key: "machine_heated_bed"
         watchedProperties: [ "value" ]
         storeIndex: 0
     }
 
-    // Make the ConfigurationSelector react when the global container changes, otherwise if Cura is not connected to the printer,
+    // Make the ConfigurationSelector react when the global container changes, otherwise if STE Slicer is not connected to the printer,
     // switching printers make no reaction
     Connections
     {
-        target: Cura.MachineManager
+        target: SteSlicer.MachineManager
         onGlobalContainerChanged:
         {
-            base.isNetworkPrinter = Cura.MachineManager.activeMachineNetworkKey != ""
-            base.printerConnected = Cura.MachineManager.printerOutputDevices.length != 0
+            base.isNetworkPrinter = SteSlicer.MachineManager.activeMachineNetworkKey != ""
+            base.printerConnected = SteSlicer.MachineManager.printerOutputDevices.length != 0
         }
     }
 }

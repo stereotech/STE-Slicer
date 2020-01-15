@@ -7,18 +7,18 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 import "PrinterOutput"
 
 Column
 {
     id: printMonitor
-    property var connectedDevice: Cura.MachineManager.printerOutputDevices.length >= 1 ? Cura.MachineManager.printerOutputDevices[0] : null
+    property var connectedDevice: SteSlicer.MachineManager.printerOutputDevices.length >= 1 ? SteSlicer.MachineManager.printerOutputDevices[0] : null
     property var activePrinter: connectedDevice != null ? connectedDevice.activePrinter : null
     property var activePrintJob: activePrinter != null ? activePrinter.activePrintJob: null
 
-    Cura.ExtrudersModel
+    SteSlicer.ExtrudersModel
     {
         id: extrudersModel
         simpleNames: true
@@ -78,18 +78,18 @@ Column
     UM.SettingPropertyProvider
     {
         id: bedTemperature
-        containerStack: Cura.MachineManager.activeMachine
+        containerStack: SteSlicer.MachineManager.activeMachine
         key: "material_bed_temperature"
         watchedProperties: ["value", "minimum_value", "maximum_value", "resolve"]
         storeIndex: 0
 
-        property var resolve: Cura.MachineManager.activeStack != Cura.MachineManager.activeMachine ? properties.resolve : "None"
+        property var resolve: SteSlicer.MachineManager.activeStack != SteSlicer.MachineManager.activeMachine ? properties.resolve : "None"
     }
 
     UM.SettingPropertyProvider
     {
         id: machineExtruderCount
-        containerStack: Cura.MachineManager.activeMachine
+        containerStack: SteSlicer.MachineManager.activeMachine
         key: "machine_extruder_count"
         watchedProperties: ["value"]
     }

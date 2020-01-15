@@ -27,9 +27,9 @@ UM.Dialog
             interval: 1000;
             running: false;
             repeat: true;
-            onTriggered: textArea.text = CuraApplication.getEngineLog();
+            onTriggered: textArea.text = SteSlicerApplication.getEngineLog();
         }
-        UM.I18nCatalog{id: catalog; name:"cura"}
+        UM.I18nCatalog{id: catalog; name:"steslicer"}
     }
 
     rightButtons: Button
@@ -43,7 +43,7 @@ UM.Dialog
     {
         if(visible)
         {
-            textArea.text = CuraApplication.getEngineLog();
+            textArea.text = SteSlicerApplication.getEngineLog();
             updateTimer.start();
         } else
         {

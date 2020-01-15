@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 import "../Menus"
 
@@ -15,7 +15,7 @@ Item
 {
     id: base;
 
-    property QtObject settingVisibilityPresetsModel: CuraApplication.getSettingVisibilityPresetsModel()
+    property QtObject settingVisibilityPresetsModel: SteSlicerApplication.getSettingVisibilityPresetsModel()
     property Action configureSettings
     property bool findingSettings
     signal showTooltip(Item item, point location, string text)
@@ -59,19 +59,19 @@ Item
             height: UM.Theme.getSize("setting_control").height
             anchors.left: globalProfileLabel.right
             anchors.right: parent.right
-            tooltip: Cura.MachineManager.activeQualityOrQualityChangesName
+            tooltip: SteSlicer.MachineManager.activeQualityOrQualityChangesName
             style: UM.Theme.styles.sidebar_header_button
             activeFocusOnPress: true
             menu: ProfileMenu { }
 
             function generateActiveQualityText () {
-                var result = Cura.MachineManager.activeQualityOrQualityChangesName;
+                var result = SteSlicer.MachineManager.activeQualityOrQualityChangesName;
 
-                if (Cura.MachineManager.isActiveQualitySupported) {
-                    if (Cura.MachineManager.activeQualityLayerHeight > 0) {
+                if (SteSlicer.MachineManager.isActiveQualitySupported) {
+                    if (SteSlicer.MachineManager.activeQualityLayerHeight > 0) {
                         result += " <font color=\"" + UM.Theme.getColor("text_detail") + "\">"
                         result += " - "
-                        result += Cura.MachineManager.activeQualityLayerHeight + "mm"
+                        result += SteSlicer.MachineManager.activeQualityLayerHeight + "mm"
                         result += "</font>"
                     }
                 }
@@ -83,7 +83,7 @@ Item
             {
                 id: customisedSettings
 
-                visible: Cura.MachineManager.hasUserSettings
+                visible: SteSlicer.MachineManager.hasUserSettings
                 height: Math.round(parent.height * 0.6)
                 width: Math.round(parent.height * 0.6)
 
@@ -97,7 +97,7 @@ Item
                 onClicked:
                 {
                     forceActiveFocus();
-                    Cura.Actions.manageProfiles.trigger()
+                    SteSlicer.Actions.manageProfiles.trigger()
                 }
                 onEntered:
                 {
@@ -307,20 +307,20 @@ Item
             model: UM.SettingDefinitionsModel
             {
                 id: definitionsModel;
-                containerId: Cura.MachineManager.activeDefinitionId
+                containerId: SteSlicer.MachineManager.activeDefinitionId
                 visibilityHandler: UM.SettingPreferenceVisibilityHandler { }
                 exclude: ["machine_settings", "command_line_settings", "infill_mesh", "infill_mesh_order", "cutting_mesh", "support_mesh", "anti_overhang_mesh"] // TODO: infill_mesh settigns are excluded hardcoded, but should be based on the fact that settable_globally, settable_per_meshgroup and settable_per_extruder are false.
-                expanded: CuraApplication.expandedCategories
+                expanded: SteSlicerApplication.expandedCategories
                 onExpandedChanged:
                 {
                     if(!findingSettings)
                     {
                         // Do not change expandedCategories preference while filtering settings
                         // because all categories are expanded while filtering
-                        CuraApplication.setExpandedCategories(expanded)
+                        SteSlicerApplication.setExpandedCategories(expanded)
                     }
                 }
-                onVisibilityChanged: Cura.SettingInheritanceManager.forceUpdate()
+                onVisibilityChanged: SteSlicer.SettingInheritanceManager.forceUpdate()
             }
 
             property var indexWithFocus: -1
@@ -336,7 +336,7 @@ Item
                 Behavior on opacity { NumberAnimation { duration: 100 } }
                 enabled:
                 {
-                    if (!Cura.ExtruderManager.activeExtruderStackId && machineExtruderCount.properties.value > 1)
+                    if (!SteSlicer.ExtruderManager.activeExtruderStackId && machineExtruderCount.properties.value > 1)
                     {
                         // disable all controls on the global tab, except categories
                         return model.type == "category"
@@ -393,11 +393,11 @@ Item
                     when: model.settable_per_extruder || (inheritStackProvider.properties.limit_to_extruder != null && inheritStackProvider.properties.limit_to_extruder >= 0);
                     value:
                     {
-                        // associate this binding with Cura.MachineManager.activeMachineId in the beginning so this
+                        // associate this binding with SteSlicer.MachineManager.activeMachineId in the beginning so this
                         // binding will be triggered when activeMachineId is changed too.
                         // Otherwise, if this value only depends on the extruderIds, it won't get updated when the
                         // machine gets changed.
-                        var activeMachineId = Cura.MachineManager.activeMachineId;
+                        var activeMachineId = SteSlicer.MachineManager.activeMachineId;
 
                         if(!model.settable_per_extruder)
                         {
@@ -407,12 +407,12 @@ Item
                         if(inheritStackProvider.properties.limit_to_extruder != null && inheritStackProvider.properties.limit_to_extruder >= 0)
                         {
                             //We have limit_to_extruder, so pick that stack.
-                            return Cura.ExtruderManager.extruderIds[String(inheritStackProvider.properties.limit_to_extruder)];
+                            return SteSlicer.ExtruderManager.extruderIds[String(inheritStackProvider.properties.limit_to_extruder)];
                         }
-                        if(Cura.ExtruderManager.activeExtruderStackId)
+                        if(SteSlicer.ExtruderManager.activeExtruderStackId)
                         {
                             //We're on an extruder tab. Pick the current extruder.
-                            return Cura.ExtruderManager.activeExtruderStackId;
+                            return SteSlicer.ExtruderManager.activeExtruderStackId;
                         }
                         //No extruder tab is selected. Pick the global stack. Shouldn't happen any more since we removed the global tab.
                         return activeMachineId;
@@ -424,7 +424,7 @@ Item
                 UM.SettingPropertyProvider
                 {
                     id: inheritStackProvider
-                    containerStackId: Cura.MachineManager.activeMachineId
+                    containerStackId: SteSlicer.MachineManager.activeMachineId
                     key: model.key
                     watchedProperties: [ "limit_to_extruder" ]
                 }
@@ -433,7 +433,7 @@ Item
                 {
                     id: provider
 
-                    containerStackId: Cura.MachineManager.activeMachineId
+                    containerStackId: SteSlicer.MachineManager.activeMachineId
                     key: model.key ? model.key : ""
                     watchedProperties: [ "value", "enabled", "state", "validationState", "settable_per_extruder", "resolve" ]
                     storeIndex: 0
@@ -454,12 +454,12 @@ Item
                     onHideTooltip: base.hideTooltip()
                     onShowAllHiddenInheritedSettings:
                     {
-                        var children_with_override = Cura.SettingInheritanceManager.getChildrenKeysWithOverride(category_id)
+                        var children_with_override = SteSlicer.SettingInheritanceManager.getChildrenKeysWithOverride(category_id)
                         for(var i = 0; i < children_with_override.length; i++)
                         {
                             definitionsModel.setVisible(children_with_override[i], true)
                         }
-                        Cura.SettingInheritanceManager.manualRemoveOverride(category_id)
+                        SteSlicer.SettingInheritanceManager.manualRemoveOverride(category_id)
                     }
                     onFocusReceived:
                     {
@@ -499,7 +499,7 @@ Item
                 }
             }
 
-            UM.I18nCatalog { id: catalog; name: "cura"; }
+            UM.I18nCatalog { id: catalog; name: "steslicer"; }
 
             NumberAnimation {
                 id: animateContentY
@@ -544,7 +544,7 @@ Item
                     text: catalog.i18nc("@action:menu", "Copy value to all extruders")
                     visible: machineExtruderCount.properties.value > 1
                     enabled: contextMenu.provider != undefined && contextMenu.provider.properties.settable_per_extruder != "False"
-                    onTriggered: Cura.MachineManager.copyValueToExtruders(contextMenu.key)
+                    onTriggered: SteSlicer.MachineManager.copyValueToExtruders(contextMenu.key)
                 }
 
                 MenuItem
@@ -553,7 +553,7 @@ Item
                     text: catalog.i18nc("@action:menu", "Copy all changed values to all extruders")
                     visible: machineExtruderCount.properties.value > 1
                     enabled: contextMenu.provider != undefined
-                    onTriggered: Cura.MachineManager.copyAllValuesToExtruders()
+                    onTriggered: SteSlicer.MachineManager.copyAllValuesToExtruders()
                 }
 
                 MenuSeparator
@@ -564,7 +564,7 @@ Item
                 Instantiator
                 {
                     id: customMenuItems
-                    model: Cura.SidebarCustomMenuItemsModel { }
+                    model: SteSlicer.SidebarCustomMenuItemsModel { }
                     MenuItem
                     {
                         text: model.name
@@ -635,7 +635,7 @@ Item
                     //: Settings context menu action
                     text: catalog.i18nc("@action:menu", "Configure setting visibility...");
 
-                    onTriggered: Cura.Actions.configureSettingVisibility.trigger(contextMenu);
+                    onTriggered: SteSlicer.Actions.configureSettingVisibility.trigger(contextMenu);
                 }
                 MenuSeparator {}
                 MenuItem
@@ -654,7 +654,7 @@ Item
             {
                 id: machineExtruderCount
 
-                containerStackId: Cura.MachineManager.activeMachineId
+                containerStackId: SteSlicer.MachineManager.activeMachineId
                 key: "machine_extruder_count"
                 watchedProperties: [ "value" ]
                 storeIndex: 0

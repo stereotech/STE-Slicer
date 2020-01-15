@@ -7,13 +7,13 @@ import QtQuick.Controls.Styles 1.1
 
 import UM 1.2 as UM
 
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 UM.PreferencesPage
 {
     title: catalog.i18nc("@title:tab", "Setting Visibility");
 
-    property QtObject settingVisibilityPresetsModel: CuraApplication.getSettingVisibilityPresetsModel()
+    property QtObject settingVisibilityPresetsModel: SteSlicerApplication.getSettingVisibilityPresetsModel()
 
     property int scrollToIndex: 0
 
@@ -154,7 +154,7 @@ UM.PreferencesPage
                 model: UM.SettingDefinitionsModel
                 {
                     id: definitionsModel
-                    containerId: Cura.MachineManager.activeDefinitionId
+                    containerId: SteSlicer.MachineManager.activeDefinitionId
                     showAll: true
                     exclude: ["machine_settings", "command_line_settings"]
                     showAncestors: true
@@ -188,7 +188,7 @@ UM.PreferencesPage
             }
         }
 
-        UM.I18nCatalog { name: "cura"; }
+        UM.I18nCatalog { name: "steslicer"; }
         SystemPalette { id: palette; }
 
         Component

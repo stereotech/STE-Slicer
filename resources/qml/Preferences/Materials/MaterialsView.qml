@@ -6,7 +6,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 import ".." // Access to ReadOnlyTextArea.qml
 
@@ -14,7 +14,7 @@ TabView
 {
     id: base
 
-    property QtObject materialManager: CuraApplication.getMaterialManager()
+    property QtObject materialManager: SteSlicerApplication.getMaterialManager()
 
     property QtObject properties
     property var currentMaterialNode: null
@@ -40,7 +40,7 @@ TabView
         {
             return ""
         }
-        var linkedMaterials = Cura.ContainerManager.getLinkedMaterials(base.currentMaterialNode, true);
+        var linkedMaterials = SteSlicer.ContainerManager.getLinkedMaterials(base.currentMaterialNode, true);
         if (linkedMaterials.length == 0)
         {
             return ""
@@ -241,10 +241,10 @@ TabView
                     {
                         // This does not use a SettingPropertyProvider, because we need to make the change to all containers
                         // which derive from the same base_file
-                        var old_diameter = Cura.ContainerManager.getContainerMetaDataEntry(base.containerId, "properties/diameter");
-                        var old_approximate_diameter = Cura.ContainerManager.getContainerMetaDataEntry(base.containerId, "approximate_diameter");
+                        var old_diameter = SteSlicer.ContainerManager.getContainerMetaDataEntry(base.containerId, "properties/diameter");
+                        var old_approximate_diameter = SteSlicer.ContainerManager.getContainerMetaDataEntry(base.containerId, "approximate_diameter");
                         var new_approximate_diameter = getApproximateDiameter(value);
-                        if (new_approximate_diameter != Cura.ExtruderManager.getActiveExtruderStack().approximateMaterialDiameter)
+                        if (new_approximate_diameter != SteSlicer.ExtruderManager.getActiveExtruderStack().approximateMaterialDiameter)
                         {
                             confirmDiameterChangeDialog.old_diameter_value = old_diameter;
                             confirmDiameterChangeDialog.new_diameter_value = value;
@@ -282,7 +282,7 @@ TabView
                 {
                     id: spoolWeightSpinBox
                     width: scrollView.columnWidth
-                    value: base.getMaterialPreferenceValue(properties.guid, "spool_weight", Cura.ContainerManager.getContainerMetaDataEntry(properties.container_id, "properties/weight"))
+                    value: base.getMaterialPreferenceValue(properties.guid, "spool_weight", SteSlicer.ContainerManager.getContainerMetaDataEntry(properties.container_id, "properties/weight"))
                     suffix: " g"
                     stepSize: 100
                     decimals: 0
@@ -329,7 +329,7 @@ TabView
                     visible: base.linkedMaterialNames != ""
                     onClicked:
                     {
-                        Cura.ContainerManager.unlinkMaterial(base.currentMaterialNode)
+                        SteSlicer.ContainerManager.unlinkMaterial(base.currentMaterialNode)
                         base.reevaluateLinkedMaterials = true
                     }
                 }
@@ -392,8 +392,8 @@ TabView
             {
                 model: UM.SettingDefinitionsModel
                 {
-                    containerId: Cura.MachineManager.activeDefinitionId
-                    visibilityHandler: Cura.MaterialSettingsVisibilityHandler { }
+                    containerId: SteSlicer.MachineManager.activeDefinitionId
+                    visibilityHandler: SteSlicer.MaterialSettingsVisibilityHandler { }
                     expanded: ["*"]
                 }
 
@@ -453,14 +453,14 @@ TabView
                     UM.ContainerPropertyProvider
                     {
                         id: variantPropertyProvider
-                        containerId: Cura.MachineManager.activeVariantId
+                        containerId: SteSlicer.MachineManager.activeVariantId
                         watchedProperties: [ "value" ]
                         key: model.key
                     }
                     UM.ContainerPropertyProvider
                     {
                         id: machinePropertyProvider
-                        containerId: Cura.MachineManager.activeDefinitionId
+                        containerId: SteSlicer.MachineManager.activeDefinitionId
                         watchedProperties: [ "value" ]
                         key: model.key
                     }
@@ -481,7 +481,7 @@ TabView
         }
         if(!spoolWeight)
         {
-            spoolWeight = base.getMaterialPreferenceValue(properties.guid, "spool_weight", Cura.ContainerManager.getContainerMetaDataEntry(properties.container_id, "properties/weight"));
+            spoolWeight = base.getMaterialPreferenceValue(properties.guid, "spool_weight", SteSlicer.ContainerManager.getContainerMetaDataEntry(properties.container_id, "properties/weight"));
         }
 
         if (diameter == 0 || density == 0 || spoolWeight == 0)
@@ -512,7 +512,7 @@ TabView
     {
         if (old_value != new_value)
         {
-            Cura.ContainerManager.setContainerMetaDataEntry(base.currentMaterialNode, entry_name, new_value)
+            SteSlicer.ContainerManager.setContainerMetaDataEntry(base.currentMaterialNode, entry_name, new_value)
             // make sure the UI properties are updated as well since we don't re-fetch the entire model here
             // When the entry_name is something like properties/diameter, we take the last part of the entry_name
             var list = entry_name.split("/")

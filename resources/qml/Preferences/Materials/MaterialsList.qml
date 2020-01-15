@@ -8,7 +8,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item
 {
@@ -16,23 +16,23 @@ Item
     height: childrenRect.height
 
     // Children
-    UM.I18nCatalog { id: catalog; name: "cura"; }
-    Cura.MaterialBrandsModel
+    UM.I18nCatalog { id: catalog; name: "steslicer"; }
+    SteSlicer.MaterialBrandsModel
     {
         id: materialsModel
-        extruderPosition: Cura.ExtruderManager.activeExtruderIndex
+        extruderPosition: SteSlicer.ExtruderManager.activeExtruderIndex
     }
 
-    Cura.FavoriteMaterialsModel
+    SteSlicer.FavoriteMaterialsModel
     {
         id: favoriteMaterialsModel
-        extruderPosition: Cura.ExtruderManager.activeExtruderIndex
+        extruderPosition: SteSlicer.ExtruderManager.activeExtruderIndex
     }
 
-    Cura.GenericMaterialsModel
+    SteSlicer.GenericMaterialsModel
     {
         id: genericMaterialsModel
-        extruderPosition: Cura.ExtruderManager.activeExtruderIndex
+        extruderPosition: SteSlicer.ExtruderManager.activeExtruderIndex
     }
 
     property var currentType: null
@@ -112,8 +112,8 @@ Item
         {
             if (base.toActivateNewMaterial)
             {
-                var position = Cura.ExtruderManager.activeExtruderIndex
-                Cura.MachineManager.setMaterial(position, base.currentItem.container_node)
+                var position = SteSlicer.ExtruderManager.activeExtruderIndex
+                SteSlicer.MachineManager.setMaterial(position, base.currentItem.container_node)
             }
             base.newRootMaterialIdToSwitchTo = ""
             base.toActivateNewMaterial = false

@@ -9,7 +9,7 @@ import QtQuick.Window 2.1
 import QtQuick.Controls.Styles 1.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 UM.Dialog
@@ -27,7 +27,7 @@ UM.Dialog
 
     flags: {
         var window_flags = Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint;
-        if (Cura.MachineManager.activeDefinitionId !== "") //Disallow closing the window if we have no active printer yet. You MUST add a printer.
+        if (SteSlicer.MachineManager.activeDefinitionId !== "") //Disallow closing the window if we have no active printer yet. You MUST add a printer.
         {
             window_flags |= Qt.WindowCloseButtonHint;
         }
@@ -202,14 +202,13 @@ UM.Dialog
             text: getMachineName()
             implicitWidth: UM.Theme.getSize("standard_list_input").width
             maximumLength: 40
-            //validator: Cura.MachineNameValidator { } //TODO: Gives a segfault in PyQt5.6. For now, we must use a signal on text changed.
             validator: RegExpValidator
             {
                 regExp: {
                     machineName.machine_name_validator.machineNameRegex
                 }
             }
-            property var machine_name_validator: Cura.MachineNameValidator { }
+            property var machine_name_validator: SteSlicer.MachineNameValidator { }
         }
     }
 
@@ -228,7 +227,7 @@ UM.Dialog
     {
         base.visible = false
         var item = machineList.model.getItem(machineList.currentIndex);
-        Cura.MachineManager.addMachine(machineName.text, item.id)
+        SteSlicer.MachineManager.addMachine(machineName.text, item.id)
         base.machineAdded(item.id) // Emit signal that the user added a machine.
     }
 
@@ -237,7 +236,7 @@ UM.Dialog
         UM.I18nCatalog
         {
             id: catalog;
-            name: "cura";
+            name: "steslicer";
         }
         SystemPalette { id: palette }
         ExclusiveGroup { id: printerGroup; }

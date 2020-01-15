@@ -5,7 +5,7 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
@@ -14,19 +14,19 @@ Menu
 
     property int extruderIndex: 0
 
-    Cura.FavoriteMaterialsModel
+    SteSlicer.FavoriteMaterialsModel
     {
         id: favoriteMaterialsModel
         extruderPosition: menu.extruderIndex
     }
 
-    Cura.GenericMaterialsModel
+    SteSlicer.GenericMaterialsModel
     {
         id: genericMaterialsModel
         extruderPosition: menu.extruderIndex
     }
 
-    Cura.MaterialBrandsModel
+    SteSlicer.MaterialBrandsModel
     {
         id: brandModel
         extruderPosition: menu.extruderIndex
@@ -45,8 +45,8 @@ Menu
         {
             text: model.brand + " " + model.name
             checkable: true
-            checked: model.root_material_id == Cura.MachineManager.currentRootMaterialId[extruderIndex]
-            onTriggered: Cura.MachineManager.setMaterial(extruderIndex, model.container_node)
+            checked: model.root_material_id == SteSlicer.MachineManager.currentRootMaterialId[extruderIndex]
+            onTriggered: SteSlicer.MachineManager.setMaterial(extruderIndex, model.container_node)
             exclusiveGroup: group
         }
         onObjectAdded: menu.insertItem(index, object)
@@ -67,9 +67,9 @@ Menu
             {
                 text: model.name
                 checkable: true
-                checked: model.root_material_id == Cura.MachineManager.currentRootMaterialId[extruderIndex]
+                checked: model.root_material_id == SteSlicer.MachineManager.currentRootMaterialId[extruderIndex]
                 exclusiveGroup: group
-                onTriggered: Cura.MachineManager.setMaterial(extruderIndex, model.container_node)
+                onTriggered: SteSlicer.MachineManager.setMaterial(extruderIndex, model.container_node)
             }
             onObjectAdded: genericMenu.insertItem(index, object)
             onObjectRemoved: genericMenu.removeItem(object) // TODO: This ain't gonna work, removeItem() takes an index, not object
@@ -105,9 +105,9 @@ Menu
                         {
                             text: model.name
                             checkable: true
-                            checked: model.id == Cura.MachineManager.allActiveMaterialIds[Cura.ExtruderManager.extruderIds[extruderIndex]]
+                            checked: model.id == SteSlicer.MachineManager.allActiveMaterialIds[SteSlicer.ExtruderManager.extruderIds[extruderIndex]]
                             exclusiveGroup: group
-                            onTriggered: Cura.MachineManager.setMaterial(extruderIndex, model.container_node)
+                            onTriggered: SteSlicer.MachineManager.setMaterial(extruderIndex, model.container_node)
                         }
                         onObjectAdded: brandMaterialsMenu.insertItem(index, object)
                         onObjectRemoved: brandMaterialsMenu.removeItem(object)
@@ -129,6 +129,6 @@ Menu
 
     MenuItem
     {
-        action: Cura.Actions.manageMaterials
+        action: SteSlicer.Actions.manageMaterials
     }
 }

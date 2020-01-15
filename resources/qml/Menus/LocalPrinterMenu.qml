@@ -5,7 +5,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Instantiator {
     model: UM.ContainerStacksModel {
@@ -14,9 +14,9 @@ Instantiator {
     MenuItem {
         text: model.name;
         checkable: true;
-        checked: Cura.MachineManager.activeMachineId == model.id
+        checked: SteSlicer.MachineManager.activeMachineId == model.id
         exclusiveGroup: group;
-        onTriggered: Cura.MachineManager.setActiveMachine(model.id);
+        onTriggered: SteSlicer.MachineManager.setActiveMachine(model.id);
     }
     onObjectAdded: menu.insertItem(index, object)
     onObjectRemoved: menu.removeItem(object)

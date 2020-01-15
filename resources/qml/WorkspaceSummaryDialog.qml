@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 UM.Dialog
 {
@@ -49,7 +49,7 @@ UM.Dialog
         UM.SettingDefinitionsModel
         {
             id: definitionsModel
-            containerId: Cura.MachineManager.activeDefinitionId
+            containerId: SteSlicer.MachineManager.activeDefinitionId
             showAll: true
             exclude: ["command_line_settings"]
             showAncestors: true
@@ -59,7 +59,7 @@ UM.Dialog
         UM.I18nCatalog
         {
             id: catalog
-            name: "cura"
+            name: "steslicer"
         }
         SystemPalette
         {
@@ -69,7 +69,7 @@ UM.Dialog
         {
             id: mainHeading
             width: parent.width
-            text: catalog.i18nc("@action:title", "Summary - Cura Project")
+            text: catalog.i18nc("@action:title", "Summary - STE Slicer Project")
             font.pointSize: 18
             anchors.top: parent.top
         }
@@ -107,7 +107,7 @@ UM.Dialog
                         }
                         Label
                         {
-                            text: (Cura.MachineManager.activeMachine == null) ? "" : Cura.MachineManager.activeMachine.definition.name
+                            text: (SteSlicer.MachineManager.activeMachine == null) ? "" : SteSlicer.MachineManager.activeMachine.definition.name
                             width: Math.floor(scroll.width / 3) | 0
                         }
                     }
@@ -117,19 +117,19 @@ UM.Dialog
                         height: childrenRect.height
                         Label
                         {
-                            text: Cura.MachineManager.activeMachineNetworkGroupName != "" ? catalog.i18nc("@action:label", "Printer Group") : catalog.i18nc("@action:label", "Name")
+                            text: SteSlicer.MachineManager.activeMachineNetworkGroupName != "" ? catalog.i18nc("@action:label", "Printer Group") : catalog.i18nc("@action:label", "Name")
                             width: Math.floor(scroll.width / 3) | 0
                         }
                         Label
                         {
-                            text: Cura.MachineManager.activeMachineNetworkGroupName != "" ? Cura.MachineManager.activeMachineNetworkGroupName : Cura.MachineManager.activeMachineName
+                            text: SteSlicer.MachineManager.activeMachineNetworkGroupName != "" ? SteSlicer.MachineManager.activeMachineNetworkGroupName : SteSlicer.MachineManager.activeMachineName
                             width: Math.floor(scroll.width / 3) | 0
                         }
                     }
                 }
                 Row
                 {
-                    visible: Cura.MachineManager.hasVariantBuildplates
+                    visible: SteSlicer.MachineManager.hasVariantBuildplates
                     width: parent.width
                     height: childrenRect.height
                     Label
@@ -139,7 +139,7 @@ UM.Dialog
                     }
                     Label
                     {
-                        text: Cura.MachineManager.activeVariantBuildplateName
+                        text: SteSlicer.MachineManager.activeVariantBuildplateName
                         width: Math.floor(scroll.width / 3) | 0
                     }
                 }
@@ -147,7 +147,7 @@ UM.Dialog
                 {
                     width: parent.width
                     height: childrenRect.height
-                    model: Cura.MachineManager.currentExtruderPositions
+                    model: SteSlicer.MachineManager.currentExtruderPositions
                     delegate: Column
                     {
                         height: childrenRect.height
@@ -176,12 +176,12 @@ UM.Dialog
                             height: childrenRect.height
                             Label
                             {
-                                text: catalog.i18nc("@action:label", "%1 & material").arg(Cura.MachineManager.activeDefinitionVariantsName)
+                                text: catalog.i18nc("@action:label", "%1 & material").arg(SteSlicer.MachineManager.activeDefinitionVariantsName)
                                 width: Math.floor(scroll.width / 3) | 0
                             }
                             Label
                             {
-                                text: Cura.MachineManager.activeVariantNames[modelData] + ", " + Cura.MachineManager.getExtruder(modelData).material.name
+                                text: SteSlicer.MachineManager.activeVariantNames[modelData] + ", " + SteSlicer.MachineManager.getExtruder(modelData).material.name
                                 width: Math.floor(scroll.width / 3) | 0
                             }
                         }
@@ -206,10 +206,10 @@ UM.Dialog
                         }
                         Label
                         {
-                            text: catalog.i18ncp("@action:label", "%1 override", "%1 overrides", Cura.MachineManager.numUserSettings).arg(Cura.MachineManager.numUserSettings)
+                            text: catalog.i18ncp("@action:label", "%1 override", "%1 overrides", SteSlicer.MachineManager.numUserSettings).arg(SteSlicer.MachineManager.numUserSettings)
                             width: Math.floor(scroll.width / 3) | 0
                         }
-                        visible: Cura.MachineManager.numUserSettings
+                        visible: SteSlicer.MachineManager.numUserSettings
                     }
                     Row
                     {
@@ -222,7 +222,7 @@ UM.Dialog
                         }
                         Label
                         {
-                            text: Cura.MachineManager.activeQualityOrQualityChangesName
+                            text: SteSlicer.MachineManager.activeQualityOrQualityChangesName
                             width: Math.floor(scroll.width / 3) | 0
                         }
 
@@ -248,7 +248,7 @@ UM.Dialog
                         }
                         Label
                         {
-                            text: catalog.i18nc("@action:label", "%1 out of %2" ).arg(definitionsModel.visibleCount).arg(Cura.MachineManager.totalNumberOfSettings)
+                            text: catalog.i18nc("@action:label", "%1 out of %2" ).arg(definitionsModel.visibleCount).arg(SteSlicer.MachineManager.totalNumberOfSettings)
                             width: Math.floor(scroll.width / 3) | 0
                         }
                     }

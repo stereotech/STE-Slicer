@@ -8,7 +8,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 import "Menus"
 
@@ -33,7 +33,7 @@ Rectangle
 
     property bool collapsed: true
 
-    property var multiBuildPlateModel: CuraApplication.getMultiBuildPlateModel()
+    property var multiBuildPlateModel: SteSlicerApplication.getMultiBuildPlateModel()
 
     SystemPalette { id: palette }
 
@@ -87,7 +87,7 @@ Rectangle
                     anchors.fill: parent;
                     onClicked:
                     {
-                        Cura.SceneController.setActiveBuildPlate(index);
+                        SteSlicer.SceneController.setActiveBuildPlate(index);
                     }
                 }
             }
@@ -131,7 +131,7 @@ Rectangle
         Rectangle
             {
                 height: childrenRect.height
-                color: Cura.ObjectsModel.getItem(index).isSelected ? palette.highlight : index % 2 ? palette.base : palette.alternateBase
+                color: SteSlicer.ObjectsModel.getItem(index).isSelected ? palette.highlight : index % 2 ? palette.base : palette.alternateBase
                 width: parent.width
                 Label
                 {
@@ -139,8 +139,8 @@ Rectangle
                     anchors.left: parent.left
                     anchors.leftMargin: UM.Theme.getSize("default_margin").width
                     width: parent.width - 2 * UM.Theme.getSize("default_margin").width - 30
-                    text: (index >= 0) && Cura.ObjectsModel.getItem(index) ? Cura.ObjectsModel.getItem(index).name : "";
-                    color: Cura.ObjectsModel.getItem(index).isSelected ? palette.highlightedText : (Cura.ObjectsModel.getItem(index).isOutsideBuildArea ? palette.mid : palette.text)
+                    text: (index >= 0) && SteSlicer.ObjectsModel.getItem(index) ? SteSlicer.ObjectsModel.getItem(index).name : "";
+                    color: SteSlicer.ObjectsModel.getItem(index).isSelected ? palette.highlightedText : (SteSlicer.ObjectsModel.getItem(index).isOutsideBuildArea ? palette.mid : palette.text)
                     elide: Text.ElideRight
                 }
 
@@ -151,8 +151,8 @@ Rectangle
                     anchors.left: nodeNameLabel.right
                     anchors.leftMargin: UM.Theme.getSize("default_margin").width
                     anchors.right: parent.right
-                    text: Cura.ObjectsModel.getItem(index).buildPlateNumber != -1 ? Cura.ObjectsModel.getItem(index).buildPlateNumber + 1 : "";
-                    color: Cura.ObjectsModel.getItem(index).isSelected ? palette.highlightedText : palette.text
+                    text: SteSlicer.ObjectsModel.getItem(index).buildPlateNumber != -1 ? SteSlicer.ObjectsModel.getItem(index).buildPlateNumber + 1 : "";
+                    color: SteSlicer.ObjectsModel.getItem(index).isSelected ? palette.highlightedText : palette.text
                     elide: Text.ElideRight
                 }
 
@@ -161,7 +161,7 @@ Rectangle
                     anchors.fill: parent;
                     onClicked:
                     {
-                        Cura.SceneController.changeSelection(index);
+                        SteSlicer.SceneController.changeSelection(index);
                     }
                 }
             }
@@ -195,7 +195,7 @@ Rectangle
         ListView
         {
             id: listview
-            model: Cura.ObjectsModel
+            model: SteSlicer.ObjectsModel
             width: parent.width
             delegate: objectDelegate
         }
@@ -238,7 +238,7 @@ Rectangle
             bottom: arrangeBuildPlateButton.top;
             bottomMargin: UM.Theme.getSize("default_margin").height;
         }
-        action: Cura.Actions.arrangeAllBuildPlates;
+        action: SteSlicer.Actions.arrangeAllBuildPlates;
     }
 
     Button
@@ -258,6 +258,6 @@ Rectangle
             bottom: parent.bottom;
             bottomMargin: UM.Theme.getSize("default_margin").height;
         }
-        action: Cura.Actions.arrangeAll;
+        action: SteSlicer.Actions.arrangeAll;
     }
 }

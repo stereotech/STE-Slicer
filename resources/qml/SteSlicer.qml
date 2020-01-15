@@ -9,14 +9,14 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 import "Menus"
 
 UM.MainWindow
 {
     id: base
-    //: Cura application window title
+    //: STE Slicer application window title
     title: catalog.i18nc("@title:window","Stereotech STE Slicer");
     viewportRect: Qt.rect(0, 0, 1.0, 1.0)
     property bool showPrintMonitor: false
@@ -26,7 +26,7 @@ UM.MainWindow
     // It should be phased out in newer plugin versions.
     Connections
     {
-        target: CuraApplication
+        target: SteSlicerApplication
         onShowPrintMonitor: {
             if (show) {
                 UM.Controller.setActiveStage("MonitorStage")
@@ -56,7 +56,7 @@ UM.MainWindow
 
     Component.onCompleted:
     {
-        CuraApplication.setMinimumWindowSize(UM.Theme.getSize("window_minimum_size"))
+        SteSlicerApplication.setMinimumWindowSize(UM.Theme.getSize("window_minimum_size"))
         // Workaround silly issues with QML Action's shortcut property.
         //
         // Currently, there is no way to define shortcuts as "Application Shortcut".
@@ -67,15 +67,15 @@ UM.MainWindow
         // shortcut will activate properly because one of its parents is a window.
         //
         // This has been fixed for QtQuick Controls 2 since the Shortcut item has a context property.
-        Cura.Actions.parent = backgroundItem
-        CuraApplication.purgeWindows()
+        SteSlicer.Actions.parent = backgroundItem
+        SteSlicerApplication.purgeWindows()
     }
 
     Item
     {
         id: backgroundItem;
         anchors.fill: parent;
-        UM.I18nCatalog{id: catalog; name:"cura"}
+        UM.I18nCatalog{id: catalog; name:"steslicer"}
 
         signal hasMesh(string name) //this signal sends the filebase name so it can be used for the JobSpecs.qml
         function getMeshName(path){
@@ -89,7 +89,7 @@ UM.MainWindow
         Keys.onPressed: {
             if (event.key == Qt.Key_Backspace)
             {
-                Cura.Actions.deleteSelection.trigger()
+                SteSlicer.Actions.deleteSelection.trigger()
             }
         }
 
@@ -105,13 +105,13 @@ UM.MainWindow
                 MenuItem
                 {
                     id: newProjectMenu
-                    action: Cura.Actions.newProject;
+                    action: SteSlicer.Actions.newProject;
                 }
 
                 MenuItem
                 {
                     id: openMenu
-                    action: Cura.Actions.open;
+                    action: SteSlicer.Actions.open;
                 }
 
                 RecentFilesMenu { }
@@ -162,31 +162,31 @@ UM.MainWindow
                 MenuItem
                 {
                     id: reloadAllMenu
-                    action: Cura.Actions.reloadAll;
+                    action: SteSlicer.Actions.reloadAll;
                 }
 
                 MenuSeparator { }
 
-                MenuItem { action: Cura.Actions.quit; }
+                MenuItem { action: SteSlicer.Actions.quit; }
             }
 
             Menu
             {
                 title: catalog.i18nc("@title:menu menubar:toplevel","&Edit");
 
-                MenuItem { action: Cura.Actions.undo; }
-                MenuItem { action: Cura.Actions.redo; }
+                MenuItem { action: SteSlicer.Actions.undo; }
+                MenuItem { action: SteSlicer.Actions.redo; }
                 MenuSeparator { }
-                MenuItem { action: Cura.Actions.selectAll; }
-                MenuItem { action: Cura.Actions.arrangeAll; }
-                MenuItem { action: Cura.Actions.deleteSelection; }
-                MenuItem { action: Cura.Actions.deleteAll; }
-                MenuItem { action: Cura.Actions.resetAllTranslation; }
-                MenuItem { action: Cura.Actions.resetAll; }
+                MenuItem { action: SteSlicer.Actions.selectAll; }
+                MenuItem { action: SteSlicer.Actions.arrangeAll; }
+                MenuItem { action: SteSlicer.Actions.deleteSelection; }
+                MenuItem { action: SteSlicer.Actions.deleteAll; }
+                MenuItem { action: SteSlicer.Actions.resetAllTranslation; }
+                MenuItem { action: SteSlicer.Actions.resetAll; }
                 MenuSeparator { }
-                MenuItem { action: Cura.Actions.groupObjects;}
-                MenuItem { action: Cura.Actions.mergeObjects;}
-                MenuItem { action: Cura.Actions.unGroupObjects;}
+                MenuItem { action: SteSlicer.Actions.groupObjects;}
+                MenuItem { action: SteSlicer.Actions.mergeObjects;}
+                MenuItem { action: SteSlicer.Actions.unGroupObjects;}
             }
 
             ViewMenu { title: catalog.i18nc("@title:menu", "&View") }
@@ -200,37 +200,37 @@ UM.MainWindow
 
                 Instantiator
                 {
-                    model: Cura.ExtrudersModel { simpleNames: true }
+                    model: SteSlicer.ExtrudersModel { simpleNames: true }
                     Menu {
                         title: model.name
 
-                        NozzleMenu { title: Cura.MachineManager.activeDefinitionVariantsName; visible: Cura.MachineManager.hasVariants; extruderIndex: index }
-                        MaterialMenu { title: catalog.i18nc("@title:menu", "&Material"); visible: Cura.MachineManager.hasMaterials; extruderIndex: index }
+                        NozzleMenu { title: SteSlicer.MachineManager.activeDefinitionVariantsName; visible: SteSlicer.MachineManager.hasVariants; extruderIndex: index }
+                        MaterialMenu { title: catalog.i18nc("@title:menu", "&Material"); visible: SteSlicer.MachineManager.hasMaterials; extruderIndex: index }
 
                         MenuSeparator
                         {
-                            visible: Cura.MachineManager.hasVariants || Cura.MachineManager.hasMaterials
+                            visible: SteSlicer.MachineManager.hasVariants || SteSlicer.MachineManager.hasMaterials
                         }
 
                         MenuItem
                         {
                             text: catalog.i18nc("@action:inmenu", "Set as Active Extruder")
-                            onTriggered: Cura.MachineManager.setExtruderIndex(model.index)
+                            onTriggered: SteSlicer.MachineManager.setExtruderIndex(model.index)
                         }
 
                         MenuItem
                         {
                             text: catalog.i18nc("@action:inmenu", "Enable Extruder")
-                            onTriggered: Cura.MachineManager.setExtruderEnabled(model.index, true)
-                            visible: !Cura.MachineManager.getExtruder(model.index).isEnabled
+                            onTriggered: SteSlicer.MachineManager.setExtruderEnabled(model.index, true)
+                            visible: !SteSlicer.MachineManager.getExtruder(model.index).isEnabled
                         }
 
                         MenuItem
                         {
                             text: catalog.i18nc("@action:inmenu", "Disable Extruder")
-                            onTriggered: Cura.MachineManager.setExtruderEnabled(model.index, false)
-                            visible: Cura.MachineManager.getExtruder(model.index).isEnabled
-                            enabled: Cura.MachineManager.numberExtrudersEnabled > 1
+                            onTriggered: SteSlicer.MachineManager.setExtruderEnabled(model.index, false)
+                            visible: SteSlicer.MachineManager.getExtruder(model.index).isEnabled
+                            enabled: SteSlicer.MachineManager.numberExtrudersEnabled > 1
                         }
 
                     }
@@ -239,12 +239,12 @@ UM.MainWindow
                 }
 
                 // TODO Only show in dev mode. Remove check when feature ready
-                BuildplateMenu { title: catalog.i18nc("@title:menu", "&Build plate"); visible: CuraSDKVersion == "dev" ? Cura.MachineManager.hasVariantBuildplates : false }
+                BuildplateMenu { title: catalog.i18nc("@title:menu", "&Build plate"); visible: SteSlicerSDKVersion == "dev" ? SteSlicer.MachineManager.hasVariantBuildplates : false }
                 ProfileMenu { title: catalog.i18nc("@title:settings", "&Profile"); }
 
                 MenuSeparator { }
 
-                MenuItem { action: Cura.Actions.configureSettingVisibility }
+                MenuItem { action: SteSlicer.Actions.configureSettingVisibility }
             }
 
             Menu
@@ -286,7 +286,7 @@ UM.MainWindow
                 id: preferencesMenu
                 title: catalog.i18nc("@title:menu menubar:toplevel","P&references");
 
-                MenuItem { action: Cura.Actions.preferences; }
+                MenuItem { action: SteSlicer.Actions.preferences; }
             }
 
             Menu
@@ -294,11 +294,11 @@ UM.MainWindow
                 id: helpMenu
                 title: catalog.i18nc("@title:menu menubar:toplevel","&Help");
 
-                MenuItem { action: Cura.Actions.showProfileFolder; }
-                MenuItem { action: Cura.Actions.documentation; }
-                MenuItem { action: Cura.Actions.reportBug; }
+                MenuItem { action: SteSlicer.Actions.showProfileFolder; }
+                MenuItem { action: SteSlicer.Actions.documentation; }
+                MenuItem { action: SteSlicer.Actions.reportBug; }
                 MenuSeparator { }
-                MenuItem { action: Cura.Actions.about; }
+                MenuItem { action: SteSlicer.Actions.about; }
             }
         }
 
@@ -306,7 +306,7 @@ UM.MainWindow
         {
             id: machineExtruderCount
 
-            containerStack: Cura.MachineManager.activeMachine
+            containerStack: SteSlicer.MachineManager.activeMachine
             key: "machine_extruder_count"
             watchedProperties: [ "value" ]
             storeIndex: 0
@@ -337,7 +337,7 @@ UM.MainWindow
                             if (filename.endsWith(".curapackage"))
                             {
                                 // Try to install plugin & close.
-                                CuraApplication.getPackageManager().installPackageViaDragAndDrop(filename);
+                                SteSlicerApplication.getPackageManager().installPackageViaDragAndDrop(filename);
                                 packageInstallDialog.text = catalog.i18nc("@label", "This package will be installed after restarting.");
                                 packageInstallDialog.icon = StandardIcon.Information;
                                 packageInstallDialog.open();
@@ -352,25 +352,6 @@ UM.MainWindow
                 }
             }
 
-            
-
-            //Button
-            //{
-            //    id: openFileButton;
-            //    text: catalog.i18nc("@action:button","Open File");
-            //    iconSource: UM.Theme.getIcon("load")
-            //    //style: UM.Theme.styles.tool_button
-            //    tooltip: ""
-            //    anchors
-            //    {
-            //        top: topbar.bottom;
-            //        topMargin: UM.Theme.getSize("default_margin").height;
-            //        left: sidebar.right;
-            //        //right: parent.right;
-            //    }
-            //    action: Cura.Actions.open;
-            //}
-//
             Toolbar
             {
                 id: toolbar;
@@ -401,7 +382,7 @@ UM.MainWindow
                         id: extruders
                         width: childrenRect.width
                         height: childrenRect.height
-                        property var _model: Cura.ExtrudersModel { id: extrudersModel }
+                        property var _model: SteSlicer.ExtrudersModel { id: extrudersModel }
                         model: _model.items.length > 1 ? _model : 0
                         ExtruderButton { extruder: model }
                     }
@@ -556,7 +537,7 @@ UM.MainWindow
     // Expand or collapse sidebar
     Connections
     {
-        target: Cura.Actions.expandSidebar
+        target: SteSlicer.Actions.expandSidebar
         onTriggered: sidebar.callExpandOrCollapse()
     }
 
@@ -603,13 +584,13 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.preferences
+        target: SteSlicer.Actions.preferences
         onTriggered: preferences.visible = true
     }
 
     Connections
     {
-        target: CuraApplication
+        target: SteSlicerApplication
         onShowPreferencesWindow: preferences.visible = true
     }
 
@@ -623,17 +604,17 @@ UM.MainWindow
         icon: StandardIcon.Question
         onYes:
         {
-            CuraApplication.deleteAll();
-            Cura.Actions.resetProfile.trigger();
+            SteSlicerApplication.deleteAll();
+            SteSlicer.Actions.resetProfile.trigger();
         }
     }
 
     Connections
     {
-        target: Cura.Actions.newProject
+        target: SteSlicer.Actions.newProject
         onTriggered:
         {
-            if(Printer.platformActivity || Cura.MachineManager.hasUserSettings)
+            if(Printer.platformActivity || SteSlicer.MachineManager.hasUserSettings)
             {
                 newProjectDialog.visible = true
             }
@@ -642,7 +623,7 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.addProfile
+        target: SteSlicer.Actions.addProfile
         onTriggered:
         {
 
@@ -655,7 +636,7 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.configureMachines
+        target: SteSlicer.Actions.configureMachines
         onTriggered:
         {
             preferences.visible = true;
@@ -665,7 +646,7 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.manageProfiles
+        target: SteSlicer.Actions.manageProfiles
         onTriggered:
         {
             preferences.visible = true;
@@ -675,7 +656,7 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.manageMaterials
+        target: SteSlicer.Actions.manageMaterials
         onTriggered:
         {
             preferences.visible = true;
@@ -685,7 +666,7 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.configureSettingVisibility
+        target: SteSlicer.Actions.configureSettingVisibility
         onTriggered:
         {
             preferences.visible = true;
@@ -698,15 +679,15 @@ UM.MainWindow
     }
 
     UM.ExtensionModel {
-        id: curaExtensions
+        id: steslicerExtensions
     }
 
     // show the plugin browser dialog
     Connections
     {
-        target: Cura.Actions.browsePackages
+        target: SteSlicer.Actions.browsePackages
         onTriggered: {
-            curaExtensions.callExtensionMethod("Toolbox", "browsePackages")
+            steslicerExtensions.callExtensionMethod("Toolbox", "browsePackages")
         }
     }
 
@@ -723,7 +704,7 @@ UM.MainWindow
     // We need to do this in order to keep the bindings intact.
     Connections
     {
-        target: Cura.MachineManager
+        target: SteSlicer.MachineManager
         onBlurSettings:
         {
             contentItem.forceActiveFocus()
@@ -736,37 +717,37 @@ UM.MainWindow
 
     onPreClosing:
     {
-        close.accepted = CuraApplication.getIsAllChecksPassed();
+        close.accepted = SteSlicerApplication.getIsAllChecksPassed();
         if (!close.accepted)
         {
-            CuraApplication.checkAndExitApplication();
+            SteSlicerApplication.checkAndExitApplication();
         }
     }
 
     MessageDialog
     {
         id: exitConfirmationDialog
-        title: catalog.i18nc("@title:window", "Closing Cura")
-        text: catalog.i18nc("@label", "Are you sure you want to exit Cura?")
+        title: catalog.i18nc("@title:window", "Closing STE Slicer")
+        text: catalog.i18nc("@label", "Are you sure you want to exit STE Slicer?")
         icon: StandardIcon.Question
         modality: Qt.ApplicationModal
         standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: CuraApplication.callConfirmExitDialogCallback(true)
-        onNo: CuraApplication.callConfirmExitDialogCallback(false)
-        onRejected: CuraApplication.callConfirmExitDialogCallback(false)
+        onYes: SteSlicerApplication.callConfirmExitDialogCallback(true)
+        onNo: SteSlicerApplication.callConfirmExitDialogCallback(false)
+        onRejected: SteSlicerApplication.callConfirmExitDialogCallback(false)
         onVisibilityChanged:
         {
             if (!visible)
             {
                 // reset the text to default because other modules may change the message text.
-                text = catalog.i18nc("@label", "Are you sure you want to exit Cura?");
+                text = catalog.i18nc("@label", "Are you sure you want to exit STE Slicer?");
             }
         }
     }
 
     Connections
     {
-        target: CuraApplication
+        target: SteSlicerApplication
         onShowConfirmExitDialog:
         {
             exitConfirmationDialog.text = message;
@@ -776,13 +757,13 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.quit
-        onTriggered: CuraApplication.checkAndExitApplication();
+        target: SteSlicer.Actions.quit
+        onTriggered: SteSlicerApplication.checkAndExitApplication();
     }
 
     Connections
     {
-        target: Cura.Actions.toggleFullScreen
+        target: SteSlicer.Actions.toggleFullScreen
         onTriggered: base.toggleFullscreen();
     }
 
@@ -795,7 +776,7 @@ UM.MainWindow
         modality: UM.Application.platform == "linux" ? Qt.NonModal : Qt.WindowModal;
         selectMultiple: true
         nameFilters: UM.MeshFileHandler.supportedReadFileTypes;
-        folder: CuraApplication.getDefaultPath("dialog_load_path")
+        folder: SteSlicerApplication.getDefaultPath("dialog_load_path")
         onAccepted:
         {
             // Because several implementations of the file dialog only update the folder
@@ -803,7 +784,7 @@ UM.MainWindow
             var f = folder;
             folder = f;
 
-            CuraApplication.setDefaultPath("dialog_load_path", folder);
+            SteSlicerApplication.setDefaultPath("dialog_load_path", folder);
 
             handleOpenFileUrls(fileUrls);
         }
@@ -826,7 +807,7 @@ UM.MainWindow
                 {
                     continue;
                 }
-                else if (CuraApplication.checkIsValidProjectFile(fileUrlList[i]))
+                else if (SteSlicerApplication.checkIsValidProjectFile(fileUrlList[i]))
                 {
                     projectFileUrlList.push(fileUrlList[i]);
                 }
@@ -917,7 +898,7 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.open
+        target: SteSlicer.Actions.open
         onTriggered: openDialog.open()
     }
 
@@ -933,7 +914,7 @@ UM.MainWindow
 
     Connections
     {
-        target: CuraApplication
+        target: SteSlicerApplication
         onOpenProjectFile:
         {
             askOpenAsProjectOrModelsDialog.fileUrl = project_file;
@@ -948,7 +929,7 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.showProfileFolder
+        target: SteSlicer.Actions.showProfileFolder
         onTriggered:
         {
             var path = UM.Resources.getPath(UM.Resources.Preferences, "");
@@ -982,7 +963,7 @@ UM.MainWindow
 
         function start(id)
         {
-            var actions = Cura.MachineActionManager.getFirstStartActions(id)
+            var actions = SteSlicer.MachineActionManager.getFirstStartActions(id)
             resetPages() // Remove previous pages
 
             for (var i = 0; i < actions.length; i++)
@@ -1004,19 +985,19 @@ UM.MainWindow
     {
         id: messageDialog
         modality: Qt.ApplicationModal
-        onAccepted: CuraApplication.messageBoxClosed(clickedButton)
-        onApply: CuraApplication.messageBoxClosed(clickedButton)
-        onDiscard: CuraApplication.messageBoxClosed(clickedButton)
-        onHelp: CuraApplication.messageBoxClosed(clickedButton)
-        onNo: CuraApplication.messageBoxClosed(clickedButton)
-        onRejected: CuraApplication.messageBoxClosed(clickedButton)
-        onReset: CuraApplication.messageBoxClosed(clickedButton)
-        onYes: CuraApplication.messageBoxClosed(clickedButton)
+        onAccepted: SteSlicerApplication.messageBoxClosed(clickedButton)
+        onApply: SteSlicerApplication.messageBoxClosed(clickedButton)
+        onDiscard: SteSlicerApplication.messageBoxClosed(clickedButton)
+        onHelp: SteSlicerApplication.messageBoxClosed(clickedButton)
+        onNo: SteSlicerApplication.messageBoxClosed(clickedButton)
+        onRejected: SteSlicerApplication.messageBoxClosed(clickedButton)
+        onReset: SteSlicerApplication.messageBoxClosed(clickedButton)
+        onYes: SteSlicerApplication.messageBoxClosed(clickedButton)
     }
 
     Connections
     {
-        target: CuraApplication
+        target: SteSlicerApplication
         onShowMessageBox:
         {
             messageDialog.title = title
@@ -1036,7 +1017,7 @@ UM.MainWindow
 
     Connections
     {
-        target: CuraApplication
+        target: SteSlicerApplication
         onShowDiscardOrKeepProfileChanges:
         {
             discardOrKeepProfileChangesDialog.show()
@@ -1045,7 +1026,7 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.addMachine
+        target: SteSlicer.Actions.addMachine
         onTriggered: addMachineDialog.visible = true;
     }
 
@@ -1056,13 +1037,13 @@ UM.MainWindow
 
     Connections
     {
-        target: Cura.Actions.about
+        target: SteSlicer.Actions.about
         onTriggered: aboutDialog.visible = true;
     }
 
     Connections
     {
-        target: CuraApplication
+        target: SteSlicerApplication
         onRequestAddPrinter:
         {
             addMachineDialog.visible = true
@@ -1084,11 +1065,11 @@ UM.MainWindow
             }
 
             // check later if the user agreement dialog has been closed
-            if (CuraApplication.needToShowUserAgreement)
+            if (SteSlicerApplication.needToShowUserAgreement)
             {
                 restart();
             }
-            else if(Cura.MachineManager.activeMachine == null)
+            else if(SteSlicer.MachineManager.activeMachine == null)
             {
                 addMachineDialog.open();
             }

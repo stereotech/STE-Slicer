@@ -5,14 +5,14 @@ import QtQuick 2.2
 import QtQuick.Controls 1.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
     title: catalog.i18nc("@title:menu menubar:toplevel", "&View")
     id: base
 
-    property var multiBuildPlateModel: CuraApplication.getMultiBuildPlateModel()
+    property var multiBuildPlateModel: SteSlicerApplication.getMultiBuildPlateModel()
 
     // main views
     Instantiator
@@ -40,11 +40,11 @@ Menu
     Menu
     {
         title: catalog.i18nc("@action:inmenu menubar:view","&Camera position");
-        MenuItem { action: Cura.Actions.view3DCamera; }
-        MenuItem { action: Cura.Actions.viewFrontCamera; }
-        MenuItem { action: Cura.Actions.viewTopCamera; }
-        MenuItem { action: Cura.Actions.viewLeftSideCamera; }
-        MenuItem { action: Cura.Actions.viewRightSideCamera; }
+        MenuItem { action: SteSlicer.Actions.view3DCamera; }
+        MenuItem { action: SteSlicer.Actions.viewFrontCamera; }
+        MenuItem { action: SteSlicer.Actions.viewTopCamera; }
+        MenuItem { action: SteSlicer.Actions.viewLeftSideCamera; }
+        MenuItem { action: SteSlicer.Actions.viewRightSideCamera; }
     }
 
     MenuSeparator
@@ -63,7 +63,7 @@ Menu
             MenuItem
             {
                 text: base.multiBuildPlateModel.getItem(index).name;
-                onTriggered: Cura.SceneController.setActiveBuildPlate(base.multiBuildPlateModel.getItem(index).buildPlateNumber)
+                onTriggered: SteSlicer.SceneController.setActiveBuildPlate(base.multiBuildPlateModel.getItem(index).buildPlateNumber)
                 checkable: true
                 checked: base.multiBuildPlateModel.getItem(index).buildPlateNumber == base.multiBuildPlateModel.activeBuildPlate
                 exclusiveGroup: buildPlateGroup
@@ -82,12 +82,12 @@ Menu
 
     MenuItem
     {
-        action: Cura.Actions.expandSidebar
+        action: SteSlicer.Actions.expandSidebar
     }
 
     MenuSeparator {}
     MenuItem
     {
-        action: Cura.Actions.toggleFullScreen
+        action: SteSlicer.Actions.toggleFullScreen
     }
 }

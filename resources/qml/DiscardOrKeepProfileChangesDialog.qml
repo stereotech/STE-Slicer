@@ -7,7 +7,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Window 2.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 UM.Dialog
 {
@@ -16,7 +16,7 @@ UM.Dialog
 
     width: 800 * screenScaleFactor
     height: 400 * screenScaleFactor
-    property var changesModel: Cura.UserChangesModel{ id: userChangesModel}
+    property var changesModel: SteSlicer.UserChangesModel{ id: userChangesModel}
     onVisibilityChanged:
     {
         if(visible)
@@ -49,7 +49,7 @@ UM.Dialog
         UM.I18nCatalog
         {
             id: catalog;
-            name: "cura"
+            name: "steslicer"
         }
 
         Label
@@ -197,7 +197,7 @@ UM.Dialog
             anchors.right: parent.right
             onClicked:
             {
-                CuraApplication.discardOrKeepProfileChangesClosed("discard")
+                SteSlicerApplication.discardOrKeepProfileChangesClosed("discard")
                 base.hide()
             }
             isDefault: true
@@ -211,7 +211,7 @@ UM.Dialog
             anchors.rightMargin: UM.Theme.getSize("default_margin").width
             onClicked:
             {
-                CuraApplication.discardOrKeepProfileChangesClosed("keep")
+                SteSlicerApplication.discardOrKeepProfileChangesClosed("keep")
                 base.hide()
             }
         }
@@ -221,7 +221,7 @@ UM.Dialog
             id: createNewProfileButton
             text: catalog.i18nc("@action:button", "Create New Profile");
             anchors.left: parent.left
-            action: Cura.Actions.addProfile
+            action: SteSlicer.Actions.addProfile
             onClicked: base.hide()
         }
     }

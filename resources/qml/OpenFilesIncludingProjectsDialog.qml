@@ -9,7 +9,7 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.1
 
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 UM.Dialog
 {
@@ -42,7 +42,7 @@ UM.Dialog
     {
         for (var i in fileUrls)
         {
-            CuraApplication.readLocalFile(fileUrls[i], true);
+            SteSlicerApplication.readLocalFile(fileUrls[i], true);
         }
 
         var meshName = backgroundItem.getMeshName(fileUrls[0].toString());

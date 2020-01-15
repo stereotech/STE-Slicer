@@ -6,7 +6,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Button
 {
@@ -24,7 +24,7 @@ Button
             for (var index in outputDevice.uniqueConfigurations)
             {
                 var configuration = outputDevice.uniqueConfigurations[index]
-                if (Cura.MachineManager.matchesConfiguration(configuration))
+                if (SteSlicer.MachineManager.matchesConfiguration(configuration))
                 {
                     base.matched = true;
                     return;
@@ -95,7 +95,7 @@ Button
 
     Connections
     {
-        target: Cura.MachineManager
+        target: SteSlicer.MachineManager
         onCurrentConfigurationChanged: updateOnSync()
         onOutputDevicesChanged: updateOnSync()
     }

@@ -7,15 +7,15 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.1 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item {
     id: base;
-    UM.I18nCatalog { id: catalog; name:"cura"}
+    UM.I18nCatalog { id: catalog; name:"steslicer"}
 
     property real progress: UM.Backend.progress
     property int backendState: UM.Backend.state
-    property bool activity: CuraApplication.platformActivity
+    property bool activity: SteSlicerApplication.platformActivity
 
     property alias buttonRowWidth: saveRow.width
 
@@ -51,9 +51,9 @@ Item {
     function sliceOrStopSlicing() {
         try {
             if ([1, 5].indexOf(base.backendState) != -1) {
-                CuraApplication.backend.forceSlice();
+                SteSlicerApplication.backend.forceSlice();
             } else {
-                CuraApplication.backend.stopSlicing();
+                SteSlicerApplication.backend.stopSlicing();
             }
         } catch (e) {
             console.log('Could not start or stop slicing', e)
@@ -143,14 +143,14 @@ Item {
         }
 
         Connections {
-            target: CuraApplication
+            target: SteSlicerApplication
             onAdditionalComponentsChanged: saveRow.addAdditionalComponents("saveButton")
         }
 
         function addAdditionalComponents (areaId) {
             if(areaId == "saveButton") {
-                for (var component in CuraApplication.additionalComponents["saveButton"]) {
-                    CuraApplication.additionalComponents["saveButton"][component].parent = additionalComponentsRow
+                for (var component in SteSlicerApplication.additionalComponents["saveButton"]) {
+                    SteSlicerApplication.additionalComponents["saveButton"][component].parent = additionalComponentsRow
                 }
             }
         }
@@ -262,7 +262,7 @@ Item {
             {
                 forceActiveFocus();
                 UM.OutputDeviceManager.requestWriteToDevice(UM.OutputDeviceManager.activeDevice, PrintInformation.jobName,
-                    { "filter_by_machine": true, "preferred_mimetypes": Cura.MachineManager.activeMachine.preferred_output_file_formats });
+                    { "filter_by_machine": true, "preferred_mimetypes": SteSlicer.MachineManager.activeMachine.preferred_output_file_formats });
             }
 
             style: ButtonStyle {

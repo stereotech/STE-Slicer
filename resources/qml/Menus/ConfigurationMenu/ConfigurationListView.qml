@@ -6,7 +6,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Column
 {
@@ -79,7 +79,7 @@ Column
                 onActivateConfiguration:
                 {
                     switchPopupState()
-                    Cura.MachineManager.applyRemoteConfiguration(configuration)
+                    SteSlicer.MachineManager.applyRemoteConfiguration(configuration)
                 }
             }
         }
@@ -96,7 +96,7 @@ Column
 
     Connections
     {
-        target: Cura.MachineManager
+        target: SteSlicer.MachineManager
         onOutputDevicesChanged:
         {
             forceModelUpdate()

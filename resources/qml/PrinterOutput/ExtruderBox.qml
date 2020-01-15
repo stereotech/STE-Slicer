@@ -4,7 +4,7 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 Item
@@ -18,12 +18,12 @@ Item
     UM.SettingPropertyProvider
     {
         id: extruderTemperature
-        containerStackId: Cura.ExtruderManager.extruderIds[position]
+        containerStackId: SteSlicer.ExtruderManager.extruderIds[position]
         key: "material_print_temperature"
         watchedProperties: ["value", "minimum_value", "maximum_value", "resolve"]
         storeIndex: 0
 
-        property var resolve: Cura.MachineManager.activeStack != Cura.MachineManager.activeMachine ? properties.resolve : "None"
+        property var resolve: SteSlicer.MachineManager.activeStack != SteSlicer.MachineManager.activeMachine ? properties.resolve : "None"
     }
 
     Rectangle
@@ -33,7 +33,7 @@ Item
 
         Label //Extruder name.
         {
-            text: Cura.ExtruderManager.getExtruderName(position) != "" ? Cura.ExtruderManager.getExtruderName(position) : catalog.i18nc("@label", "Extruder")
+            text: SteSlicer.ExtruderManager.getExtruderName(position) != "" ? SteSlicer.ExtruderManager.getExtruderName(position) : catalog.i18nc("@label", "Extruder")
             color: UM.Theme.getColor("text")
             font: UM.Theme.getFont("default")
             anchors.left: parent.left

@@ -7,13 +7,13 @@ import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item
 {
     id: base
 
-    property QtObject materialManager: CuraApplication.getMaterialManager()
+    property QtObject materialManager: SteSlicerApplication.getMaterialManager()
     // Keep PreferencesDialog happy
     property var resetEnabled: false
     property var currentItem: null
@@ -25,20 +25,20 @@ Item
         {
             return false
         }
-        const extruder_position = Cura.ExtruderManager.activeExtruderIndex
-        const root_material_id = Cura.MachineManager.currentRootMaterialId[extruder_position]
+        const extruder_position = SteSlicer.ExtruderManager.activeExtruderIndex
+        const root_material_id = SteSlicer.MachineManager.currentRootMaterialId[extruder_position]
         return base.currentItem.root_material_id == root_material_id
     }
     property string newRootMaterialIdToSwitchTo: ""
     property bool toActivateNewMaterial: false
 
-    property var extruder_position: Cura.ExtruderManager.activeExtruderIndex
-    property var active_root_material_id: Cura.MachineManager.currentRootMaterialId[extruder_position]
+    property var extruder_position: SteSlicer.ExtruderManager.activeExtruderIndex
+    property var active_root_material_id: SteSlicer.MachineManager.currentRootMaterialId[extruder_position]
 
     UM.I18nCatalog
     {
         id: catalog
-        name: "cura"
+        name: "steslicer"
     }
 
     // When loaded, try to select the active material in the tree
@@ -90,8 +90,8 @@ Item
 
                 // Set the current material as the one to be activated (needed to force the UI update)
                 base.newRootMaterialIdToSwitchTo = base.currentItem.root_material_id
-                const extruder_position = Cura.ExtruderManager.activeExtruderIndex
-                Cura.MachineManager.setMaterial(extruder_position, base.currentItem.container_node)
+                const extruder_position = SteSlicer.ExtruderManager.activeExtruderIndex
+                SteSlicer.MachineManager.setMaterial(extruder_position, base.currentItem.container_node)
             }
         }
 
@@ -200,10 +200,10 @@ Item
             visible: text != ""
             text:
             {
-                var caption = catalog.i18nc("@action:label", "Printer") + ": " + Cura.MachineManager.activeMachineName;
-                if (Cura.MachineManager.hasVariants)
+                var caption = catalog.i18nc("@action:label", "Printer") + ": " + SteSlicer.MachineManager.activeMachineName;
+                if (SteSlicer.MachineManager.hasVariants)
                 {
-                    caption += ", " + Cura.MachineManager.activeDefinitionVariantsName + ": " + Cura.MachineManager.activeVariantName;
+                    caption += ", " + SteSlicer.MachineManager.activeDefinitionVariantsName + ": " + SteSlicer.MachineManager.activeVariantName;
                 }
                 return caption;
             }
@@ -276,11 +276,11 @@ Item
         id: importMaterialDialog
         title: catalog.i18nc("@title:window", "Import Material")
         selectExisting: true
-        nameFilters: Cura.ContainerManager.getContainerNameFilters("material")
-        folder: CuraApplication.getDefaultPath("dialog_material_path")
+        nameFilters: SteSlicer.ContainerManager.getContainerNameFilters("material")
+        folder: SteSlicerApplication.getDefaultPath("dialog_material_path")
         onAccepted:
         {
-            var result = Cura.ContainerManager.importMaterialContainer(fileUrl);
+            var result = SteSlicer.ContainerManager.importMaterialContainer(fileUrl);
 
             messageDialog.title = catalog.i18nc("@title:window", "Import Material");
             messageDialog.text = catalog.i18nc("@info:status Don't translate the XML tags <filename> or <message>!", "Could not import material <filename>%1</filename>: <message>%2</message>").arg(fileUrl).arg(result.message);
@@ -298,7 +298,7 @@ Item
                 messageDialog.icon = StandardIcon.Critical;
             }
             messageDialog.open();
-            CuraApplication.setDefaultPath("dialog_material_path", folder);
+            SteSlicerApplication.setDefaultPath("dialog_material_path", folder);
         }
     }
 
@@ -307,11 +307,11 @@ Item
         id: exportMaterialDialog
         title: catalog.i18nc("@title:window", "Export Material")
         selectExisting: false
-        nameFilters: Cura.ContainerManager.getContainerNameFilters("material")
-        folder: CuraApplication.getDefaultPath("dialog_material_path")
+        nameFilters: SteSlicer.ContainerManager.getContainerNameFilters("material")
+        folder: SteSlicerApplication.getDefaultPath("dialog_material_path")
         onAccepted:
         {
-            var result = Cura.ContainerManager.exportContainer(base.currentItem.root_material_id, selectedNameFilter, fileUrl);
+            var result = SteSlicer.ContainerManager.exportContainer(base.currentItem.root_material_id, selectedNameFilter, fileUrl);
 
             messageDialog.title = catalog.i18nc("@title:window", "Export Material");
             if (result.status == "error")
@@ -326,7 +326,7 @@ Item
                 messageDialog.text = catalog.i18nc("@info:status Don't translate the XML tag <filename>!", "Successfully exported material to <filename>%1</filename>").arg(result.path);
                 messageDialog.open();
             }
-            CuraApplication.setDefaultPath("dialog_material_path", folder);
+            SteSlicerApplication.setDefaultPath("dialog_material_path", folder);
         }
     }
 

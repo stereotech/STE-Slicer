@@ -5,7 +5,7 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 Item
@@ -16,10 +16,10 @@ Item
 
     Connections
     {
-        target: Cura.MachineManager
+        target: SteSlicer.MachineManager
         onGlobalContainerChanged:
         {
-            outputDevice = Cura.MachineManager.printerOutputDevices.length >= 1 ? Cura.MachineManager.printerOutputDevices[0] : null;
+            outputDevice = SteSlicer.MachineManager.printerOutputDevices.length >= 1 ? SteSlicer.MachineManager.printerOutputDevices[0] : null;
         }
     }
 

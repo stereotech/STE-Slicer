@@ -168,7 +168,7 @@ class SteSlicerApplication(QtApplication):
 
         self.default_theme = "material"
 
-        self.change_log_url = "https://ultimaker.com/ultimaker-cura-latest-features"
+        self.change_log_url = "https://stereotech.org/steslicer/whats-new"
 
         self._boot_loading_time = time.time()
 
@@ -466,7 +466,7 @@ class SteSlicerApplication(QtApplication):
         self.getController().getScene().sceneChanged.connect(self.updatePlatformActivityDelayed)
         self.getController().toolOperationStopped.connect(self._onToolOperationStopped)
         self.getController().contextMenuRequested.connect(self._onContextMenuRequested)
-        self.getCuraSceneController().activeBuildPlateChanged.connect(self.updatePlatformActivityDelayed)
+        self.getSteSlicerSceneController().activeBuildPlateChanged.connect(self.updatePlatformActivityDelayed)
 
         self.showSplashMessage(self._i18n_catalog.i18nc("@info:progress", "Loading machines..."))
 
@@ -517,7 +517,7 @@ class SteSlicerApplication(QtApplication):
         self.applicationShuttingDown.connect(self.saveSettings)
         self.engineCreatedSignal.connect(self._onEngineCreated)
 
-        self.getCuraSceneController().setActiveBuildPlate(0)  # Initialize
+        self.getSteSlicerSceneController().setActiveBuildPlate(0)  # Initialize
 
         SteSlicerApplication.Created = True
 
@@ -733,7 +733,7 @@ class SteSlicerApplication(QtApplication):
 
         self.started = True
         self.initializationFinished.emit()
-        Logger.log("d", "Booting Cura took %s seconds", time.time() - self._boot_loading_time)
+        Logger.log("d", "Booting STE Slicer took %s seconds", time.time() - self._boot_loading_time)
 
         # For now use a timer to postpone some things that need to be done after the application and GUI are
         # initialized, for example opening files because they may show dialogs which can be closed due to incomplete
@@ -806,7 +806,7 @@ class SteSlicerApplication(QtApplication):
         self.showSplashMessage(self._i18n_catalog.i18nc("@info:progress", "Loading interface..."))
 
         # Initialize QML engine
-        self.setMainQml(Resources.getPath(self.ResourceTypes.QmlFiles, "Cura.qml"))
+        self.setMainQml(Resources.getPath(self.ResourceTypes.QmlFiles, "SteSlicer.qml"))
         self._qml_import_paths.append(Resources.getPath(self.ResourceTypes.QmlFiles))
         self.initializeEngine()
 
@@ -823,7 +823,7 @@ class SteSlicerApplication(QtApplication):
     def getSettingVisibilityPresetsModel(self, *args) -> SettingVisibilityPresetsModel:
         return self._setting_visibility_presets_model
 
-    def getCuraFormulaFunctions(self, *args) -> "CuraFormulaFunctions":
+    def getSteSlicerFormulaFunctions(self, *args) -> "SteSlicerFormulaFunctions":
         if self._steslicer_formula_functions is None:
             self._steslicer_formula_functions = SteSlicerFormulaFunctions(self)
         return self._steslicer_formula_functions
@@ -869,9 +869,9 @@ class SteSlicerApplication(QtApplication):
             self._build_plate_model = BuildPlateModel(self)
         return self._build_plate_model
 
-    def getCuraSceneController(self, *args) -> SteSlicerSceneController:
+    def getSteSlicerSceneController(self, *args) -> SteSlicerSceneController:
         if self._steslicer_scene_controller is None:
-            self._steslicer_scene_controller = SteSlicerSceneController.createCuraSceneController()
+            self._steslicer_scene_controller = SteSlicerSceneController.createSteSlicerSceneController()
         return self._steslicer_scene_controller
 
     def getSettingInheritanceManager(self, *args) -> SettingInheritanceManager:
@@ -925,62 +925,62 @@ class SteSlicerApplication(QtApplication):
 
         # global contexts
         engine.rootContext().setContextProperty("Printer", self)
-        engine.rootContext().setContextProperty("CuraApplication", self)
+        engine.rootContext().setContextProperty("SteSlicerApplication", self)
         engine.rootContext().setContextProperty("PrintInformation", self._print_information)
-        engine.rootContext().setContextProperty("CuraActions", self._steslicer_actions)
-        engine.rootContext().setContextProperty("CuraSDKVersion", SteSlicerSDKVersion)
+        engine.rootContext().setContextProperty("SteSlicerActions", self._steslicer_actions)
+        engine.rootContext().setContextProperty("SteSlicerSDKVersion", SteSlicerSDKVersion)
 
-        qmlRegisterUncreatableType(SteSlicerApplication, "Cura", 1, 0, "ResourceTypes", "Just an Enum type")
+        qmlRegisterUncreatableType(SteSlicerApplication, "SteSlicer", 1, 0, "ResourceTypes", "Just an Enum type")
 
-        qmlRegisterSingletonType(SteSlicerSceneController, "Cura", 1, 0, "SceneController", self.getCuraSceneController)
-        qmlRegisterSingletonType(ExtruderManager, "Cura", 1, 0, "ExtruderManager", self.getExtruderManager)
-        qmlRegisterSingletonType(MachineManager, "Cura", 1, 0, "MachineManager", self.getMachineManager)
-        qmlRegisterSingletonType(SettingInheritanceManager, "Cura", 1, 0, "SettingInheritanceManager", self.getSettingInheritanceManager)
-        qmlRegisterSingletonType(SimpleModeSettingsManager, "Cura", 1, 0, "SimpleModeSettingsManager", self.getSimpleModeSettingsManager)
-        qmlRegisterSingletonType(MachineActionManager.MachineActionManager, "Cura", 1, 0, "MachineActionManager", self.getMachineActionManager)
+        qmlRegisterSingletonType(SteSlicerSceneController, "SteSlicer", 1, 0, "SceneController", self.getSteSlicerSceneController)
+        qmlRegisterSingletonType(ExtruderManager, "SteSlicer", 1, 0, "ExtruderManager", self.getExtruderManager)
+        qmlRegisterSingletonType(MachineManager, "SteSlicer", 1, 0, "MachineManager", self.getMachineManager)
+        qmlRegisterSingletonType(SettingInheritanceManager, "SteSlicer", 1, 0, "SettingInheritanceManager", self.getSettingInheritanceManager)
+        qmlRegisterSingletonType(SimpleModeSettingsManager, "SteSlicer", 1, 0, "SimpleModeSettingsManager", self.getSimpleModeSettingsManager)
+        qmlRegisterSingletonType(MachineActionManager.MachineActionManager, "SteSlicer", 1, 0, "MachineActionManager", self.getMachineActionManager)
 
-        qmlRegisterType(NetworkMJPGImage, "Cura", 1, 0, "NetworkMJPGImage")
+        qmlRegisterType(NetworkMJPGImage, "SteSlicer", 1, 0, "NetworkMJPGImage")
 
-        qmlRegisterSingletonType(ObjectsModel, "Cura", 1, 0, "ObjectsModel", self.getObjectsModel)
-        qmlRegisterType(BuildPlateModel, "Cura", 1, 0, "BuildPlateModel")
-        qmlRegisterType(MultiBuildPlateModel, "Cura", 1, 0, "MultiBuildPlateModel")
-        qmlRegisterType(InstanceContainer, "Cura", 1, 0, "InstanceContainer")
-        qmlRegisterType(ExtrudersModel, "Cura", 1, 0, "ExtrudersModel")
+        qmlRegisterSingletonType(ObjectsModel, "SteSlicer", 1, 0, "ObjectsModel", self.getObjectsModel)
+        qmlRegisterType(BuildPlateModel, "SteSlicer", 1, 0, "BuildPlateModel")
+        qmlRegisterType(MultiBuildPlateModel, "SteSlicer", 1, 0, "MultiBuildPlateModel")
+        qmlRegisterType(InstanceContainer, "SteSlicer", 1, 0, "InstanceContainer")
+        qmlRegisterType(ExtrudersModel, "SteSlicer", 1, 0, "ExtrudersModel")
 
-        qmlRegisterType(FavoriteMaterialsModel, "Cura", 1, 0, "FavoriteMaterialsModel")
-        qmlRegisterType(GenericMaterialsModel, "Cura", 1, 0, "GenericMaterialsModel")
-        qmlRegisterType(MaterialBrandsModel, "Cura", 1, 0, "MaterialBrandsModel")
-        qmlRegisterType(QualityManagementModel, "Cura", 1, 0, "QualityManagementModel")
-        qmlRegisterType(MachineManagementModel, "Cura", 1, 0, "MachineManagementModel")
+        qmlRegisterType(FavoriteMaterialsModel, "SteSlicer", 1, 0, "FavoriteMaterialsModel")
+        qmlRegisterType(GenericMaterialsModel, "SteSlicer", 1, 0, "GenericMaterialsModel")
+        qmlRegisterType(MaterialBrandsModel, "SteSlicer", 1, 0, "MaterialBrandsModel")
+        qmlRegisterType(QualityManagementModel, "SteSlicer", 1, 0, "QualityManagementModel")
+        qmlRegisterType(MachineManagementModel, "SteSlicer", 1, 0, "MachineManagementModel")
 
-        qmlRegisterSingletonType(QualityProfilesDropDownMenuModel, "Cura", 1, 0,
+        qmlRegisterSingletonType(QualityProfilesDropDownMenuModel, "SteSlicer", 1, 0,
                                  "QualityProfilesDropDownMenuModel", self.getQualityProfilesDropDownMenuModel)
-        qmlRegisterSingletonType(CustomQualityProfilesDropDownMenuModel, "Cura", 1, 0,
+        qmlRegisterSingletonType(CustomQualityProfilesDropDownMenuModel, "SteSlicer", 1, 0,
                                  "CustomQualityProfilesDropDownMenuModel", self.getCustomQualityProfilesDropDownMenuModel)
-        qmlRegisterType(NozzleModel, "Cura", 1, 0, "NozzleModel")
+        qmlRegisterType(NozzleModel, "SteSlicer", 1, 0, "NozzleModel")
 
-        qmlRegisterType(MaterialSettingsVisibilityHandler, "Cura", 1, 0, "MaterialSettingsVisibilityHandler")
-        qmlRegisterType(SettingVisibilityPresetsModel, "Cura", 1, 0, "SettingVisibilityPresetsModel")
-        qmlRegisterType(QualitySettingsModel, "Cura", 1, 0, "QualitySettingsModel")
-        qmlRegisterType(MachineNameValidator, "Cura", 1, 0, "MachineNameValidator")
-        qmlRegisterType(UserChangesModel, "Cura", 1, 0, "UserChangesModel")
-        qmlRegisterSingletonType(ContainerManager, "Cura", 1, 0, "ContainerManager", ContainerManager.getInstance)
-        qmlRegisterType(SidebarCustomMenuItemsModel, "Cura", 1, 0, "SidebarCustomMenuItemsModel")
+        qmlRegisterType(MaterialSettingsVisibilityHandler, "SteSlicer", 1, 0, "MaterialSettingsVisibilityHandler")
+        qmlRegisterType(SettingVisibilityPresetsModel, "SteSlicer", 1, 0, "SettingVisibilityPresetsModel")
+        qmlRegisterType(QualitySettingsModel, "SteSlicer", 1, 0, "QualitySettingsModel")
+        qmlRegisterType(MachineNameValidator, "SteSlicer", 1, 0, "MachineNameValidator")
+        qmlRegisterType(UserChangesModel, "SteSlicer", 1, 0, "UserChangesModel")
+        qmlRegisterSingletonType(ContainerManager, "SteSlicer", 1, 0, "ContainerManager", ContainerManager.getInstance)
+        qmlRegisterType(SidebarCustomMenuItemsModel, "SteSlicer", 1, 0, "SidebarCustomMenuItemsModel")
 
         # As of Qt5.7, it is necessary to get rid of any ".." in the path for the singleton to work.
         actions_url = QUrl.fromLocalFile(os.path.abspath(Resources.getPath(SteSlicerApplication.ResourceTypes.QmlFiles, "Actions.qml")))
-        qmlRegisterSingletonType(actions_url, "Cura", 1, 0, "Actions")
+        qmlRegisterSingletonType(actions_url, "SteSlicer", 1, 0, "Actions")
 
         for path in Resources.getAllResourcesOfType(SteSlicerApplication.ResourceTypes.QmlFiles):
             type_name = os.path.splitext(os.path.basename(path))[0]
-            if type_name in ("Cura", "Actions"):
+            if type_name in ("SteSlicer", "Actions"):
                 continue
 
             # Ignore anything that is not a QML file.
             if not path.endswith(".qml"):
                 continue
 
-            qmlRegisterType(QUrl.fromLocalFile(path), "Cura", 1, 0, type_name)
+            qmlRegisterType(QUrl.fromLocalFile(path), "SteSlicer", 1, 0, type_name)
 
     def onSelectionChanged(self):
         if Selection.hasSelection():
@@ -1073,88 +1073,6 @@ class SteSlicerApplication(QtApplication):
 
         self._platform_activity = True if count > 0 else False
         self.activityChanged.emit()
-
-    # Remove all selected objects from the scene.
-    @pyqtSlot()
-    @deprecated("Moved to CuraActions", "2.6")
-    def deleteSelection(self):
-        if not self.getController().getToolsEnabled():
-            return
-        removed_group_nodes = []
-        op = GroupedOperation()
-        nodes = Selection.getAllSelectedObjects()
-        for node in nodes:
-            op.addOperation(RemoveSceneNodeOperation(node))
-            group_node = node.getParent()
-            if group_node and group_node.callDecoration("isGroup") and group_node not in removed_group_nodes:
-                remaining_nodes_in_group = list(set(group_node.getChildren()) - set(nodes))
-                if len(remaining_nodes_in_group) == 1:
-                    removed_group_nodes.append(group_node)
-                    op.addOperation(SetParentOperation(remaining_nodes_in_group[0], group_node.getParent()))
-                    op.addOperation(RemoveSceneNodeOperation(group_node))
-        op.push()
-
-    ##  Remove an object from the scene.
-    #   Note that this only removes an object if it is selected.
-    @pyqtSlot("quint64")
-    @deprecated("Use deleteSelection instead", "2.6")
-    def deleteObject(self, object_id):
-        if not self.getController().getToolsEnabled():
-            return
-
-        node = self.getController().getScene().findObject(object_id)
-
-        if not node and object_id != 0:  # Workaround for tool handles overlapping the selected object
-            node = Selection.getSelectedObject(0)
-
-        if node:
-            op = GroupedOperation()
-            op.addOperation(RemoveSceneNodeOperation(node))
-
-            group_node = node.getParent()
-            if group_node:
-                # Note that at this point the node has not yet been deleted
-                if len(group_node.getChildren()) <= 2 and group_node.callDecoration("isGroup"):
-                    op.addOperation(SetParentOperation(group_node.getChildren()[0], group_node.getParent()))
-                    op.addOperation(RemoveSceneNodeOperation(group_node))
-
-            op.push()
-
-    ##  Create a number of copies of existing object.
-    #   \param object_id
-    #   \param count number of copies
-    #   \param min_offset minimum offset to other objects.
-    @pyqtSlot("quint64", int)
-    @deprecated("Use CuraActions::multiplySelection", "2.6")
-    def multiplyObject(self, object_id, count, min_offset = 8):
-        node = self.getController().getScene().findObject(object_id)
-        if not node:
-            node = Selection.getSelectedObject(0)
-
-        while node.getParent() and node.getParent().callDecoration("isGroup"):
-            node = node.getParent()
-
-        job = MultiplyObjectsJob([node], count, min_offset)
-        job.start()
-        return
-
-    ##  Center object on platform.
-    @pyqtSlot("quint64")
-    @deprecated("Use CuraActions::centerSelection", "2.6")
-    def centerObject(self, object_id):
-        node = self.getController().getScene().findObject(object_id)
-        if not node and object_id != 0:  # Workaround for tool handles overlapping the selected object
-            node = Selection.getSelectedObject(0)
-
-        if not node:
-            return
-
-        if node.getParent() and node.getParent().callDecoration("isGroup"):
-            node = node.getParent()
-
-        if node:
-            op = SetTransformOperation(node, Vector())
-            op.push()
 
     ##  Select all nodes containing mesh data in the scene.
     @pyqtSlot()
@@ -1251,7 +1169,7 @@ class SteSlicerApplication(QtApplication):
                 nodes.append(node)
         job = ArrangeObjectsAllBuildPlatesJob(nodes)
         job.start()
-        self.getCuraSceneController().setActiveBuildPlate(0)  # Select first build plate
+        self.getSteSlicerSceneController().setActiveBuildPlate(0)  # Select first build plate
 
     # Single build plate
     @pyqtSlot()

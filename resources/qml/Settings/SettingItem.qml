@@ -6,7 +6,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.0
 
 import UM 1.1 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 import "."
 
@@ -27,7 +27,7 @@ Item {
     // Create properties to put property provider stuff in (bindings break in qt 5.5.1 otherwise)
     property var state: propertyProvider.properties.state
     // There is no resolve property if there is only one stack.
-    property var resolve: Cura.MachineManager.activeStackId != Cura.MachineManager.activeMachineId ? propertyProvider.properties.resolve : "None"
+    property var resolve: SteSlicer.MachineManager.activeStackId != SteSlicer.MachineManager.activeMachineId ? propertyProvider.properties.resolve : "None"
     property var stackLevels: propertyProvider.stackLevels
     property var stackLevel: stackLevels[0]
 
@@ -140,7 +140,7 @@ Item {
             {
                 id: linkedSettingIcon;
 
-                visible: Cura.MachineManager.activeStack != Cura.MachineManager.activeMachine && (!definition.settable_per_extruder || String(globalPropertyProvider.properties.limit_to_extruder) != "-1") && base.showLinkedSettingIcon
+                visible: SteSlicer.MachineManager.activeStack != SteSlicer.MachineManager.activeMachine && (!definition.settable_per_extruder || String(globalPropertyProvider.properties.limit_to_extruder) != "-1") && base.showLinkedSettingIcon
 
                 height: parent.height;
                 width: height;
@@ -155,7 +155,7 @@ Item {
                     var tooltipText = catalog.i18nc("@label", "This setting is always shared between all extruders. Changing it here will change the value for all extruders.");
                     if ((resolve != "None") && (stackLevel != 0)) {
                         // We come here if a setting has a resolve and the setting is not manually edited.
-                        tooltipText += " " + catalog.i18nc("@label", "The value is resolved from per-extruder values ") + "[" + Cura.ExtruderManager.getInstanceExtruderValues(definition.key) + "].";
+                        tooltipText += " " + catalog.i18nc("@label", "The value is resolved from per-extruder values ") + "[" + SteSlicer.ExtruderManager.getInstanceExtruderValues(definition.key) + "].";
                     }
                     base.showTooltip(tooltipText);
                 }
@@ -182,7 +182,7 @@ Item {
                     if (externalResetHandler) {
                         externalResetHandler(propertyProvider.key)
                     } else {
-                        Cura.MachineManager.clearUserSettingAllCurrentStacks(propertyProvider.key)
+                        SteSlicer.MachineManager.clearUserSettingAllCurrentStacks(propertyProvider.key)
                     }
                 }
 
@@ -213,7 +213,7 @@ Item {
                     }
 
                     // There are no settings with any warning.
-                    if(Cura.SettingInheritanceManager.settingsWithInheritanceWarning.length == 0)
+                    if(SteSlicer.SettingInheritanceManager.settingsWithInheritanceWarning.length == 0)
                     {
                         return false;
                     }
@@ -227,7 +227,7 @@ Item {
                     // If the setting does not have a limit_to_extruder property (or is -1), use the active stack.
                     if(globalPropertyProvider.properties.limit_to_extruder == null || String(globalPropertyProvider.properties.limit_to_extruder) == "-1")
                     {
-                        return Cura.SettingInheritanceManager.settingsWithInheritanceWarning.indexOf(definition.key) >= 0;
+                        return SteSlicer.SettingInheritanceManager.settingsWithInheritanceWarning.indexOf(definition.key) >= 0;
                     }
 
                     // Setting does have a limit_to_extruder property, so use that one instead.
@@ -235,7 +235,7 @@ Item {
                         // Observed when loading workspace, probably when SettingItems are removed.
                         return false;
                     }
-                    return Cura.SettingInheritanceManager.getOverridesForExtruder(definition.key, String(globalPropertyProvider.properties.limit_to_extruder)).indexOf(definition.key) >= 0;
+                    return SteSlicer.SettingInheritanceManager.getOverridesForExtruder(definition.key, String(globalPropertyProvider.properties.limit_to_extruder)).indexOf(definition.key) >= 0;
                 }
 
                 height: parent.height;
@@ -297,5 +297,5 @@ Item {
         }
     }
 
-    UM.I18nCatalog { id: catalog; name: "cura" }
+    UM.I18nCatalog { id: catalog; name: "steslicer" }
 }

@@ -5,7 +5,7 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Tab
 {
@@ -20,7 +20,7 @@ Tab
         {
             return false;
         }
-        return qualityItem.name == Cura.MachineManager.activeQualityOrQualityChangesName;
+        return qualityItem.name == SteSlicer.MachineManager.activeQualityOrQualityChangesName;
     }
 
     TableView
@@ -91,7 +91,7 @@ Tab
             font.bold: true
         }
 
-        model: Cura.QualitySettingsModel
+        model: SteSlicer.QualitySettingsModel
         {
             id: qualitySettings
             selectedPosition: base.extruderPosition

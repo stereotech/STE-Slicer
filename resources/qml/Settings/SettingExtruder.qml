@@ -5,7 +5,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 
 import UM 1.1 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 SettingItem
 {
@@ -17,7 +17,7 @@ SettingItem
         id: control
         anchors.fill: parent
 
-        model: Cura.ExtrudersModel
+        model: SteSlicer.ExtrudersModel
         {
             onModelChanged: {
                 control.color = getItem(control.currentIndex).color;

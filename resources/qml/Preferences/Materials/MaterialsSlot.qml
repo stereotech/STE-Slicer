@@ -8,7 +8,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Rectangle
 {
@@ -41,7 +41,7 @@ Rectangle
         anchors.left: swatch.right
         anchors.verticalCenter: materialSlot.verticalCenter
         anchors.leftMargin: UM.Theme.getSize("narrow_margin").width
-        font.italic: Cura.MachineManager.currentRootMaterialId[Cura.ExtruderManager.activeExtruderIndex] == material.root_material_id
+        font.italic: SteSlicer.MachineManager.currentRootMaterialId[SteSlicer.ExtruderManager.activeExtruderIndex] == material.root_material_id
     }
     MouseArea
     {

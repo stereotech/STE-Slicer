@@ -5,7 +5,7 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
@@ -13,16 +13,16 @@ Menu
 
     Instantiator
     {
-        model: Cura.QualityProfilesDropDownMenuModel
+        model: SteSlicer.QualityProfilesDropDownMenuModel
 
         MenuItem
         {
             text: (model.layer_height != "") ? model.name + " - " + model.layer_height + model.layer_height_unit : model.name
             checkable: true
-            checked: Cura.MachineManager.activeQualityOrQualityChangesName == model.name
+            checked: SteSlicer.MachineManager.activeQualityOrQualityChangesName == model.name
             exclusiveGroup: group
             onTriggered: {
-                Cura.MachineManager.setQualityGroup(model.quality_group)
+                SteSlicer.MachineManager.setQualityGroup(model.quality_group)
             }
             visible: model.available
         }
@@ -34,27 +34,27 @@ Menu
     MenuSeparator
     {
         id: customSeparator
-        visible: Cura.CustomQualityProfilesDropDownMenuModel.rowCount > 0
+        visible: SteSlicer.CustomQualityProfilesDropDownMenuModel.rowCount > 0
     }
 
     Instantiator
     {
         id: customProfileInstantiator
-        model: Cura.CustomQualityProfilesDropDownMenuModel
+        model: SteSlicer.CustomQualityProfilesDropDownMenuModel
 
         Connections
         {
-            target: Cura.CustomQualityProfilesDropDownMenuModel
-            onModelReset: customSeparator.visible = Cura.CustomQualityProfilesDropDownMenuModel.rowCount() > 0
+            target: SteSlicer.CustomQualityProfilesDropDownMenuModel
+            onModelReset: customSeparator.visible = SteSlicer.CustomQualityProfilesDropDownMenuModel.rowCount() > 0
         }
 
         MenuItem
         {
             text: model.name
             checkable: true
-            checked: Cura.MachineManager.activeQualityOrQualityChangesName == model.name
+            checked: SteSlicer.MachineManager.activeQualityOrQualityChangesName == model.name
             exclusiveGroup: group
-            onTriggered: Cura.MachineManager.setQualityChangesGroup(model.quality_changes_group)
+            onTriggered: SteSlicer.MachineManager.setQualityChangesGroup(model.quality_changes_group)
         }
 
         onObjectAdded:
@@ -73,9 +73,9 @@ Menu
 
     MenuSeparator { id: profileMenuSeparator }
 
-    MenuItem { action: Cura.Actions.addProfile }
-    MenuItem { action: Cura.Actions.updateProfile }
-    MenuItem { action: Cura.Actions.resetProfile }
+    MenuItem { action: SteSlicer.Actions.addProfile }
+    MenuItem { action: SteSlicer.Actions.updateProfile }
+    MenuItem { action: SteSlicer.Actions.resetProfile }
     MenuSeparator { }
-    MenuItem { action: Cura.Actions.manageProfiles }
+    MenuItem { action: SteSlicer.Actions.manageProfiles }
 }

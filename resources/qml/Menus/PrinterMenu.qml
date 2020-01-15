@@ -6,7 +6,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
@@ -56,6 +56,6 @@ Menu
         visible: localPrinterMenu.count > 0
     }
 
-    MenuItem { action: Cura.Actions.addMachine; }
-    MenuItem { action: Cura.Actions.configureMachines; }
+    MenuItem { action: SteSlicer.Actions.addMachine; }
+    MenuItem { action: SteSlicer.Actions.configureMachines; }
 }

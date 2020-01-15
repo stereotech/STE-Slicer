@@ -5,7 +5,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Button
 {
@@ -18,7 +18,7 @@ Button
     style: UM.Theme.styles.tool_button;
     iconSource: UM.Theme.getIcon("extruder_button")
 
-    checked: Cura.ExtruderManager.selectedObjectExtruders.indexOf(extruder.id) != -1
+    checked: SteSlicer.ExtruderManager.selectedObjectExtruders.indexOf(extruder.id) != -1
     enabled: UM.Selection.hasSelection && extruder.stack.isEnabled
 
     property color customColor: base.hovered ? UM.Theme.getColor("button_hover") : UM.Theme.getColor("button");
@@ -76,6 +76,6 @@ Button
     onClicked:
     {
         forceActiveFocus() //First grab focus, so all the text fields are updated
-        CuraActions.setExtruderForSelection(extruder.id);
+        SteSlicerActions.setExtruderForSelection(extruder.id);
     }
 }

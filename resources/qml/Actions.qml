@@ -6,7 +6,7 @@ pragma Singleton
 import QtQuick 2.2
 import QtQuick.Controls 1.1
 import UM 1.1 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item
 {
@@ -70,7 +70,7 @@ Item
 
     property alias browsePackages: browsePackagesAction
 
-    UM.I18nCatalog{id: catalog; name:"cura"}
+    UM.I18nCatalog{id: catalog; name:"steslicer"}
 
     Action
     {
@@ -146,7 +146,7 @@ Item
     Action
     {
         id: preferencesAction;
-        text: catalog.i18nc("@action:inmenu","Configure Cura...");
+        text: catalog.i18nc("@action:inmenu","Configure SteSlicer...");
         iconName: "configure";
     }
 
@@ -173,27 +173,27 @@ Item
     Action
     {
         id: updateProfileAction;
-        enabled: !Cura.MachineManager.stacksHaveErrors && Cura.MachineManager.hasUserSettings && Cura.MachineManager.activeQualityChangesGroup != null
+        enabled: !SteSlicer.MachineManager.stacksHaveErrors && SteSlicer.MachineManager.hasUserSettings && SteSlicer.MachineManager.activeQualityChangesGroup != null
         text: catalog.i18nc("@action:inmenu menubar:profile","&Update profile with current settings/overrides");
-        onTriggered: Cura.ContainerManager.updateQualityChanges();
+        onTriggered: SteSlicer.ContainerManager.updateQualityChanges();
     }
 
     Action
     {
         id: resetProfileAction;
-        enabled: Cura.MachineManager.hasUserSettings
+        enabled: SteSlicer.MachineManager.hasUserSettings
         text: catalog.i18nc("@action:inmenu menubar:profile","&Discard current changes");
         onTriggered:
         {
             forceActiveFocus();
-            Cura.ContainerManager.clearUserContainers();
+            SteSlicer.ContainerManager.clearUserContainers();
         }
     }
 
     Action
     {
         id: addProfileAction;
-        enabled: !Cura.MachineManager.stacksHaveErrors && Cura.MachineManager.hasUserSettings
+        enabled: !SteSlicer.MachineManager.stacksHaveErrors && SteSlicer.MachineManager.hasUserSettings
         text: catalog.i18nc("@action:inmenu menubar:profile","&Create profile from current settings/overrides...");
     }
 
@@ -210,14 +210,14 @@ Item
         text: catalog.i18nc("@action:inmenu menubar:help","Show Online &Documentation");
         iconName: "help-contents";
         shortcut: StandardKey.Help;
-        onTriggered: CuraActions.openDocumentation();
+        onTriggered: SteSlicerActions.openDocumentation();
     }
 
     Action {
         id: reportBugAction;
         text: catalog.i18nc("@action:inmenu menubar:help","Report a &Bug");
         iconName: "tools-report-bug";
-        onTriggered: CuraActions.openBugReportPage();
+        onTriggered: SteSlicerActions.openBugReportPage();
     }
 
     Action
@@ -234,7 +234,7 @@ Item
         enabled: UM.Controller.toolsEnabled && UM.Selection.hasSelection;
         iconName: "edit-delete";
         shortcut: StandardKey.Delete;
-        onTriggered: CuraActions.deleteSelection();
+        onTriggered: SteSlicerActions.deleteSelection();
     }
 
     Action
@@ -243,7 +243,7 @@ Item
         text: catalog.i18ncp("@action:inmenu menubar:edit", "Center Selected Model", "Center Selected Models", UM.Selection.selectionCount);
         enabled: UM.Controller.toolsEnabled && UM.Selection.hasSelection;
         iconName: "align-vertical-center";
-        onTriggered: CuraActions.centerSelection();
+        onTriggered: SteSlicerActions.centerSelection();
     }
 
     Action
@@ -276,7 +276,7 @@ Item
         enabled: UM.Scene.numObjectsSelected > 1 ? true: false
         iconName: "object-group"
         shortcut: "Ctrl+G";
-        onTriggered: CuraApplication.groupSelected();
+        onTriggered: SteSlicerApplication.groupSelected();
     }
 
     Action
@@ -284,7 +284,7 @@ Item
         id: reloadQmlAction
         onTriggered:
         {
-            CuraApplication.reloadQML()
+            SteSlicerApplication.reloadQML()
         }
         shortcut: "Shift+F5"
     }
@@ -296,7 +296,7 @@ Item
         enabled: UM.Scene.isGroupSelected
         iconName: "object-ungroup"
         shortcut: "Ctrl+Shift+G";
-        onTriggered: CuraApplication.ungroupSelected();
+        onTriggered: SteSlicerApplication.ungroupSelected();
     }
 
     Action
@@ -306,7 +306,7 @@ Item
         enabled: UM.Scene.numObjectsSelected > 1 ? true: false
         iconName: "merge";
         shortcut: "Ctrl+Alt+G";
-        onTriggered: CuraApplication.mergeSelected();
+        onTriggered: SteSlicerApplication.mergeSelected();
     }
 
     Action
@@ -323,7 +323,7 @@ Item
         enabled: UM.Controller.toolsEnabled;
         iconName: "edit-select-all";
         shortcut: "Ctrl+A";
-        onTriggered: CuraApplication.selectAll();
+        onTriggered: SteSlicerApplication.selectAll();
     }
 
     Action
@@ -333,7 +333,7 @@ Item
         enabled: UM.Controller.toolsEnabled;
         iconName: "edit-delete";
         shortcut: "Ctrl+D";
-        onTriggered: CuraApplication.deleteAll();
+        onTriggered: SteSlicerApplication.deleteAll();
     }
 
     Action
@@ -342,7 +342,7 @@ Item
         text: catalog.i18nc("@action:inmenu menubar:file","Reload All Models");
         iconName: "document-revert";
         shortcut: "F5"
-        onTriggered: CuraApplication.reloadAll();
+        onTriggered: SteSlicerApplication.reloadAll();
     }
 
     Action
@@ -371,14 +371,14 @@ Item
     {
         id: resetAllTranslationAction;
         text: catalog.i18nc("@action:inmenu menubar:edit","Reset All Model Positions");
-        onTriggered: CuraApplication.resetAllTranslation();
+        onTriggered: SteSlicerApplication.resetAllTranslation();
     }
 
     Action
     {
         id: resetAllAction;
         text: catalog.i18nc("@action:inmenu menubar:edit","Reset All Model Transformations");
-        onTriggered: CuraApplication.resetAll();
+        onTriggered: SteSlicerApplication.resetAll();
     }
 
     Action

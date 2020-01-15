@@ -9,7 +9,7 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.1
 
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 UM.Dialog
@@ -53,7 +53,7 @@ UM.Dialog
             UM.Preferences.setValue("steslicer/choice_on_open_project", "open_as_model")
         }
 
-        CuraApplication.readLocalFile(base.fileUrl, true)
+        SteSlicerApplication.readLocalFile(base.fileUrl, true)
         var meshName = backgroundItem.getMeshName(base.fileUrl.toString())
         backgroundItem.hasMesh(decodeURIComponent(meshName))
 
@@ -90,7 +90,7 @@ UM.Dialog
         Label
         {
             id: questionText
-            text: catalog.i18nc("@text:window", "This is a Cura project file. Would you like to open it as a project or import the models from it?")
+            text: catalog.i18nc("@text:window", "This is a STE Slicer project file. Would you like to open it as a project or import the models from it?")
             anchors.left: parent.left
             anchors.right: parent.right
             font: UM.Theme.getFont("default")

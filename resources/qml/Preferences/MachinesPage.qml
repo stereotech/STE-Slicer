@@ -6,7 +6,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Window 2.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 UM.ManagementPage
@@ -14,15 +14,15 @@ UM.ManagementPage
     id: base;
 
     title: catalog.i18nc("@title:tab", "Printers");
-    model: Cura.MachineManagementModel { }
+    model: SteSlicer.MachineManagementModel { }
 
-    activeId: Cura.MachineManager.activeMachineId
+    activeId: SteSlicer.MachineManager.activeMachineId
     activeIndex: activeMachineIndex()
 
     function activeMachineIndex()
     {
         for(var i = 0; i < model.rowCount(); i++) {
-            if (model.getItem(i).id == Cura.MachineManager.activeMachineId) {
+            if (model.getItem(i).id == SteSlicer.MachineManager.activeMachineId) {
                 return i;
             }
         }
@@ -34,14 +34,14 @@ UM.ManagementPage
         {
             text: catalog.i18nc("@action:button", "Activate");
             iconName: "list-activate";
-            enabled: base.currentItem != null && base.currentItem.id != Cura.MachineManager.activeMaterialId
-            onClicked: Cura.MachineManager.setActiveMachine(base.currentItem.id)
+            enabled: base.currentItem != null && base.currentItem.id != SteSlicer.MachineManager.activeMaterialId
+            onClicked: SteSlicer.MachineManager.setActiveMachine(base.currentItem.id)
         },
         Button
         {
             text: catalog.i18nc("@action:button", "Add");
             iconName: "list-add";
-            onClicked: CuraApplication.requestAddPrinter()
+            onClicked: SteSlicerApplication.requestAddPrinter()
         },
         Button
         {
@@ -76,7 +76,7 @@ UM.ManagementPage
         Flow
         {
             id: machineActions
-            visible: currentItem && currentItem.id == Cura.MachineManager.activeMachineId
+            visible: currentItem && currentItem.id == SteSlicer.MachineManager.activeMachineId
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: machineName.bottom
@@ -85,7 +85,7 @@ UM.ManagementPage
             Repeater
             {
                 id: machineActionRepeater
-                model: base.currentItem ? Cura.MachineActionManager.getSupportedActions(Cura.MachineManager.getDefinitionByMachineId(base.currentItem.id)) : null
+                model: base.currentItem ? SteSlicer.MachineActionManager.getSupportedActions(SteSlicer.MachineManager.getDefinitionByMachineId(base.currentItem.id)) : null
 
                 Item
                 {
@@ -138,9 +138,9 @@ UM.ManagementPage
 
             visible: base.currentItem
 
-            property bool printerConnected: Cura.MachineManager.printerConnected
-            property var connectedPrinter: printerConnected ? Cura.MachineManager.printerOutputDevices[0] : null
-            property bool printerAcceptsCommands: printerConnected && Cura.MachineManager.printerOutputDevices[0].acceptsCommands
+            property bool printerConnected: SteSlicer.MachineManager.printerConnected
+            property var connectedPrinter: printerConnected ? SteSlicer.MachineManager.printerOutputDevices[0] : null
+            property bool printerAcceptsCommands: printerConnected && SteSlicer.MachineManager.printerOutputDevices[0].acceptsCommands
             property var printJob: connectedPrinter != null ? connectedPrinter.activePrintJob: null
             Label
             {
@@ -154,19 +154,19 @@ UM.ManagementPage
             Label
             {
                 text: catalog.i18nc("@label", "Connection:")
-                visible: base.currentItem && base.currentItem.id == Cura.MachineManager.activeMachineId
+                visible: base.currentItem && base.currentItem.id == SteSlicer.MachineManager.activeMachineId
             }
             Label
             {
                 width: (parent.width * 0.7) | 0
                 text: machineInfo.printerConnected ? machineInfo.connectedPrinter.connectionText : catalog.i18nc("@info:status", "The printer is not connected.")
-                visible: base.currentItem && base.currentItem.id == Cura.MachineManager.activeMachineId
+                visible: base.currentItem && base.currentItem.id == SteSlicer.MachineManager.activeMachineId
                 wrapMode: Text.WordWrap
             }
             Label
             {
                 text: catalog.i18nc("@label", "State:")
-                visible: base.currentItem && base.currentItem.id == Cura.MachineManager.activeMachineId && machineInfo.printerAcceptsCommands
+                visible: base.currentItem && base.currentItem.id == SteSlicer.MachineManager.activeMachineId && machineInfo.printerAcceptsCommands
             }
             Label {
                 width: (parent.width * 0.7) | 0
@@ -201,7 +201,7 @@ UM.ManagementPage
                     }
                     return ""
                 }
-                visible: base.currentItem && base.currentItem.id == Cura.MachineManager.activeMachineId && machineInfo.printerAcceptsCommands
+                visible: base.currentItem && base.currentItem.id == SteSlicer.MachineManager.activeMachineId && machineInfo.printerAcceptsCommands
                 wrapMode: Text.WordWrap
             }
         }
@@ -214,12 +214,12 @@ UM.ManagementPage
             anchors.topMargin: UM.Theme.getSize("default_margin").width
 
             spacing: UM.Theme.getSize("default_margin").width
-            visible: base.currentItem && base.currentItem.id == Cura.MachineManager.activeMachineId
+            visible: base.currentItem && base.currentItem.id == SteSlicer.MachineManager.activeMachineId
 
             Component.onCompleted:
             {
-                for (var component in CuraApplication.additionalComponents["machinesDetailPane"]) {
-                    CuraApplication.additionalComponents["machinesDetailPane"][component].parent = additionalComponentsColumn
+                for (var component in SteSlicerApplication.additionalComponents["machinesDetailPane"]) {
+                    SteSlicerApplication.additionalComponents["machinesDetailPane"][component].parent = additionalComponentsColumn
                 }
             }
         }
@@ -229,19 +229,19 @@ UM.ManagementPage
         }
 
         Connections {
-            target: CuraApplication
+            target: SteSlicerApplication
             onAdditionalComponentsChanged: addAdditionalComponents
         }
 
         function addAdditionalComponents (areaId) {
             if(areaId == "machinesDetailPane") {
-                for (var component in CuraApplication.additionalComponents["machinesDetailPane"]) {
-                    CuraApplication.additionalComponents["machinesDetailPane"][component].parent = additionalComponentsColumn
+                for (var component in SteSlicerApplication.additionalComponents["machinesDetailPane"]) {
+                    SteSlicerApplication.additionalComponents["machinesDetailPane"][component].parent = additionalComponentsColumn
                 }
             }
         }
 
-        UM.I18nCatalog { id: catalog; name: "cura"; }
+        UM.I18nCatalog { id: catalog; name: "steslicer"; }
 
         UM.ConfirmRemoveDialog
         {
@@ -249,7 +249,7 @@ UM.ManagementPage
             object: base.currentItem && base.currentItem.name ? base.currentItem.name : "";
             onYes:
             {
-                Cura.MachineManager.removeMachine(base.currentItem.id);
+                SteSlicer.MachineManager.removeMachine(base.currentItem.id);
                 if(!base.currentItem)
                 {
                     objectList.currentIndex = activeMachineIndex()
@@ -265,11 +265,11 @@ UM.ManagementPage
             width: 300 * screenScaleFactor
             height: 150 * screenScaleFactor
             object: base.currentItem && base.currentItem.name ? base.currentItem.name : "";
-            property var machine_name_validator: Cura.MachineNameValidator { }
+            property var machine_name_validator: SteSlicer.MachineNameValidator { }
             validName: renameDialog.newName.match(renameDialog.machine_name_validator.machineNameRegex) != null;
             onAccepted:
             {
-                Cura.MachineManager.renameMachine(base.currentItem.id, newName.trim());
+                SteSlicer.MachineManager.renameMachine(base.currentItem.id, newName.trim());
                 //Force updating currentItem and the details panel
                 objectList.onCurrentIndexChanged()
             }
@@ -277,7 +277,7 @@ UM.ManagementPage
 
         Connections
         {
-            target: Cura.MachineManager
+            target: SteSlicer.MachineManager
             onGlobalContainerChanged:
             {
                 objectList.currentIndex = activeMachineIndex()

@@ -5,14 +5,14 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
     id: menu
     title: catalog.i18nc("@action:inmenu", "Visible Settings")
 
-    property QtObject settingVisibilityPresetsModel: CuraApplication.getSettingVisibilityPresetsModel()
+    property QtObject settingVisibilityPresetsModel: SteSlicerApplication.getSettingVisibilityPresetsModel()
 
     signal showAllSettings()
 
@@ -52,7 +52,7 @@ Menu
     {
         text: catalog.i18nc("@action:inmenu", "Manage Setting Visibility...")
         iconName: "configure"
-        onTriggered: Cura.Actions.configureSettingVisibility.trigger()
+        onTriggered: SteSlicer.Actions.configureSettingVisibility.trigger()
     }
 
     ExclusiveGroup { id: group }

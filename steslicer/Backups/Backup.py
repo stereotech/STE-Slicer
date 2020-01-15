@@ -39,7 +39,7 @@ class Backup:
         steslicer_release = self._application.getVersion()
         version_data_dir = Resources.getDataStoragePath()
 
-        Logger.log("d", "Creating backup for Cura %s, using folder %s", steslicer_release, version_data_dir)
+        Logger.log("d", "Creating backup for STE Slicer %s, using folder %s", steslicer_release, version_data_dir)
 
         # Ensure all current settings are saved.
         self._application.saveSettings()
@@ -107,10 +107,10 @@ class Backup:
     def restore(self) -> bool:
         if not self.zip_file or not self.meta_data or not self.meta_data.get("steslicer_release", None):
             # We can restore without the minimum required information.
-            Logger.log("w", "Tried to restore a Cura backup without having proper data or meta data.")
+            Logger.log("w", "Tried to restore a STE Slicer backup without having proper data or meta data.")
             self._showMessage(
                 self.catalog.i18nc("@info:backup_failed",
-                                   "Tried to restore a Cura backup without having proper data or meta data."))
+                                   "Tried to restore a STE Slicer backup without having proper data or meta data."))
             return False
 
         current_version = self._application.getVersion()
@@ -120,7 +120,7 @@ class Backup:
             # Restoring this will cause a lot of issues so we don't allow this for now.
             self._showMessage(
                 self.catalog.i18nc("@info:backup_failed",
-                                   "Tried to restore a Cura backup that does not match your current version."))
+                                   "Tried to restore a STE Slicer backup that does not match your current version."))
             return False
 
         version_data_dir = Resources.getDataStoragePath()

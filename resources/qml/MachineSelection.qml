@@ -7,18 +7,18 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 import "Menus"
 
 ToolButton
 {
     id: base
-    property bool isNetworkPrinter: Cura.MachineManager.activeMachineNetworkKey != ""
-    property bool printerConnected: Cura.MachineManager.printerConnected
-    property var printerStatus: Cura.MachineManager.printerConnected ? "connected" : "disconnected"
-    text: isNetworkPrinter ? Cura.MachineManager.activeMachineNetworkGroupName : Cura.MachineManager.activeMachineName
+    property bool isNetworkPrinter: SteSlicer.MachineManager.activeMachineNetworkKey != ""
+    property bool printerConnected: SteSlicer.MachineManager.printerConnected
+    property var printerStatus: SteSlicer.MachineManager.printerConnected ? "connected" : "disconnected"
+    text: isNetworkPrinter ? SteSlicer.MachineManager.activeMachineNetworkGroupName : SteSlicer.MachineManager.activeMachineName
 
-    tooltip: Cura.MachineManager.activeMachineName
+    tooltip: SteSlicer.MachineManager.activeMachineName
 
     style: ButtonStyle
     {

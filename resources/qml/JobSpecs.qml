@@ -7,15 +7,15 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.1 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item {
     id: base
 
-    property bool activity: CuraApplication.platformActivity
+    property bool activity: SteSlicerApplication.platformActivity
     property string fileBaseName: PrintInformation.baseName
 
-    UM.I18nCatalog { id: catalog; name:"cura"}
+    UM.I18nCatalog { id: catalog; name:"steslicer"}
 
     height: childrenRect.height
 
@@ -126,7 +126,7 @@ Item {
         verticalAlignment: Text.AlignVCenter
         font: UM.Theme.getFont("small")
         color: UM.Theme.getColor("text_scene")
-        text: CuraApplication.getSceneBoundingBoxString
+        text: SteSlicerApplication.getSceneBoundingBoxString
     }
 
     Component.onCompleted: {
@@ -134,14 +134,14 @@ Item {
     }
 
     Connections {
-        target: CuraApplication
+        target: SteSlicerApplication
         onAdditionalComponentsChanged: base.addAdditionalComponents("jobSpecsButton")
     }
 
     function addAdditionalComponents (areaId) {
         if(areaId == "jobSpecsButton") {
-            for (var component in CuraApplication.additionalComponents["jobSpecsButton"]) {
-                CuraApplication.additionalComponents["jobSpecsButton"][component].parent = additionalComponentsRow
+            for (var component in SteSlicerApplication.additionalComponents["jobSpecsButton"]) {
+                SteSlicerApplication.additionalComponents["jobSpecsButton"][component].parent = additionalComponentsRow
             }
         }
     }

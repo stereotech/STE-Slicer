@@ -8,18 +8,18 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.1 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item
 {
     id: base;
-    UM.I18nCatalog { id: catalog; name:"cura"}
+    UM.I18nCatalog { id: catalog; name:"steslicer"}
 
     height: childrenRect.height + UM.Theme.getSize("sidebar_margin").height
 
-    property bool printerConnected: Cura.MachineManager.printerConnected
-    property bool printerAcceptsCommands: printerConnected && Cura.MachineManager.printerOutputDevices[0].acceptsCommands
-    property var activePrinter: printerConnected ? Cura.MachineManager.printerOutputDevices[0].activePrinter : null
+    property bool printerConnected: SteSlicer.MachineManager.printerConnected
+    property bool printerAcceptsCommands: printerConnected && SteSlicer.MachineManager.printerOutputDevices[0].acceptsCommands
+    property var activePrinter: printerConnected ? SteSlicer.MachineManager.printerOutputDevices[0].activePrinter : null
     property var activePrintJob: activePrinter ? activePrinter.activePrintJob: null
     property real progress:
     {
@@ -110,7 +110,7 @@ Item
         }
     }
 
-    property bool activity: CuraApplication.platformActivity;
+    property bool activity: SteSlicerApplication.platformActivity;
     property string fileBaseName
     property string statusText:
     {
@@ -123,7 +123,7 @@ Item
             return catalog.i18nc("@label:MonitorStatus", "Printer does not accept commands");
         }
 
-        var printerOutputDevice = Cura.MachineManager.printerOutputDevices[0]
+        var printerOutputDevice = SteSlicer.MachineManager.printerOutputDevices[0]
         if(activePrinter == null)
         {
             return "";
@@ -253,14 +253,14 @@ Item
         }
 
         Connections {
-            target: CuraApplication
+            target: SteSlicerApplication
             onAdditionalComponentsChanged: buttonsRow.updateAdditionalComponents("monitorButtons")
         }
 
         function updateAdditionalComponents (areaId) {
             if(areaId == "monitorButtons") {
-                for (var component in CuraApplication.additionalComponents["monitorButtons"]) {
-                    CuraApplication.additionalComponents["monitorButtons"][component].parent = additionalComponentsRow
+                for (var component in SteSlicerApplication.additionalComponents["monitorButtons"]) {
+                    SteSlicerApplication.additionalComponents["monitorButtons"][component].parent = additionalComponentsRow
                 }
             }
         }

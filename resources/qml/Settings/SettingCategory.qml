@@ -6,7 +6,7 @@ import QtQuick.Controls 2.0
 import QtGraphicalEffects 1.0
 
 import UM 1.1 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Button
 {
@@ -212,7 +212,7 @@ Button
         iconSource: UM.Theme.getIcon("settings")
 
         onClicked: {
-            Cura.Actions.configureSettingVisibility.trigger(definition)
+            SteSlicer.Actions.configureSettingVisibility.trigger(definition)
         }
     }
 
@@ -226,9 +226,9 @@ Button
 
         visible:
         {
-            if (Cura.SettingInheritanceManager.settingsWithInheritanceWarning.indexOf(definition.key) >= 0)
+            if (SteSlicer.SettingInheritanceManager.settingsWithInheritanceWarning.indexOf(definition.key) >= 0)
             {
-                var children_with_override = Cura.SettingInheritanceManager.getChildrenKeysWithOverride(definition.key)
+                var children_with_override = SteSlicer.SettingInheritanceManager.getChildrenKeysWithOverride(definition.key)
                 for (var i = 0; i < children_with_override.length; i++)
                 {
                     if (!settingDefinitionsModel.getVisible(children_with_override[i]))
@@ -265,6 +265,6 @@ Button
             base.hideTooltip();
         }
 
-        UM.I18nCatalog { id: catalog; name: "cura" }
+        UM.I18nCatalog { id: catalog; name: "steslicer" }
     }
 }

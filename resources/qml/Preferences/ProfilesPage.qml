@@ -7,20 +7,20 @@ import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 Item
 {
     id: base
 
-    property QtObject qualityManager: CuraApplication.getQualityManager()
+    property QtObject qualityManager: SteSlicerApplication.getQualityManager()
     property var resetEnabled: false  // Keep PreferencesDialog happy
-    property var extrudersModel: Cura.ExtrudersModel {}
+    property var extrudersModel: SteSlicer.ExtrudersModel {}
 
-    UM.I18nCatalog { id: catalog; name: "cura"; }
+    UM.I18nCatalog { id: catalog; name: "steslicer"; }
 
-    Cura.QualityManagementModel {
+    SteSlicer.QualityManagementModel {
         id: qualitiesModel
     }
 
@@ -49,11 +49,11 @@ Item
         if (!base.currentItem) {
             return false;
         }
-        return base.currentItem.name == Cura.MachineManager.activeQualityOrQualityChangesName;
+        return base.currentItem.name == SteSlicer.MachineManager.activeQualityOrQualityChangesName;
     }
 
     property var canCreateProfile: {
-        return isCurrentItemActivated && Cura.MachineManager.hasUserSettings;
+        return isCurrentItemActivated && SteSlicer.MachineManager.hasUserSettings;
     }
 
     Row  // Button Row
@@ -74,9 +74,9 @@ Item
             enabled: !isCurrentItemActivated
             onClicked: {
                 if (base.currentItem.is_read_only) {
-                    Cura.MachineManager.setQualityGroup(base.currentItem.quality_group);
+                    SteSlicer.MachineManager.setQualityGroup(base.currentItem.quality_group);
                 } else {
-                    Cura.MachineManager.setQualityChangesGroup(base.currentItem.quality_changes_group);
+                    SteSlicer.MachineManager.setQualityChangesGroup(base.currentItem.quality_changes_group);
                 }
             }
         }
@@ -86,11 +86,11 @@ Item
         {
             text: catalog.i18nc("@label", "Create")
             iconName: "list-add"
-            enabled: base.canCreateProfile && !Cura.MachineManager.stacksHaveErrors
+            enabled: base.canCreateProfile && !SteSlicer.MachineManager.stacksHaveErrors
             visible: base.canCreateProfile
 
             onClicked: {
-                createQualityDialog.object = Cura.ContainerManager.makeUniqueName(base.currentItem.name);
+                createQualityDialog.object = SteSlicer.ContainerManager.makeUniqueName(base.currentItem.name);
                 createQualityDialog.open();
                 createQualityDialog.selectText();
             }
@@ -105,7 +105,7 @@ Item
             visible: !base.canCreateProfile
 
             onClicked: {
-                duplicateQualityDialog.object = Cura.ContainerManager.makeUniqueName(base.currentItem.name);
+                duplicateQualityDialog.object = SteSlicer.ContainerManager.makeUniqueName(base.currentItem.name);
                 duplicateQualityDialog.open();
                 duplicateQualityDialog.selectText();
             }
@@ -162,7 +162,7 @@ Item
     signal createProfile()
     onCreateProfile:
     {
-        createQualityDialog.object = Cura.ContainerManager.makeUniqueName(Cura.MachineManager.activeQualityOrQualityChangesName);
+        createQualityDialog.object = SteSlicer.ContainerManager.makeUniqueName(SteSlicer.MachineManager.activeQualityOrQualityChangesName);
         createQualityDialog.open();
         createQualityDialog.selectText();
     }
@@ -204,7 +204,7 @@ Item
                         newIdx = idx;
                         if (base.toActivateNewQuality) {
                             // Activate this custom quality if required
-                            Cura.MachineManager.setQualityChangesGroup(item.quality_changes_group);
+                            SteSlicer.MachineManager.setQualityChangesGroup(item.quality_changes_group);
                         }
                         break;
                     }
@@ -269,10 +269,10 @@ Item
         title: catalog.i18nc("@title:window", "Import Profile")
         selectExisting: true
         nameFilters: qualitiesModel.getFileNameFilters("profile_reader")
-        folder: CuraApplication.getDefaultPath("dialog_profile_path")
+        folder: SteSlicerApplication.getDefaultPath("dialog_profile_path")
         onAccepted:
         {
-            var result = Cura.ContainerManager.importProfile(fileUrl);
+            var result = SteSlicer.ContainerManager.importProfile(fileUrl);
             messageDialog.text = result.message;
             if (result.status == "ok") {
                 messageDialog.icon = StandardIcon.Information;
@@ -284,7 +284,7 @@ Item
                 messageDialog.icon = StandardIcon.Critical;
             }
             messageDialog.open();
-            CuraApplication.setDefaultPath("dialog_profile_path", folder);
+            SteSlicerApplication.setDefaultPath("dialog_profile_path", folder);
         }
     }
 
@@ -295,10 +295,10 @@ Item
         title: catalog.i18nc("@title:window", "Export Profile")
         selectExisting: false
         nameFilters: qualitiesModel.getFileNameFilters("profile_writer")
-        folder: CuraApplication.getDefaultPath("dialog_profile_path")
+        folder: SteSlicerApplication.getDefaultPath("dialog_profile_path")
         onAccepted:
         {
-            var result = Cura.ContainerManager.exportQualityChangesGroup(base.currentItem.quality_changes_group,
+            var result = SteSlicer.ContainerManager.exportQualityChangesGroup(base.currentItem.quality_changes_group,
                                                                          fileUrl, selectedNameFilter);
 
             if (result && result.status == "error") {
@@ -308,7 +308,7 @@ Item
             }
 
             // else pop-up Message thing from python code
-            CuraApplication.setDefaultPath("dialog_profile_path", folder);
+            SteSlicerApplication.setDefaultPath("dialog_profile_path", folder);
         }
     }
 
@@ -347,7 +347,7 @@ Item
                 left: parent.left
             }
             visible: text != ""
-            text: catalog.i18nc("@label %1 is printer name", "Printer: %1").arg(Cura.MachineManager.activeMachineName)
+            text: catalog.i18nc("@label %1 is printer name", "Printer: %1").arg(SteSlicer.MachineManager.activeMachineName)
             width: profileScrollView.width
             elide: Text.ElideRight
         }
@@ -379,7 +379,7 @@ Item
 
                 Component.onCompleted:
                 {
-                    var selectedItemName = Cura.MachineManager.activeQualityOrQualityChangesName;
+                    var selectedItemName = SteSlicer.MachineManager.activeQualityOrQualityChangesName;
 
                     // Select the required quality name if given
                     for (var idx = 0; idx < qualitiesModel.rowCount(); idx++) {
@@ -421,7 +421,7 @@ Item
                         width: Math.floor((parent.width * 0.8))
                         text: model.name
                         elide: Text.ElideRight
-                        font.italic: model.name == Cura.MachineManager.activeQualityOrQualityChangesName
+                        font.italic: model.name == SteSlicer.MachineManager.activeQualityOrQualityChangesName
                         color: parent.isCurrentItem ? palette.highlightedText : palette.text
                     }
 
@@ -469,7 +469,7 @@ Item
 
                 Flow {
                     id: currentSettingsActions
-                    visible: base.hasCurrentItem && base.currentItem.name == Cura.MachineManager.activeQualityOrQualityChangesName
+                    visible: base.hasCurrentItem && base.currentItem.name == SteSlicer.MachineManager.activeQualityOrQualityChangesName
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: profileName.bottom
@@ -478,15 +478,15 @@ Item
                     Button
                     {
                         text: catalog.i18nc("@action:button", "Update profile with current settings/overrides")
-                        enabled: Cura.MachineManager.hasUserSettings && !base.currentItem.is_read_only
-                        onClicked: Cura.ContainerManager.updateQualityChanges()
+                        enabled: SteSlicer.MachineManager.hasUserSettings && !base.currentItem.is_read_only
+                        onClicked: SteSlicer.ContainerManager.updateQualityChanges()
                     }
 
                     Button
                     {
                         text: catalog.i18nc("@action:button", "Discard current changes");
-                        enabled: Cura.MachineManager.hasUserSettings
-                        onClicked: Cura.ContainerManager.clearUserContainers();
+                        enabled: SteSlicer.MachineManager.hasUserSettings
+                        onClicked: SteSlicer.ContainerManager.clearUserContainers();
                     }
                 }
 
@@ -507,7 +507,7 @@ Item
                     }
                     Label {
                         id: noCurrentSettingsMessage
-                        visible: base.isCurrentItemActivated && !Cura.MachineManager.hasUserSettings
+                        visible: base.isCurrentItemActivated && !SteSlicer.MachineManager.hasUserSettings
                         text: catalog.i18nc("@action:label", "Your current settings match the selected profile.")
                         wrapMode: Text.WordWrap
                         width: parent.width

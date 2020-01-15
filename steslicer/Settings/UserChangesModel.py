@@ -42,7 +42,7 @@ class UserChangesModel(ListModel):
     def _update(self):
         application = Application.getInstance()
         machine_manager = application.getMachineManager()
-        steslicer_formula_functions = application.getCuraFormulaFunctions()
+        steslicer_formula_functions = application.getSteSlicerFormulaFunctions()
 
         item_dict = OrderedDict()
         item_list = []

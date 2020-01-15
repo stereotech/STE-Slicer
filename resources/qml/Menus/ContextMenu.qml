@@ -7,7 +7,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Window 2.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Menu
 {
@@ -15,26 +15,26 @@ Menu
 
     property bool shouldShowExtruders: machineExtruderCount.properties.value > 1;
 
-    property var multiBuildPlateModel: CuraApplication.getMultiBuildPlateModel()
+    property var multiBuildPlateModel: SteSlicerApplication.getMultiBuildPlateModel()
 
     // Selection-related actions.
-    MenuItem { action: Cura.Actions.centerSelection; }
-    MenuItem { action: Cura.Actions.deleteSelection; }
-    MenuItem { action: Cura.Actions.multiplySelection; }
+    MenuItem { action: SteSlicer.Actions.centerSelection; }
+    MenuItem { action: SteSlicer.Actions.deleteSelection; }
+    MenuItem { action: SteSlicer.Actions.multiplySelection; }
 
     // Extruder selection - only visible if there is more than 1 extruder
     MenuSeparator { visible: base.shouldShowExtruders }
     MenuItem { id: extruderHeader; text: catalog.i18ncp("@label", "Print Selected Model With:", "Print Selected Models With:", UM.Selection.selectionCount); enabled: false; visible: base.shouldShowExtruders }
     Instantiator
     {
-        model: Cura.ExtrudersModel { id: extrudersModel }
+        model: SteSlicer.ExtrudersModel { id: extrudersModel }
         MenuItem {
             text: "%1: %2 - %3".arg(model.name).arg(model.material).arg(model.variant)
             visible: base.shouldShowExtruders
             enabled: UM.Selection.hasSelection && model.enabled
             checkable: true
-            checked: Cura.ExtruderManager.selectedObjectExtruders.indexOf(model.id) != -1
-            onTriggered: CuraActions.setExtruderForSelection(model.id)
+            checked: SteSlicer.ExtruderManager.selectedObjectExtruders.indexOf(model.id) != -1
+            onTriggered: SteSlicerActions.setExtruderForSelection(model.id)
             shortcut: "Ctrl+" + (model.index + 1)
         }
         onObjectAdded: base.insertItem(index, object)
@@ -51,7 +51,7 @@ Menu
         MenuItem {
             enabled: UM.Selection.hasSelection
             text: base.multiBuildPlateModel.getItem(index).name;
-            onTriggered: CuraActions.setBuildPlateForSelection(base.multiBuildPlateModel.getItem(index).buildPlateNumber);
+            onTriggered: SteSlicerActions.setBuildPlateForSelection(base.multiBuildPlateModel.getItem(index).buildPlateNumber);
             checkable: true
             checked: base.multiBuildPlateModel.selectionBuildPlates.indexOf(base.multiBuildPlateModel.getItem(index).buildPlateNumber) != -1;
             visible: UM.Preferences.getValue("steslicer/use_multi_build_plate")
@@ -64,7 +64,7 @@ Menu
         enabled: UM.Selection.hasSelection
         text: "New build plate";
         onTriggered: {
-            CuraActions.setBuildPlateForSelection(base.multiBuildPlateModel.maxBuildPlate + 1);
+            SteSlicerActions.setBuildPlateForSelection(base.multiBuildPlateModel.maxBuildPlate + 1);
             checked = false;
         }
         checkable: true
@@ -74,18 +74,18 @@ Menu
 
     // Global actions
     MenuSeparator {}
-    MenuItem { action: Cura.Actions.selectAll; }
-    MenuItem { action: Cura.Actions.arrangeAll; }
-    MenuItem { action: Cura.Actions.deleteAll; }
-    MenuItem { action: Cura.Actions.reloadAll; }
-    MenuItem { action: Cura.Actions.resetAllTranslation; }
-    MenuItem { action: Cura.Actions.resetAll; }
+    MenuItem { action: SteSlicer.Actions.selectAll; }
+    MenuItem { action: SteSlicer.Actions.arrangeAll; }
+    MenuItem { action: SteSlicer.Actions.deleteAll; }
+    MenuItem { action: SteSlicer.Actions.reloadAll; }
+    MenuItem { action: SteSlicer.Actions.resetAllTranslation; }
+    MenuItem { action: SteSlicer.Actions.resetAll; }
 
     // Group actions
     MenuSeparator {}
-    MenuItem { action: Cura.Actions.groupObjects; }
-    MenuItem { action: Cura.Actions.mergeObjects; }
-    MenuItem { action: Cura.Actions.unGroupObjects; }
+    MenuItem { action: SteSlicer.Actions.groupObjects; }
+    MenuItem { action: SteSlicer.Actions.mergeObjects; }
+    MenuItem { action: SteSlicer.Actions.unGroupObjects; }
 
     Connections
     {
@@ -95,7 +95,7 @@ Menu
 
     Connections
     {
-        target: Cura.Actions.multiplySelection
+        target: SteSlicer.Actions.multiplySelection
         onTriggered: multiplyDialog.open()
     }
 
@@ -103,7 +103,7 @@ Menu
     {
         id: machineExtruderCount
 
-        containerStack: Cura.MachineManager.activeMachine
+        containerStack: SteSlicer.MachineManager.activeMachine
         key: "machine_extruder_count"
         watchedProperties: [ "value" ]
     }
@@ -116,7 +116,7 @@ Menu
         title: catalog.i18ncp("@title:window", "Multiply Selected Model", "Multiply Selected Models", UM.Selection.selectionCount)
 
 
-        onAccepted: CuraActions.multiplySelection(copiesField.value)
+        onAccepted: SteSlicerActions.multiplySelection(copiesField.value)
 
         signal reset()
         onReset:
@@ -172,5 +172,5 @@ Menu
         return -1;
     }
 
-    UM.I18nCatalog { id: catalog; name: "cura" }
+    UM.I18nCatalog { id: catalog; name: "steslicer" }
 }

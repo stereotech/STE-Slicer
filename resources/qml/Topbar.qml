@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 import UM 1.4 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 import "Menus"
 
 Rectangle
@@ -18,8 +18,8 @@ Rectangle
     height: UM.Theme.getSize("sidebar_header").height
     color: UM.Controller.activeStage.stageId == "STEAppStage" ? UM.Theme.getColor("topbar_background_color_monitoring") : UM.Theme.getColor("topbar_background_color")
 
-    property bool printerConnected: Cura.MachineManager.printerConnected
-    property bool printerAcceptsCommands: printerConnected && Cura.MachineManager.printerOutputDevices[0].acceptsCommands
+    property bool printerConnected: SteSlicer.MachineManager.printerConnected
+    property bool printerAcceptsCommands: printerConnected && SteSlicer.MachineManager.printerOutputDevices[0].acceptsCommands
 
     property int rightMargin: UM.Theme.getSize("sidebar").width + UM.Theme.getSize("default_margin").width;
     property int allItemsWidth: 0;
@@ -44,7 +44,7 @@ Rectangle
     UM.I18nCatalog
     {
         id: catalog
-        name:"cura"
+        name:"steslicer"
     }
 
     Image
@@ -78,7 +78,7 @@ Rectangle
             leftMargin: UM.Theme.getSize("default_margin").width;
             //right: parent.right;
         }
-        action: Cura.Actions.open;
+        action: SteSlicer.Actions.open;
     }
 
     Row
@@ -256,7 +256,7 @@ Rectangle
     // Expand or collapse sidebar
     Connections
     {
-        target: Cura.Actions.expandSidebar
+        target: SteSlicer.Actions.expandSidebar
         onTriggered: updateMarginsAndSizes()
     }
 

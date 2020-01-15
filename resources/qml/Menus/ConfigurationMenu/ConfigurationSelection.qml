@@ -6,12 +6,12 @@ import QtQuick.Controls 2.0
 import QtQuick.Controls.Styles 1.4
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item
 {
     id: configurationSelector
-    property var connectedDevice: Cura.MachineManager.printerOutputDevices.length >= 1 ? Cura.MachineManager.printerOutputDevices[0] : null
+    property var connectedDevice: SteSlicer.MachineManager.printerOutputDevices.length >= 1 ? SteSlicer.MachineManager.printerOutputDevices[0] : null
     property var panelWidth: control.width
 
     function switchPopupState()
