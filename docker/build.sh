@@ -16,7 +16,7 @@ cd "${PROJECT_DIR}"
 #
 # Clone Uranium and set PYTHONPATH first
 #
-URANIUM_BRANCH="${steslicer}"
+URANIUM_BRANCH="steslicer"
 output="$(git ls-remote --heads https://gitlab.com/stereotech/steslicer/Uranium.git "${URANIUM_BRANCH}")"
 if [ -z "${output}" ]; then
     echo "Could not find Uranium banch ${URANIUM_BRANCH}, fallback to use master."
