@@ -22,7 +22,7 @@ set(STESLICER_BUILDTYPE "" CACHE STRING "Build type of STE Slicer, eg. 'PPA'")
 set(STESLICER_SDK_VERSION "" CACHE STRING "SDK version of STE Slicer")
 
 # configure_file(${CMAKE_SOURCE_DIR}/cura.desktop.in ${CMAKE_BINARY_DIR}/cura.desktop @ONLY)
-configure_file(steslicer/SteslicerVersion.py.in SteSlicerVersion.py @ONLY)
+configure_file(steslicer/SteSlicerVersion.py.in SteSlicerVersion.py @ONLY)
 
 if(NOT ${URANIUM_DIR} STREQUAL "")
     set(CMAKE_MODULE_PATH "${URANIUM_DIR}/cmake")
