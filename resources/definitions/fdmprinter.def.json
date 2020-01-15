@@ -198,6 +198,15 @@
                     "settable_per_extruder": false,
                     "settable_per_meshgroup": false
                 },
+                "machine_heated_build_volume": {
+                    "label": "Has Build Volume Temperature Stabilization",
+                    "description": "Whether the machine is able to stabilize the build volume temperature.",
+                    "default_value": false,
+                    "type": "bool",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
+                },
                 "machine_extruder_count": {
                     "label": "Number of Extruders",
                     "description": "Number of extruder trains. An extruder train is the combination of a feeder, bowden tube, and nozzle.",
@@ -1102,6 +1111,17 @@
                                     "default_value": 6,
                                     "type": "int",
                                     "value": "999999 if infill_sparse_density == 100 else math.ceil(round(bottom_thickness / resolveOrValue('layer_height'), 4))",
+                                    "limit_to_extruder": "top_bottom_extruder_nr",
+                                    "settable_per_mesh": true
+                                },
+                                "initial_bottom_layers": {
+                                    "label": "Initial Bottom Layers",
+                                    "description": "The number of initial bottom layers, from the build-plate upwards. When calculated by the bottom thickness, this value is rounded to a whole number.",
+                                    "minimum_value": "0",
+                                    "minimum_value_warning": "2",
+                                    "default_value": 6,
+                                    "type": "int",
+                                    "value": "bottom_layers",
                                     "limit_to_extruder": "top_bottom_extruder_nr",
                                     "settable_per_mesh": true
                                 }
@@ -3807,6 +3827,18 @@
                     "limit_to_extruder": "support_infill_extruder_nr",
                     "settable_per_mesh": false
                 },
+                "minimum_support_area": {
+                    "label": "Minimum Support Area",
+                    "description": "Minimum area size for support polygons. Polygons which have an area smaller than this value will not be generated.",
+                    "unit": "mm²",
+                    "type": "float",
+                    "default_value": 0.0,
+                    "minimum_value": "0",
+                    "maximum_value_warning": "5",
+                    "enabled": "support_enable",
+                    "limit_to_extruder": "support_infill_extruder_nr",
+                    "settable_per_mesh": true
+                },
                 "support_interface_enable": {
                     "label": "Enable Support Interface",
                     "description": "Generate a dense interface between the model and the support. This will create a skin at the top of the support on which the model is printed and at the bottom of the support, where it rests on the model.",
@@ -4905,6 +4937,17 @@
                     "enabled": "not support_enable",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
+                },
+                "meshfix_maximum_deviation": {
+                    "label": "Maximum Deviation",
+                    "description": "The maximum deviation allowed when reducing the resolution for the Maximum Resolution setting. If you increase this, the print will be less accurate, but the g-code will be smaller. Maximum Deviation is a limit for Maximum Resolution, so if the two conflict the Maximum Deviation will always be held true.",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 0.05,
+                    "minimum_value": "0.001",
+                    "minimum_value_warning": "0.01",
+                    "maximum_value_warning": "0.3",
+                    "settable_per_mesh": true
                 }
             }
         },

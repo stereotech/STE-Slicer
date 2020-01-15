@@ -1,0 +1,13 @@
+stages:
+  - build
+  - test
+
+image: ultimaker/cura-build-environment
+
+buildSteSlicer:
+  stage: build
+  script:
+    - docker/build.sh
+  artifacts:
+    paths:
+      - build
