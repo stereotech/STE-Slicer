@@ -4,5 +4,5 @@
     "version": "2.2",
     "api": 5,
     "description": "Extension that allows for user created scripts for post processing",
-    "catalog": "cura"
+    "i18n-catalog": "steslicer"
 }

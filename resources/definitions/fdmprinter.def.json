@@ -101,7 +101,7 @@
                 },
                 "material_print_temp_prepend": {
                     "label": "Include Material Temperatures",
-                    "description": "Whether to include nozzle temperature commands at the start of the gcode. When the start_gcode already contains nozzle temperature commands Cura frontend will automatically disable this setting.",
+                    "description": "Whether to include nozzle temperature commands at the start of the gcode. When the start_gcode already contains nozzle temperature commands STE Slicer frontend will automatically disable this setting.",
                     "default_value": true,
                     "type": "bool",
                     "enabled": "machine_nozzle_temp_enabled",
@@ -111,7 +111,7 @@
                 },
                 "material_bed_temp_prepend": {
                     "label": "Include Build Plate Temperature",
-                    "description": "Whether to include build plate temperature commands at the start of the gcode. When the start_gcode already contains build plate temperature commands Cura frontend will automatically disable this setting.",
+                    "description": "Whether to include build plate temperature commands at the start of the gcode. When the start_gcode already contains build plate temperature commands STE Slicer frontend will automatically disable this setting.",
                     "default_value": true,
                     "type": "bool",
                     "settable_per_mesh": false,
@@ -286,7 +286,7 @@
                 },
                 "machine_nozzle_temp_enabled": {
                     "label": "Enable Nozzle Temperature Control",
-                    "description": "Whether to control temperature from Cura. Turn this off to control nozzle temperature from outside of Cura.",
+                    "description": "Whether to control temperature from STE Slicer. Turn this off to control nozzle temperature from outside of Cura.",
                     "default_value": true,
                     "value": "machine_gcode_flavor != \"UltiGCode\"",
                     "type": "bool",
@@ -3139,7 +3139,7 @@
             "children": {
                 "retraction_combing": {
                     "label": "Combing Mode",
-                    "description": "Combing keeps the nozzle within already printed areas when traveling. This results in slightly longer travel moves but reduces the need for retractions. If combing is off, the material will retract and the nozzle moves in a straight line to the next point. It is also possible to avoid combing over top/bottom skin areas and also to only comb within the infill. Note that the 'Within Infill' option behaves exactly like the 'Not in Skin' option in earlier Cura releases.",
+                    "description": "Combing keeps the nozzle within already printed areas when traveling. This results in slightly longer travel moves but reduces the need for retractions. If combing is off, the material will retract and the nozzle moves in a straight line to the next point. It is also possible to avoid combing over top/bottom skin areas and also to only comb within the infill. Note that the 'Within Infill' option behaves exactly like the 'Not in Skin' option in earlier STE Slicer releases.",
                     "type": "enum",
                     "options": {
                         "off": "Off",
@@ -4892,7 +4892,7 @@
                 },
                 "meshfix_keep_open_polygons": {
                     "label": "Keep Disconnected Faces",
-                    "description": "Normally Cura tries to stitch up small holes in the mesh and remove parts of a layer with big holes. Enabling this option keeps those parts which cannot be stitched. This option should be used as a last resort option when everything else fails to produce proper g-code.",
+                    "description": "Normally STE Slicer tries to stitch up small holes in the mesh and remove parts of a layer with big holes. Enabling this option keeps those parts which cannot be stitched. This option should be used as a last resort option when everything else fails to produce proper g-code.",
                     "type": "bool",
                     "default_value": false,
                     "settable_per_mesh": true
@@ -6325,7 +6325,7 @@
         },
         "command_line_settings": {
             "label": "Command Line Settings",
-            "description": "Settings which are only used if CuraEngine isn't called from the Cura frontend.",
+            "description": "Settings which are only used if CuraEngine isn't called from the STE Slicer frontend.",
             "type": "category",
             "enabled": false,
             "children": {

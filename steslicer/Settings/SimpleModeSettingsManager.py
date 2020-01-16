@@ -18,7 +18,7 @@ class SimpleModeSettingsManager(QObject):
         self._machine_manager.activeQualityGroupChanged.connect(self._updateIsProfileUserCreated)
         self._machine_manager.activeQualityChangesGroupChanged.connect(self._updateIsProfileUserCreated)
 
-        # update on create as the activeQualityChanged signal is emitted before this manager is created when Cura starts
+        # update on create as the activeQualityChanged signal is emitted before this manager is created when STE Slier starts
         self._updateIsProfileCustomized()
         self._updateIsProfileUserCreated()
 

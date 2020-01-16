@@ -1,7 +1,7 @@
 {
     "time_stamp": 1523973715.486928,
     "schema_version": 0,
-    "cura_version": "3.3",
+    "steslicer_version": "1.0",
     "active_mode": "custom",
     "machine_settings_changed_by_user": true,
     "language": "en_US",

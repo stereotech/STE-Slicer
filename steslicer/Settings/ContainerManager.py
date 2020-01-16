@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 catalog = i18nCatalog("steslicer")
 
 
-##  Manager class that contains common actions to deal with containers in Cura.
+##  Manager class that contains common actions to deal with containers in STE Slicer.
 #
 #   This is primarily intended as a class to be able to perform certain actions
 #   from within QML. We want to be able to trigger things like removing a container

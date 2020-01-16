@@ -14,7 +14,7 @@ from steslicer.Settings.ExtruderStack import ExtruderStack
 from steslicer.Settings.GlobalStack import GlobalStack
 import steslicer.Settings.SteSlicerContainerStack
 
-# Returns the CuraContainerRegistry instance with some empty containers.
+# Returns the SteSlicerContainerRegistry instance with some empty containers.
 @pytest.fixture()
 def container_registry(application) -> SteSlicerContainerRegistry:
     ContainerRegistry._ContainerRegistry__instance= None    # Need to reset since we only allow one instance

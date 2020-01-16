@@ -94,7 +94,7 @@ class SteSlicerStackBuilder:
                     extruder_stack.quality = application.empty_quality_container
 
         # Register the global stack after the extruder stacks are created. This prevents the registry from adding another
-        # extruder stack because the global stack didn't have one yet (which is enforced since Cura 3.1).
+        # extruder stack because the global stack didn't have one yet.
         registry.addContainer(new_global_stack)
 
         return new_global_stack

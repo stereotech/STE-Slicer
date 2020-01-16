@@ -635,7 +635,7 @@ class SteSlicerApplication(QtApplication):
     def setSaveDataEnabled(self, enabled: bool) -> None:
         self._save_data_enabled = enabled
 
-    # Cura has multiple locations where instance containers need to be saved, so we need to handle this differently.
+    # STE Slicer has multiple locations where instance containers need to be saved, so we need to handle this differently.
     def saveSettings(self):
         if not self.started or not self._save_data_enabled:
             # Do not do saving during application start or when data should not be saved on quit.
@@ -708,7 +708,7 @@ class SteSlicerApplication(QtApplication):
         self._machine_error_checker.initialize()
 
         # Check if we should run as single instance or not. If so, set up a local socket server which listener which
-        # coordinates multiple Cura instances and accepts commands.
+        # coordinates multiple STE Slicer instances and accepts commands.
         if self._use_single_instance:
             self.__setUpSingleInstanceServer()
 
@@ -760,11 +760,11 @@ class SteSlicerApplication(QtApplication):
 
     initializationFinished = pyqtSignal()
 
-    ##  Run Cura without GUI elements and interaction (server mode).
+    ##  Run STE Slicer without GUI elements and interaction (server mode).
     def runWithoutGUI(self):
         self.closeSplash()
 
-    ##  Run Cura with GUI (desktop mode).
+    ##  Run STE Slicer with GUI (desktop mode).
     def runWithGUI(self):
         self.showSplashMessage(self._i18n_catalog.i18nc("@info:progress", "Setting up scene..."))
 
@@ -1553,7 +1553,7 @@ class SteSlicerApplication(QtApplication):
 
         for original_node in nodes:
 
-            # Create a CuraSceneNode just if the original node is not that type
+            # Create a SteSlicerSceneNode just if the original node is not that type
             if isinstance(original_node, SteSlicerSceneNode):
                 node = original_node
             else:

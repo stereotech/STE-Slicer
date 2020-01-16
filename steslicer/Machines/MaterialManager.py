@@ -493,7 +493,7 @@ class MaterialManager(QObject):
             return None
 
     ##  Get default material for given global stack, extruder position and extruder nozzle name
-    #   you can provide the extruder_definition and then the position is ignored (useful when building up global stack in CuraStackBuilder)
+    #   you can provide the extruder_definition and then the position is ignored (useful when building up global stack in SteSlicerStackBuilder)
     def getDefaultMaterial(self, global_stack: "GlobalStack", position: str, nozzle_name: Optional[str],
                            extruder_definition: Optional["DefinitionContainer"] = None) -> Optional["MaterialNode"]:
         node = None

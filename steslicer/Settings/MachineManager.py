@@ -182,7 +182,7 @@ class MachineManager(QObject):
         if not self._global_container_stack:
             return
 
-        # Create the configuration model with the current data in Cura
+        # Create the configuration model with the current data in STE Slicer
         self._current_printer_configuration.printerType = self._global_container_stack.definition.getName()
         self._current_printer_configuration.extruderConfigurations = []
         for extruder in self._global_container_stack.extruders.values():

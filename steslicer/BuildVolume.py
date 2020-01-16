@@ -221,7 +221,7 @@ class BuildVolume(SceneNode):
             # It's over 9000!
             build_volume_bounding_box = build_volume_bounding_box.set(bottom=-9001)
         else:
-            # No bounding box. This is triggered when running Cura from command line with a model for the first time
+            # No bounding box. This is triggered when running STE Slicer from command line with a model for the first time
             # In that situation there is a model, but no machine (and therefore no build volume.
             return
 
@@ -274,7 +274,7 @@ class BuildVolume(SceneNode):
                 # It's over 9000!
                 build_volume_bounding_box = build_volume_bounding_box.set(bottom=-9001)
             else:
-                # No bounding box. This is triggered when running Cura from command line with a model for the first time
+                # No bounding box. This is triggered when running STE Slicer from command line with a model for the first time
                 # In that situation there is a model, but no machine (and therefore no build volume.
                 return
         else:
@@ -857,7 +857,7 @@ class BuildVolume(SceneNode):
             offset_y = extruder.getProperty("machine_nozzle_offset_y", "value")
             if offset_y is None:
                 offset_y = 0
-            offset_y = -offset_y #Y direction of g-code is the inverse of Y direction of Cura's scene space.
+            offset_y = -offset_y #Y direction of g-code is the inverse of Y direction of STE Slicer's scene space.
             result[extruder_id] = []
 
             for polygon in machine_disallowed_polygons:

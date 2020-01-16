@@ -60,13 +60,6 @@ if Platform.isWindows() and hasattr(sys, "frozen"):
     except KeyError:
         pass
 
-# WORKAROUND: GITHUB-704 GITHUB-708
-# It looks like setuptools creates a .pth file in
-# the default /usr/lib which causes the default site-packages
-# to be inserted into sys.path before PYTHONPATH.
-# This can cause issues such as having libsip loaded from
-# the system instead of the one provided with Cura, which causes
-# incompatibility issues with libArcus
 if "PYTHONPATH" in os.environ.keys():                       # If PYTHONPATH is used
     PYTHONPATH = os.environ["PYTHONPATH"].split(os.pathsep) # Get the value, split it..
     PYTHONPATH.reverse()                                    # and reverse it, because we always insert at 1
@@ -84,20 +77,6 @@ def exceptHook(hook_type, value, traceback):
     if SteSlicerApplication.Created:
         has_started = SteSlicerApplication.getInstance().started
 
-    #
-    # When the exception hook is triggered, the QApplication may not have been initialized yet. In this case, we don't
-    # have an QApplication to handle the event loop, which is required by the Crash Dialog.
-    # The flag "CuraApplication.Created" is set to True when CuraApplication finishes its constructor call.
-    #
-    # Before the "started" flag is set to True, the Qt event loop has not started yet. The event loop is a blocking
-    # call to the QApplication.exec_(). In this case, we need to:
-    #   1. Remove all scheduled events so no more unnecessary events will be processed, such as loading the main dialog,
-    #      loading the machine, etc.
-    #   2. Start the Qt event loop with exec_() and show the Crash Dialog.
-    #
-    # If the application has finished its initialization and was running fine, and then something causes a crash,
-    # we run the old routine to show the Crash Dialog.
-    #
     from PyQt5.Qt import QApplication
     if SteSlicerApplication.Created:
         _crash_handler = CrashHandler(hook_type, value, traceback, has_started)
@@ -113,7 +92,6 @@ def exceptHook(hook_type, value, traceback):
         application = QApplication(sys.argv)
         application.removePostedEvents(None)
         _crash_handler = CrashHandler(hook_type, value, traceback, has_started)
-        # This means the QtApplication could be created and so the splash screen. Then Cura closes it
         if SteSlicerApplication.splash is not None:
             SteSlicerApplication.splash.close()
         _crash_handler.early_crash_dialog.show()

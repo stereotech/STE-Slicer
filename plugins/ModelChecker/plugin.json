@@ -4,5 +4,5 @@
     "version": "0.1",
     "api": 5,
     "description": "Checks models and print configuration for possible printing issues and give suggestions.",
-    "i18n-catalog": "cura"
+    "i18n-catalog": "steslicer"
 }

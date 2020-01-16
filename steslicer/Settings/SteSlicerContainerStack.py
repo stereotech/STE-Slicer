@@ -17,7 +17,7 @@ from steslicer.Settings import steslicer_empty_instance_containers
 from . import Exceptions
 
 
-##  Base class for Cura related stacks that want to enforce certain containers are available.
+##  Base class for STE Slicer related stacks that want to enforce certain containers are available.
 #
 #   This class makes sure that the stack has the following containers set: user changes, quality
 #   changes, quality, material, variant, definition changes and finally definition. Initially,

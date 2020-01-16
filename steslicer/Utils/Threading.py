@@ -9,7 +9,7 @@ from steslicer.SteSlicerApplication import SteSlicerApplication
 # In project loading, when override the existing machine is selected, the stacks and containers that are correctly
 # active in the system will be overridden at runtime. Because the project loading is done in a different thread than
 # the Qt thread, something else can kick in the middle of the process. One of them is the rendering. It will access
-# the current stacks and container, which have not completely been updated yet, so Cura will crash in this case.
+# the current stacks and container, which have not completely been updated yet, so STE Slicer will crash in this case.
 #
 # This "@call_on_qt_thread" decorator makes sure that a function will always be called on the Qt thread (blocking).
 # It is applied to the read() function of project loading so it can be guaranteed that only after the project loading

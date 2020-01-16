@@ -2,7 +2,7 @@ from UM.Scene.SceneNodeDecorator import SceneNodeDecorator
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 
 
-##  Make a SceneNode build plate aware CuraSceneNode objects all have this decorator.
+##  Make a SceneNode build plate aware SteSlicerSceneNode objects all have this decorator.
 class BuildPlateDecorator(SceneNodeDecorator):
     def __init__(self, build_plate_number = -1):
         super().__init__()
@@ -11,7 +11,7 @@ class BuildPlateDecorator(SceneNodeDecorator):
 
     def setBuildPlateNumber(self, nr):
         # Make sure that groups are set correctly
-        # setBuildPlateForSelection in CuraActions makes sure that no single childs are set.
+        # setBuildPlateForSelection in SteSlicerActions makes sure that no single childs are set.
         self._build_plate_number = nr
         if isinstance(self._node, SteSlicerSceneNode):
             self._node.transformChanged()  # trigger refresh node without introducing a new signal

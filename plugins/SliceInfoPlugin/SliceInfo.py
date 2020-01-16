@@ -131,7 +131,7 @@ class SliceInfo(QObject, Extension):
             data = dict()  # The data that we're going to submit.
             data["time_stamp"] = time.time()
             data["schema_version"] = 0
-            data["cura_version"] = application.getVersion()
+            data["steslicer_version"] = application.getVersion()
 
             active_mode = Application.getInstance().getPreferences().getValue("steslicer/active_mode")
             if active_mode == 0:

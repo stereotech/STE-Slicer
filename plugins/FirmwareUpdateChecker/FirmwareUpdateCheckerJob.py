@@ -102,7 +102,7 @@ class FirmwareUpdateCheckerJob(Job):
                 Logger.log("i", "Reading firmware version of %s: checked = %s - latest = %s", machine_name, checked_version, current_version)
 
                 # The first time we want to store the current version, the notification will not be shown,
-                # because the new version of Cura will be release before the firmware and we don't want to
+                # because the new version of STE Slicer will be release before the firmware and we don't want to
                 # notify the user when no new firmware version is available.
                 if (checked_version != "") and (checked_version != current_version):
                     Logger.log("i", "SHOWING FIRMWARE UPDATE MESSAGE")

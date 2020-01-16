@@ -4,5 +4,5 @@
     "description": "Provides removable drive hotplugging and writing support.",
     "version": "1.0.0",
     "api": 5,
-    "i18n-catalog": "cura"
+    "i18n-catalog": "steslicer"
 }

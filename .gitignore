@@ -27,7 +27,6 @@ LC_MESSAGES
 *.qm
 .directory
 .idea
-cura.desktop
 
 # Eclipse+PyDev
 .project
@@ -65,7 +64,7 @@ Testing/
 CTestTestfile.cmake
 Makefile*
 junit-pytest-*
-CuraVersion.py
+SteSlicerVersion.py
 cmake_install.cmake
 
 #Debug

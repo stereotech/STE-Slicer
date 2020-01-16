@@ -104,7 +104,7 @@ class SupportEraser(Tool):
         node.addDecorator(BuildPlateDecorator(active_build_plate))
         node.addDecorator(SliceableObjectDecorator())
 
-        stack = node.callDecoration("getStack") # created by SettingOverrideDecorator that is automatically added to CuraSceneNode
+        stack = node.callDecoration("getStack") # created by SettingOverrideDecorator that is automatically added to SteSlicerSceneNode
         settings = stack.getTop()
 
         definition = stack.getSettingDefinition("anti_overhang_mesh")

@@ -8,7 +8,7 @@
             "name": "STE Slicer Debug",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/cura_app.py",
+            "program": "${workspaceFolder}/steslicer_app.py",
             "console": "integratedTerminal"
         }
     ]

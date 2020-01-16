@@ -444,23 +444,6 @@ class SimulationView(View):
                 return True
 
         if event.type == Event.ViewActivateEvent:
-            # FIX: on Max OS X, somehow QOpenGLContext.currentContext() can become None during View switching.
-            # This can happen when you do the following steps:
-            #   1. Start Cura
-            #   2. Load a model
-            #   3. Switch to Custom mode
-            #   4. Select the model and click on the per-object tool icon
-            #   5. Switch view to Layer view or X-Ray
-            #   6. Cura will very likely crash
-            # It seems to be a timing issue that the currentContext can somehow be empty, but I have no clue why.
-            # This fix tries to reschedule the view changing event call on the Qt thread again if the current OpenGL
-            # context is None.
-            if Platform.isOSX():
-                if QOpenGLContext.currentContext() is None:
-                    Logger.log("d", "current context of OpenGL is empty on Mac OS X, will try to create shaders later")
-                    SteSlicerApplication.getInstance().callLater(lambda e=event: self.event(e))
-                    return False
-
             # Make sure the SimulationPass is created
             layer_pass = self.getSimulationPass()
             self.getRenderer().addRenderPass(layer_pass)

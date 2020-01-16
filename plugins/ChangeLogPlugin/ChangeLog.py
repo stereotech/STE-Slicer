@@ -27,7 +27,7 @@ class ChangeLog(Extension, QObject,):
 
         self._change_logs = None
         Application.getInstance().engineCreatedSignal.connect(self._onEngineCreated)
-        Application.getInstance().getPreferences().addPreference("general/latest_version_changelog_shown", "2.0.0") #First version of CURA with uranium
+        Application.getInstance().getPreferences().addPreference("general/latest_version_changelog_shown", "2.0.0") #First version of STE Slicer with uranium
         self.addMenuItem(catalog.i18nc("@item:inmenu", "Show Changelog"), self.showChangelog)
 
     def getChangeLogs(self):
@@ -85,7 +85,7 @@ class ChangeLog(Extension, QObject,):
         Application.getInstance().getPreferences().setValue("general/latest_version_changelog_shown", Application.getInstance().getVersion())
 
         # Do not show the changelog when there is no global container stack
-        # This implies we are running Cura for the first time.
+        # This implies we are running Ste Slicer for the first time.
         if not Application.getInstance().getGlobalContainerStack():
             return
 
