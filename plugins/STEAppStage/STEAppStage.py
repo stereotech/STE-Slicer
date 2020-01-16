@@ -16,6 +16,7 @@ class STEAppStage(SteSlicerStage):
         self._active_print_job = None
         self._active_printer = None
 
+
     def _setActivePrintJob(self, print_job):
         if self._active_print_job != print_job:
             self._active_print_job = print_job
@@ -70,6 +71,9 @@ class STEAppStage(SteSlicerStage):
         self._onOutputDevicesChanged()
         self._updateMainOverlay()
         self._updateSidebar()
+        icon_path = os.path.join(PluginRegistry.getInstance().getPluginPath("STEAppStage"),
+                                           "steapp.svg")
+        self.setIconSource(icon_path)
 
     def _updateMainOverlay(self):
         main_component_path = os.path.join(PluginRegistry.getInstance().getPluginPath("STEAppStage"),

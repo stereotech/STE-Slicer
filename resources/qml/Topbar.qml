@@ -4,6 +4,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
+import QtGraphicalEffects 1.0
 
 import UM 1.4 as UM
 import SteSlicer 1.0 as SteSlicer
@@ -25,14 +26,6 @@ Rectangle
 
     function updateMarginsAndSizes() {
         rightMargin = UM.Theme.getSize("default_margin").width;
-        //if (UM.Preferences.getValue("steslicer/sidebar_collapsed"))
-        //{
-        //    
-        //}
-        //else
-        //{
-        //    rightMargin = UM.Theme.getSize("sidebar").width + UM.Theme.getSize("default_margin").width;
-        //}
         allItemsWidth = (
             logo.width + UM.Theme.getSize("topbar_logo_right_margin").width +
             UM.Theme.getSize("topbar_logo_right_margin").width + stagesMenuContainer.width +
@@ -79,6 +72,30 @@ Rectangle
         }
         action: SteSlicer.Actions.open;
     }
+
+    MachineSelection
+    {
+        id: machineSelection
+        anchors
+        {
+            verticalCenter: parent.verticalCenter
+            top: base.top;
+            topMargin: UM.Theme.getSize("default_margin").height;
+            left: openFileButton.right;
+            leftMargin: UM.Theme.getSize("default_margin").width;
+            right: stagesMenuContainer.left;
+            rightMargin: UM.Theme.getSize("default_margin").width;
+        }
+    }
+
+    DropShadow
+     {
+        anchors.fill: machineSelection
+        radius: UM.Theme.getSize("monitor_shadow_radius").width;
+        verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+        color: "#3F000000"; // 25% shadow
+        source: machineSelection
+     }
 
     Row
     {

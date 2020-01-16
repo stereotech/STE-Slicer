@@ -83,15 +83,6 @@ Rectangle
         }
     }
 
-    MachineSelection
-    {
-        id: machineSelection
-        width: base.width - configSelection.width - separator.width
-        height: UM.Theme.getSize("sidebar_header").height
-        anchors.top: base.top
-        anchors.left: parent.left
-    }
-
     Rectangle
     {
         id: separator
@@ -99,7 +90,7 @@ Rectangle
         width: visible ? Math.round(UM.Theme.getSize("sidebar_lining_thin").height / 2) : 0
         height: UM.Theme.getSize("sidebar_header").height
         color: UM.Theme.getColor("sidebar_lining_thin")
-        anchors.left: machineSelection.right
+        anchors.left: parent.left
     }
 
     ConfigurationSelection
@@ -117,7 +108,7 @@ Rectangle
     {
         id: controlItem
         anchors.bottom: footerSeparator.top
-        anchors.top: machineSelection.bottom
+        anchors.top: base.top
         anchors.left: base.left
         anchors.right: base.right
         sourceComponent:
@@ -136,7 +127,7 @@ Rectangle
     Loader
     {
         anchors.bottom: footerSeparator.top
-        anchors.top: machineSelection.bottom
+        anchors.top: base.top
         anchors.left: base.left
         anchors.right: base.right
         source:

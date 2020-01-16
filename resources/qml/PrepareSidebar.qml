@@ -91,15 +91,6 @@ Rectangle
         }
     }
 
-    MachineSelection
-    {
-        id: machineSelection
-        width: base.width - configSelection.width - separator.width
-        height: UM.Theme.getSize("sidebar_header").height
-        anchors.top: base.top
-        anchors.left: parent.left
-    }
-
     Rectangle
     {
         id: separator
@@ -107,7 +98,7 @@ Rectangle
         width: visible ? Math.round(UM.Theme.getSize("sidebar_lining_thin").height / 2) : 0
         height: UM.Theme.getSize("sidebar_header").height / 4
         color: UM.Theme.getColor("sidebar_lining_thin")
-        anchors.left: machineSelection.right
+        anchors.left: parent.left
     }
 
     ConfigurationSelection
@@ -125,7 +116,7 @@ Rectangle
         id: header
         width: parent.width
         visible: !hideSettings && (machineExtruderCount.properties.value > 1 || SteSlicer.MachineManager.hasMaterials || SteSlicer.MachineManager.hasVariants)
-        anchors.top: machineSelection.bottom
+        anchors.top: base.top
 
         onShowTooltip: base.showTooltip(item, location, text)
         onHideTooltip: base.hideTooltip()
@@ -157,7 +148,7 @@ Rectangle
         renderType: Text.NativeRendering
         anchors.left: parent.left
         anchors.leftMargin: UM.Theme.getSize("sidebar_margin").width
-        anchors.top: hideSettings ? machineSelection.bottom : headerSeparator.bottom
+        anchors.top: hideSettings ? base.top : headerSeparator.bottom
         anchors.topMargin: UM.Theme.getSize("sidebar_margin").height
         width: Math.round(parent.width * 0.45)
         font: UM.Theme.getFont("large")
