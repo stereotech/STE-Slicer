@@ -1,5 +1,4 @@
-# Copyright (c) 2018 Ultimaker B.V.
-# Cura is released under the terms of the LGPLv3 or higher.
+
 
 import argparse #To run the engine in debug mode if the front-end is in debug mode.
 from collections import defaultdict

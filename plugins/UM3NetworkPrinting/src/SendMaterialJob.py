@@ -1,5 +1,4 @@
-# Copyright (c) 2018 Ultimaker B.V.
-# Cura is released under the terms of the LGPLv3 or higher.
+
 
 import json #To understand the list of materials from the printer reply.
 import os #To walk over material files.

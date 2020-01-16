@@ -1,5 +1,4 @@
-# Copyright (c) 2017 Ultimaker B.V.
-# Cura is released under the terms of the LGPLv3 or higher.
+
 from UM.Job import Job
 from UM.Logger import Logger
 from UM.Platform import Platform

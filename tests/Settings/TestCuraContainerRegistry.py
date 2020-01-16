@@ -1,5 +1,4 @@
-# Copyright (c) 2018 Ultimaker B.V.
-# Cura is released under the terms of the LGPLv3 or higher.
+
 
 import os #To find the directory with test files and find the test files.
 import unittest.mock #To mock and monkeypatch stuff.

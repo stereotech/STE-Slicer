@@ -1,5 +1,4 @@
-# Copyright (c) 2018 Ultimaker B.V.
-# Cura is released under the terms of the LGPLv3 or higher.
+
 
 # The purpose of this class is to create fixtures or methods that can be shared among all tests.
 

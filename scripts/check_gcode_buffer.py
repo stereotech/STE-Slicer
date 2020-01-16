@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2018 Ultimaker B.V.
-# Cura is released under the terms of the LGPLv3 or higher.
+
 
 import copy
 import math
