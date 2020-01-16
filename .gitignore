@@ -74,3 +74,4 @@ run.sh
 CuraEngine
 openscad.*
 *.dll
+plugins/*.txt
