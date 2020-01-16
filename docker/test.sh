@@ -27,6 +27,5 @@ echo "Using Uranium branch ${URANIUM_BRANCH} ..."
 git clone --depth=1 -b "${URANIUM_BRANCH}" https://gitlab.com/stereotech/steslicer/Uranium.git "${PROJECT_DIR}"/Uranium
 export PYTHONPATH="${PROJECT_DIR}/Uranium:.:${PYTHONPATH}"
 
-mkdir build
 cd build
 ctest3 --output-on-failure -T Test
