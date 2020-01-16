@@ -1,5 +1,4 @@
-// Copyright (c) 2017 Ultimaker B.V.
-// Cura is released under the terms of the LGPLv3 or higher.
+
 
 import QtQuick 2.7
 import QtQuick.Controls 2.0
@@ -553,15 +552,6 @@ Rectangle
         
         
     }
-
-    //DropShadow 
-    //{
-    //    anchors.fill: tooltip
-    //    radius: UM.Theme.getSize("monitor_shadow_radius").width;
-    //    verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
-    //    color: "#3F000000"; // 25% shadow
-    //    source: tooltip
-    //}
 
     // Setting mode: Recommended or Custom
     ListModel
