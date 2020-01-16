@@ -54,11 +54,11 @@ foreach(_plugin ${_plugins})
 endforeach()
 
 #Add code style test.
-add_test(
-    NAME "code-style"
-    COMMAND ${PYTHON_EXECUTABLE} run_mypy.py
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
+#add_test(
+#    NAME "code-style"
+#    COMMAND ${PYTHON_EXECUTABLE} run_mypy.py
+#    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+#)
 
 #Add test for whether the shortcut alt-keys are unique in every translation.
 add_test(
