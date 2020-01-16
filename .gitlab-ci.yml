@@ -15,5 +15,4 @@ buildSteSlicer:
 testSteSlicer:
   stage: test
   script:
-    - cd build
-    - ctest3 --output-on-failure -T Test
+    - docker/test.sh
