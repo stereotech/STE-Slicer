@@ -6,19 +6,19 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item {
     id: base;
-    property string activeQualityDefinitionId: Cura.MachineManager.activeQualityDefinitionId;
+    property string activeQualityDefinitionId: SteSlicer.MachineManager.activeQualityDefinitionId;
     property bool isUM3: activeQualityDefinitionId == "ultimaker3" || activeQualityDefinitionId.match("ultimaker_") != null;
-    property bool printerConnected: Cura.MachineManager.printerConnected;
-    property bool printerAcceptsCommands: printerConnected && Cura.MachineManager.printerOutputDevices[0].acceptsCommands;
-    property bool authenticationRequested: printerConnected && (Cura.MachineManager.printerOutputDevices[0].authenticationState == 2 || Cura.MachineManager.printerOutputDevices[0].authenticationState == 5); // AuthState.AuthenticationRequested or AuthenticationReceived.
+    property bool printerConnected: SteSlicer.MachineManager.printerConnected;
+    property bool printerAcceptsCommands: printerConnected && SteSlicer.MachineManager.printerOutputDevices[0].acceptsCommands;
+    property bool authenticationRequested: printerConnected && (SteSlicer.MachineManager.printerOutputDevices[0].authenticationState == 2 || SteSlicer.MachineManager.printerOutputDevices[0].authenticationState == 5); // AuthState.AuthenticationRequested or AuthenticationReceived.
 
     UM.I18nCatalog {
         id: catalog;
-        name: "cura";
+        name: "steslicer";
     }
 
     Row {
@@ -28,7 +28,7 @@ Item {
 
         Button {
             height: UM.Theme.getSize("save_button_save_to_button").height;
-            onClicked: Cura.MachineManager.printerOutputDevices[0].requestAuthentication();
+            onClicked: SteSlicer.MachineManager.printerOutputDevices[0].requestAuthentication();
             style: UM.Theme.styles.sidebar_action_button;
             text: catalog.i18nc("@action:button", "Request Access");
             tooltip: catalog.i18nc("@info:tooltip", "Send access request to the printer");
@@ -66,7 +66,7 @@ Item {
         visible: isUM3;
 
         Button {
-            onClicked: Cura.MachineManager.printerOutputDevices[0].requestAuthentication();
+            onClicked: SteSlicer.MachineManager.printerOutputDevices[0].requestAuthentication();
             text: catalog.i18nc("@action:button", "Request Access");
             tooltip: catalog.i18nc("@info:tooltip", "Send access request to the printer");
             visible: printerConnected && !printerAcceptsCommands && !authenticationRequested;
@@ -83,7 +83,7 @@ Item {
 
             Column {
                 Repeater {
-                    model: Cura.ExtrudersModel {
+                    model: SteSlicer.ExtrudersModel {
                         simpleNames: true;
                     }
 
@@ -96,7 +96,7 @@ Item {
             Column {
                 Repeater {
                     id: nozzleColumn;
-                    model: printerConnected ? Cura.MachineManager.printerOutputDevices[0].hotendIds : null;
+                    model: printerConnected ? SteSlicer.MachineManager.printerOutputDevices[0].hotendIds : null;
 
                     Label {
                         text: nozzleColumn.model[index];
@@ -107,7 +107,7 @@ Item {
             Column {
                 Repeater {
                     id: materialColumn;
-                    model: printerConnected ? Cura.MachineManager.printerOutputDevices[0].materialNames : null;
+                    model: printerConnected ? SteSlicer.MachineManager.printerOutputDevices[0].materialNames : null;
 
                     Label {
                         text: materialColumn.model[index];
@@ -119,7 +119,7 @@ Item {
         Button {
             onClicked: manager.loadConfigurationFromPrinter();
             text: catalog.i18nc("@action:button", "Activate Configuration");
-            tooltip: catalog.i18nc("@info:tooltip", "Load the configuration of the printer into Cura");
+            tooltip: catalog.i18nc("@info:tooltip", "Load the configuration of the printer into STE Slicer");
             visible: false; // printerConnected && !isClusterPrinter()
         }
     }

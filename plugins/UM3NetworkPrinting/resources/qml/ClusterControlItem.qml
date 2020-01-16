@@ -5,7 +5,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.3
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Component {
     Rectangle {
@@ -18,7 +18,7 @@ Component {
 
         UM.I18nCatalog {
             id: catalog;
-            name: "cura";
+            name: "steslicer";
         }
 
         Label {
@@ -52,7 +52,7 @@ Component {
         MouseArea {
             anchors.fill: managePrintersLabel;
             hoverEnabled: true;
-            onClicked: Cura.MachineManager.printerOutputDevices[0].openPrinterControlPanel();
+            onClicked: SteSlicer.MachineManager.printerOutputDevices[0].openPrinterControlPanel();
             onEntered: managePrintersLabel.font.underline = true;
             onExited: managePrintersLabel.font.underline = false;
         }

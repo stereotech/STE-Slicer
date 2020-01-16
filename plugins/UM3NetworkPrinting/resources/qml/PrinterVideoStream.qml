@@ -5,7 +5,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item {
     property var cameraUrl: "";
@@ -34,7 +34,7 @@ Item {
         z: 999;
     }
 
-    Cura.NetworkMJPGImage {
+    SteSlicer.NetworkMJPGImage {
         id: cameraImage
         anchors.horizontalCenter: parent.horizontalCenter;
         anchors.verticalCenter: parent.verticalCenter;

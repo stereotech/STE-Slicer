@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 
 import UM 1.0 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Item
 {
@@ -230,7 +230,7 @@ Item
 
             Repeater
             {
-                model: Cura.ExtrudersModel{}
+                model: SteSlicer.ExtrudersModel{}
                 CheckBox
                 {
                     id: extrudersModelCheckBox
@@ -432,7 +432,7 @@ Item
 
                     function minText()
                     {
-                        if (UM.SimulationView.layerActivity && CuraApplication.platformActivity)
+                        if (UM.SimulationView.layerActivity && SteSlicerApplication.platformActivity)
                         {
                             // Feedrate selected
                             if (UM.Preferences.getValue("layerview/layer_view_type") == 2)
@@ -458,7 +458,7 @@ Item
 
                     function unitsText()
                     {
-                        if (UM.SimulationView.layerActivity && CuraApplication.platformActivity)
+                        if (UM.SimulationView.layerActivity && SteSlicerApplication.platformActivity)
                         {
                             // Feedrate selected
                             if (UM.Preferences.getValue("layerview/layer_view_type") == 2)
@@ -484,7 +484,7 @@ Item
 
                     function maxText()
                     {
-                        if (UM.SimulationView.layerActivity && CuraApplication.platformActivity)
+                        if (UM.SimulationView.layerActivity && SteSlicerApplication.platformActivity)
                         {
                             // Feedrate selected
                             if (UM.Preferences.getValue("layerview/layer_view_type") == 2)
@@ -588,7 +588,7 @@ Item
         id: slidersBox
 
         width: parent.width
-        visible: UM.SimulationView.layerActivity && CuraApplication.platformActivity
+        visible: UM.SimulationView.layerActivity && SteSlicerApplication.platformActivity
 
         anchors
         {

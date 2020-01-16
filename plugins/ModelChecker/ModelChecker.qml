@@ -9,14 +9,14 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 Button
 {
     id: modelCheckerButton
 
-    UM.I18nCatalog{id: catalog; name:"cura"}
+    UM.I18nCatalog{id: catalog; name:"steslicer"}
 
     visible: manager.hasWarnings
     tooltip: catalog.i18nc("@info:tooltip", "Some things could be problematic in this print. Click to see tips for adjustment.")

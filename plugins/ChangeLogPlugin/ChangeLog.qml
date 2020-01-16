@@ -31,7 +31,7 @@ UM.Dialog
             UM.I18nCatalog
             {
                 id: catalog
-                name: "cura"
+                name: "steslicer"
             }
 
             text: catalog.i18nc("@action:button", "Close")

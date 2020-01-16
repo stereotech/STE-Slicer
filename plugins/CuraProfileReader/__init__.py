@@ -10,8 +10,8 @@ def getMetaData():
     return {
         "profile_reader": [
             {
-                "extension": "curaprofile",
-                "description": catalog.i18nc("@item:inlistbox", "Cura Profile")
+                "extension": "steslicerprofile",
+                "description": catalog.i18nc("@item:inlistbox", "STE Slicer Profile")
             }
         ]
     }

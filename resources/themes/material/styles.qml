@@ -263,14 +263,9 @@ QtObject {
     property Component tool_button: Component {
         ButtonStyle {
             background: Item {
+                id: toolButtonBackgroundItem
                 implicitWidth: Theme.getSize("button").width;
                 implicitHeight: Theme.getSize("button").height;
-                layer.effect: DropShadow {
-                        radius: UM.Theme.getSize("monitor_shadow_radius").width;
-                        verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
-                        color: "#3F000000"; // 25% shadow
-                    }
-                layer.enabled: true
                 UM.PointingRectangle {
                     id: button_tooltip
                     anchors.left: parent.right
@@ -368,6 +363,14 @@ QtObject {
                     }
                 }
             }
+            DropShadow
+            {
+                anchors.fill: toolButtonBackgroundItem
+                radius: UM.Theme.getSize("monitor_shadow_radius").width;
+                verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+                color: "#3F000000"; // 25% shadow
+                source: toolButtonBackgroundItem
+            }
 
             label: Item {
                 UM.RecolorImage {
@@ -412,13 +415,6 @@ QtObject {
                     id: buttonOpenFile;
                     radius:4
                     anchors.fill: parent;
-                    
-                    layer.effect: DropShadow {
-                        radius: UM.Theme.getSize("monitor_shadow_radius").width;
-                        verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
-                        color: "#3F000000"; // 25% shadow
-                    }
-                    layer.enabled: true
 
                     property bool down: control.pressed || (control.checkable && control.checked);
                     color:
@@ -478,6 +474,14 @@ QtObject {
                         }
                         source: Theme.getIcon("chevron-down")
                     }
+                }
+                DropShadow
+                {
+                        anchors.fill: buttonOpenFile
+                        radius: UM.Theme.getSize("monitor_shadow_radius").width;
+                        verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+                        color: "#3F000000"; // 25% shadow
+                        source: buttonOpenFile
                 }
             }
 

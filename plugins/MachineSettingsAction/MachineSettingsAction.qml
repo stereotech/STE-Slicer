@@ -7,16 +7,16 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
-Cura.MachineAction
+SteSlicer.MachineAction
 {
     id: base
-    property var extrudersModel: Cura.ExtrudersModel{}
+    property var extrudersModel: SteSlicer.ExtrudersModel{}
     property int extruderTabsCount: 0
 
-    property var activeMachineId: Cura.MachineManager.activeMachine != null ? Cura.MachineManager.activeMachine.id : ""
+    property var activeMachineId: SteSlicer.MachineManager.activeMachine != null ? SteSlicer.MachineManager.activeMachine.id : ""
 
     Connections
     {
@@ -52,7 +52,7 @@ Cura.MachineAction
         id: machineSettingsAction
         anchors.fill: parent;
 
-        UM.I18nCatalog { id: catalog; name: "cura"; }
+        UM.I18nCatalog { id: catalog; name: "steslicer"; }
 
         Label
         {
@@ -387,7 +387,7 @@ Cura.MachineAction
                         Loader
                         {
                             id: extruderNozzleSizeField
-                            visible: !Cura.MachineManager.hasVariants
+                            visible: !SteSlicer.MachineManager.hasVariants
                             sourceComponent: numericTextFieldWithUnit
                             property string settingKey: "machine_nozzle_size"
                             property string label: catalog.i18nc("@label", "Nozzle size")
@@ -395,7 +395,7 @@ Cura.MachineAction
                             function afterOnEditingFinished()
                             {
                                 // Somehow the machine_nozzle_size dependent settings are not updated otherwise
-                                Cura.MachineManager.forceUpdateAllSettings()
+                                SteSlicer.MachineManager.forceUpdateAllSettings()
                             }
                             property bool isExtruderSetting: true
                         }
@@ -403,7 +403,7 @@ Cura.MachineAction
                         Loader
                         {
                             id: materialDiameterField
-                            visible: Cura.MachineManager.hasMaterials
+                            visible: SteSlicer.MachineManager.hasMaterials
                             sourceComponent: numericTextFieldWithUnit
                             property string settingKey: "material_diameter"
                             property string label: catalog.i18nc("@label", "Compatible material diameter")
@@ -421,7 +421,7 @@ Cura.MachineAction
                                 if (settingsTabs.currentIndex > 0)
                                 {
                                     const extruderIndex = index.toString()
-                                    Cura.MachineManager.activeMachine.extruders[extruderIndex].compatibleMaterialDiameter = value
+                                    SteSlicer.MachineManager.activeMachine.extruders[extruderIndex].compatibleMaterialDiameter = value
                                 }
                             }
                             property bool isExtruderSetting: true
@@ -537,7 +537,7 @@ Cura.MachineAction
                     {
                         if(settingsTabs.currentIndex > 0)
                         {
-                            return Cura.ExtruderManager.extruderIds[String(settingsTabs.currentIndex - 1)];
+                            return SteSlicer.ExtruderManager.extruderIds[String(settingsTabs.currentIndex - 1)];
                         }
                         return "";
                     }
@@ -591,7 +591,7 @@ Cura.MachineAction
                     {
                         if(settingsTabs.currentIndex > 0)
                         {
-                            return Cura.ExtruderManager.extruderIds[String(settingsTabs.currentIndex - 1)];
+                            return SteSlicer.ExtruderManager.extruderIds[String(settingsTabs.currentIndex - 1)];
                         }
                         return "";
                     }
@@ -700,7 +700,7 @@ Cura.MachineAction
                     {
                         if(settingsTabs.currentIndex > 0)
                         {
-                            return Cura.ExtruderManager.extruderIds[String(settingsTabs.currentIndex - 1)];
+                            return SteSlicer.ExtruderManager.extruderIds[String(settingsTabs.currentIndex - 1)];
                         }
                         return "";
                     }
@@ -799,7 +799,7 @@ Cura.MachineAction
                     {
                         if(settingsTabs.currentIndex > 0)
                         {
-                            return Cura.ExtruderManager.extruderIds[String(settingsTabs.currentIndex - 1)];
+                            return SteSlicer.ExtruderManager.extruderIds[String(settingsTabs.currentIndex - 1)];
                         }
                         return "";
                     }

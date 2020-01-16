@@ -191,7 +191,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
 
         # Check if there are any conflicts, so we can ask the user.
         archive = zipfile.ZipFile(file_name, "r")
-        cura_file_names = [name for name in archive.namelist() if name.startswith("Cura/")]
+        cura_file_names = [name for name in archive.namelist() if name.startswith("SteSlicer/")]
 
         resolve_strategy_keys = ["machine", "material", "quality_changes"]
         self._resolve_strategies = {k: None for k in resolve_strategy_keys}
@@ -447,7 +447,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
         num_visible_settings = 0
         try:
             temp_preferences = Preferences()
-            serialized = archive.open("Cura/preferences.cfg").read().decode("utf-8")
+            serialized = archive.open("SteSlicer/preferences.cfg").read().decode("utf-8")
             temp_preferences.deserialize(serialized)
 
             visible_settings_string = temp_preferences.getValue("general/visible_settings")
@@ -580,12 +580,12 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
 
         archive = zipfile.ZipFile(file_name, "r")
 
-        cura_file_names = [name for name in archive.namelist() if name.startswith("Cura/")]
+        cura_file_names = [name for name in archive.namelist() if name.startswith("SteSlicer/")]
 
         # Create a shadow copy of the preferences (we don't want all of the preferences, but we do want to re-use its
         # parsing code.
         temp_preferences = Preferences()
-        serialized = archive.open("Cura/preferences.cfg").read().decode("utf-8")
+        serialized = archive.open("SteSlicer/preferences.cfg").read().decode("utf-8")
         temp_preferences.deserialize(serialized)
 
         # Copy a number of settings from the temp preferences to the global
@@ -1006,7 +1006,7 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
     def _stripFileToId(self, file):
         mime_type = MimeTypeDatabase.getMimeTypeForFile(file)
         file = mime_type.stripExtension(file)
-        return file.replace("Cura/", "")
+        return file.replace("SteSlicer/", "")
 
     def _getXmlProfileClass(self):
         return self._container_registry.getContainerForMimeType(MimeTypeDatabase.getMimeType("application/x-ultimaker-material-profile"))

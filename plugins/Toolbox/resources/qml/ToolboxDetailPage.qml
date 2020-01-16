@@ -146,7 +146,7 @@ Item
                     }
                     if (details.author_email)
                     {
-                        return "<a href=\"mailto:" + details.author_email+"?Subject=Cura: " + details.name + "\">" + details.author_name + "</a>"
+                        return "<a href=\"mailto:" + details.author_email+"?Subject=SteSlicer: " + details.name + "\">" + details.author_name + "</a>"
                     }
                     else
                     {

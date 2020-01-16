@@ -7,7 +7,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 
 import UM 1.0 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 UM.PointingRectangle {
     id: sliderLabelRoot

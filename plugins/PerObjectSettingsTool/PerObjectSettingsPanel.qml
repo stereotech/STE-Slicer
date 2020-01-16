@@ -7,13 +7,13 @@ import QtQuick.Controls.Styles 1.2
 import QtQuick.Window 2.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 import ".."
 
 Item {
     id: base;
 
-    UM.I18nCatalog { id: catalog; name: "cura"; }
+    UM.I18nCatalog { id: catalog; name: "steslicer"; }
 
     width: childrenRect.width;
     height: childrenRect.height;
@@ -44,7 +44,7 @@ Item {
             UM.SettingPropertyProvider
             {
                 id: meshTypePropertyProvider
-                containerStack: Cura.MachineManager.activeMachine
+                containerStack: SteSlicer.MachineManager.activeMachine
                 watchedProperties: [ "enabled" ]
             }
 
@@ -121,7 +121,7 @@ Item {
 
             Connections
             {
-                target: Cura.MachineManager
+                target: SteSlicer.MachineManager
                 onGlobalContainerChanged:
                 {
                     meshTypeSelection.model.clear();
@@ -160,7 +160,7 @@ Item {
                     model: UM.SettingDefinitionsModel
                     {
                         id: addedSettingsModel;
-                        containerId: Cura.MachineManager.activeDefinitionId
+                        containerId: SteSlicer.MachineManager.activeDefinitionId
                         expanded: [ "*" ]
                         filter:
                         {
@@ -181,7 +181,7 @@ Item {
                             return excluded_settings;
                         }
 
-                        visibilityHandler: Cura.PerObjectSettingVisibilityHandler
+                        visibilityHandler: SteSlicer.PerObjectSettingVisibilityHandler
                         {
                             selectedObjectId: UM.ActiveTool.properties.getValue("SelectedObjectId")
                         }
@@ -468,7 +468,7 @@ Item {
                 model: UM.SettingDefinitionsModel
                 {
                     id: definitionsModel;
-                    containerId: Cura.MachineManager.activeDefinitionId
+                    containerId: SteSlicer.MachineManager.activeDefinitionId
                     visibilityHandler: UM.SettingPreferenceVisibilityHandler {}
                     expanded: [ "*" ]
                     exclude:
@@ -518,7 +518,7 @@ Item {
     {
         id: machineExtruderCount
 
-        containerStack: Cura.MachineManager.activeMachine
+        containerStack: SteSlicer.MachineManager.activeMachine
         key: "machine_extruder_count"
         watchedProperties: [ "value" ]
         storeIndex: 0
@@ -528,7 +528,7 @@ Item {
     {
         id: printSequencePropertyProvider
 
-        containerStack: Cura.MachineManager.activeMachine
+        containerStack: SteSlicer.MachineManager.activeMachine
         key: "print_sequence"
         watchedProperties: [ "value" ]
         storeIndex: 0
@@ -540,48 +540,48 @@ Item {
     {
         id: settingTextField;
 
-        Cura.SettingTextField { }
+        SteSlicer.SettingTextField { }
     }
 
     Component
     {
         id: settingComboBox;
 
-        Cura.SettingComboBox { }
+        SteSlicer.SettingComboBox { }
     }
 
     Component
     {
         id: settingExtruder;
 
-        Cura.SettingExtruder { }
+        SteSlicer.SettingExtruder { }
     }
 
     Component
     {
         id: settingOptionalExtruder
 
-        Cura.SettingOptionalExtruder { }
+        SteSlicer.SettingOptionalExtruder { }
     }
 
     Component
     {
         id: settingCheckBox;
 
-        Cura.SettingCheckBox { }
+        SteSlicer.SettingCheckBox { }
     }
 
     Component
     {
         id: settingCategory;
 
-        Cura.SettingCategory { }
+        SteSlicer.SettingCategory { }
     }
 
     Component
     {
         id: settingUnknown;
 
-        Cura.SettingUnknown { }
+        SteSlicer.SettingUnknown { }
     }
 }

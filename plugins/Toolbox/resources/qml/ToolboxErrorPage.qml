@@ -13,7 +13,7 @@ Rectangle
     color: "transparent"
     Label
     {
-        text: catalog.i18nc("@info", "Could not connect to the Cura Package database. Please check your connection.")
+        text: catalog.i18nc("@info", "Could not connect to the STE Slicer Package database. Please check your connection.")
         anchors
         {
             centerIn: parent

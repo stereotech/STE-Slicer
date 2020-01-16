@@ -5,7 +5,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.3
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Rectangle {
     property var iconSource: null;

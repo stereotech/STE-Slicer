@@ -2,7 +2,7 @@
 // Cura is released under the terms of the LGPLv3 or higher.
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 import QtQuick 2.2
 import QtQuick.Controls 1.1
@@ -10,7 +10,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
 import QtQuick.Dialogs 1.2
 
-Cura.MachineAction
+SteSlicer.MachineAction
 {
     id: base
     anchors.fill: parent;
@@ -45,7 +45,7 @@ Cura.MachineAction
         id: existingConnectionDialog
         title: catalog.i18nc("@window:title", "Existing Connection")
         icon: StandardIcon.Information
-        text: catalog.i18nc("@message:text", "This printer/group is already added to Cura. Please select another printer/group.")
+        text: catalog.i18nc("@message:text", "This printer/group is already added to STE Slicer. Please select another printer/group.")
         standardButtons: StandardButton.Ok
         modality: Qt.ApplicationModal
     }
@@ -57,7 +57,7 @@ Cura.MachineAction
         spacing: UM.Theme.getSize("default_margin").height
 
         SystemPalette { id: palette }
-        UM.I18nCatalog { id: catalog; name:"cura" }
+        UM.I18nCatalog { id: catalog; name:"steslicer" }
         Label
         {
             id: pageTitle
@@ -72,7 +72,7 @@ Cura.MachineAction
             id: pageDescription
             width: parent.width
             wrapMode: Text.WordWrap
-            text: catalog.i18nc("@label", "To print directly to your printer over the network, please make sure your printer is connected to the network using a network cable or by connecting your printer to your WIFI network. If you don't connect Cura with your printer, you can still use a USB drive to transfer g-code files to your printer.\n\nSelect your printer from the list below:")
+            text: catalog.i18nc("@label", "To print directly to your printer over the network, please make sure your printer is connected to the network using a network cable or by connecting your printer to your WIFI network. If you don't connect STE Slicer with your printer, you can still use a USB drive to transfer g-code files to your printer.\n\nSelect your printer from the list below:")
         }
 
         Row

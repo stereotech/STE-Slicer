@@ -14,7 +14,7 @@ Item
     height: visible ? Math.floor(UM.Theme.getSize("toolbox_footer").height) : 0
     Label
     {
-        text: catalog.i18nc("@info", "You will need to restart Cura before changes in packages have effect.")
+        text: catalog.i18nc("@info", "You will need to restart STE Slicer before changes in packages have effect.")
         color: UM.Theme.getColor("text")
         height: Math.floor(UM.Theme.getSize("toolbox_footer_button").height)
         verticalAlignment: Text.AlignVCenter
@@ -31,7 +31,7 @@ Item
     Button
     {
         id: restartButton
-        text: catalog.i18nc("@info:button", "Quit Cura")
+        text: catalog.i18nc("@info:button", "Quit STE Slicer")
         anchors
         {
             top: parent.top

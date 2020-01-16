@@ -110,7 +110,7 @@ class SimulationView(View):
         self._only_show_top_layers = bool(Application.getInstance().getPreferences().getValue("view/only_show_top_layers"))
         self._compatibility_mode = self._evaluateCompatibilityMode()
 
-        self._wireprint_warning_message = Message(catalog.i18nc("@info:status", "Cura does not accurately display layers when Wire Printing is enabled"),
+        self._wireprint_warning_message = Message(catalog.i18nc("@info:status", "STE Slicer does not accurately display layers when Wire Printing is enabled"),
                                                   title = catalog.i18nc("@info:title", "Simulation View"))
 
     def _evaluateCompatibilityMode(self) -> bool:

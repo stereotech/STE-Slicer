@@ -24,7 +24,7 @@ Window
     UM.I18nCatalog
     {
         id: catalog
-        name:"cura"
+        name:"steslicer"
     }
     Item
     {

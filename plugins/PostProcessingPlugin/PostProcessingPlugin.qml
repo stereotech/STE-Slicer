@@ -9,7 +9,7 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.2
 
 import UM 1.2 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 UM.Dialog
 {
@@ -31,7 +31,7 @@ UM.Dialog
 
     Item
     {
-        UM.I18nCatalog{id: catalog; name:"cura"}
+        UM.I18nCatalog{id: catalog; name:"steslicer"}
         id: base
         property int columnWidth: Math.round((base.width / 2) - UM.Theme.getSize("default_margin").width)
         property int textMargin: Math.round(UM.Theme.getSize("default_margin").width / 2)
@@ -387,7 +387,7 @@ UM.Dialog
                         UM.SettingPropertyProvider
                         {
                             id: inheritStackProvider
-                            containerStack: Cura.MachineManager.activeMachine
+                            containerStack: SteSlicer.MachineManager.activeMachine
                             key: model.key ? model.key : "None"
                             watchedProperties: [ "limit_to_extruder" ]
                         }
@@ -415,7 +415,7 @@ UM.Dialog
             }
         }
 
-        Cura.SidebarTooltip
+        SteSlicer.SidebarTooltip
         {
             id: tooltip
         }
@@ -424,42 +424,42 @@ UM.Dialog
         {
             id: settingTextField;
 
-            Cura.SettingTextField { }
+            SteSlicer.SettingTextField { }
         }
 
         Component
         {
             id: settingComboBox;
 
-            Cura.SettingComboBox { }
+            SteSlicer.SettingComboBox { }
         }
 
         Component
         {
             id: settingExtruder;
 
-            Cura.SettingExtruder { }
+            SteSlicer.SettingExtruder { }
         }
 
         Component
         {
             id: settingCheckBox;
 
-            Cura.SettingCheckBox { }
+            SteSlicer.SettingCheckBox { }
         }
 
         Component
         {
             id: settingCategory;
 
-            Cura.SettingCategory { }
+            SteSlicer.SettingCategory { }
         }
 
         Component
         {
             id: settingUnknown;
 
-            Cura.SettingUnknown { }
+            SteSlicer.SettingUnknown { }
         }
     }
     rightButtons: Button

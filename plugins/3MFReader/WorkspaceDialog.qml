@@ -40,7 +40,7 @@ UM.Dialog
         UM.I18nCatalog
         {
             id: catalog
-            name: "cura"
+            name: "steslicer"
         }
         SystemPalette
         {
@@ -67,7 +67,7 @@ UM.Dialog
             Label
             {
                 id: titleLabel
-                text: catalog.i18nc("@action:title", "Summary - Cura Project")
+                text: catalog.i18nc("@action:title", "Summary - STE Slicer Project")
                 font.pointSize: 18
             }
             Rectangle

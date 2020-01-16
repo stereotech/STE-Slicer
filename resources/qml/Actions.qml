@@ -146,7 +146,7 @@ Item
     Action
     {
         id: preferencesAction;
-        text: catalog.i18nc("@action:inmenu","Configure SteSlicer...");
+        text: catalog.i18nc("@action:inmenu","Configure STE Slicer...");
         iconName: "configure";
     }
 

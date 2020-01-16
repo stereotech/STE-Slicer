@@ -58,14 +58,14 @@ class ThreeMFWorkspaceWriter(WorkspaceWriter):
             temp_preferences.setValue(preference, original_preferences.getValue(preference))
         preferences_string = StringIO()
         temp_preferences.writeToFile(preferences_string)
-        preferences_file = zipfile.ZipInfo("Cura/preferences.cfg")
+        preferences_file = zipfile.ZipInfo("SteSlicer/preferences.cfg")
         archive.writestr(preferences_file, preferences_string.getvalue())
 
-        # Save Cura version
-        version_file = zipfile.ZipInfo("Cura/version.ini")
+        # Save STE Slicer version
+        version_file = zipfile.ZipInfo("SteSlicer/version.ini")
         version_config_parser = configparser.ConfigParser(interpolation = None)
         version_config_parser.add_section("versions")
-        version_config_parser.set("versions", "cura_version", application.getVersion())
+        version_config_parser.set("versions", "steslicer_version", application.getVersion())
         version_config_parser.set("versions", "build_type", application.getBuildType())
         version_config_parser.set("versions", "is_debug_mode", str(application.getIsDebugMode()))
 
@@ -94,7 +94,7 @@ class ThreeMFWorkspaceWriter(WorkspaceWriter):
             if base_file != container.getId():
                 container = ContainerRegistry.getInstance().findContainers(id = base_file)[0]
 
-        file_name = "Cura/%s.%s" % (container.getId(), file_suffix)
+        file_name = "SteSlicer/%s.%s" % (container.getId(), file_suffix)
 
         if file_name in archive.namelist():
             return  # File was already saved, no need to do it again. Uranium guarantees unique ID's, so this should hold.

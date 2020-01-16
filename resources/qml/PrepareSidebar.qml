@@ -550,7 +550,18 @@ Rectangle
     SidebarTooltip
     {
         id: tooltip
+        
+        
     }
+
+    //DropShadow 
+    //{
+    //    anchors.fill: tooltip
+    //    radius: UM.Theme.getSize("monitor_shadow_radius").width;
+    //    verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+    //    color: "#3F000000"; // 25% shadow
+    //    source: tooltip
+    //}
 
     // Setting mode: Recommended or Custom
     ListModel

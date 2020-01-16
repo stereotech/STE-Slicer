@@ -20,6 +20,6 @@ def getMetaData():
     }
 
 def register(app):
-    qmlRegisterType(PerObjectSettingVisibilityHandler.PerObjectSettingVisibilityHandler, "Cura", 1, 0,
+    qmlRegisterType(PerObjectSettingVisibilityHandler.PerObjectSettingVisibilityHandler, "SteSlicer", 1, 0,
                     "PerObjectSettingVisibilityHandler")
     return { "tool": PerObjectSettingsTool.PerObjectSettingsTool() }

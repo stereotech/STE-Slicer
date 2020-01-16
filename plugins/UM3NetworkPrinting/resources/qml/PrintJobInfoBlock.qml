@@ -21,7 +21,7 @@ Item {
 
     UM.I18nCatalog {
         id: catalog;
-        name: "cura";
+        name: "steslicer";
     }
 
     // The actual card (white block)

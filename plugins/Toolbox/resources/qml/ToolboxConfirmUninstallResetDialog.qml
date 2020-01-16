@@ -9,7 +9,7 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.1
 
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 UM.Dialog
@@ -30,7 +30,7 @@ UM.Dialog
 
     Column
     {
-        UM.I18nCatalog { id: catalog; name: "cura" }
+        UM.I18nCatalog { id: catalog; name: "steslicer" }
 
         anchors
         {

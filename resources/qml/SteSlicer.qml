@@ -412,13 +412,6 @@ UM.MainWindow
             {
                 id: sidebar
 
-                layer.effect: DropShadow {
-                    radius: UM.Theme.getSize("monitor_shadow_radius").width;
-                    verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
-                    color: "#3F000000"; // 25% shadow
-                }
-                layer.enabled: true    
-
                 property bool collapsed: false;
                 property var initialWidth: UM.Theme.getSize("sidebar").width;
 
@@ -481,6 +474,14 @@ UM.MainWindow
                     acceptedButtons: Qt.AllButtons
                     onWheel: wheel.accepted = true
                 }
+            }
+
+            DropShadow {
+                    anchors.fill: sidebar
+                    radius: UM.Theme.getSize("monitor_shadow_radius").width;
+                    verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+                    color: "#3F000000"; // 25% shadow
+                    source: sidebar
             }
 
             Loader

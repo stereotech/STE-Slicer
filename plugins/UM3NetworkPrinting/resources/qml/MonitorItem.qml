@@ -3,14 +3,14 @@
 
 import QtQuick 2.2
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 Component {
     Item {
         height: maximumHeight;
         width: maximumWidth;
 
-        Cura.NetworkMJPGImage {
+        SteSlicer.NetworkMJPGImage {
             id: cameraImage;
             anchors {
                 horizontalCenter: parent.horizontalCenter;

@@ -35,9 +35,9 @@ UM.Dialog
     {
         id: logo
         width: (base.minimumWidth * 0.85) | 0
-        height: (width * (1/4.25)) | 0
+        height: (width * (0.38)) | 0
 
-        source: UM.Theme.getImage("logo")
+        source: UM.Theme.getImage("steslicer")
 
         sourceSize.width: width
         sourceSize.height: height
@@ -66,7 +66,7 @@ UM.Dialog
         width: parent.width
 
         //: About dialog application description
-        text: catalog.i18nc("@label","End-to-end solution for fused filament 3D printing.")
+        text: catalog.i18nc("@label","End-to-end solution for filament 3D and innovative 5D printing.")
         font: UM.Theme.getFont("system")
         wrapMode: Text.WordWrap
         anchors.top: version.bottom

@@ -7,7 +7,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
 import UM 1.3 as UM
-import Cura 1.0 as Cura
+import SteSlicer 1.0 as SteSlicer
 
 
 UM.Dialog
@@ -63,7 +63,7 @@ UM.Dialog
                 right: parent.right
             }
 
-            text: catalog.i18nc("@text:window", "Cura sends anonymous data to Ultimaker in order to improve the print quality and user experience. Below is an example of all the data that is sent.")
+            text: catalog.i18nc("@text:window", "STE Slicer sends anonymous data to Ultimaker in order to improve the print quality and user experience. Below is an example of all the data that is sent.")
             wrapMode: Text.WordWrap
         }
 
@@ -108,7 +108,7 @@ UM.Dialog
         RadioButton
         {
             id: allowSendButton
-            text: catalog.i18nc("@text:window", "Allow sending these data to Ultimaker and help us improve Cura")
+            text: catalog.i18nc("@text:window", "Allow sending these data to Stereotech and help us improve STE Slicer")
             exclusiveGroup: group
             onClicked:
             {
@@ -124,7 +124,7 @@ UM.Dialog
         width: parent.width
         anchors.bottomMargin: UM.Theme.getSize("default_margin").height
 
-        UM.I18nCatalog { id: catalog; name: "cura" }
+        UM.I18nCatalog { id: catalog; name: "steslicer" }
 
         Button
         {

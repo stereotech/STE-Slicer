@@ -580,7 +580,7 @@ class XmlMaterialProfile(InstanceContainer):
                     common_compatibility = self._parseCompatibleValue(entry.text)
 
         # Add namespaced Cura-specific settings
-        settings = data.iterfind("./um:settings/steslicer:setting", self.__namespaces)
+        settings = data.iterfind("./um:settings/cura:setting", self.__namespaces)
         for entry in settings:
             value = entry.text
             if value.lower() == "yes":
@@ -624,7 +624,7 @@ class XmlMaterialProfile(InstanceContainer):
                     Logger.log("d", "Unsupported material setting %s", key)
 
             # Add namespaced Cura-specific settings
-            settings = machine.iterfind("./steslicer:setting", self.__namespaces)
+            settings = machine.iterfind("./cura:setting", self.__namespaces)
             for entry in settings:
                 value = entry.text
                 if value.lower() == "yes":
@@ -854,7 +854,7 @@ class XmlMaterialProfile(InstanceContainer):
                 Logger.log("w", "Unsupported material setting %s", setting_key)
 
         # Fetch settings in the "steslicer" namespace
-        cura_settings = node.iterfind("./steslicer:setting", cls.__namespaces)
+        cura_settings = node.iterfind("./cura:setting", cls.__namespaces)
         for cura_setting_entry in cura_settings:
             value = cura_setting_entry.text
             if value.lower() == "yes":
@@ -1106,7 +1106,7 @@ class XmlMaterialProfile(InstanceContainer):
 
         elif key not in self.__material_properties_setting_map.values() and key not in self.__material_metadata_setting_map.values():
             # Setting is not in the standard namespace, and not a material property (eg diameter) or metadata (eg GUID)
-            tag_name = "steslicer:setting"
+            tag_name = "cura:setting"
         else:
             # Skip material properties (eg diameter) or metadata (eg GUID)
             return
@@ -1203,7 +1203,7 @@ class XmlMaterialProfile(InstanceContainer):
     # Map of recognised namespaces with a proper prefix.
     __namespaces = {
         "um": "http://www.ultimaker.com/material",
-        "steslicer": "http://www.ultimaker.com/cura"
+        "cura": "http://www.ultimaker.com/cura"
     }
 
 ##  Helper function for pretty-printing XML because ETree is stupid
