@@ -12,6 +12,15 @@ buildSteSlicer:
     paths:
       - build
 
+extractTranslations:
+  image: ultimaker/cura-build-environment
+  stage: build
+  script:
+    - docker/extract-translations.sh
+  artifacts:
+    paths:
+      - build
+
 testSteSlicer:
   image: ultimaker/cura-build-environment
   stage: test
