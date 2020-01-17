@@ -20,6 +20,7 @@ extractTranslations:
   artifacts:
     paths:
       - build
+      - resources/i18n
 
 testSteSlicer:
   image: ultimaker/cura-build-environment
