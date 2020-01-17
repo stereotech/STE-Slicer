@@ -19,7 +19,6 @@ extractTranslations:
     - docker/extract-translations.sh
   artifacts:
     paths:
-      - build
       - resources/i18n
 
 testSteSlicer:
@@ -32,3 +31,5 @@ deployDeveloperBuild:
   stage: deploy
   script:
     - curl -X POST -F token=38fe74bf0215330816f969bdd3e555 -F ref=master https://gitlab.com/api/v4/projects/16067414/trigger/pipeline
+  only:
+    - schedules
