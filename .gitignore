@@ -75,3 +75,4 @@ CuraEngine
 openscad.*
 *.dll
 plugins/*.txt
+plugins/setup.py

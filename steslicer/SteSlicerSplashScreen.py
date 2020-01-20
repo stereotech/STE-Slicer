@@ -65,8 +65,8 @@ class SteSlicerSplashScreen(QSplashScreen):
         if len(version) > 1:
             font.setPixelSize(16)
             painter.setFont(font)
-            painter.setPen(QColor(200, 200, 200, 255))
-            painter.drawText(432, 39, 330 * self._scale, 255 * self._scale, Qt.AlignRight | Qt.AlignTop, version[1])
+            painter.setPen(QColor(38, 50, 56, 255))
+            painter.drawText(400, 39, 330 * self._scale, 255 * self._scale, Qt.AlignRight | Qt.AlignTop, version[1])
         painter.setPen(QColor(255, 255, 255, 255))
 
         # draw the loading image

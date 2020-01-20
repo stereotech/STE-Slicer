@@ -388,8 +388,8 @@ class PrintInformation(QObject):
 
         abbr_machine = ""
         for word in re.findall(r"[\w']+", active_machine_type_name):
-            if word.lower() == "ultimaker":
-                abbr_machine += "UM"
+            if word.lower() == "stereotech":
+                abbr_machine += "STE"
             elif word.isdigit():
                 abbr_machine += word
             else:

@@ -98,7 +98,7 @@ class CrashHandler:
         layout.addWidget(label)
 
         # "send report" check box and show details
-        self._send_report_checkbox = QCheckBox(catalog.i18nc("@action:button", "Send crash report to Ultimaker"), dialog)
+        self._send_report_checkbox = QCheckBox(catalog.i18nc("@action:button", "Send crash report to Stereotech"), dialog)
         self._send_report_checkbox.setChecked(True)
 
         show_details_button = QPushButton(catalog.i18nc("@action:button", "Show detailed crash report"), dialog)

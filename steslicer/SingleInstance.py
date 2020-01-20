@@ -23,7 +23,7 @@ class SingleInstance:
         Logger.log("i", "Checking for the presence of an ready running STE Slicer instance.")
         single_instance_socket = QLocalSocket(self._application)
         Logger.log("d", "Full single instance server name: %s", single_instance_socket.fullServerName())
-        single_instance_socket.connectToServer("ultimaker-steslicer")
+        single_instance_socket.connectToServer("stereotech-steslicer")
         single_instance_socket.waitForConnected(msecs = 3000)  # wait for 3 seconds
 
         if single_instance_socket.state() != QLocalSocket.ConnectedState:
@@ -62,7 +62,7 @@ class SingleInstance:
         self._single_instance_server = QLocalServer()
         if self._single_instance_server:
             self._single_instance_server.newConnection.connect(self._onClientConnected)
-            self._single_instance_server.listen("ultimaker-steslicer")
+            self._single_instance_server.listen("stereotech-steslicer")
         else:
             Logger.log("e", "Single instance server was not created.")
 

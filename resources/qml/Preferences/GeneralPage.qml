@@ -679,7 +679,7 @@ UM.PreferencesPage
                 visible: pluginExistsAndEnabled("SliceInfoPlugin")
                 width: childrenRect.width
                 height: visible ? childrenRect.height : 0
-                text: catalog.i18nc("@info:tooltip","Should anonymous data about your print be sent to Ultimaker? Note, no models, IP addresses or other personally identifiable information is sent or stored.")
+                text: catalog.i18nc("@info:tooltip","Should anonymous data about your print be sent to Stereotech? Note, no models, IP addresses or other personally identifiable information is sent or stored.")
 
                 CheckBox
                 {
