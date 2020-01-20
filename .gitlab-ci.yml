@@ -1,7 +1,6 @@
 stages:
   - build
   - test
-  - deploy
 
 buildSteSlicer:
   image: ultimaker/cura-build-environment
@@ -26,10 +25,3 @@ testSteSlicer:
   stage: test
   script:
     - docker/test.sh
-
-deployDeveloperBuild:
-  stage: deploy
-  script:
-    - curl -X POST -F token=38fe74bf0215330816f969bdd3e555 -F ref=master https://gitlab.com/api/v4/projects/16067414/trigger/pipeline
-  only:
-    - schedules
