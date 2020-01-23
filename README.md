@@ -1,4 +1,4 @@
-Cura
+STE Slicer
 ====
 
 License
