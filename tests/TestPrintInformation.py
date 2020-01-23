@@ -46,7 +46,7 @@ def setup_module():
 
 def test_setProjectName():
 
-    print_information = getPrintInformation("ultimaker")
+    print_information = getPrintInformation("stereotech")
 
     # Test simple name
     project_name = ["HelloWorld",".3mf"]
