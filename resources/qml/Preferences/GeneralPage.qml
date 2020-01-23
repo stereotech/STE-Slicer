@@ -708,27 +708,6 @@ UM.PreferencesPage
                 width: UM.Theme.getSize("default_margin").height
             }
 
-            Label
-            {
-                font.bold: true
-                text: catalog.i18nc("@label","Experimental")
-            }
-
-            UM.TooltipArea
-            {
-                width: childrenRect.width
-                height: childrenRect.height
-                text: catalog.i18nc("@info:tooltip","Use multi build plate functionality")
-
-                CheckBox
-                {
-                    id: useMultiBuildPlateCheckbox
-                    text: catalog.i18nc("@option:check","Use multi build plate functionality (restart required)")
-                    checked: boolCheck(UM.Preferences.getValue("steslicer/use_multi_build_plate"))
-                    onCheckedChanged: UM.Preferences.setValue("steslicer/use_multi_build_plate", checked)
-                }
-            }
-
             Connections
             {
                 target: UM.Preferences
