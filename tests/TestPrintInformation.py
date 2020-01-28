@@ -46,37 +46,37 @@ def setup_module():
 
 def test_setProjectName():
 
-    print_information = getPrintInformation("ultimaker")
+    print_information = getPrintInformation("stereotech")
 
     # Test simple name
     project_name = ["HelloWorld",".3mf"]
     print_information.setProjectName(project_name[0] + project_name[1])
-    assert "UM_" + project_name[0] == print_information._job_name
+     + project_name[0] == print_information._job_name
 
     # Test the name with one dot
     project_name = ["Hello.World",".3mf"]
     print_information.setProjectName(project_name[0] + project_name[1])
-    assert "UM_" + project_name[0] == print_information._job_name
+    assert "STE_" + project_name[0] == print_information._job_name
 
     # Test the name with two dot
     project_name = ["Hello.World.World",".3mf"]
     print_information.setProjectName(project_name[0] + project_name[1])
-    assert "UM_" + project_name[0] == print_information._job_name
+    assert "STE_" + project_name[0] == print_information._job_name
 
     # Test the name with dot at the beginning
     project_name = [".Hello.World",".3mf"]
     print_information.setProjectName(project_name[0] + project_name[1])
-    assert "UM_" + project_name[0] == print_information._job_name
+    assert "STE_" + project_name[0] == print_information._job_name
 
     # Test the name with underline
     project_name = ["Hello_World",".3mf"]
     print_information.setProjectName(project_name[0] + project_name[1])
-    assert "UM_" + project_name[0] == print_information._job_name
+    assert "STE_" + project_name[0] == print_information._job_name
 
     # Test gcode extension
     project_name = ["Hello_World",".gcode"]
     print_information.setProjectName(project_name[0] + project_name[1])
-    assert "UM_" + project_name[0] == print_information._job_name
+    assert "STE_" + project_name[0] == print_information._job_name
 
     # Test empty project name
     project_name = ["",""]
@@ -86,7 +86,7 @@ def test_setProjectName():
     # Test wrong file extension
     project_name = ["Hello_World",".test"]
     print_information.setProjectName(project_name[0] + project_name[1])
-    assert "UM_" + project_name[0] != print_information._job_name
+    assert "STE_" + project_name[0] != print_information._job_name
 
 def test_setJobName():
 

@@ -54,6 +54,7 @@ plugins/ProfileFlattener
 plugins/X3GWriter
 plugins/CliReader
 plugins/GlicerWriter
+plugins/GlicerBackend
 plugins/.gitignore
 
 #Build stuff
