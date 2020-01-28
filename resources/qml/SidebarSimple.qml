@@ -48,7 +48,7 @@ Item
                 anchors.left: parent.left
                 anchors.leftMargin: UM.Theme.getSize("sidebar_margin").width
                 anchors.right: parent.right
-
+                anchors.top: printingModeCombobox.bottom
                 Timer
                 {
                     id: qualitySliderChangeTimer
@@ -185,6 +185,7 @@ Item
                     }
                 }
 
+             
                 Label
                 {
                     id: qualityRowTitle
@@ -197,7 +198,7 @@ Item
                 Item
                 {
                     y: -5;
-                    anchors.left: speedSlider.left
+                    anchors.left: speedSlider.left                  
                     Repeater
                     {
                         model: qualityModel
@@ -1047,12 +1048,79 @@ Item
                 }
             }
 
+            Label{
+                id: printingModeTitle
+                text: catalog.i18nc("@label", "Printing Mode")
+                font: UM.Theme.getFont("default")
+                color: UM.Theme.getColor("text")
+                visible: printingModeCombobox.visible
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    leftMargin: UM.Theme.getSize("sidebar_margin").width
+                    right: printingModeCombobox.right
+                    rightMargin: UM.Theme.getSize("sidebar_margin").width
+                    topMargin: UM.Theme.getSize("sidebar_margin").height
+                    verticalCenter: printingModeCombobox.verticalCenter
+                    
+                }
+            }
+            ComboBox{
+                id: printingModeCombobox
+                property bool _forceUpdateOnChange: (typeof(forceUpdateOnChange) === 'undefined') ? false: forceUpdateOnChange
+                property var _afterOnActivate: (typeof(afterOnActivate) === 'undefined') ? undefined : afterOnActivate
+                anchors.top: parent.top
+                anchors.topMargin: UM.Theme.getSize("sidebar_margin").height
+                anchors.left: infillCellRight.left
+                style: UM.Theme.styles.combobox
+                visible: printingModes.properties.enabled == "True"
+                textRole: "text"
+                model: printingModesModel               
+                width: Math.round(UM.Theme.getSize("sidebar").width * .55) - Math.round(UM.Theme.getSize("sidebar_margin").width / 2) - enableSupportCheckBox.width
+
+
+                Behavior on height { NumberAnimation { duration: 100 } }
+                currentIndex:
+                {
+                    var currentValue = printingModes.properties.value;
+                    var index = 0;
+                    for(var i = 0; i < printingModesModel.count; i++)
+                    {
+                        if(printingModesModel.get(i).value == currentValue) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    return index
+                }
+                onActivated:
+                {
+                    if(printingModes.properties.value != printingModesModel.get(index).value)
+                    {
+                        printingModes.setPropertyValue("value", printingModesModel.get(index).value);
+                        //if(_forceUpdateOnChange)
+                        //{
+                        //    manager.forceUpdate();
+                        //}
+                        if(_afterOnActivate)
+                        {
+                            _afterOnActivate();
+                        }
+                    }
+                }
+
+            }
             ListModel
             {
                 id: extruderModel
                 Component.onCompleted: populateExtruderModel()
             }
 
+            ListModel
+            {
+                id: printingModesModel
+                Component.onCompleted: populatePrintingModesModel()
+            }
             //: Model used to populate the extrudelModel
             SteSlicer.ExtrudersModel
             {
@@ -1061,6 +1129,14 @@ Item
             }
 
            
+            UM.SettingPropertyProvider
+            {
+                id: printingModes
+                containerStack: SteSlicer.MachineManager.activeMachine 
+                key: "printing_mode"
+                watchedProperties: ["value","enabled","options"]
+                storeIndex: 0
+            }
 
             UM.SettingPropertyProvider
             {
@@ -1139,5 +1215,21 @@ Item
             })
         }
         supportExtruderCombobox.updateCurrentColor();
+    }
+
+    function populatePrintingModesModel()
+    {
+        printingModesModel.clear()
+        var printingOptions = printingModes.properties.options.match(/^OrderedDict\(\[\((.*)\)\]\)$/)
+        printingOptions = printingOptions[1].split("), (")
+        if (printingOptions){
+            for (var optNumber = 0; optNumber < printingOptions.length; optNumber++)
+            {
+                var option = printingOptions[optNumber].substring(1, printingOptions[optNumber].length - 1).split("', '")
+                printingModesModel.append({
+                    text: option[1], value: option[0]
+                })
+            }
+        }       
     }
 }

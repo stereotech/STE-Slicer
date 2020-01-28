@@ -267,6 +267,7 @@ Rectangle
         }
     }
 
+   
     StackView
     {
         id: sidebarContents
