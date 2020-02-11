@@ -4,12 +4,15 @@ import numpy
 from string import Formatter
 from enum import IntEnum
 import time
+import trimesh
 from typing import Any, cast, Dict, List, Optional, Set
 import re
 import Arcus #For typing.
 
 from UM.Job import Job
 from UM.Logger import Logger
+from UM.Mesh import MeshData
+from UM.Scene.SceneNode import SceneNode
 from UM.Settings.ContainerStack import ContainerStack #For typing.
 from UM.Settings.SettingRelation import SettingRelation #For typing.
 
@@ -22,7 +25,7 @@ from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.OneAtATimeIterator import OneAtATimeIterator
 from steslicer.Settings.ExtruderManager import ExtruderManager
-
+from steslicer.GcodeStartEndFormatter import GcodeStartEndFormatter
 
 NON_PRINTING_MESH_SETTINGS = ["anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
 
@@ -36,41 +39,6 @@ class StartJobResult(IntEnum):
     BuildPlateError = 6
     ObjectSettingError = 7 #When an error occurs in per-object settings.
     ObjectsWithDisabledExtruder = 8
-
-
-##  Formatter class that handles token expansion in start/end gcode
-class GcodeStartEndFormatter(Formatter):
-    def __init__(self, default_extruder_nr: int = -1) -> None:
-        super().__init__()
-        self._default_extruder_nr = default_extruder_nr
-
-    def get_value(self, key: str, args: str, kwargs: dict) -> str: #type: ignore # [CodeStyle: get_value is an overridden function from the Formatter class]
-        # The kwargs dictionary contains a dictionary for each stack (with a string of the extruder_nr as their key),
-        # and a default_extruder_nr to use when no extruder_nr is specified
-
-        extruder_nr = self._default_extruder_nr
-
-        key_fragments = [fragment.strip() for fragment in key.split(",")]
-        if len(key_fragments) == 2:
-            try:
-                extruder_nr = int(key_fragments[1])
-            except ValueError:
-                try:
-                    extruder_nr = int(kwargs["-1"][key_fragments[1]]) # get extruder_nr values from the global stack #TODO: How can you ever provide the '-1' kwarg?
-                except (KeyError, ValueError):
-                    # either the key does not exist, or the value is not an int
-                    Logger.log("w", "Unable to determine stack nr '%s' for key '%s' in start/end g-code, using global stack", key_fragments[1], key_fragments[0])
-        elif len(key_fragments) != 1:
-            Logger.log("w", "Incorrectly formatted placeholder '%s' in start/end g-code", key)
-            return "{" + key + "}"
-
-        key = key_fragments[0]
-        try:
-            return kwargs[str(extruder_nr)][key]
-        except KeyError:
-            Logger.log("w", "Unable to replace '%s' placeholder in start/end g-code", key)
-            return "{" + key + "}"
-
 
 ##  Job class that builds up the message of scene data to send to CuraEngine.
 class StartSliceJob(Job):
@@ -158,39 +126,74 @@ class StartSliceJob(Job):
 
             # Get the objects in their groups to print.
             object_groups = []
-            if stack.getProperty("print_sequence", "value") == "one_at_a_time":
-                for node in OneAtATimeIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+            printing_mode = stack.getProperty("printing_mode", "value")
+            if printing_mode == "classic":
+                if stack.getProperty("print_sequence", "value") == "one_at_a_time":
+                    for node in OneAtATimeIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+                        temp_list = []
+
+                        # Node can't be printed, so don't bother sending it.
+                        if getattr(node, "_outside_buildarea", False):
+                            continue
+
+                        # Filter on current build plate
+                        build_plate_number = node.callDecoration("getBuildPlateNumber")
+                        if build_plate_number is not None and build_plate_number != self._build_plate_number:
+                            continue
+
+                        children = node.getAllChildren()
+                        children.append(node)
+                        for child_node in children:
+                            if child_node.getMeshData() and child_node.getMeshData().getVertices() is not None:
+                                temp_list.append(child_node)
+
+                        if temp_list:
+                            object_groups.append(temp_list)
+                        Job.yieldThread()
+                    if len(object_groups) == 0:
+                        Logger.log("w", "No objects suitable for one at a time found, or no correct order found")
+                else:
                     temp_list = []
+                    has_printing_mesh = False
+                    for node in DepthFirstIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+                        if node.callDecoration("isSliceable") and node.getMeshData() and node.getMeshData().getVertices() is not None:
+                            per_object_stack = node.callDecoration("getStack")
+                            is_non_printing_mesh = False
+                            if per_object_stack:
+                                is_non_printing_mesh = any(per_object_stack.getProperty(key, "value") for key in NON_PRINTING_MESH_SETTINGS)
 
-                    # Node can't be printed, so don't bother sending it.
-                    if getattr(node, "_outside_buildarea", False):
-                        continue
+                            # Find a reason not to add the node
+                            if node.callDecoration("getBuildPlateNumber") != self._build_plate_number:
+                                continue
+                            if getattr(node, "_outside_buildarea", False) and not is_non_printing_mesh:
+                                continue
 
-                    # Filter on current build plate
-                    build_plate_number = node.callDecoration("getBuildPlateNumber")
-                    if build_plate_number is not None and build_plate_number != self._build_plate_number:
-                        continue
+                            temp_list.append(node)
+                            if not is_non_printing_mesh:
+                                has_printing_mesh = True
 
-                    children = node.getAllChildren()
-                    children.append(node)
-                    for child_node in children:
-                        if child_node.getMeshData() and child_node.getMeshData().getVertices() is not None:
-                            temp_list.append(child_node)
+                        Job.yieldThread()
+
+                    #If the list doesn't have any model with suitable settings then clean the list
+                    # otherwise CuraEngine will crash
+                    if not has_printing_mesh:
+                        temp_list.clear()
 
                     if temp_list:
                         object_groups.append(temp_list)
-                    Job.yieldThread()
-                if len(object_groups) == 0:
-                    Logger.log("w", "No objects suitable for one at a time found, or no correct order found")
-            else:
+            elif printing_mode == "cylindrical":
                 temp_list = []
                 has_printing_mesh = False
-                for node in DepthFirstIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
-                    if node.callDecoration("isSliceable") and node.getMeshData() and node.getMeshData().getVertices() is not None:
+
+                for node in DepthFirstIterator(
+                        self._scene.getRoot()):  # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+                    if node.callDecoration(
+                            "isSliceable") and node.getMeshData() and node.getMeshData().getVertices() is not None:
                         per_object_stack = node.callDecoration("getStack")
                         is_non_printing_mesh = False
                         if per_object_stack:
-                            is_non_printing_mesh = any(per_object_stack.getProperty(key, "value") for key in NON_PRINTING_MESH_SETTINGS)
+                            is_non_printing_mesh = any(
+                                per_object_stack.getProperty(key, "value") for key in NON_PRINTING_MESH_SETTINGS)
 
                         # Find a reason not to add the node
                         if node.callDecoration("getBuildPlateNumber") != self._build_plate_number:
@@ -204,13 +207,36 @@ class StartSliceJob(Job):
 
                     Job.yieldThread()
 
-                #If the list doesn't have any model with suitable settings then clean the list
+                # If the list doesn't have any model with suitable settings then clean the list
                 # otherwise CuraEngine will crash
                 if not has_printing_mesh:
                     temp_list.clear()
 
                 if temp_list:
-                    object_groups.append(temp_list)
+                    cut_list = []
+                    radius = SteSlicerApplication.getInstance().getGlobalContainerStack(
+                    ).getProperty("cylindrical_mode_base_diameter", "value") / 2
+                    height = SteSlicerApplication.getInstance().getGlobalContainerStack(
+                    ).getProperty("machine_height", "value")
+                    cutting_cylinder = trimesh.primitives.Cylinder(
+                        radius=radius, height=height)
+                    cutting_cylinder.apply_transform(trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
+                    for node in temp_list:
+                        mesh_data = node.getMeshData()
+                        faces = mesh_data.getIndices() if mesh_data.hasIndices() else mesh_data.getVertexCount()
+                        mesh = trimesh.Trimesh(vertices=mesh_data.getVertices(), faces=faces)
+                        cutting_result = mesh.intersection(cutting_cylinder, engine="scad")
+                        if cutting_result:
+                            data = MeshData.MeshData(vertices=cutting_result.vertices,
+                                                     normals=cutting_result.face_normals, indices=cutting_result.faces)
+                            cutting_node = SceneNode(node.getParent())
+                            cutting_node.setMeshData(data)
+                            cut_list.append(cutting_node)
+
+                    object_groups.append(cut_list)
+            else:
+                self.setResult(StartJobResult.ObjectSettingError)
+                return
 
             global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
             if not global_stack:
