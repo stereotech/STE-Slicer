@@ -331,3 +331,12 @@ class NetworkedPrinterOutputDevice(PrinterOutputDevice):
     @pyqtProperty(str, constant = True)
     def ipAddress(self) -> str:
         return self._address
+
+    ## Model of printer
+    @pyqtProperty(str, constant = True)
+    def model(self) -> str:
+        return self._properties.get(b"model", b"").decode("utf-8")
+
+    @pyqtProperty(str, constant = True)
+    def printers(self) -> str:
+        return self._properties.get(b"printers", b"").decode("utf-8")

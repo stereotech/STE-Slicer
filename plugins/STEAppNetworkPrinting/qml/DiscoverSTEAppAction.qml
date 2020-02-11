@@ -289,7 +289,7 @@ SteSlicer.MachineAction
                 Button
                 {
                     text: catalog.i18nc("@action:button", "Connect")
-                    enabled: (base.selectedDevice && base.completeProperties && base.selectedDevice.printers > 0) ? true : false
+                    enabled: (base.selectedDevice && base.completeProperties && base.selectedDevice.clusterSize > 0) ? true : false
                     onClicked: connectToPrinter()
                 }
             }

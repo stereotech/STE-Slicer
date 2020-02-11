@@ -407,6 +407,23 @@
             }
         }
     },
+    "STEAppNetworkPrinting":{
+        "package_info": {
+            "package_id": "STEAppNetworkPrinting",
+            "package_type": "plugin",
+            "display_name": "STEApp Network Printing",
+            "description": "Manages network connections to STE printers.",
+            "package_version": "",
+            "sdk_version": "",
+            "website": "",
+            "author": {
+                "author_id": "",
+                "display_name": "",
+                "email": "",
+                "website": ""
+            }
+        }
+    },
     "UserAgreement": {
         "package_info": {
             "package_id": "UserAgreement",

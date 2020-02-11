@@ -15,6 +15,7 @@ from zeroconf import Zeroconf, ServiceBrowser, ServiceStateChange, ServiceInfo
 from queue import Queue
 from threading import Event, Thread
 from time import time
+import re
 
 import json
 
@@ -108,6 +109,7 @@ class UM3OutputDevicePlugin(OutputDevicePlugin):
             return
 
         um_network_key = active_machine.getMetaDataEntry("um_network_key")
+
 
         for key in self._discovered_devices:
             if key == um_network_key:
@@ -257,13 +259,12 @@ class UM3OutputDevicePlugin(OutputDevicePlugin):
     def _onAddDevice(self, name, address, properties):
         # Check what kind of device we need to add; Depending on the firmware we either add a "Connect"/"Cluster"
         # or "Legacy" UM3 device.
-        cluster_size = int(properties.get(b"cluster_size", -1))
+        cluster_size = int(properties.get(b"printers", 1))
 
-        printer_type = properties.get(b"machine", b"").decode("utf-8")
+        printer_type = properties.get(b"model", b"").decode("utf-8")
         printer_type_identifiers = {
-            "9066": "ultimaker3",
-            "9511": "ultimaker3_extended",
-            "9051": "ultimaker_s5"
+            "STE330": "ste320",
+            "STE520": "ste520"
         }
 
         for key, value in printer_type_identifiers.items():
@@ -272,14 +273,11 @@ class UM3OutputDevicePlugin(OutputDevicePlugin):
                 break
         else:
             properties[b"printer_type"] = b"Unknown"
-        if cluster_size >= 0:
-            device = ClusterUM3OutputDevice.ClusterUM3OutputDevice(name, address, properties)
-        else:
-            device = LegacyUM3OutputDevice.LegacyUM3OutputDevice(name, address, properties)
+
+        device = LegacyUM3OutputDevice.LegacyUM3OutputDevice(name, address, properties)
 
         self._discovered_devices[device.getId()] = device
         self.discoveredDevicesChanged.emit()
-
         global_container_stack = Application.getInstance().getGlobalContainerStack()
         if global_container_stack and device.getId() == global_container_stack.getMetaDataEntry("um_network_key"):
             device.connect()
@@ -345,9 +343,9 @@ class UM3OutputDevicePlugin(OutputDevicePlugin):
                 info = zero_conf.get_service_info(service_type, name)
 
             if info:
-                type_of_device = info.properties.get(b"type", None)
+                type_of_device = str(info.properties.get(b"id", None), encoding='utf-8')
                 if type_of_device:
-                    if type_of_device == b"printer":
+                    if re.fullmatch(r'st-[a-z0-9]..', type_of_device):
                         address = '.'.join(map(lambda n: str(n), info.address))
                         self.addDeviceSignal.emit(str(name), address, info.properties)
                     else:
