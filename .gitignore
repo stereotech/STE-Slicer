@@ -56,6 +56,7 @@ plugins/CliReader
 plugins/GlicerWriter
 plugins/GlicerBackend
 plugins/.gitignore
+plugins/build
 
 #Build stuff
 CMakeCache.txt
@@ -77,3 +78,4 @@ openscad.*
 *.dll
 plugins/*.txt
 plugins/setup.py
+plugins/cmake

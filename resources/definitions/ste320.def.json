@@ -20,10 +20,10 @@
             "1": "stereotech_ste320_2nd"
         },
         "first_start_actions": [
-
+            "DiscoverUM3Action"
         ],
         "supported_actions": [
-
+            "DiscoverUM3Action"
         ]
     },
     "overrides": {

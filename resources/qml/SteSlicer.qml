@@ -28,7 +28,7 @@ UM.MainWindow
         target: SteSlicerApplication
         onShowPrintMonitor: {
             if (show) {
-                UM.Controller.setActiveStage("MonitorStage")
+                UM.Controller.setActiveStage("STEAppStage")
             } else {
                 UM.Controller.setActiveStage("PrepareStage")
             }

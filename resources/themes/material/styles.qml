@@ -295,6 +295,15 @@ QtObject {
                     }
                 }
 
+                DropShadow
+                {
+                    anchors.fill: toolButtonBackgroundItem
+                    radius: UM.Theme.getSize("monitor_shadow_radius").width;
+                    verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
+                    color: "#3F000000"; // 25% shadow
+                    source: toolButtonBackgroundItem
+                }
+
                 Rectangle {
                     id: buttonFace;
                     anchors.fill: parent;
@@ -362,14 +371,7 @@ QtObject {
                     }
                 }
             }
-            DropShadow
-            {
-                anchors.fill: toolButtonBackgroundItem
-                radius: UM.Theme.getSize("monitor_shadow_radius").width;
-                verticalOffset: UM.Theme.getSize("monitor_shadow_offset").width;
-                color: "#3F000000"; // 25% shadow
-                source: toolButtonBackgroundItem
-            }
+
 
             label: Item {
                 UM.RecolorImage {

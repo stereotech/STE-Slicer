@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<fdmmaterial version="1.3" 
+  xmlns="http://www.ultimaker.com/material" >
+  <metadata>
+    <name>
+      <brand>Chocolate</brand>
+      <material>Glaze</material>
+      <color>Brown</color>
+      <label>Chocolate Glaze</label>
+    </name>
+    <compatible>True</compatible>
+    <version>19</version>
+    <definition>ste520_chocolate</definition>
+    <GUID>0422e17a-e8a4-49a9-8a83-2ec26b327e6a</GUID>
+    <color_code>#624d0d</color_code>
+    <adhesion_info>Print on bare glass. Use tape for cold build plates.</adhesion_info>
+    <description>Fast, safe and reliable printing. PLA is ideal for the fast and reliable printing of parts and prototypes with a great surface quality.</description>
+  </metadata>
+  <properties>
+    <diameter>2.55</diameter>
+    <density>1.35</density>
+  </properties>
+  <settings>
+    <setting key="retraction amount">0.2</setting>
+    <setting key="adhesion tendency">0</setting>
+    <setting key="surface energy">100</setting>
+    <setting key="standby temperature">34.0</setting>
+    <setting key="print temperature">34.0</setting>
+    <setting key="heated bed temperature">0.0</setting>
+  </settings>
+</fdmmaterial>
