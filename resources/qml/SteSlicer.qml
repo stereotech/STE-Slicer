@@ -298,6 +298,7 @@ UM.MainWindow
                 MenuItem { action: SteSlicer.Actions.reportBug; }
                 MenuSeparator { }
                 MenuItem { action: SteSlicer.Actions.about; }
+                MenuItem { action: SteSlicer.Actions.licensing; }
             }
         }
 
@@ -1066,6 +1067,10 @@ UM.MainWindow
 
             // check later if the user agreement dialog has been closed
             if (SteSlicerApplication.needToShowUserAgreement)
+            {
+                restart();
+            }
+            else if (SteSlicerApplication.needToShowLicense)
             {
                 restart();
             }

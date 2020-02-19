@@ -62,6 +62,7 @@ Item
     property alias documentation: documentationAction;
     property alias reportBug: reportBugAction;
     property alias about: aboutAction;
+    property alias licensing: licensingAction;
 
     property alias toggleFullScreen: toggleFullScreenAction;
 
@@ -224,6 +225,14 @@ Item
         id: aboutAction;
         text: catalog.i18nc("@action:inmenu menubar:help","About...");
         iconName: "help-about";
+    }
+
+    Action
+    {
+        id: licensingAction
+        text: catalog.i18nc("@action:inmenu menubar:help","Licensing");
+        iconName: "help-licensing";
+        onTriggered: SteSlicerActions.showLicenseWindow();
     }
 
     Action

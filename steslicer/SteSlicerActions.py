@@ -31,6 +31,10 @@ class SteSlicerActions(QObject):
         super().__init__(parent)
 
     @pyqtSlot()
+    def showLicenseWindow(self) -> None:
+        steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getLicenseManager().showLicenseWindow()
+
+    @pyqtSlot()
     def openDocumentation(self) -> None:
         # Starting a web browser from a signal handler connected to a menu will crash on windows.
         # So instead, defer the call to the next run of the event loop, since that does work.
