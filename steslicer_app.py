@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-
-
 import argparse
 import faulthandler
 import os
@@ -59,6 +57,25 @@ if Platform.isWindows() and hasattr(sys, "frozen"):
         del os.environ["PYTHONPATH"]
     except KeyError:
         pass
+
+    from ctypes import CDLL
+    from Crypto.Util import _raw_api
+
+    def load_pycryptodome_raw_lib(name, _):
+        for ext in _raw_api.extension_suffixes:
+            mod_file_name = name + ext
+            for path in sys.path:
+                if path.endswith('.zip'):
+                    continue
+                mod_file_path = os.path.join(path, mod_file_name)
+                if os.path.exists(mod_file_path):
+                    return CDLL(mod_file_path)
+
+        raise OSError("Cannot load native module '%s'" % name)
+
+    _raw_api.load_pycryptodome_raw_lib = load_pycryptodome_raw_lib
+    sys.modules['Crypto.Util._raw_api'] = _raw_api
+
 
 if "PYTHONPATH" in os.environ.keys():                       # If PYTHONPATH is used
     PYTHONPATH = os.environ["PYTHONPATH"].split(os.pathsep) # Get the value, split it..
