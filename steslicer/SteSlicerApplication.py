@@ -155,6 +155,7 @@ class SteSlicerApplication(QtApplication):
         ExtruderStack = Resources.UserType + 9
         DefinitionChangesContainer = Resources.UserType + 10
         SettingVisibilityPreset = Resources.UserType + 11
+        Certificates = Resources.UserType + 12
 
     Q_ENUMS(ResourceTypes)
 
@@ -381,6 +382,7 @@ class SteSlicerApplication(QtApplication):
 
         Resources.addType(self.ResourceTypes.QmlFiles, "qml")
         Resources.addType(self.ResourceTypes.Firmware, "firmware")
+        Resources.addType(self.ResourceTypes.Certificates, "certificates")
 
     # Adds all empty containers.
     def __addAllEmptyContainers(self) -> None:

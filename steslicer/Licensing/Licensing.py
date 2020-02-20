@@ -30,7 +30,8 @@ class Licensing(QObject, Extension):
 
     def _keyIsValid(self) -> bool:
         try:
-            with open('certificate.pem', 'rb') as f:
+            path = os.path.join(Resources.getPath(self._application.ResourceTypes.Certificates), "license_cert.pem")
+            with open(path, 'rb') as f:
                 certificate = f.read()
             key = BytesIO(bytes.fromhex(self.licenseKey))
             lic = License.load(key, b'StereotechSTESlicerProFeatures')
