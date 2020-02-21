@@ -6,6 +6,8 @@ import QtQuick.Controls 1.1
 import UM 1.3 as UM
 import SteSlicer 1.0 as SteSlicer
 
+import QtWebEngine 1.0
+
 Item
 {
     // parent could be undefined as this component is not visible at all times
@@ -29,17 +31,15 @@ Item
         }
     }
 
-    Loader
+    WebEngineView
     {
         id: monitorViewComponent
-
         width: parent.width
         height: parent.height
 
         property real maximumWidth: parent.width
         property real maximumHeight: parent.height
 
-        sourceComponent: SteSlicer.MachineManager.printerOutputDevices.length > 0 ? SteSlicer.MachineManager.printerOutputDevices[0].monitorItem: null
-        visible: sourceComponent != null
+        url: "http://192.168.1.161"
     }
 }

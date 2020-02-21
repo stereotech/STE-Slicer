@@ -263,7 +263,7 @@ class GlicerConfigWriter(MeshWriter):
         super().__init__()
 
 
-    def generate(self) -> str:
+    def generate(self):
         application = SteSlicerApplication.getInstance()
         global_stack = application.getGlobalContainerStack()  # type: GlobalStack
         root = eltree.Element("root")

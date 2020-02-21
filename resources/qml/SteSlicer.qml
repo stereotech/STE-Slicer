@@ -435,7 +435,7 @@ UM.MainWindow
                     bottom: parent.bottom
                 }
 
-                width: initialWidth
+                width: UM.Controller.activeStage.stageId != "STEAppStage" ? initialWidth : 0
                 x: 0//base.width - sidebar.width
                 source: UM.Controller.activeStage.sidebarComponent
 
