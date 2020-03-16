@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtQml import qmlRegisterUncreatableType, qmlRegisterSingletonType, qmlRegisterType
 
 from UM.Application import Application
+from UM.Backend.Backend import Backend
 from UM.PluginError import PluginNotFoundError
 from UM.Scene.SceneNode import SceneNode
 from UM.Scene.Camera import Camera
@@ -84,6 +85,7 @@ from steslicer.Settings.SettingInheritanceManager import SettingInheritanceManag
 from steslicer.Settings.SimpleModeSettingsManager import SimpleModeSettingsManager
 
 from steslicer.Machines.VariantManager import VariantManager
+from .BackendManager import BackendManager
 
 from .SingleInstance import SingleInstance
 from .AutoSave import AutoSave
@@ -203,6 +205,8 @@ class SteSlicerApplication(QtApplication):
         self._extruder_manager = None
         self._container_manager = None
 
+        self._backend_manager = None
+
         self._object_manager = None
         self._build_plate_model = None
         self._multi_build_plate_model = None
@@ -307,6 +311,9 @@ class SteSlicerApplication(QtApplication):
 
         self._machine_action_manager = MachineActionManager.MachineActionManager(self)
         self._machine_action_manager.initialize()
+
+        self._backend_manager = BackendManager.BackendManager(self)
+        self._backend_manager.initialize()
 
     def __sendCommandToSingleInstance(self):
         self._single_instance = SingleInstance(self, self._files_to_open)
@@ -1687,3 +1694,10 @@ class SteSlicerApplication(QtApplication):
     def getSidebarCustomMenuItems(self) -> list:
         return self._sidebar_custom_menu_items
 
+    @pyqtSlot(result="QObject*")
+    def getBackend(self) -> Backend:
+        current_backend = self._backend_manager.getCurrentBackend()
+        if current_backend is not None:
+            return current_backend
+        else:
+            raise RuntimeError("Could not load the backend plugin!")

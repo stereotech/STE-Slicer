@@ -10,7 +10,8 @@ from typing import Optional
 COLOR_WARNING = '\033[93m'
 COLOR_ENDC = '\033[0m'
 
-regex_patter = '(&[\w])' #"&[a-zA-Z0-9]" - Search char '&' and at least one character after it
+# "&[a-zA-Z0-9]" - Search char '&' and at least one character after it
+regex_patter = '(&[\w])'
 
 # Directory where this python file resides
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -26,7 +27,7 @@ class ShortcutKeysChecker:
         """
         Checks if the given file has duplicate shortcut keys.
         """
-        with open(filename, "r", encoding = "utf-8") as f:
+        with open(filename, "r", encoding="utf-8") as f:
             all_lines = f.readlines()
 
         all_lines = [l.strip() for l in all_lines]
@@ -56,12 +57,14 @@ class ShortcutKeysChecker:
                 continue
 
             elif found_ctxt and line.startswith('"'):
-                data = line[1:-1]  # strip the beginning and ending double-quotes
+                # strip the beginning and ending double-quotes
+                data = line[1:-1]
                 current_data[current_field] += data
                 continue
 
             if current_data:
-                self._process_translation(shortcut_dict, current_data, start_line)
+                self._process_translation(
+                    shortcut_dict, current_data, start_line)
 
             current_data.clear()
             current_field = None
@@ -113,12 +116,14 @@ class ShortcutKeysChecker:
                 has_duplicates = True
 
                 print("")
-                print("The following messages have the same shortcut key '%s':" % shortcut_key)
+                print(
+                    "The following messages have the same shortcut key '%s':" % shortcut_key)
                 print("  shortcut: '%s'" % data_dict["shortcut_key"])
                 print("  section : '%s'" % data_dict["section"])
                 for line, msg in data_dict["existing_lines"].items():
                     relative_filename = (filename.rsplit("..", 1)[-1])[1:]
-                    print(" - [%s] L%7d : '%s'" % (relative_filename, line, msg["message"]))
+                    print(" - [%s] L%7d : '%s'" %
+                          (relative_filename, line, msg["message"]))
 
         return has_duplicates
 
@@ -133,7 +138,9 @@ if __name__ == "__main__":
     found_duplicates = False
     for dirname in all_dirnames:
         file_name = "steslicer.pot" if not dirname else "steslicer.po"
-        file_path = os.path.join(SCRIPT_DIR, "..", "resources", "i18n", dirname, file_name)
-        found_duplicates = found_duplicates or checker.has_duplicates(file_path)
+        file_path = os.path.join(
+            SCRIPT_DIR, "..", "resources", "i18n", dirname, file_name)
+        found_duplicates = found_duplicates or checker.has_duplicates(
+            file_path)
 
     sys.exit(0 if not found_duplicates else 1)
