@@ -440,6 +440,7 @@ class SteSlicerApplication(QtApplication):
             # Misc.:
             "ConsoleLogger",
             "CuraEngineBackend",
+            "GlicerBackend",
             "UserAgreement",
             "FileLogger",
             "XmlMaterialProfile",

@@ -84,6 +84,23 @@
             }
         }
     },
+    "GlicerBackend":  {
+        "package_info": {
+            "package_id": "GlicerBackend",
+            "package_type": "plugin",
+            "display_name": "Glicer Backend",
+            "description": "Provides the link to the Glicer slicing backend.",
+            "package_version": "1.0.0",
+            "sdk_version": 5,
+            "website": "https://stereotech.org",
+            "author": {
+                "author_id": "StereotechPackages",
+                "display_name": "Stereotech LLC.",
+                "email": "dev@ste3d.ru",
+                "website": "https://stereotech.org"
+            }
+        }
+    },
     "CuraProfileReader": {
         "package_info": {
             "package_id": "CuraProfileReader",
