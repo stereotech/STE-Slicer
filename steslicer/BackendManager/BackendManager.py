@@ -16,6 +16,8 @@ class BackendManager:
     __instance = None #type: BackendManager
     currendBackendChanged = Signal()
 
+    printDurationMessage = Signal()
+
     def __init__(self, application) -> None:
         if BackendManager.__instance is not None:
             raise RuntimeError("Try to create singleton '%s' more than once" % self.__class__.__name__)
@@ -37,14 +39,16 @@ class BackendManager:
         if printing_mode in backend_types:
             self._current_backend = self.getBackendByType(printing_mode)
 
-
     def initialize(self):
         PluginRegistry.addType("backend", self.addBackendEngine)
 
+    def _onPrintDurationMessage(self, start_slice_job_build_plate, times, material_amounts):
+        self.printDurationMessage.emit(start_slice_job_build_plate, times, material_amounts)
 
     def addBackendEngine(self, backend: "Backend") -> None:
         if backend.getPluginId() not in self._backends_by_id:
             self._backends_by_id[backend.getPluginId()] = backend
+            backend.printDurationMessage.connect(self._onPrintDurationMessage)
             metadata = PluginRegistry.getInstance().getMetaData(backend.getPluginId())
             backend_type = metadata["backend_engine"].get("type", "")
             if backend_type in backend_types:

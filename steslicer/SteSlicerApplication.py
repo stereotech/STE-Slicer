@@ -1702,3 +1702,6 @@ class SteSlicerApplication(QtApplication):
             return current_backend
         else:
             raise RuntimeError("Could not load the backend plugin!")
+
+    def getBackendManager(self) -> BackendManager:
+        return self._backend_manager

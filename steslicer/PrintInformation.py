@@ -46,9 +46,13 @@ class PrintInformation(QObject):
 
         self._pre_sliced = False
 
-        self._backend = self._application.getBackend()
-        if self._backend:
-            self._backend.printDurationMessage.connect(self._onPrintDurationMessage)
+        #self._backend = self._application.getBackend()
+        #if self._backend:
+        #    self._backend.printDurationMessage.connect(self._onPrintDurationMessage)
+        self._backend_manager = self._application.getBackendManager()
+        if self._backend_manager:
+            self._backend_manager.printDurationMessage.connect(self._onPrintDurationMessage)
+
 
         self._application.getController().getScene().sceneChanged.connect(self._onSceneChanged)
 
@@ -135,24 +139,28 @@ class PrintInformation(QObject):
 
     @pyqtProperty("QVariantList", notify = materialLengthsChanged)
     def materialLengths(self):
+        Logger.log("d", "Material lengths %s", self._material_lengths[self._active_build_plate])
         return self._material_lengths[self._active_build_plate]
 
     materialWeightsChanged = pyqtSignal()
 
     @pyqtProperty("QVariantList", notify = materialWeightsChanged)
     def materialWeights(self):
+        Logger.log("d", "Material weights %s", self._material_weights[self._active_build_plate])
         return self._material_weights[self._active_build_plate]
 
     materialCostsChanged = pyqtSignal()
 
     @pyqtProperty("QVariantList", notify = materialCostsChanged)
     def materialCosts(self):
+        Logger.log("d", "Material costs %s", self._material_costs[self._active_build_plate])
         return self._material_costs[self._active_build_plate]
 
     materialNamesChanged = pyqtSignal()
 
     @pyqtProperty("QVariantList", notify = materialNamesChanged)
     def materialNames(self):
+        Logger.log("d", "Material names %s", self._material_names[self._active_build_plate])
         return self._material_names[self._active_build_plate]
 
     #   Get all print times (by feature) of the active buildplate.
