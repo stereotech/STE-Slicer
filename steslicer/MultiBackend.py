@@ -1,4 +1,5 @@
 import argparse #To run the engine in debug mode if the front-end is in debug mode.
+import subprocess
 from collections import defaultdict
 import os
 from PyQt5.QtCore import QObject, QTimer, pyqtSlot
@@ -45,3 +46,29 @@ class MultiBackend(QObject, Backend):
     def close(self):
         for backend_id, backend in self._backends:
             backend.close()
+
+    def startEngine(self):
+        for backend_id, backend in self._backends:
+            backend.startEngine()
+
+    def _backendLog(self, line):
+        for backend_id, backend in self._backends:
+            backend._backendLog(line)
+
+    def getLog(self):
+        backend_log = []
+        for backend_id, backend in self._backends:
+            backend_log.extend(backend.getLog())
+        return backend_log
+
+    def convertBytesToVerticeList(self, data):
+        result = []
+        for backend_id, backend in self._backends:
+            result.extend(backend.convertBytesToVerticeList(data))
+        return result
+
+    def getEngineCommand(self):
+        return ""
+
+    def _runEngineProcess(self, command_list) -> Optional[subprocess.Popen]:
+        return None
