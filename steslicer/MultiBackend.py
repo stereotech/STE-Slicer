@@ -36,39 +36,18 @@ if TYPE_CHECKING:
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
 
-class MultiBackend(QObject, Backend):
+
+class MultiBackend(Backend):
     def __init__(self):
+        #super().__init__()
         self._backends = {} #type: Dict[str, Backend]
 
+    def getBackends(self) -> List[Backend]:
+        return [ v for v in self._backends.values() ]
+
     def addBackend(self, backend: Backend):
-        pass
+        if not backend.getPluginId() in self._backends:
+            self._backends[backend.getPluginId()] = backend
+        else:
+            Logger.log("d", "Backend with id %s is already added", backend.getPluginId())
 
-    def close(self):
-        for backend_id, backend in self._backends:
-            backend.close()
-
-    def startEngine(self):
-        for backend_id, backend in self._backends:
-            backend.startEngine()
-
-    def _backendLog(self, line):
-        for backend_id, backend in self._backends:
-            backend._backendLog(line)
-
-    def getLog(self):
-        backend_log = []
-        for backend_id, backend in self._backends:
-            backend_log.extend(backend.getLog())
-        return backend_log
-
-    def convertBytesToVerticeList(self, data):
-        result = []
-        for backend_id, backend in self._backends:
-            result.extend(backend.convertBytesToVerticeList(data))
-        return result
-
-    def getEngineCommand(self):
-        return ""
-
-    def _runEngineProcess(self, command_list) -> Optional[subprocess.Popen]:
-        return None

@@ -102,13 +102,13 @@ class CuraEngineBackend(QObject, Backend):
         self._global_container_stack = None #type: Optional[ContainerStack]
 
         # Listeners for receiving messages from the back-end.
-        self._message_handlers["cura.proto.Layer"] = self._onLayerMessage
-        self._message_handlers["cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
-        self._message_handlers["cura.proto.Progress"] = self._onProgressMessage
-        self._message_handlers["cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
-        self._message_handlers["cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
-        self._message_handlers["cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
-        self._message_handlers["cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
+        #self._message_handlers["cura.proto.Layer"] = self._onLayerMessage
+        #self._message_handlers["cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
+        #self._message_handlers["cura.proto.Progress"] = self._onProgressMessage
+        #self._message_handlers["cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
+        #self._message_handlers["cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
+        #self._message_handlers["cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
+        #self._message_handlers["cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
 
         self._start_slice_job = None #type: Optional[StartSliceJob]
         self._start_slice_job_build_plate = None #type: Optional[int]
@@ -223,6 +223,15 @@ class CuraEngineBackend(QObject, Backend):
 
     ##  Perform a slice of the scene.
     def slice(self) -> None:
+        # Listeners for receiving messages from the back-end.
+        self._message_handlers["cura.proto.Layer"] = self._onLayerMessage
+        self._message_handlers["cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
+        self._message_handlers["cura.proto.Progress"] = self._onProgressMessage
+        self._message_handlers["cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
+        self._message_handlers["cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
+        self._message_handlers["cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
+        self._message_handlers["cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
+
         Logger.log("d", "Starting to slice...")
         self._slice_start_time = time()
         if not self._build_plates_to_be_sliced:
@@ -575,6 +584,9 @@ class CuraEngineBackend(QObject, Backend):
     # \param instance The setting instance that has changed.
     # \param property The property of the setting instance that has changed.
     def _onSettingChanged(self, instance: SettingInstance, property: str) -> None:
+        if instance == "printing_mode" and property == "value":
+            self._message_handlers = {}
+
         if property == "value":  # Only reslice if the value has changed.
             self.needsSlicing()
             self._onChanged()
@@ -673,6 +685,8 @@ class CuraEngineBackend(QObject, Backend):
     #
     #   \param message The protobuf message containing g-code, encoded as UTF-8.
     def _onGCodeLayerMessage(self, message: Arcus.PythonMessage) -> None:
+        if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
+            self._scene.gcode_dict[self._start_slice_job_build_plate] = []
         self._scene.gcode_dict[self._start_slice_job_build_plate].append(message.data.decode("utf-8", "replace")) #type: ignore #Because we generate this attribute dynamically.
 
     ##  Called when a g-code prefix message is received from the engine.

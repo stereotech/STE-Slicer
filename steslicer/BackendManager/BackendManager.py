@@ -7,7 +7,7 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.SettingInstance import SettingInstance
 from UM.Signal import Signal
 
-backend_types = ["classic", "cylindrical"]
+backend_types = ["classic", "cylindrical", "cylindrical_full"]
 
 class BackendAlreadyAdded(Exception):
     pass

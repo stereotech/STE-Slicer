@@ -1,4 +1,4 @@
-
+from copy import deepcopy, copy
 
 import numpy
 from string import Formatter
@@ -14,6 +14,7 @@ from UM.Logger import Logger
 from UM.Mesh import MeshData
 from UM.Scene.SceneNode import SceneNode
 from UM.Settings.ContainerStack import ContainerStack #For typing.
+from UM.Settings.SettingInstance import SettingInstance
 from UM.Settings.SettingRelation import SettingRelation #For typing.
 
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
@@ -21,6 +22,7 @@ from UM.Scene.Scene import Scene #For typing.
 from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
 
+from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.OneAtATimeIterator import OneAtATimeIterator
@@ -181,7 +183,7 @@ class StartSliceJob(Job):
 
                     if temp_list:
                         object_groups.append(temp_list)
-            elif printing_mode == "cylindrical":
+            elif printing_mode == "cylindrical_full":
                 temp_list = []
                 has_printing_mesh = False
 
@@ -214,24 +216,55 @@ class StartSliceJob(Job):
 
                 if temp_list:
                     cut_list = []
-                    radius = SteSlicerApplication.getInstance().getGlobalContainerStack(
-                    ).getProperty("cylindrical_mode_base_diameter", "value") / 2
-                    height = SteSlicerApplication.getInstance().getGlobalContainerStack(
-                    ).getProperty("machine_height", "value")
-                    cutting_cylinder = trimesh.primitives.Cylinder(
-                        radius=radius, height=height)
-                    cutting_cylinder.apply_transform(trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
+                    radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty("cylindrical_mode_base_diameter", "value") / 2
                     for node in temp_list:
+                        height = node.getBoundingBox().height
+                        cutting_cylinder = trimesh.primitives.Cylinder(
+                            radius=radius, height=height)
+                        cutting_cylinder.apply_transform(
+                            trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
+
                         mesh_data = node.getMeshData()
                         faces = mesh_data.getIndices() if mesh_data.hasIndices() else mesh_data.getVertexCount()
                         mesh = trimesh.Trimesh(vertices=mesh_data.getVertices(), faces=faces)
-                        cutting_result = mesh.intersection(cutting_cylinder, engine="scad")
-                        if cutting_result:
-                            data = MeshData.MeshData(vertices=cutting_result.vertices,
-                                                     normals=cutting_result.face_normals, indices=cutting_result.faces)
-                            cutting_node = SceneNode(node.getParent())
-                            cutting_node.setMeshData(data)
-                            cut_list.append(cutting_node)
+                        try:
+                            cutting_result = mesh.intersection(cutting_cylinder, engine="scad")
+                            if cutting_result and cutting_result.is_watertight:
+                                cutting_result.fill_holes()
+                                cutting_result.fix_normals()
+
+                                data = MeshData.MeshData(vertices=cutting_result.vertices.astype('float32'),
+                                                         normals=cutting_result.face_normals.astype('float32'),
+                                                         indices=cutting_result.faces.astype('int64'))
+                                cutting_node = SteSlicerSceneNode(node.getParent(), no_setting_override=True)
+                                cutting_node.addDecorator(node.getDecorator(SettingOverrideDecorator))
+                        except Exception as e:
+                            Logger.log("e", "Failed to intersect model! %s", e)
+                            cutting_result = cutting_cylinder
+                            if cutting_result and cutting_result.is_watertight:
+                                cutting_result.fill_holes()
+                                cutting_result.fix_normals()
+
+                                data = MeshData.MeshData(vertices=cutting_result.vertices.astype('float32'),
+                                                         normals=cutting_result.face_normals.astype('float32'),
+                                                         indices=cutting_result.faces.astype('int64'))
+                                cutting_node = SteSlicerSceneNode(node.getParent(), no_setting_override=True)
+                                stack = cutting_node.callDecoration("getStack")  # Don't try to get the active extruder since it may be None anyway.
+                                if not stack:
+                                    cutting_node.addDecorator(SettingOverrideDecorator())
+                                    stack = cutting_node.callDecoration("getStack")
+                                settings = stack.getTop()
+                                if not (settings.getInstance("support_mesh") and settings.getProperty("support_mesh", "value")):
+                                    definition = stack.getSettingDefinition("support_mesh")
+                                    new_instance = SettingInstance(definition, settings)
+                                    new_instance.setProperty("value", True, emit_signals=False)
+                                    new_instance.resetState()  # Ensure that the state is not seen as a user state.
+                                    settings.addInstance(new_instance)
+
+                        cutting_node.setName("cut_" + node.getName())
+                        cutting_node.setMeshData(data)
+
+                        cut_list.append(cutting_node)
 
                     object_groups.append(cut_list)
             else:

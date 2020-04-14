@@ -116,8 +116,9 @@ class SettingOverrideDecorator(SceneNodeDecorator):
             self._is_non_printing_mesh = self.evaluateIsNonPrintingMesh()
             self._is_non_thumbnail_visible_mesh = self.evaluateIsNonThumbnailVisibleMesh()
 
-            Application.getInstance().getBackend().needsSlicing()
-            Application.getInstance().getBackend().tickle()
+            if not instance == "support_mesh":
+                Application.getInstance().getBackend().needsSlicing()
+                Application.getInstance().getBackend().tickle()
 
     ##  Makes sure that the stack upon which the container stack is placed is
     #   kept up to date.
@@ -132,9 +133,9 @@ class SettingOverrideDecorator(SceneNodeDecorator):
 
                 self._stack.setNextStack(extruder_stack[0])
                 # Trigger slice/need slicing if the extruder changed.
-                if self._stack.getNextStack().getId() != old_extruder_stack_id:
-                    Application.getInstance().getBackend().needsSlicing()
-                    Application.getInstance().getBackend().tickle()
+                #if self._stack.getNextStack().getId() != old_extruder_stack_id:
+                #    Application.getInstance().getBackend().needsSlicing()
+                #    Application.getInstance().getBackend().tickle()
             else:
                 Logger.log("e", "Extruder stack %s below per-object settings does not exist.", self._extruder_stack)
         else:
