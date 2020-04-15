@@ -15,9 +15,12 @@ class LayerDataBuilder(MeshBuilder):
         self._layers = {}
         self._element_counts = {}
 
-    def addLayer(self, layer):
-        if layer not in self._layers:
-            self._layers[layer] = Layer(layer)
+    def addLayer(self, layer_id, layer: Layer = None):
+        if layer_id not in self._layers:
+            if layer:
+                self._layers[layer_id] = layer
+            else:
+                self._layers[layer_id] = Layer(layer_id)
 
     def addPolygon(self, layer, polygon_type, data, line_width, line_thickness, line_feedrate):
         if layer not in self._layers:

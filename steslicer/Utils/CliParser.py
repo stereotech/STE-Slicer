@@ -58,6 +58,7 @@ def colorCodeToRGBA(color_code):
 class CliParser:
     progressChanged = Signal()
     timeMaterialEstimates = Signal()
+    layersDataGenerated = Signal()
 
     def __init__(self, build_plate_number) -> None:
         self._profiled = False
@@ -99,7 +100,9 @@ class CliParser:
         self._extruder_number = 0
         # type: Dict[int, List[float]] # Offsets for multi extruders. key is index, value is [x-offset, y-offset]
         self._extruder_offsets = {}
+
         self._gcode_list = []
+
         self._current_layer_thickness = 0
         self._current_layer_height = 0
 
@@ -137,7 +140,7 @@ class CliParser:
     def cancel(self):
         self._cancelled = True
 
-    def processCliStream(self, stream: str) -> Optional[SteSlicerSceneNode]:
+    def processCliStream(self, stream: str) -> List[str]:
         Logger.log("d", "Preparing to load CLI")
         start_time = time()
         self._cancelled = False
@@ -149,9 +152,10 @@ class CliParser:
 
         mesh = MeshData()
 
-        gcode_list = []
-        self._writeStartCode(gcode_list)
-        gcode_list.append(";LAYER_COUNT\n")
+        self._gcode_list = []
+
+        self._writeStartCode(self._gcode_list)
+        self._gcode_list[-1] += ";LAYER_COUNT\n"
 
         # Reading starts here
         file_lines = 0
@@ -211,9 +215,9 @@ class CliParser:
                     #    [self._position.x, self._position.y, self._position.z, self._position.a, self._position.b,
                     #     self._position.c, self._position.f, self._position.e[self._extruder_number],
                     #     LayerPolygon.MoveCombingType])
-                    if not gcode_list[-1].startswith(";LAYER:"):
+                    if not (self._gcode_list[-1].startswith(";LAYER:") and self._gcode_list[-1].count('\n') < 2):
                         self._layer_number += 1
-                        gcode_list.append(";LAYER:%s\n" % self._layer_number)
+                        self._gcode_list.append(";LAYER:%s\n" % self._layer_number)
                 except:
                     pass
 
@@ -233,7 +237,7 @@ class CliParser:
                 continue
 
             # Polyline processing
-            self.processPolyline(line, current_path, gcode_list)
+            self._gcode_list[-1] = self.processPolyline(line, current_path, self._gcode_list[-1])
 
             if self._cancelled:
                 return None
@@ -245,25 +249,17 @@ class CliParser:
                 self._layer_number += 1
                 current_path.clear()
 
-        layer_count_idx = gcode_list.index(";LAYER_COUNT\n")
-        if layer_count_idx > 0:
-            gcode_list[layer_count_idx] = ";LAYER_COUNT:%s\n" % self._layer_number
+        self._gcode_list[0].replace(";LAYER_COUNT:\n", ";LAYER_COUNT:%s\n" % self._layer_number)
 
         end_gcode = self._global_stack.getProperty(
             "machine_end_gcode", "value")
-        gcode_list.append(end_gcode + "\n")
+        self._gcode_list.append(end_gcode + "\n")
 
         self.timeMaterialEstimates.emit(self._material_amounts, self._time_estimates)
+        self.layersDataGenerated.emit(self._layer_data_builder.getLayers())
 
-        # material_color_map = numpy.zeros((8, 4), dtype=numpy.float32)
-        # material_color_map[0, :] = [0.0, 0.7, 0.9, 1.0]
-        # material_color_map[1, :] = [0.7, 0.9, 0.0, 1.0]
-        # material_color_map[2, :] = [0.9, 0.0, 0.7, 1.0]
-        # material_color_map[3, :] = [0.7, 0.0, 0.0, 1.0]
-        # material_color_map[4, :] = [0.0, 0.7, 0.0, 1.0]
-        # material_color_map[5, :] = [0.0, 0.0, 0.7, 1.0]
-        # material_color_map[6, :] = [0.3, 0.3, 0.3, 1.0]
-        # material_color_map[7, :] = [0.7, 0.7, 0.7, 1.0]
+        return self._gcode_list
+
         global_container_stack = Application.getInstance().getGlobalContainerStack()
         manager = ExtruderManager.getInstance()
         extruders = manager.getActiveExtruderStacks()
@@ -333,7 +329,7 @@ class CliParser:
 
         Logger.log("d", "Processing layers took %s seconds", time() - start_time)
 
-        return new_node
+        return self._gcode_list
 
     def _setPrintSettings(self):
         pass
@@ -515,18 +511,18 @@ class CliParser:
         this_layer.polygons.append(this_poly)
         return True
 
-    def processPolyline(self, line: str, path: List[List[Union[float, int]]], gcode_list: List[str]) -> bool:
+    def processPolyline(self, line: str, path: List[List[Union[float, int]]], gcode_line: str) -> str:
         # Convering line to point array
         values_line = self._getValue(line, "$$POLYLINE")
         if not values_line:
-            return (self._position, None)
+            return gcode_line
         values = values_line.split(",")
         if len(values[3:]) % 2 != 0:
-            return (self._position, None)
+            return gcode_line
         idx = 2
         points = values[3:]
         if len(points) < 2:
-            return (self._position, None)
+            return gcode_line
         # TODO: add combing to this polyline
         new_position, new_gcode_position = self._cliPointToPosition(
             CliPoint(float(points[0]), float(points[1])), self._position, False)
@@ -537,7 +533,7 @@ class CliParser:
         if is_retraction:
             # we have retraction move
             new_extruder_position = self._position.e[self._extruder_number] - self._retraction_amount
-            gcode_list.append("G1 E%.5f F%.0f\n" % (new_extruder_position, (self._retraction_speed * 60)))
+            gcode_line += "G1 E%.5f F%.0f\n" % (new_extruder_position, (self._retraction_speed * 60))
             self._position.e[self._extruder_number] = new_extruder_position
             self._gcode_position.e[self._extruder_number] = new_extruder_position
             self._addToPath(path,
@@ -559,7 +555,7 @@ class CliParser:
                 gcode_command = self._generateGCodeCommand(
                     0, gcode_position, self._travel_speed)
                 if gcode_command is not None:
-                    gcode_list.append(gcode_command)
+                    gcode_line += gcode_command
                 self._gcode_position = gcode_position
                 self._addToPath(path, [self._position.x, self._position.y, self._position.z, self._position.a,
                                        self._position.b,
@@ -577,7 +573,7 @@ class CliParser:
                 gcode_command = self._generateGCodeCommand(
                     0, gcode_position, self._travel_speed)
                 if gcode_command is not None:
-                    gcode_list.append(gcode_command)
+                    gcode_line += gcode_command
                 self._addToPath(path, [position.x, position.y, position.z, position.a, position.b,
                                        position.c, position.f, position.e, LayerPolygon.MoveCombingType])
                 # path.append([position.x, position.y, position.z, position.a, position.b,
@@ -588,7 +584,7 @@ class CliParser:
         self._position = Position(x, y, z, a, b, c, feedrate, self._position.e)
         gcode_command = self._generateGCodeCommand(0, new_gcode_position, feedrate)
         if gcode_command is not None:
-            gcode_list.append(gcode_command)
+            gcode_line += gcode_command
         gx, gy, gz, ga, gb, gc, gf, ge = new_gcode_position
         self._gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
         self._addToPath(path, [x, y, z, a, b, c, feedrate, e,
@@ -599,7 +595,7 @@ class CliParser:
         if is_retraction:
             # we have retraction move
             new_extruder_position = self._position.e[self._extruder_number] + self._retraction_amount
-            gcode_list.append("G1 E%.5f F%.0f\n" % (new_extruder_position, (self._prime_speed * 60)))
+            gcode_line += "G1 E%.5f F%.0f\n" % (new_extruder_position, (self._prime_speed * 60))
             self._position.e[self._extruder_number] = new_extruder_position
             self._gcode_position.e[self._extruder_number] = new_extruder_position
             self._addToPath(path,
@@ -609,13 +605,13 @@ class CliParser:
             #             self._position.c, self._prime_speed, self._position.e, LayerPolygon.MoveRetractionType])
 
         if self._layer_type == LayerPolygon.SupportType:
-            gcode_list.append(self._type_keyword + "SUPPORT\n")
+            gcode_line += self._type_keyword + "SUPPORT\n"
         elif self._layer_type == LayerPolygon.SkinType:
-            gcode_list.append(self._type_keyword + "SKIN\n")
+            gcode_line += self._type_keyword + "SKIN\n"
         elif self._layer_type == LayerPolygon.InfillType:
-            gcode_list.append(self._type_keyword + "FILL\n")
+            gcode_line += self._type_keyword + "FILL\n"
         else:
-            gcode_list.append(self._type_keyword + "WALL-OUTER\n")
+            gcode_line += self._type_keyword + "WALL-OUTER\n"
 
         while idx < len(points):
             point = CliPoint(float(points[idx]), float(points[idx + 1]))
@@ -632,11 +628,12 @@ class CliParser:
             self._position = Position(x, y, z, a, b, c, feedrate, e)
             gcode_command = self._generateGCodeCommand(1, new_gcode_position, feedrate)
             if gcode_command is not None:
-                gcode_list.append(gcode_command)
+                gcode_line += gcode_command
             gx, gy, gz, ga, gb, gc, gf, ge = new_gcode_position
             self._gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
             self._addToPath(path, [x, y, z, a, b, c, feedrate, e, self._layer_type])
             # path.append([x, y, z, a, b, c, feedrate, e, self._layer_type])
+        return gcode_line
 
     def _generateGCodeCommand(self, g: int, gcode_position: Position, feedrate: float) -> Optional[str]:
         gcode_command = "G%s" % g
@@ -675,7 +672,7 @@ class CliParser:
         return dVe / Af
 
     def _writeStartCode(self, gcode_list: List[str]):
-        gcode_list.append("T0\n")
+        start_gcode = "T0\n"
         extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None)  # type: Optional[ExtruderStack]
         init_temperature = extruder.getProperty(
             "material_print_temperature", "value")
@@ -683,17 +680,18 @@ class CliParser:
             "material_bed_temperature", "value")
         has_heated_bed = self._global_stack.getProperty("machine_heated_bed", "value")
         if has_heated_bed:
-            gcode_list.extend(["M140 S%s\n" % init_bed_temperature,
-                               "M105\n",
-                               "M190 S%s\n" % init_bed_temperature])
-        gcode_list.extend(["M104 S%s\n" % init_temperature,
-                           "M105\n",
-                           "M109 S%s\n" % init_temperature,
-                           "M82 ;absolute extrusion mode\n"])
-        start_gcode = self._global_stack.getProperty(
+            start_gcode += "M140 S%s\n" % init_bed_temperature
+            start_gcode += "M105\n"
+            start_gcode += "M190 S%s\n" % init_bed_temperature
+        start_gcode +="M104 S%s\n" % init_temperature
+        start_gcode += "M105\n"
+        start_gcode += "M109 S%s\n" % init_temperature
+        start_gcode += "M82 ;absolute extrusion mode\n"
+        start_gcode_prefix = self._global_stack.getProperty(
             "machine_start_gcode", "value")
-        if self._parsing_type == "cylindrical":
-            start_gcode = start_gcode.replace("G55", "G56")
+        if self._parsing_type in ["cylindrical", "cylindrical_full"]:
+            start_gcode_prefix = start_gcode_prefix.replace("G55", "G56")
+        start_gcode += start_gcode_prefix
         gcode_list.append(start_gcode + "\n")
 
     def _cliPointToPosition(self, point: CliPoint, position: Position, extrusion_move: bool = True) -> (
@@ -706,7 +704,7 @@ class CliParser:
             i = 0
             j = 0
             k = 1
-        elif self._parsing_type == "cylindrical":
+        elif self._parsing_type in ["cylindrical", "cylindrical_full"]:
             x = self._current_layer_height * math.cos(point.y)
             y = self._current_layer_height * math.sin(point.y)
             z = point.x
