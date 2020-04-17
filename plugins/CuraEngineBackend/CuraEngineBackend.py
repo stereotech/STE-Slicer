@@ -685,6 +685,8 @@ class CuraEngineBackend(QObject, Backend):
     #
     #   \param message The protobuf message containing g-code, encoded as UTF-8.
     def _onGCodeLayerMessage(self, message: Arcus.PythonMessage) -> None:
+        if not self._scene.gcode_dict:
+            self._scene.gcode_dict = {0: []}
         if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
             self._scene.gcode_dict[self._start_slice_job_build_plate] = []
         self._scene.gcode_dict[self._start_slice_job_build_plate].append(message.data.decode("utf-8", "replace")) #type: ignore #Because we generate this attribute dynamically.

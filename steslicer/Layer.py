@@ -12,6 +12,10 @@ class Layer:
         self._element_count = 0
 
     @property
+    def id(self):
+        return self._id
+
+    @property
     def height(self):
         return self._height
 

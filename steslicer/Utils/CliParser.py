@@ -40,21 +40,6 @@ CliPoint = NamedTuple(
 Position = NamedTuple("Position", [("x", float), ("y", float), ("z", float), (
     "a", float), ("b", float), ("c", float), ("f", Optional[float]), ("e", Optional[List[float]])])
 
-
-##  Return a 4-tuple with floats 0-1 representing the html color code
-#
-#   \param color_code html color code, i.e. "#FF0000" -> red
-def colorCodeToRGBA(color_code):
-    if color_code is None:
-        Logger.log("w", "Unable to convert color code, returning default")
-        return [0, 0, 0, 1]
-    return [
-        int(color_code[1:3], 16) / 255,
-        int(color_code[3:5], 16) / 255,
-        int(color_code[5:7], 16) / 255,
-        1.0]
-
-
 class CliParser:
     progressChanged = Signal()
     timeMaterialEstimates = Signal()
@@ -140,17 +125,24 @@ class CliParser:
     def cancel(self):
         self._cancelled = True
 
+    def getLayersData(self):
+        if self._layer_data_builder:
+            return self._layer_data_builder.getLayers()
+        else:
+            return []
+
+    def getMaterialAmounts(self):
+        return self._material_amounts
+
+    def getTimes(self):
+        return self._time_estimates
+
     def processCliStream(self, stream: str) -> List[str]:
         Logger.log("d", "Preparing to load CLI")
         start_time = time()
         self._cancelled = False
         self._setPrintSettings()
         self._is_layers_in_file = False
-
-        new_node = SteSlicerSceneNode(no_setting_override=True)
-        new_node.addDecorator(BuildPlateDecorator(self._build_plate_number))
-
-        mesh = MeshData()
 
         self._gcode_list = []
 
@@ -257,77 +249,6 @@ class CliParser:
 
         self.timeMaterialEstimates.emit(self._material_amounts, self._time_estimates)
         self.layersDataGenerated.emit(self._layer_data_builder.getLayers())
-
-        return self._gcode_list
-
-        global_container_stack = Application.getInstance().getGlobalContainerStack()
-        manager = ExtruderManager.getInstance()
-        extruders = manager.getActiveExtruderStacks()
-        if extruders:
-            material_color_map = numpy.zeros((len(extruders), 4), dtype=numpy.float32)
-            for extruder in extruders:
-                position = int(extruder.getMetaDataEntry("position", default="0"))  # Get the position
-                try:
-                    default_color = ExtrudersModel.defaultColors[position]
-                except IndexError:
-                    default_color = "#e0e000"
-                color_code = extruder.material.getMetaDataEntry("color_code", default=default_color)
-                color = colorCodeToRGBA(color_code)
-                material_color_map[position, :] = color
-        else:
-            # Single extruder via global stack.
-            material_color_map = numpy.zeros((1, 4), dtype=numpy.float32)
-            color_code = global_container_stack.material.getMetaDataEntry("color_code", default="#e0e000")
-            color = colorCodeToRGBA(color_code)
-            material_color_map[0, :] = color
-
-        # We have to scale the colors for compatibility mode
-        if OpenGLContext.isLegacyOpenGL() or bool(
-                Application.getInstance().getPreferences().getValue("view/force_layer_view_compatibility_mode")):
-            line_type_brightness = 0.5  # for compatibility mode
-        else:
-            line_type_brightness = 1.0
-        layer_mesh = self._layer_data_builder.build(material_color_map, line_type_brightness)
-
-        if self._cancelled:
-            return None
-
-        decorator = LayerDataDecorator()
-        decorator.setLayerData(layer_mesh)
-        new_node.addDecorator(decorator)
-        new_node.setMeshData(mesh)
-
-        #TODO: move this to GlicerBackend Module
-        new_node_parent = Application.getInstance().getBuildVolume()
-        new_node.setParent(new_node_parent)
-
-        gcode_list_decorator = GCodeListDecorator()
-        gcode_list_decorator.setGCodeList(gcode_list)
-        new_node.addDecorator(gcode_list_decorator)
-
-        # gcode_dict stores gcode_lists for a number of build plates.
-        active_build_plate_id = SteSlicerApplication.getInstance(
-        ).getMultiBuildPlateModel().activeBuildPlate
-        gcode_dict = {active_build_plate_id: gcode_list}
-        # type: ignore #Because gcode_dict is generated dynamically.
-        SteSlicerApplication.getInstance().getController().getScene().gcode_dict = gcode_dict
-
-        Logger.log("d", "Finished parsing CLI file")
-
-        if self._layer_number == 0:
-            Logger.log("w", "File doesn't contain any valid layers")
-
-        if not self._global_stack.getProperty("machine_center_is_zero", "value"):
-            machine_width = self._global_stack.getProperty(
-                "machine_width", "value")
-            machine_depth = self._global_stack.getProperty(
-                "machine_depth", "value")
-            new_node.setPosition(
-                Vector(-machine_width / 2, 0, machine_depth / 2))
-
-        self.progressChanged.emit(100)
-
-        Logger.log("d", "Processing layers took %s seconds", time() - start_time)
 
         return self._gcode_list
 
@@ -672,27 +593,30 @@ class CliParser:
         return dVe / Af
 
     def _writeStartCode(self, gcode_list: List[str]):
-        start_gcode = "T0\n"
-        extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None)  # type: Optional[ExtruderStack]
-        init_temperature = extruder.getProperty(
-            "material_print_temperature", "value")
-        init_bed_temperature = extruder.getProperty(
-            "material_bed_temperature", "value")
-        has_heated_bed = self._global_stack.getProperty("machine_heated_bed", "value")
-        if has_heated_bed:
-            start_gcode += "M140 S%s\n" % init_bed_temperature
+        if self._global_stack.getProperty("machine_heated_bed", "value"):
+            start_gcode = "T0\n"
+            extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None)  # type: Optional[ExtruderStack]
+            init_temperature = extruder.getProperty(
+                "material_print_temperature", "value")
+            init_bed_temperature = extruder.getProperty(
+                "material_bed_temperature", "value")
+            has_heated_bed = self._global_stack.getProperty("machine_heated_bed", "value")
+            if has_heated_bed:
+                start_gcode += "M140 S%s\n" % init_bed_temperature
+                start_gcode += "M105\n"
+                start_gcode += "M190 S%s\n" % init_bed_temperature
+            start_gcode +="M104 S%s\n" % init_temperature
             start_gcode += "M105\n"
-            start_gcode += "M190 S%s\n" % init_bed_temperature
-        start_gcode +="M104 S%s\n" % init_temperature
-        start_gcode += "M105\n"
-        start_gcode += "M109 S%s\n" % init_temperature
-        start_gcode += "M82 ;absolute extrusion mode\n"
-        start_gcode_prefix = self._global_stack.getProperty(
-            "machine_start_gcode", "value")
-        if self._parsing_type in ["cylindrical", "cylindrical_full"]:
-            start_gcode_prefix = start_gcode_prefix.replace("G55", "G56")
-        start_gcode += start_gcode_prefix
-        gcode_list.append(start_gcode + "\n")
+            start_gcode += "M109 S%s\n" % init_temperature
+            start_gcode += "M82 ;absolute extrusion mode\n"
+            start_gcode_prefix = self._global_stack.getProperty(
+                "machine_start_gcode", "value")
+            if self._parsing_type in ["cylindrical", "cylindrical_full"]:
+                start_gcode_prefix = start_gcode_prefix.replace("G55", "G56")
+            start_gcode += start_gcode_prefix
+            gcode_list.append(start_gcode + "\n")
+        else:
+            gcode_list.append("G54\nG0 Z100 A90 F600\nG92 E0 C0\nG1 F200 E6 ;extrude 6 mm of feed stock\nG92 E0 ;zero the extruded length again\nG56\n")
 
     def _cliPointToPosition(self, point: CliPoint, position: Position, extrusion_move: bool = True) -> (
             Position, Position):

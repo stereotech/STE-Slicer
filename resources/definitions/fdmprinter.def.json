@@ -711,7 +711,19 @@
                     "type": "float",
                     "unit": "mm",
                     "default_value": 6,
-                    "enabled": "resolveOrValue('printing_mode') == 'cylindrical'",
+                    "enabled": "resolveOrValue('printing_mode') in ['cylindrical', 'cylindrical_full']",
+                    "minimum_value": "4",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "non_printing_base_diameter": {
+                    "label": "Non Printing Base Diameter",
+                    "description": "Diameter of cylindrical base, assembled into tool base",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 6,
+                    "enabled": true,
                     "minimum_value": "4",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
@@ -4463,6 +4475,19 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": true,
                     "limit_to_extruder": "adhesion_extruder_nr"
+                },
+                "cylindrical_raft_base_height": {
+                    "label": "",
+                    "description": "Base height of Cylindrical Raft",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 15,
+                    "minimum_value": "10",
+                    "minimum_value_warning": "11",
+                    "maximum_value_warning": "50",
+                    "enabled": "resolveOrValue('machine_five_axis')",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
                 },
                 "raft_speed": {
                     "label": "Raft Print Speed",

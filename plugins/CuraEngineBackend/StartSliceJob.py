@@ -5,6 +5,7 @@ from string import Formatter
 from enum import IntEnum
 import time
 import trimesh
+from trimesh.primitives import Box
 from typing import Any, cast, Dict, List, Optional, Set
 import re
 import Arcus #For typing.
@@ -218,7 +219,7 @@ class StartSliceJob(Job):
                     cut_list = []
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty("cylindrical_mode_base_diameter", "value") / 2
                     for node in temp_list:
-                        height = node.getBoundingBox().height
+                        height = node.getBoundingBox().height * 2
                         cutting_cylinder = trimesh.primitives.Cylinder(
                             radius=radius, height=height)
                         cutting_cylinder.apply_transform(
@@ -226,7 +227,13 @@ class StartSliceJob(Job):
 
                         mesh_data = node.getMeshData()
                         faces = mesh_data.getIndices() if mesh_data.hasIndices() else mesh_data.getVertexCount()
-                        mesh = trimesh.Trimesh(vertices=mesh_data.getVertices(), faces=faces)
+                        verts = mesh_data.getVertices()
+                        rot_scale = node.getWorldTransformation().getTransposed().getData()[0:3, 0:3]
+                        translate = node.getWorldTransformation().getData()[:3, 3]
+                        verts = verts.dot(rot_scale)
+                        verts += translate
+                        mesh = trimesh.Trimesh(vertices=verts, faces=faces)
+
                         try:
                             cutting_result = mesh.intersection(cutting_cylinder, engine="scad")
                             if cutting_result and cutting_result.is_watertight:
