@@ -593,7 +593,7 @@ class CliParser:
         return dVe / Af
 
     def _writeStartCode(self, gcode_list: List[str]):
-        if self._global_stack.getProperty("machine_heated_bed", "value"):
+        if self._parsing_type == "cylindrical":
             start_gcode = "T0\n"
             extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None)  # type: Optional[ExtruderStack]
             init_temperature = extruder.getProperty(
@@ -615,8 +615,10 @@ class CliParser:
                 start_gcode_prefix = start_gcode_prefix.replace("G55", "G56")
             start_gcode += start_gcode_prefix
             gcode_list.append(start_gcode + "\n")
+        elif self._parsing_type == "cylindrical_full":
+            gcode_list.append("G54\nG0 Z125 A90 F600\nG92 E0 C0\nG1 F200 E-1 ;retract 1 mm of feed stock\nG92 E0 ;zero the extruded length again\nG56\nG1 F200 E1 ;extrude 1 mm of feed stock\nG92 E0 ;zero the extruded length again\n")
         else:
-            gcode_list.append("G54\nG0 Z100 A90 F600\nG92 E0 C0\nG1 F200 E6 ;extrude 6 mm of feed stock\nG92 E0 ;zero the extruded length again\nG56\n")
+            gcode_list.append("G54\nG0 Z125 A90 F600\nG92 E0 C0\nG1 F200 E6 ;extrude 6 mm of feed stock\nG92 E0 ;zero the extruded length again\nG56\n")
 
     def _cliPointToPosition(self, point: CliPoint, position: Position, extrusion_move: bool = True) -> (
             Position, Position):

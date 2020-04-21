@@ -154,7 +154,7 @@ class GenerateBasementJob(Job):
 
             Job.yieldThread()
 
-        self._gcode_list.append("G54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E6 ;extrude 6 mm of feed stock\nG92 E0 ;zero the extruded length again\nG55\n")
+        self._gcode_list.append("G54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again")
 
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
@@ -253,14 +253,14 @@ class GenerateBasementJob(Job):
         return gcode_line
 
     def _generateHelix(self, radius: float, height: float, reverse_twist: bool, chordal_err: float = 0.05):
-        pitch = self._raft_base_line_spacing
+        pitch = self._raft_base_line_width
         max_t = numpy.pi * 2 + height / pitch
         result = []
         position = self._position
         gcode_position = self._gcode_position
         for t in numpy.arange(0, max_t, chordal_err):
-            x = radius * (cos(t) if not reverse_twist else sin(t))
-            y = radius * (sin(t) if not reverse_twist else cos(t))
+            x = radius * cos(t)
+            y = radius * (sin(t) if not reverse_twist else -sin(t))
             z = - self._raft_base_line_width / 2 if max_t - t <= (numpy.pi + chordal_err) * 2 else - (height - pitch * t)
             length = numpy.sqrt(x ** 2 + y ** 2)
             i = x / length if length != 0 else 0
