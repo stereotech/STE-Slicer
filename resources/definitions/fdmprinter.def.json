@@ -4284,7 +4284,7 @@
                     "default_value": 15,
                     "minimum_value_warning": "raft_interface_line_width",
                     "maximum_value_warning": "20",
-                    "enabled": "resolveOrValue('adhesion_type') == 'raft'",
+                    "enabled": "resolveOrValue('adhesion_type') in ['raft', 'none']",
                     "limit_to_extruder": "adhesion_extruder_nr",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true

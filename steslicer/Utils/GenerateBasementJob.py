@@ -63,6 +63,7 @@ class GenerateBasementJob(Job):
         self._raft_base_line_width = self._global_stack.getProperty("raft_base_line_width", "value")
         self._raft_base_line_spacing = self._global_stack.getProperty("raft_base_line_spacing", "value")
         self._raft_speed = self._global_stack.getProperty("raft_speed", "value")
+        self._raft_margin = self._global_stack.getProperty("raft_margin", "value")
         self._extruder_number = 0
         self._extruder_offsets = {}
         extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None)  # type: Optional[ExtruderStack]
@@ -134,7 +135,7 @@ class GenerateBasementJob(Job):
         self._gcode_position = Position(999, 999, 999, 0, 0, 0, 0, [0])
         current_path = []  # type: List[List[float]]
 
-        layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness))
+        layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness) + self._raft_margin / 2)
 
         for layer_number in range(0, layer_count):
             if self._abort_requested:
@@ -143,7 +144,7 @@ class GenerateBasementJob(Job):
             self.processingProgress.emit(layer_number / layer_count)
             self._gcode_list.append(";LAYER:%s\n" % layer_number)
 
-            self._gcode_list[-1] = self.processPolyline(layer_number, current_path, self._gcode_list[-1])
+            self._gcode_list[-1] = self.processPolyline(layer_number, current_path, self._gcode_list[-1], layer_count)
 
             self._createPolygon(layer_number, current_path, self._extruder_offsets.get(
                 self._extruder_number, [0, 0]))
@@ -156,9 +157,9 @@ class GenerateBasementJob(Job):
 
         self._gcode_list.append("G54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again")
 
-    def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str) -> str:
+    def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
-        height = self._cylindrical_raft_base_height / (layer_number + 1)
+        height = self._cylindrical_raft_base_height - layer_number * (self._cylindrical_raft_base_height / layer_count) + self._raft_base_line_width
         points = self._generateHelix(radius, height, layer_number % 2 == 0)
 
         new_position, new_gcode_position = points[0]
@@ -434,7 +435,7 @@ class GenerateBasementJob(Job):
         if numpy.abs(gcode_position.b - self._gcode_position.b) > 0.0001:
             gcode_command += " B%.2f" % gcode_position.b
         if numpy.abs(gcode_position.c - self._gcode_position.c) > 0.0001:
-            gcode_command += " C%.2f" % gcode_position.c
+            gcode_command += " C%.3f" % (gcode_position.c / 6)
         if numpy.abs(feedrate - self._gcode_position.f) > 0.0001:
             gcode_command += " F%.0f" % (feedrate * 60)
         if numpy.abs(gcode_position.e[self._extruder_number] - self._gcode_position.e[

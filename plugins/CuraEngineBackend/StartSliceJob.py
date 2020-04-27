@@ -221,12 +221,18 @@ class StartSliceJob(Job):
                     for node in temp_list:
                         height = node.getBoundingBox().height * 2
                         cutting_cylinder = trimesh.primitives.Cylinder(
-                            radius=radius, height=height)
+                            radius=radius, height=height, sections=64)
                         cutting_cylinder.apply_transform(
                             trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
 
                         mesh_data = node.getMeshData()
-                        faces = mesh_data.getIndices() if mesh_data.hasIndices() else mesh_data.getVertexCount()
+                        if mesh_data.hasIndices():
+                            faces = mesh_data.getIndices()
+                        else:
+                            num_verts = mesh_data.getVertexCount()
+                            faces = numpy.empty((int(num_verts / 3 + 1), 3), numpy.int32)
+                            for i in range(0, num_verts - 2, 3):
+                                faces[int(i / 3):] = [i, i + 1, i + 2]
                         verts = mesh_data.getVertices()
                         rot_scale = node.getWorldTransformation().getTransposed().getData()[0:3, 0:3]
                         translate = node.getWorldTransformation().getData()[:3, 3]

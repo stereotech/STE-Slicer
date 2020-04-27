@@ -533,7 +533,8 @@ class CliParser:
             gcode_line += self._type_keyword + "FILL\n"
         else:
             gcode_line += self._type_keyword + "WALL-OUTER\n"
-
+        gcode_position_list = []
+        last_gcode_position = self._gcode_position
         while idx < len(points):
             point = CliPoint(float(points[idx]), float(points[idx + 1]))
             idx += 2
@@ -547,13 +548,29 @@ class CliParser:
                 feedrate = self._infill_speed
             x, y, z, a, b, c, f, e = new_position
             self._position = Position(x, y, z, a, b, c, feedrate, e)
-            gcode_command = self._generateGCodeCommand(1, new_gcode_position, feedrate)
-            if gcode_command is not None:
-                gcode_line += gcode_command
+            #gcode_command = self._generateGCodeCommand(1, new_gcode_position, feedrate)
+            #if gcode_command is not None:
+            #    gcode_line += gcode_command
             gx, gy, gz, ga, gb, gc, gf, ge = new_gcode_position
             self._gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
+            gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
+            gcode_position_list.append(gcode_position)
             self._addToPath(path, [x, y, z, a, b, c, feedrate, e, self._layer_type])
             # path.append([x, y, z, a, b, c, feedrate, e, self._layer_type])
+        self._gcode_position = last_gcode_position
+        if len(gcode_position_list) > 0:
+            filtered_gcode_position_list = [gcode_position_list[0]]
+            for index in range(1, len(gcode_position_list) - 2):
+                dist2 = self.getDist2FromLineSegment(gcode_position_list[index -1],gcode_position_list[index], gcode_position_list[index+1])
+                if dist2 > 0.000001:
+                    filtered_gcode_position_list.append(gcode_position_list[index])
+            filtered_gcode_position_list.append(gcode_position_list[-1])
+            for gcode_position in filtered_gcode_position_list:
+                gcode_command = self._generateGCodeCommand(1, gcode_position, gcode_position.f)
+                if gcode_command is not None:
+                    gcode_line += gcode_command
+                gx, gy, gz, ga, gb, gc, gf, ge = gcode_position
+                self._gcode_position = Position(gx, gy, gz, ga, gb, gc, gf, ge)
         return gcode_line
 
     def _generateGCodeCommand(self, g: int, gcode_position: Position, feedrate: float) -> Optional[str]:
@@ -569,7 +586,7 @@ class CliParser:
         if numpy.abs(gcode_position.b - self._gcode_position.b) > 0.0001:
             gcode_command += " B%.2f" % gcode_position.b
         if numpy.abs(gcode_position.c - self._gcode_position.c) > 0.0001:
-            gcode_command += " C%.2f" % gcode_position.c
+            gcode_command += " C%.3f" % (gcode_position.c / 6)
         if numpy.abs(feedrate - self._gcode_position.f) > 0.0001:
             gcode_command += " F%.0f" % (feedrate * 60)
         if numpy.abs(gcode_position.e[self._extruder_number] - self._gcode_position.e[
@@ -631,8 +648,8 @@ class CliParser:
             j = 0
             k = 1
         elif self._parsing_type in ["cylindrical", "cylindrical_full"]:
-            x = self._current_layer_height * math.cos(point.y)
-            y = self._current_layer_height * math.sin(point.y)
+            x = self._current_layer_height * numpy.cos(point.y)
+            y = self._current_layer_height * numpy.sin(point.y)
             z = point.x
             length = numpy.sqrt(x ** 2 + y ** 2)
             i = x / length if length != 0 else 0
@@ -678,3 +695,25 @@ class CliParser:
             feedrate = self._travel_speed
         self._time_estimates[layer_type_to_times_type[layer_type]] += (length / feedrate) * 2
         path.append(addition)
+
+    @staticmethod
+    def getDist2FromLineSegment(a: Position, b: Position, c: Position) -> float:
+        c_arr = [c.x, c.y, c.z, c.a, c.b, c.c]
+        a_arr = [a.x, a.y, a.z, a.a, a.b, a.c]
+        b_arr = [b.x, b.y, b.z, b.a, b.b, b.c]
+        ac = numpy.subtract(c_arr, a_arr)
+        ac_size = numpy.sqrt(numpy.sum(ac ** 2))
+        ab = numpy.subtract(b_arr, a_arr)
+        if ac_size == 0:
+            ab_dist = numpy.sum(ab ** 2)
+            return ab_dist
+        projected_x = numpy.dot(ab, ac)
+        ax_size = projected_x / ac_size
+        if ax_size < 0:
+            return numpy.sum(ab ** 2)
+        if (ax_size > ac_size):
+            return numpy.sum(numpy.subtract(b_arr, c_arr) ** 2)
+        ax = ac * ax_size / ac_size
+        bx = ab - ax
+        bx_size = numpy.sum(bx ** 2)
+        return bx_size

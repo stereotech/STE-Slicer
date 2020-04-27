@@ -72,10 +72,11 @@ class ProcessCliJob(Job):
         self._parser = CliParser(self.getBuildPlate())
         self._parser.progressChanged.connect(self._onCliParserProgress)
         self._gcode_list = self._parser.processCliStream(file_data)
-        self._layers_data = self._parser.getLayersData().values()
-        self._material_amounts = self._parser.getMaterialAmounts()
-        self._times = self._parser.getTimes()
-        self._parser.progressChanged.disconnectAll()
+        if not self._abort_requested:
+            self._layers_data = self._parser.getLayersData().values()
+            self._material_amounts = self._parser.getMaterialAmounts()
+            self._times = self._parser.getTimes()
+            self._parser.progressChanged.disconnectAll()
         self._parser = None
 
     def _onCliParserProgress(self, amount):

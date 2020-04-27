@@ -1,8 +1,0 @@
-{
-    "name": "STEApp Network Connection",
-    "author": "-----",
-    "description": "Manages network connections to STE printers.",
-    "version": "1.0.0",
-    "api": 5,
-    "i18n-catalog": "steslicer"
-}

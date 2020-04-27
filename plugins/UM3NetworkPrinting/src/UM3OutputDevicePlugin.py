@@ -6,7 +6,7 @@ from UM.Application import Application
 from UM.Signal import Signal, signalemitter
 from UM.Version import Version
 
-from . import ClusterUM3OutputDevice, LegacyUM3OutputDevice
+from . import LegacyUM3OutputDevice
 
 from PyQt5.QtNetwork import QNetworkRequest, QNetworkAccessManager
 from PyQt5.QtCore import QUrl
@@ -263,7 +263,7 @@ class UM3OutputDevicePlugin(OutputDevicePlugin):
 
         printer_type = properties.get(b"model", b"").decode("utf-8")
         printer_type_identifiers = {
-            "STE330": "ste320",
+            "STE320": "ste320",
             "STE520": "ste520"
         }
 
