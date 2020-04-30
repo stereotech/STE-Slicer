@@ -61,6 +61,11 @@ class BuildVolume(SceneNode):
         self._grid_mesh = None
         self._grid_shader = None
 
+        self._cutting_cylinder_mesh = None
+        self._printing_mode = None
+        self._cutting_cylinder_radius = 0.0
+        self._cutting_cylinder_height = 0.0
+
         self._disallowed_areas = []
         self._disallowed_areas_no_brim = []
         self._disallowed_area_mesh = None
@@ -199,6 +204,7 @@ class BuildVolume(SceneNode):
 
         renderer.queueNode(self, mode = RenderBatch.RenderMode.Lines)
         renderer.queueNode(self, mesh = self._origin_mesh, backface_cull = True)
+        renderer.queueNode(self, mesh = self._cutting_cylinder_mesh, transparent=True, shader=self._shader)
         renderer.queueNode(self, mesh = self._grid_mesh, shader = self._grid_shader, backface_cull = True)
         if self._disallowed_area_mesh:
             renderer.queueNode(self, mesh = self._disallowed_area_mesh, shader = self._shader, transparent = True, backface_cull = True, sort = -9)
@@ -416,6 +422,13 @@ class BuildVolume(SceneNode):
         )
         self._origin_mesh = mb.build()
 
+        mb = MeshBuilder()
+        mb.addArc(self._cutting_cylinder_radius, Vector.Unit_Z)
+        arcVerts = mb.getVertices()
+        mb = MeshBuilder()
+        mb.addConvexPolygonExtrusion(arcVerts, 0, self._cutting_cylinder_height, color=self._disallowed_area_color)
+        self._cutting_cylinder_mesh = mb.build()
+
         disallowed_area_height = 0.1
         disallowed_area_size = 0
         if self._disallowed_areas:
@@ -486,6 +499,16 @@ class BuildVolume(SceneNode):
     def getRaftThickness(self) -> float:
         return self._raft_thickness
 
+    def _updateCuttingCylinder(self):
+        old_cutting_cylinder_radius = self._cutting_cylinder_radius
+        old_cutting_cylinder_height = self._cutting_cylinder_height
+        self._printing_mode = self._global_container_stack.getProperty("printing_mode", "value")
+        self._cutting_cylinder_radius = 0.0
+        self._cutting_cylinder_height = 0.0
+        if self._printing_mode in ["cylindrical", "cylindrical_full"]:
+            self._cutting_cylinder_radius = self._global_container_stack.getProperty("cylindrical_mode_base_diameter", "value")
+            self._cutting_cylinder_height = self._global_container_stack.getProperty("machine_height", "value")
+
     def _updateRaftThickness(self):
         old_raft_thickness = self._raft_thickness
         self._adhesion_type = self._global_container_stack.getProperty("adhesion_type", "value")
@@ -555,6 +578,8 @@ class BuildVolume(SceneNode):
             self._updateRaftThickness()
             self._updateExtraZClearance()
 
+            self._updateCuttingCylinder()
+
             if self._engine_ready:
                 self.rebuild()
 
@@ -573,6 +598,7 @@ class BuildVolume(SceneNode):
         update_disallowed_areas = False
         update_raft_thickness = False
         update_extra_z_clearance = True
+        update_cutting_cylinder = False
 
         for setting_key in self._changed_settings_since_last_rebuild:
 
@@ -616,6 +642,10 @@ class BuildVolume(SceneNode):
                 update_disallowed_areas = True
                 rebuild_me = True
 
+            if setting_key in self._cutting_cylinder_settings:
+                update_cutting_cylinder = True
+                rebuild_me = True
+
         # We only want to update all of them once.
         if update_disallowed_areas:
             self._updateDisallowedAreas()
@@ -625,6 +655,9 @@ class BuildVolume(SceneNode):
 
         if update_extra_z_clearance:
             self._updateExtraZClearance()
+
+        if update_cutting_cylinder:
+            self._updateCuttingCylinder()
 
         if rebuild_me:
             self.rebuild()
@@ -654,6 +687,7 @@ class BuildVolume(SceneNode):
         self._updateDisallowedAreas()
         self._updateRaftThickness()
         self._updateExtraZClearance()
+        self._updateCuttingCylinder()
         self.rebuild()
 
     def _updateDisallowedAreas(self):
@@ -1065,3 +1099,4 @@ class BuildVolume(SceneNode):
     _distance_settings = ["infill_wipe_dist", "travel_avoid_distance", "support_offset", "support_enable", "travel_avoid_other_parts", "travel_avoid_supports"]
     _extruder_settings = ["support_enable", "support_bottom_enable", "support_roof_enable", "support_infill_extruder_nr", "support_extruder_nr_layer_0", "support_bottom_extruder_nr", "support_roof_extruder_nr", "brim_line_count", "adhesion_extruder_nr", "adhesion_type"] #Settings that can affect which extruders are used.
     _limit_to_extruder_settings = ["wall_extruder_nr", "wall_0_extruder_nr", "wall_x_extruder_nr", "top_bottom_extruder_nr", "infill_extruder_nr", "support_infill_extruder_nr", "support_extruder_nr_layer_0", "support_bottom_extruder_nr", "support_roof_extruder_nr", "adhesion_extruder_nr"]
+    _cutting_cylinder_settings = ["printing_mode", "cylindrical_mode_base_diameter", "machine_height"]

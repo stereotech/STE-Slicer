@@ -1,5 +1,8 @@
-
-
+import numpy
+import trimesh
+from UM.Math.Vector import Vector
+from UM.Mesh import MeshData
+from UM.Mesh.MeshBuilder import MeshBuilder
 from UM.View.View import View
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 from UM.Scene.Selection import Selection
@@ -10,6 +13,7 @@ from UM.Settings.Validator import ValidatorState
 from UM.Math.Color import Color
 from UM.View.GL.OpenGL import OpenGL
 
+from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.Settings.ExtrudersModel import ExtrudersModel
 
@@ -73,6 +77,8 @@ class SolidView(View):
                     self._enabled_shader.setUniformValue("u_overhangAngle", math.cos(math.radians(0))) #Overhang angle of 0 causes no area at all to be marked as overhang.
             else:
                 self._enabled_shader.setUniformValue("u_overhangAngle", math.cos(math.radians(0)))
+
+
 
         for node in DepthFirstIterator(scene.getRoot()):
             if not node.render(renderer):

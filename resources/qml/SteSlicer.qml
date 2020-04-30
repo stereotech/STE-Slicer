@@ -521,6 +521,20 @@ UM.MainWindow
                 }
             }
 
+            //PreSlicingSlider
+            //{
+            //    id: preSlicingSlider
+            //    visible: UM.Controller.activeStage.stageId != "STEAppStage"
+            //    anchors
+            //    {
+            //        bottom: jobSpecs.top;
+            //        //left: sidebar.right;
+            //        right: parent.right;
+            //        bottomMargin: UM.Theme.getSize("default_margin").height;
+            //        rightMargin: UM.Theme.getSize("default_margin").width;
+            //    }
+            //}
+
             UM.MessageStack
             {
                 anchors
