@@ -696,8 +696,8 @@
                     "type": "enum",
                     "options": {
                         "classic": "Classic",
-                        "cylindrical": "Coil5D",
-                        "cylindrical_full": "Coil5D Full"
+                        "cylindrical": "5D Spiral",
+                        "cylindrical_full": "5D Spiral Full"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
@@ -3423,6 +3423,15 @@
                     "label": "Generate Support",
                     "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
                     "type": "bool",
+                    "default_value": false,
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": false
+                },
+                "support_enable_cylindrical": {
+                    "label": "Generate Cylindrical Support",
+                    "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
+                    "type": "bool",
+                    "enabled": "support_enable",
                     "default_value": false,
                     "settable_per_mesh": true,
                     "settable_per_extruder": false

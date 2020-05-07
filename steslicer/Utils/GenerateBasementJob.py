@@ -435,7 +435,7 @@ class GenerateBasementJob(Job):
         if numpy.abs(gcode_position.b - self._gcode_position.b) > 0.0001:
             gcode_command += " B%.2f" % gcode_position.b
         if numpy.abs(gcode_position.c - self._gcode_position.c) > 0.0001:
-            gcode_command += " C%.3f" % (gcode_position.c / 6)
+            gcode_command += " C%.3f" % (gcode_position.c / 3)
         if numpy.abs(feedrate - self._gcode_position.f) > 0.0001:
             gcode_command += " F%.0f" % (feedrate * 60)
         if numpy.abs(gcode_position.e[self._extruder_number] - self._gcode_position.e[

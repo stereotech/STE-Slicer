@@ -340,7 +340,8 @@ class StartSliceJob(Job):
                     # This effectively performs a limited form of MeshData.getTransformed that ignores normals.
                     verts = mesh_data.getVertices()
                     verts = verts.dot(rot_scale)
-                    #verts += translate
+                    if printing_mode == "classic":
+                        verts += translate
 
                     # Convert from Y up axes to Z up axes. Equals a 90 degree rotation.
                     verts[:, [1, 2]] = verts[:, [2, 1]]

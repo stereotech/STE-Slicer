@@ -506,7 +506,7 @@ class BuildVolume(SceneNode):
         self._cutting_cylinder_radius = 0.0
         self._cutting_cylinder_height = 0.0
         if self._printing_mode in ["cylindrical", "cylindrical_full"]:
-            self._cutting_cylinder_radius = self._global_container_stack.getProperty("cylindrical_mode_base_diameter", "value")
+            self._cutting_cylinder_radius = self._global_container_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2
             self._cutting_cylinder_height = self._global_container_stack.getProperty("machine_height", "value")
 
     def _updateRaftThickness(self):
