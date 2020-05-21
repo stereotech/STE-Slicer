@@ -633,7 +633,7 @@ class CliParser:
             start_gcode += start_gcode_prefix
             gcode_list.append(start_gcode + "\n")
         elif self._parsing_type == "cylindrical_full":
-            gcode_list.append("G54\nG0 Z125 A90 F600\nG92 E0 C0\nG1 F200 E-1 ;retract 1 mm of feed stock\nG92 E0 ;zero the extruded length again\nG56\nG1 F200 E1 ;extrude 1 mm of feed stock\nG92 E0 ;zero the extruded length again\n")
+            gcode_list.append("G91\nG0 Z20\nG90\nG54\nG0 Z125 A90 F600\nG92 E0 C0\nG1 F200 E-1 ;retract 1 mm of feed stock\nG92 E0 ;zero the extruded length again\nG56\nG1 F200 E1 ;extrude 1 mm of feed stock\nG92 E0 ;zero the extruded length again\n")
         else:
             gcode_list.append("G54\nG0 Z125 A90 F600\nG92 E0 C0\nG1 F200 E6 ;extrude 6 mm of feed stock\nG92 E0 ;zero the extruded length again\nG56\n")
 
