@@ -126,6 +126,7 @@ class PostProcessingPlugin(QObject, Extension):
 
     ##  Load all scripts from all paths where scripts can be found.
     #
+
     #   This should probably only be done on init.
     def loadAllScripts(self) -> None:
         if self._loaded_scripts: # Already loaded.

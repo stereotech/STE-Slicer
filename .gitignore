@@ -83,3 +83,4 @@ plugins/*.txt
 plugins/setup.py
 plugins/cmake
 glicer_console.exe
+CliParser.exe
