@@ -1,4 +1,5 @@
 import argparse #To run the engine in debug mode if the front-end is in debug mode.
+import subprocess
 import tempfile
 from collections import defaultdict
 import os
@@ -333,10 +334,10 @@ class CliParserBackend(QObject, Backend):
         self.backendStateChange.emit(BackendState.Processing)
         slice_message = job.getSliceMessage()
         slice_message.append('-o')
-        output_path = [os.path.join(tempfile.tempdir, next(tempfile._get_candidate_names()), ".cli")]
+        output_path = [os.path.join(tempfile.tempdir, next(tempfile._get_candidate_names()) + ".cli")]
         slice_message.extend(output_path)
 
-        self._glicer_process = self._runEngineProcess(slice_message)
+        self._glicer_process = self._runGlicerEngineProcess(slice_message)
         # Notify the user that it's now up to the backend to do it's job
         self._startProcessCliLayersJob(output_path, self._application.getMultiBuildPlateModel().activeBuildPlate)
 
@@ -352,6 +353,15 @@ class CliParserBackend(QObject, Backend):
         self._process_cli_job.setBuildPlate(build_plate_number)
         self._process_cli_job.finished.connect(self._onProcessCliFinished)
         self._process_cli_job.start()
+
+    def _runGlicerEngineProcess(self, command_list) -> Optional[subprocess.Popen]:
+        try:
+            return subprocess.Popen(command_list)
+        except PermissionError:
+            Logger.log("e", "Couldn't start back-end: No permission to execute process.")
+        except FileNotFoundError:
+            Logger.logException("e", "Unable to find backend executable: %s", command_list[0])
+        return None
 
     def _onProcessCliFinished(self, job: ProcessCliJob):
         self._message_handlers["cliparser.proto.LayerOptimized"] = self._onOptimizedLayerMessage
