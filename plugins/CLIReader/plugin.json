@@ -1,0 +1,8 @@
+{
+    "name": "Cli Reader",
+    "author": "Stereotech",
+    "version": "1.0.0",
+    "description": "Allows loading and processing CLI Files",
+    "api": 5,
+    "i18n-catalog": "steslicer"
+}

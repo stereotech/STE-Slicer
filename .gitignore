@@ -10,7 +10,8 @@ resources/i18n/en_7S
 resources/i18n/x-test
 resources/firmware
 CuraEngine.exe
-glicer.exe
+glicer_console.exe
+CliParser.exe
 LC_MESSAGES
 .cache
 *.qmlc
@@ -53,13 +54,6 @@ plugins/GodMode
 plugins/OctoPrintPlugin
 plugins/ProfileFlattener
 plugins/X3GWriter
-plugins/CliReader
-plugins/GlicerWriter
-plugins/GlicerConfigWriter
-plugins/GlicerBackend
-plugins/CylindricalBackend
-plugins/.gitignore
-plugins/build
 
 #Build stuff
 CMakeCache.txt
@@ -79,7 +73,3 @@ run.sh
 CuraEngine
 openscad.*
 *.dll
-plugins/*.txt
-plugins/setup.py
-plugins/cmake
-glicer_console.exe
