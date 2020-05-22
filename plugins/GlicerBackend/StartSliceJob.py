@@ -6,15 +6,15 @@ from enum import IntEnum
 import time
 from typing import Any, cast, Dict, List, Optional, Set
 import re
-import Arcus #For typing.
+import Arcus  # For typing.
 
 from UM.Job import Job
 from UM.Logger import Logger
-from UM.Settings.ContainerStack import ContainerStack #For typing.
-from UM.Settings.SettingRelation import SettingRelation #For typing.
+from UM.Settings.ContainerStack import ContainerStack  # For typing.
+from UM.Settings.SettingRelation import SettingRelation  # For typing.
 
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
-from UM.Scene.Scene import Scene #For typing.
+from UM.Scene.Scene import Scene  # For typing.
 from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
 
@@ -30,7 +30,8 @@ import trimesh
 import trimesh.primitives
 import trimesh.repair
 
-NON_PRINTING_MESH_SETTINGS = ["anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
+NON_PRINTING_MESH_SETTINGS = [
+    "anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
 
 params_dict = {
     "Camera": {'xsize': {
@@ -262,6 +263,7 @@ params_dict = {
     }
 }
 
+
 class StartJobResult(IntEnum):
     Finished = 1
     Error = 2
@@ -269,20 +271,21 @@ class StartJobResult(IntEnum):
     NothingToSlice = 4
     MaterialIncompatible = 5
     BuildPlateError = 6
-    ObjectSettingError = 7 #When an error occurs in per-object settings.
+    ObjectSettingError = 7  # When an error occurs in per-object settings.
     ObjectsWithDisabledExtruder = 8
 
 
 class StartSliceJob(Job):
     def __init__(self, slice_message):
         super().__init__()
-
-        self._scene = SteSlicerApplication.getInstance().getController().getScene() #type: Scene
+        self._scene = SteSlicerApplication.getInstance(
+        ).getController().getScene()  # type: Scene
         self._slice_message = slice_message
         self._is_cancelled = False  # type: bool
         self._build_plate_number = None  # type: Optional[int]
 
-        self._all_extruders_settings = None  # type: Optional[Dict[str, Any]] # cache for all setting values from all stacks (global & extruder) for the current machine
+        # type: Optional[Dict[str, Any]] # cache for all setting values from all stacks (global & extruder) for the current machine
+        self._all_extruders_settings = None
 
     def setBuildPlate(self, build_plate_number: int) -> None:
         self._build_plate_number = build_plate_number
@@ -290,8 +293,8 @@ class StartSliceJob(Job):
     def getSliceMessage(self) -> List[str]:
         return self._slice_message
 
-    ##  Check if a stack has any errors.
-    ##  returns true if it has errors, false otherwise.
+    # Check if a stack has any errors.
+    # returns true if it has errors, false otherwise.
     def _checkStackForErrors(self, stack: ContainerStack) -> bool:
         if stack is None:
             return False
@@ -299,7 +302,8 @@ class StartSliceJob(Job):
         for key in stack.getAllKeys():
             validation_state = stack.getProperty(key, "validationState")
             if validation_state in (ValidatorState.Exception, ValidatorState.MaximumError, ValidatorState.MinimumError):
-                Logger.log("w", "Setting %s is not valid, but %s. Aborting slicing.", key, validation_state)
+                Logger.log(
+                    "w", "Setting %s is not valid, but %s. Aborting slicing.", key, validation_state)
                 return True
             Job.yieldThread()
         return False
@@ -348,9 +352,9 @@ class StartSliceJob(Job):
                     self.setResult(StartJobResult.MaterialIncompatible)
                     return
 
-
         # Don't slice if there is a per object setting with an error value.
-        for node in DepthFirstIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+        # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+        for node in DepthFirstIterator(self._scene.getRoot()):
             if not isinstance(node, SteSlicerSceneNode) or not node.isSelectable():
                 continue
 
@@ -360,7 +364,8 @@ class StartSliceJob(Job):
 
         with self._scene.getSceneLock():
             # Remove old layer data.
-            for node in DepthFirstIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+            # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+            for node in DepthFirstIterator(self._scene.getRoot()):
                 if node.callDecoration("getLayerData") and node.callDecoration("getBuildPlateNumber") == self._build_plate_number:
                     node.getParent().removeChild(node)
                     break
@@ -405,18 +410,22 @@ class StartSliceJob(Job):
             global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
             if not global_stack:
                 return
-            extruders_enabled = {position: stack.isEnabled for position, stack in global_stack.extruders.items()}
+            extruders_enabled = {
+                position: stack.isEnabled for position, stack in global_stack.extruders.items()}
             filtered_object_groups = []
             has_model_with_disabled_extruders = False
             associated_disabled_extruders = set()
             for group in object_groups:
                 #stack = global_stack
-                stack = SteSlicerApplication.getInstance().getExtruderManager().getActiveExtruderStack()
+                stack = SteSlicerApplication.getInstance(
+                ).getExtruderManager().getActiveExtruderStack()
                 skip_group = False
                 for node in group:
                     # Only check if the printing extruder is enabled for printing meshes
-                    is_non_printing_mesh = node.callDecoration("evaluateIsNonPrintingMesh")
-                    extruder_position = node.callDecoration("getActiveExtruderPosition")
+                    is_non_printing_mesh = node.callDecoration(
+                        "evaluateIsNonPrintingMesh")
+                    extruder_position = node.callDecoration(
+                        "getActiveExtruderPosition")
                     if not is_non_printing_mesh and not extruders_enabled[extruder_position]:
                         skip_group = True
                         has_model_with_disabled_extruders = True
@@ -426,7 +435,8 @@ class StartSliceJob(Job):
 
             if has_model_with_disabled_extruders:
                 self.setResult(StartJobResult.ObjectsWithDisabledExtruder)
-                associated_disabled_extruders = {str(c) for c in sorted([int(p) + 1 for p in associated_disabled_extruders])}
+                associated_disabled_extruders = {str(c) for c in sorted(
+                    [int(p) + 1 for p in associated_disabled_extruders])}
                 self.setMessage(", ".join(associated_disabled_extruders))
                 return
 
@@ -441,8 +451,10 @@ class StartSliceJob(Job):
             for group in filtered_object_groups:
                 for object in group:
                     mesh_data = object.getMeshData()
-                    rot_scale = object.getWorldTransformation().getTransposed().getData()[0:3, 0:3]
-                    translate = object.getWorldTransformation().getData()[:3, 3]
+                    rot_scale = object.getWorldTransformation().getTransposed().getData()[
+                        0:3, 0:3]
+                    translate = object.getWorldTransformation().getData()[
+                        :3, 3]
 
                     # This effectively performs a limited form of MeshData.getTransformed that ignores normals.
                     verts = mesh_data.getVertices()
@@ -457,7 +469,8 @@ class StartSliceJob(Job):
                         faces = mesh_data.getIndices()
                     else:
                         num_verts = mesh_data.getVertexCount()
-                        faces = numpy.empty((int(num_verts / 3 + 1), 3), numpy.int32)
+                        faces = numpy.empty(
+                            (int(num_verts / 3 + 1), 3), numpy.int32)
                         for i in range(0, num_verts - 2, 3):
                             faces[int(i / 3):] = [i, i + 1, i + 2]
                     if faces is None:
@@ -477,10 +490,12 @@ class StartSliceJob(Job):
     def _buildObjectFiles(self, indicies_collection, vertices_collection):
         mesh_collection = []
         for index, vertices in enumerate(vertices_collection):
-            mesh = trimesh.Trimesh(vertices=vertices, faces=indicies_collection[index])
+            mesh = trimesh.Trimesh(
+                vertices=vertices, faces=indicies_collection[index])
             mesh_collection.append(mesh)
             Job.yieldThread()
-        output_mesh = trimesh.util.concatenate(mesh_collection) #type: trimesh.Trimesh
+        output_mesh = trimesh.util.concatenate(
+            mesh_collection)  # type: trimesh.Trimesh
         trimesh.repair.fix_winding(output_mesh)
         Job.yieldThread()
         trimesh.repair.fix_inversion(output_mesh, multibody=True)
@@ -488,8 +503,9 @@ class StartSliceJob(Job):
         output_mesh.fix_normals()
         # create_cutting_cylinder
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
-        radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2
-        height = global_stack.getProperty("machine_height", "value")
+        radius = global_stack.getProperty(
+            "cylindrical_mode_base_diameter", "value") / 2
+        height = global_stack.getProperty("machine_height", "value") * 2
         cutting_cylinder = trimesh.primitives.Cylinder(
             radius=radius, height=height, sections=64)
 
@@ -502,17 +518,16 @@ class StartSliceJob(Job):
         temp_mesh = tempfile.NamedTemporaryFile('w', delete=False)
         result.export(temp_mesh.name, 'stl')
 
-
         self._slice_message.append('-m')
         self._slice_message.append(temp_mesh.name)
-
-
-    ##  Replace setting tokens in a piece of g-code.
+    # Replace setting tokens in a piece of g-code.
     #   \param value A piece of g-code to replace tokens in.
     #   \param default_extruder_nr Stack nr to use when no stack nr is specified, defaults to the global stack
+
     def _expandGcodeTokens(self, value: str, default_extruder_nr: int = -1) -> str:
         if not self._all_extruders_settings:
-            global_stack = cast(ContainerStack, SteSlicerApplication.getInstance().getGlobalContainerStack())
+            global_stack = cast(
+                ContainerStack, SteSlicerApplication.getInstance().getGlobalContainerStack())
 
             # NB: keys must be strings for the string formatter
             self._all_extruders_settings = {
@@ -520,20 +535,24 @@ class StartSliceJob(Job):
             }
 
             for extruder_stack in ExtruderManager.getInstance().getActiveExtruderStacks():
-                extruder_nr = extruder_stack.getProperty("extruder_nr", "value")
-                self._all_extruders_settings[str(extruder_nr)] = self._buildReplacementTokens(extruder_stack)
+                extruder_nr = extruder_stack.getProperty(
+                    "extruder_nr", "value")
+                self._all_extruders_settings[str(
+                    extruder_nr)] = self._buildReplacementTokens(extruder_stack)
 
         try:
             # any setting can be used as a token
-            fmt = GcodeStartEndFormatter(default_extruder_nr=default_extruder_nr)
+            fmt = GcodeStartEndFormatter(
+                default_extruder_nr=default_extruder_nr)
             settings = self._all_extruders_settings.copy()
             settings["default_extruder_nr"] = default_extruder_nr
             return str(fmt.format(value, **settings))
         except:
-            Logger.logException("w", "Unable to do token replacement on start/end g-code")
+            Logger.logException(
+                "w", "Unable to do token replacement on start/end g-code")
             return str(value)
 
-    ##  Creates a dictionary of tokens to replace in g-code pieces.
+    # Creates a dictionary of tokens to replace in g-code pieces.
     #
     #   This indicates what should be replaced in the start and end g-codes.
     #   \param stack The stack to get the settings from to replace the tokens
@@ -547,14 +566,18 @@ class StartSliceJob(Job):
             result[key] = value
             Job.yieldThread()
 
-        result["print_bed_temperature"] = result["material_bed_temperature"]  # Renamed settings.
+        # Renamed settings.
+        result["print_bed_temperature"] = result["material_bed_temperature"]
         result["print_temperature"] = result["material_print_temperature"]
         result["time"] = time.strftime("%H:%M:%S")  # Some extra settings.
         result["date"] = time.strftime("%d-%m-%Y")
-        result["day"] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
+        result["day"] = ["Sun", "Mon", "Tue", "Wed",
+                         "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
 
-        initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
-        initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
+        initial_extruder_stack = SteSlicerApplication.getInstance(
+        ).getExtruderManager().getUsedExtruderStacks()[0]
+        initial_extruder_nr = initial_extruder_stack.getProperty(
+            "extruder_nr", "value")
         result["initial_extruder_nr"] = initial_extruder_nr
 
         return result
@@ -564,36 +587,48 @@ class StartSliceJob(Job):
 
         # Pre-compute material material_bed_temp_prepend and material_print_temp_prepend
         start_gcode = settings["machine_start_gcode"]
-        bed_temperature_settings = ["material_bed_temperature", "material_bed_temperature_layer_0"]
-        pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(bed_temperature_settings) # match {setting} as well as {setting, extruder_nr}
-        settings["material_bed_temp_prepend"] = re.search(pattern, start_gcode) == None
-        print_temperature_settings = ["material_print_temperature", "material_print_temperature_layer_0", "default_material_print_temperature", "material_initial_print_temperature", "material_final_print_temperature", "material_standby_temperature"]
-        pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(print_temperature_settings) # match {setting} as well as {setting, extruder_nr}
-        settings["material_print_temp_prepend"] = re.search(pattern, start_gcode) == None
+        bed_temperature_settings = [
+            "material_bed_temperature", "material_bed_temperature_layer_0"]
+        # match {setting} as well as {setting, extruder_nr}
+        pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(bed_temperature_settings)
+        settings["material_bed_temp_prepend"] = re.search(
+            pattern, start_gcode) == None
+        print_temperature_settings = ["material_print_temperature", "material_print_temperature_layer_0", "default_material_print_temperature",
+                                      "material_initial_print_temperature", "material_final_print_temperature", "material_standby_temperature"]
+        # match {setting} as well as {setting, extruder_nr}
+        pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(print_temperature_settings)
+        settings["material_print_temp_prepend"] = re.search(
+            pattern, start_gcode) == None
 
         # Replace the setting tokens in start and end g-code.
         # Use values from the first used extruder by default so we get the expected temperatures
-        initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
-        initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
+        initial_extruder_stack = SteSlicerApplication.getInstance(
+        ).getExtruderManager().getUsedExtruderStacks()[0]
+        initial_extruder_nr = initial_extruder_stack.getProperty(
+            "extruder_nr", "value")
 
-        settings["machine_start_gcode"] = self._expandGcodeTokens(settings["machine_start_gcode"], initial_extruder_nr)
-        settings["machine_end_gcode"] = self._expandGcodeTokens(settings["machine_end_gcode"], initial_extruder_nr)
+        settings["machine_start_gcode"] = self._expandGcodeTokens(
+            settings["machine_start_gcode"], initial_extruder_nr)
+        settings["machine_end_gcode"] = self._expandGcodeTokens(
+            settings["machine_end_gcode"], initial_extruder_nr)
 
-        temp_config = tempfile.NamedTemporaryFile('w', delete=False, encoding='Windows-1251')
+        temp_config = tempfile.NamedTemporaryFile(
+            'w', delete=False, encoding='Windows-1251')
         self._generateGlicerConfig(temp_config.name, settings)
 
         self._slice_message.append('-c')
         self._slice_message.append(temp_config.name)
 
-
     def _generateGlicerConfig(self, filename: str, settings: Dict) -> None:
         root = eltree.Element("root")
         normalize = "normalize_when_load"
-        sub = eltree.SubElement(root, "param", attrib={'NAME': normalize, 'PARAM': ''})
+        sub = eltree.SubElement(root, "param", attrib={
+                                'NAME': normalize, 'PARAM': ''})
         sub.text = "0"
         for region, params in params_dict.items():
             for name, value in params.items():
-                sub = eltree.SubElement(root, "param", attrib={'NAME': name, 'REGION': region, 'PARAM': ''})
+                sub = eltree.SubElement(root, "param", attrib={
+                                        'NAME': name, 'REGION': region, 'PARAM': ''})
                 setting_value = settings.get(value.get("stack_key", ""), None)
                 if setting_value is not None:
                     if isinstance(setting_value, bool):
@@ -606,13 +641,15 @@ class StartSliceJob(Job):
                     if name == "skin_width":
                         setting_value = setting_value if setting_value <= 4 else 4
                     if name == "supportangle":
-                        supports_enabled = settings.get("support_enable_cylindrical", False)
+                        supports_enabled = settings.get(
+                            "support_enable_cylindrical", False)
                         setting_value = 90 - setting_value if supports_enabled else "0"
 
                 else:
                     setting_value = value.get("default_value", "")
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
-        settings_string = eltree.tostring(root, encoding='Windows-1251').decode("Windows-1251")
+        settings_string = eltree.tostring(
+            root, encoding='Windows-1251').decode("Windows-1251")
         with open(filename, mode='w') as f:
             f.write(settings_string)
