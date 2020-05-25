@@ -245,7 +245,8 @@ class CliParserBackend(QObject, Backend):
 
         self.determineAutoSlicing()
 
-        self._start_slice_job = StartSliceJob(self.getGlicerEngineCommand())
+        slice_message = self._socket.createMessage("cliparser.proto.Process")
+        self._start_slice_job = StartSliceJob(self.getGlicerEngineCommand(), slice_message)
         self._start_slice_job_build_plate = build_plate_to_be_sliced
         self._start_slice_job.setBuildPlate(self._start_slice_job_build_plate)
         self._start_slice_job.start()
@@ -339,7 +340,8 @@ class CliParserBackend(QObject, Backend):
 
         self._glicer_process = self._runGlicerEngineProcess(slice_message)
         # Notify the user that it's now up to the backend to do it's job
-        self._startProcessCliLayersJob(output_path, self._application.getMultiBuildPlateModel().activeBuildPlate)
+        arcus_message = job.getArcusMessage()
+        self._startProcessCliLayersJob(output_path, self._application.getMultiBuildPlateModel().activeBuildPlate, arcus_message)
 
         Logger.log("i", "Started engine process: %s", self.getGlicerEngineCommand()[0])
         self._backendLog(bytes("Calling engine with: %s\n" % self.getGlicerEngineCommand(), "utf-8"))
@@ -347,9 +349,8 @@ class CliParserBackend(QObject, Backend):
         if self._slice_start_time:
             Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time)
 
-    def _startProcessCliLayersJob(self, output_path: List[str], build_plate_number: int) -> None:
-        slice_message = self._socket.createMessage("cliparser.proto.Process")
-        self._process_cli_job = ProcessCliJob(self._glicer_process, output_path, slice_message)
+    def _startProcessCliLayersJob(self, output_path: List[str], build_plate_number: int, arcus_message: Arcus.PythonMessage) -> None:
+        self._process_cli_job = ProcessCliJob(self._glicer_process, output_path, arcus_message)
         self._process_cli_job.setBuildPlate(build_plate_number)
         self._process_cli_job.finished.connect(self._onProcessCliFinished)
         self._process_cli_job.start()

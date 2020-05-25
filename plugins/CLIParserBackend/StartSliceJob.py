@@ -274,11 +274,12 @@ class StartJobResult(IntEnum):
 
 
 class StartSliceJob(Job):
-    def __init__(self, slice_message):
+    def __init__(self, slice_message, arcus_message: Arcus.PythonMessage):
         super().__init__()
 
         self._scene = SteSlicerApplication.getInstance().getController().getScene() #type: Scene
         self._slice_message = slice_message
+        self._arcus_message = arcus_message
         self._is_cancelled = False  # type: bool
         self._build_plate_number = None  # type: Optional[int]
 
@@ -290,6 +291,8 @@ class StartSliceJob(Job):
     def getSliceMessage(self) -> List[str]:
         return self._slice_message
 
+    def getArcusMessage(self) -> Arcus.PythonMessage:
+        return self._arcus_message
     ##  Check if a stack has any errors.
     ##  returns true if it has errors, false otherwise.
     def _checkStackForErrors(self, stack: ContainerStack) -> bool:
@@ -410,8 +413,8 @@ class StartSliceJob(Job):
             has_model_with_disabled_extruders = False
             associated_disabled_extruders = set()
             for group in object_groups:
-                #stack = global_stack
-                stack = SteSlicerApplication.getInstance().getExtruderManager().getActiveExtruderStack()
+                stack = global_stack
+                #stack = SteSlicerApplication.getInstance().getExtruderManager().getActiveExtruderStack()
                 skip_group = False
                 for node in group:
                     # Only check if the printing extruder is enabled for printing meshes
@@ -434,11 +437,17 @@ class StartSliceJob(Job):
                 self.setResult(StartJobResult.NothingToSlice)
                 return
 
+            self._buildGlicerConfigMessage(SteSlicerApplication.getInstance().getExtruderManager().getActiveExtruderStack())
+
             self._buildGlobalSettingsMessage(stack)
+            self._buildGlobalInheritsStackMessage(stack)
 
             indicies_collection = []
             vertices_collection = []
             for group in filtered_object_groups:
+                cli_list_message = self._arcus_message.addRepeatedMessage("cli_lists")
+                if group[0].getParent() is not None and group[0].getParent().callDecoration("isGroup"):
+                    self._handlePerObjectSettings(group[0].getParent(), cli_list_message)
                 for object in group:
                     mesh_data = object.getMeshData()
                     rot_scale = object.getWorldTransformation().getTransposed().getData()[0:3, 0:3]
@@ -468,6 +477,11 @@ class StartSliceJob(Job):
                         flat_verts = numpy.array(verts)
                     indicies_collection.append(faces)
                     vertices_collection.append(flat_verts)
+
+                    cli = cli_list_message.addRepeatedMessage("cli")
+                    cli.id = id(object)
+                    cli.name = object.getName()
+                    self._handlePerObjectSettings(object, cli)
 
                     Job.yieldThread()
             self._buildObjectFiles(indicies_collection, vertices_collection)
@@ -559,7 +573,7 @@ class StartSliceJob(Job):
 
         return result
 
-    def _buildGlobalSettingsMessage(self, stack: ContainerStack) -> None:
+    def _buildGlicerConfigMessage(self, stack: ContainerStack) -> None:
         settings = self._buildReplacementTokens(stack)
 
         # Pre-compute material material_bed_temp_prepend and material_print_temp_prepend
@@ -584,7 +598,6 @@ class StartSliceJob(Job):
 
         self._slice_message.append('-c')
         self._slice_message.append(temp_config.name)
-
 
     def _generateGlicerConfig(self, filename: str, settings: Dict) -> None:
         root = eltree.Element("root")
@@ -618,3 +631,88 @@ class StartSliceJob(Job):
         settings_string = eltree.tostring(root, encoding='Windows-1251').decode("Windows-1251")
         with open(filename, mode='w') as f:
             f.write(settings_string)
+
+    def _buildGlobalSettingsMessage(self, stack: ContainerStack) -> None:
+        settings = self._buildReplacementTokens(stack)
+
+        # Pre-compute material material_bed_temp_prepend and material_print_temp_prepend
+        start_gcode = settings["machine_start_gcode"]
+        bed_temperature_settings = ["material_bed_temperature", "material_bed_temperature_layer_0"]
+        pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(
+            bed_temperature_settings)  # match {setting} as well as {setting, extruder_nr}
+        settings["material_bed_temp_prepend"] = re.search(pattern, start_gcode) == None
+        print_temperature_settings = ["material_print_temperature", "material_print_temperature_layer_0",
+                                      "default_material_print_temperature", "material_initial_print_temperature",
+                                      "material_final_print_temperature", "material_standby_temperature"]
+        pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(
+            print_temperature_settings)  # match {setting} as well as {setting, extruder_nr}
+        settings["material_print_temp_prepend"] = re.search(pattern, start_gcode) == None
+
+        # Replace the setting tokens in start and end g-code.
+        # Use values from the first used extruder by default so we get the expected temperatures
+        initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
+        initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
+
+        settings["machine_start_gcode"] = self._expandGcodeTokens(settings["machine_start_gcode"], initial_extruder_nr)
+        settings["machine_end_gcode"] = self._expandGcodeTokens(settings["machine_end_gcode"], initial_extruder_nr)
+
+        # Add all sub-messages for each individual setting.
+        for key, value in settings.items():
+            setting_message = self._arcus_message.getMessage("global_settings").addRepeatedMessage("settings")
+            setting_message.name = key
+            setting_message.value = str(value).encode("utf-8")
+            Job.yieldThread()
+
+    def _buildGlobalInheritsStackMessage(self, stack: ContainerStack) -> None:
+        for key in stack.getAllKeys():
+            extruder_position = int(round(float(stack.getProperty(key, "limit_to_extruder"))))
+            if extruder_position >= 0:  # Set to a specific extruder.
+                setting_extruder = self._arcus_message.addRepeatedMessage("limit_to_extruder")
+                setting_extruder.name = key
+                setting_extruder.extruder = extruder_position
+            Job.yieldThread()
+
+    def _handlePerObjectSettings(self, node: SteSlicerSceneNode, message: Arcus.PythonMessage):
+        stack = node.callDecoration("getStack")
+
+        # Check if the node has a stack attached to it and the stack has any settings in the top container.
+        if not stack:
+            return
+
+        # Check all settings for relations, so we can also calculate the correct values for dependent settings.
+        top_of_stack = stack.getTop()  # Cache for efficiency.
+        changed_setting_keys = top_of_stack.getAllKeys()
+
+        # Add all relations to changed settings as well.
+        for key in top_of_stack.getAllKeys():
+            instance = top_of_stack.getInstance(key)
+            self._addRelations(changed_setting_keys, instance.definition.relations)
+            Job.yieldThread()
+
+        # Ensure that the engine is aware what the build extruder is.
+        changed_setting_keys.add("extruder_nr")
+
+        # Get values for all changed settings
+        for key in changed_setting_keys:
+            setting = message.addRepeatedMessage("settings")
+            setting.name = key
+            extruder = int(round(float(stack.getProperty(key, "limit_to_extruder"))))
+
+            # Check if limited to a specific extruder, but not overridden by per-object settings.
+            if extruder >= 0 and key not in changed_setting_keys:
+                limited_stack = ExtruderManager.getInstance().getActiveExtruderStacks()[extruder]
+            else:
+                limited_stack = stack
+
+            setting.value = str(limited_stack.getProperty(key, "value")).encode("utf-8")
+
+            Job.yieldThread()
+
+    def _addRelations(self, relations_set: Set[str], relations: List[SettingRelation]):
+        for relation in filter(lambda r: r.role == "value" or r.role == "limit_to_extruder", relations):
+            if relation.type == RelationType.RequiresTarget:
+                continue
+
+            relations_set.add(relation.target.key)
+            self._addRelations(relations_set, relation.target.relations)
+
