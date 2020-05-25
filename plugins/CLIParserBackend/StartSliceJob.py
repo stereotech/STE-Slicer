@@ -442,6 +442,10 @@ class StartSliceJob(Job):
             self._buildGlobalSettingsMessage(stack)
             self._buildGlobalInheritsStackMessage(stack)
 
+            extruder_stack_list = sorted(list(global_stack.extruders.items()), key=lambda item: int(item[0]))
+            for _, extruder_stack in extruder_stack_list:
+                self._buildExtruderMessage(extruder_stack)
+
             indicies_collection = []
             vertices_collection = []
             for group in filtered_object_groups:
@@ -716,3 +720,25 @@ class StartSliceJob(Job):
             relations_set.add(relation.target.key)
             self._addRelations(relations_set, relation.target.relations)
 
+    def _buildExtruderMessage(self, stack: ContainerStack) -> None:
+        message = self._arcus_message.addRepeatedMessage("extruders")
+        message.id = int(stack.getMetaDataEntry("position"))
+
+        settings = self._buildReplacementTokens(stack)
+
+        # Also send the material GUID. This is a setting in fdmprinter, but we have no interface for it.
+        settings["material_guid"] = stack.material.getMetaDataEntry("GUID", "")
+
+        # Replace the setting tokens in start and end g-code.
+        extruder_nr = stack.getProperty("extruder_nr", "value")
+        settings["machine_extruder_start_code"] = self._expandGcodeTokens(settings["machine_extruder_start_code"], extruder_nr)
+        settings["machine_extruder_end_code"] = self._expandGcodeTokens(settings["machine_extruder_end_code"], extruder_nr)
+
+        for key, value in settings.items():
+            # Do not send settings that are not settable_per_extruder.
+            if not stack.getProperty(key, "settable_per_extruder"):
+                continue
+            setting = message.getMessage("settings").addRepeatedMessage("settings")
+            setting.name = key
+            setting.value = str(value).encode("utf-8")
+            Job.yieldThread()

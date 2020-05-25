@@ -656,7 +656,7 @@ class CuraEngineBackend(QObject, Backend):
 
             gcode_list[index] = replaced
 
-        self._slicing = False
+
         if self._slice_start_time:
             Logger.log("d", "Slicing took %s seconds", time() - self._slice_start_time )
         Logger.log("d", "Number of models per buildplate: %s", dict(self._numObjectsPerBuildPlate()))
@@ -680,6 +680,8 @@ class CuraEngineBackend(QObject, Backend):
         if self._build_plates_to_be_sliced:
             self.enableTimer()  # manually enable timer to be able to invoke slice, also when in manual slice mode
             self._invokeSlice()
+        self._message_handlers = {}
+        self._slicing = False
 
     ##  Called when a g-code message is received from the engine.
     #
@@ -819,6 +821,8 @@ class CuraEngineBackend(QObject, Backend):
     #
     #   We should reset our state and start listening for new connections.
     def _onBackendQuit(self) -> None:
+        if not self._current:
+            return
         if not self._restart:
             if self._process: # type: ignore
                 Logger.log("d", "Backend quit with return code %s. Resetting process and socket.", self._process.wait()) # type: ignore

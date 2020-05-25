@@ -677,7 +677,7 @@ class CliParserBackend(QObject, Backend):
 
             gcode_list[index] = replaced
 
-        self._slicing = False
+
         if self._slice_start_time:
             Logger.log("d", "Slicing took %s seconds", time() - self._slice_start_time )
         Logger.log("d", "Number of models per buildplate: %s", dict(self._numObjectsPerBuildPlate()))
@@ -701,6 +701,8 @@ class CliParserBackend(QObject, Backend):
         if self._build_plates_to_be_sliced:
             self.enableTimer()  # manually enable timer to be able to invoke slice, also when in manual slice mode
             self._invokeSlice()
+        self._message_handlers = {}
+        self._slicing = False
 
     def _onGCodeLayerMessage(self, message: Arcus.PythonMessage) -> None:
         if not self._scene.gcode_dict:
@@ -808,9 +810,11 @@ class CliParserBackend(QObject, Backend):
                 self._layer_view_active = False
 
     def _onBackendQuit(self) -> None:
+        if not self._current:
+            return
         if not self._restart:
             if self._glicer_process: # type: ignore
-                Logger.log("d", "Backend quit with return code %s. Resetting process and socket.", self._process.wait()) # type: ignore
+                Logger.log("d", "Backend quit with return code %s. Resetting process and socket.", self._glicer_process.wait()) # type: ignore
                 self._glicer_process = None # type: ignore
             if self._process: # type: ignore
                 Logger.log("d", "Backend quit with return code %s. Resetting process and socket.", self._process.wait()) # type: ignore
