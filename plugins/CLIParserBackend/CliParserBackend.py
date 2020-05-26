@@ -486,7 +486,7 @@ class CliParserBackend(QObject, Backend):
 
         # Notify the user that it's now up to the backend to do it's job
         self.backendStateChange.emit(BackendState.Processing)
-        self.processingProgress.emit(0.3)
+        self.processingProgress.emit(0.2)
 
         if self._slice_start_time:
             Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time )
@@ -650,7 +650,7 @@ class CliParserBackend(QObject, Backend):
             self._stored_optimized_layer_data[self._start_slice_job_build_plate].append(message)
 
     def _onProgressMessage(self, message: Arcus.PythonMessage) -> None:
-        self.processingProgress.emit(message.amount)
+        self.processingProgress.emit(message.amount * 0.8 + 0.2)
         self.backendStateChange.emit(BackendState.Processing)
 
     def _invokeSlice(self) -> None:
