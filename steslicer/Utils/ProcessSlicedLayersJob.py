@@ -125,8 +125,8 @@ class ProcessSlicedLayersJob(Job):
 
                 # If the layer is below the minimum, it means that there is no data, so that we don't create a layer
                 # data. However, if there are empty layers in between, we compute them.
-                #if layer.id < min_layer_number:
-                #    continue
+                if layer.id < min_layer_number:
+                    continue
 
                 # Layers are offset by the minimum layer number. In case the raft (negative layers) is being used,
                 # then the absolute layer number is adjusted by removing the empty layers that can be in between raft
@@ -190,9 +190,9 @@ class ProcessSlicedLayersJob(Job):
                         new_points[:, 0] = points[:, 0]
                         new_points[:, 1] = points[:, 2]
                         new_points[:, 2] = -points[:, 1]
-                        new_points[:, 3] = points[:, 3]
-                        new_points[:, 4] = points[:, 4]
-                        new_points[:, 5] = points[:, 5]
+                        new_points[:, 3] = -points[:, 4]
+                        new_points[:, 4] = points[:, 5]
+                        new_points[:, 5] = -points[:, 3]
 
                     this_poly = LayerPolygon.LayerPolygon(extruder, line_types, new_points, line_widths, line_thicknesses,
                                                           line_feedrates)

@@ -761,6 +761,8 @@ class CuraEngineBackend(QObject, Backend):
 
     ##  Called when the back-end connects to the front-end.
     def _onBackendConnected(self) -> None:
+        if not self._current:
+            return
         if self._restart:
             self._restart = False
             self._onChanged()

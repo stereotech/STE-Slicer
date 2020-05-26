@@ -234,7 +234,10 @@ class CliParserBackend(QObject, Backend):
         if self._application.getPrintInformation() and build_plate_to_be_sliced == active_build_plate:
             self._application.getPrintInformation().setToZeroPrintInformation(build_plate_to_be_sliced)
 
+        if self._process is None: # type: ignore
+            self._createSocket()
         self.stopSlicing()
+        self._engine_is_fresh = False  # Yes we're going to use the engine
 
         self.processingProgress.emit(0.0)
         self.backendStateChange.emit(BackendState.NotStarted)
@@ -765,6 +768,8 @@ class CliParserBackend(QObject, Backend):
 
     ##  Called when the back-end connects to the front-end.
     def _onBackendConnected(self) -> None:
+        if not self._current:
+            return
         if self._restart:
             self._restart = False
             self._onChanged()
