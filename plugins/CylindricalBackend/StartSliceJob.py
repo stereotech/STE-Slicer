@@ -25,7 +25,7 @@ from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
 
 from plugins.CuraEngineBackend import CuraEngineBackend
-from plugins.GlicerBackend import GlicerBackend
+from plugins.CLIParserBackend import CliParserBackend
 from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
@@ -76,7 +76,7 @@ class StartSliceJob(Job):
             self._classic_start_slice_job = None
         self._slice_messages = []
         self._job_results = []
-        classic_backend = next(b for b in self._backends if b._socket)
+        classic_backend = self._backends[0]
         slice_message = classic_backend._socket.createMessage("cura.proto.Slice")
         self._classic_start_slice_job = CuraEngineBackend.StartSliceJob(slice_message)
         self._classic_start_slice_job.setBuildPlate(self._start_slice_job_build_plate)
@@ -89,9 +89,10 @@ class StartSliceJob(Job):
             self._slice_messages.append(self._classic_start_slice_job.getSliceMessage())
         self._classic_start_slice_job = None
 
-        cylindrical_backend = next(b for b in self._backends if not b._socket)
-        slice_message = cylindrical_backend.getEngineCommand()
-        self._cylindrical_start_slice_job = GlicerBackend.StartSliceJob(slice_message)
+        cylindrical_backend = self._backends[1] #type: CliParserBackend.CliParserBackend
+        slice_message = cylindrical_backend.getGlicerEngineCommand()
+        arcus_message = cylindrical_backend._socket.createMessage("cliparser.proto.Process")
+        self._cylindrical_start_slice_job = CliParserBackend.StartSliceJob(slice_message, arcus_message)
         self._cylindrical_start_slice_job.setBuildPlate(self._start_slice_job_build_plate)
         self._cylindrical_start_slice_job.start()
         while not self._cylindrical_start_slice_job.isFinished():

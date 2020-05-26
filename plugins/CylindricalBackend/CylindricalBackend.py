@@ -301,8 +301,6 @@ class CylindricalBackend(QObject, MultiBackend):
         self.backendStateChange.emit(BackendState.Processing)
 
     def _onGenerateBasementJobFinished(self, job: GenerateBasementJob):
-
-
         if not self._scene.gcode_dict:
             self._scene.gcode_dict = {0: []}
         if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
