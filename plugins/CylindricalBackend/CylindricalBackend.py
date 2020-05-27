@@ -4,7 +4,7 @@ import tempfile
 from collections import defaultdict
 from enum import IntEnum
 from time import time
-from typing import Optional, List, Any, Dict, Set
+from typing import Optional, List, Any, Dict, Set, cast
 
 import Arcus
 from Arcus import PythonMessage
@@ -17,6 +17,7 @@ from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 from UM.Scene.Scene import Scene
 from UM.Scene.SceneNode import SceneNode
 from UM.Settings.ContainerStack import ContainerStack
+from UM.Settings.Interfaces import DefinitionContainerInterface
 from UM.Settings.SettingInstance import SettingInstance
 from UM.Signal import Signal
 from UM.Tool import Tool
@@ -70,6 +71,7 @@ class CylindricalBackend(QObject, MultiBackend):
         self._start_slice_job = None #type: Optional[StartSliceJob]
         self._generate_basement_job = None
         self._glicer_process = None
+        self._layers_size = 0
         self._slicing = False  # type: bool # Are we currently slicing?
         self._restart = False  # type: bool # Back-end is currently restarting?
         self._tool_active = False  # type: bool # If a tool is active, some tasks do not have to do anything
@@ -141,7 +143,7 @@ class CylindricalBackend(QObject, MultiBackend):
         self.addBackend(cylindrical_backend)
 
     def close(self) -> None:
-        for backend in self.getBackends():  # type: Backend
+        for name, backend in self.getBackends().items():
             backend._terminate()
 
     @pyqtSlot()
@@ -313,7 +315,7 @@ class CylindricalBackend(QObject, MultiBackend):
             if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
                 self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
         self._stored_optimized_layer_data[self._start_slice_job_build_plate].extend(job.getLayersData())
-
+        self._layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate])
         if self._generate_basement_job is job:
             self._generate_basement_job = None
         # sending to the first backend
@@ -357,8 +359,19 @@ class CylindricalBackend(QObject, MultiBackend):
                 self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
             self._stored_optimized_layer_data[self._start_slice_job_build_plate].append(message)
 
+    def _onCliOptimizedLayerMessage(self, message: Arcus.PythonMessage) -> None:
+        if self._start_slice_job_build_plate is not None:
+            if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
+                self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
+            message.id += self._layers_size
+            self._stored_optimized_layer_data[self._start_slice_job_build_plate].append(message)
+
     def _onProgressMessage(self, message: Arcus.PythonMessage) -> None:
-        self.processingProgress.emit(0.1 + message.amount / 2.23)
+        self.processingProgress.emit(0.1 + message.amount / 2.5)
+        self.backendStateChange.emit(BackendState.Processing)
+
+    def _onCliParserProgressMessage(self, message: Arcus.PythonMessage) -> None:
+        self.processingProgress.emit(0.6 + message.amount / 2.5)
         self.backendStateChange.emit(BackendState.Processing)
 
     def _onGCodeLayerMessage(self, message: Arcus.PythonMessage) -> None:
@@ -406,6 +419,8 @@ class CylindricalBackend(QObject, MultiBackend):
         return result
 
     def _onSlicingFinishedMessage(self, message: Arcus.PythonMessage) -> None:
+        self._layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate]) - self._layers_size
+
         self.backendStateChange.emit(BackendState.Processing)
         self.processingProgress.emit(0.5)
 
@@ -449,33 +464,150 @@ class CylindricalBackend(QObject, MultiBackend):
         self.printDurationMessage.emit(self._start_slice_job_build_plate, self._times, self._material_amounts)
 
     def _onProcessCliFinished(self, job: ProcessCliJob):
-        if job.isCancelled() or job.getError():
+        self._backends["CLIParserBackend"]._terminate()
+        self._backends["CLIParserBackend"]._createSocket()
+        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.LayerOptimized"] = self._onCliOptimizedLayerMessage
+        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.Progress"] = self._onCliParserProgressMessage
+        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.GCodeLayer"] = self._onGCodeLayerMessage
+        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.GCodePrefix"] = self._onGCodePrefixMessage
+        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
+        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.SlicingFinished"] = self._onCliParserFinishedMessage
+
+        if self._error_message:
+            self._error_message.hide()
+
+        # Note that cancelled slice jobs can still call this method.
+        if self._process_cli_job is job:
+            self._process_cli_job = None
+
+        if job.isCancelled() or job.getError() or job.getResult() == StartJobResult.Error:
             self.backendStateChange.emit(BackendState.Error)
             self.backendError.emit(job)
             return
 
-        if not self._scene.gcode_dict:
-            self._scene.gcode_dict = {0: []}
-        if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
-            self._scene.gcode_dict[self._start_slice_job_build_plate] = []
-        # remove end gcode from Curaengine
-        del self._scene.gcode_dict[self._start_slice_job_build_plate][-1]
-        self._scene.gcode_dict[self._start_slice_job_build_plate].extend(job.getGCodeList())
+        if job.getResult() == StartJobResult.MaterialIncompatible:
+            if self._application.platformActivity:
+                self._error_message = Message(catalog.i18nc("@info:status",
+                                            "Unable to slice with the current material as it is incompatible with the selected machine or configuration."), title = catalog.i18nc("@info:title", "Unable to slice"))
+                self._error_message.show()
+                self.backendStateChange.emit(BackendState.Error)
+                self.backendError.emit(job)
+            else:
+                self.backendStateChange.emit(BackendState.NotStarted)
+            return
 
-        if self._start_slice_job_build_plate is not None:
-            if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
-                self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
-            self._stored_optimized_layer_data[self._start_slice_job_build_plate].extend(job.getLayersData())
+        if job.getResult() == StartJobResult.SettingError:
+            if self._application.platformActivity:
+                if not self._global_container_stack:
+                    Logger.log("w", "Global container stack not assigned to CuraEngineBackend!")
+                    return
+                extruders = ExtruderManager.getInstance().getActiveExtruderStacks()
+                error_keys = [] #type: List[str]
+                for extruder in extruders:
+                    error_keys.extend(extruder.getErrorKeys())
+                if not extruders:
+                    error_keys = self._global_container_stack.getErrorKeys()
+                error_labels = set()
+                for key in error_keys:
+                    for stack in [self._global_container_stack] + extruders: #Search all container stacks for the definition of this setting. Some are only in an extruder stack.
+                        definitions = cast(DefinitionContainerInterface, stack.getBottom()).findDefinitions(key = key)
+                        if definitions:
+                            break #Found it! No need to continue search.
+                    else: #No stack has a definition for this setting.
+                        Logger.log("w", "When checking settings for errors, unable to find definition for key: {key}".format(key = key))
+                        continue
+                    error_labels.add(definitions[0].label)
 
-        self._onTimeMaterialEstimates(job.getMaterialAmounts(), job.getTimes())
+                self._error_message = Message(catalog.i18nc("@info:status", "Unable to slice with the current settings. The following settings have errors: {0}").format(", ".join(error_labels)),
+                                              title = catalog.i18nc("@info:title", "Unable to slice"))
+                self._error_message.show()
+                self.backendStateChange.emit(BackendState.Error)
+                self.backendError.emit(job)
+            else:
+                self.backendStateChange.emit(BackendState.NotStarted)
+            return
 
+        elif job.getResult() == StartJobResult.ObjectSettingError:
+            errors = {}
+            for node in DepthFirstIterator(self._application.getController().getScene().getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+                stack = node.callDecoration("getStack")
+                if not stack:
+                    continue
+                for key in stack.getErrorKeys():
+                    if not self._global_container_stack:
+                        Logger.log("e", "CuraEngineBackend does not have global_container_stack assigned.")
+                        continue
+                    definition = cast(DefinitionContainerInterface, self._global_container_stack.getBottom()).findDefinitions(key = key)
+                    if not definition:
+                        Logger.log("e", "When checking settings for errors, unable to find definition for key {key} in per-object stack.".format(key = key))
+                        continue
+                    errors[key] = definition[0].label
+            self._error_message = Message(catalog.i18nc("@info:status", "Unable to slice due to some per-model settings. The following settings have errors on one or more models: {error_labels}").format(error_labels = ", ".join(errors.values())),
+                                          title = catalog.i18nc("@info:title", "Unable to slice"))
+            self._error_message.show()
+            self.backendStateChange.emit(BackendState.Error)
+            self.backendError.emit(job)
+            return
+
+        if job.getResult() == StartJobResult.BuildPlateError:
+            if self._application.platformActivity:
+                self._error_message = Message(catalog.i18nc("@info:status", "Unable to slice because the prime tower or prime position(s) are invalid."),
+                                              title = catalog.i18nc("@info:title", "Unable to slice"))
+                self._error_message.show()
+                self.backendStateChange.emit(BackendState.Error)
+                self.backendError.emit(job)
+            else:
+                self.backendStateChange.emit(BackendState.NotStarted)
+
+        if job.getResult() == StartJobResult.ObjectsWithDisabledExtruder:
+            self._error_message = Message(catalog.i18nc("@info:status", "Unable to slice because there are objects associated with disabled Extruder %s." % job.getMessage()),
+                                          title = catalog.i18nc("@info:title", "Unable to slice"))
+            self._error_message.show()
+            self.backendStateChange.emit(BackendState.Error)
+            self.backendError.emit(job)
+            return
+
+        if job.getResult() == StartJobResult.NothingToSlice:
+            if self._application.platformActivity:
+                self._error_message = Message(catalog.i18nc("@info:status", "Nothing to slice because none of the models fit the build volume. Please scale or rotate models to fit."),
+                                              title = catalog.i18nc("@info:title", "Unable to slice"))
+                self._error_message.show()
+                self.backendStateChange.emit(BackendState.Error)
+                self.backendError.emit(job)
+            else:
+                self.backendStateChange.emit(BackendState.NotStarted)
+            self._invokeSlice()
+            return
+
+        self._backends["CLIParserBackend"]._socket.sendMessage(job.getSliceMessage())
+
+        self.backendStateChange.emit(BackendState.Processing)
+        self.processingProgress.emit(0.6)
+
+        if self._slice_start_time:
+            Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time )
+
+
+    def _onCliParserFinishedMessage(self, message: Arcus.PythonMessage) -> None:
+        self._layers_size = 0
         self.backendStateChange.emit(BackendState.Done)
         self.processingProgress.emit(1.0)
 
-        self._slicing = False
+        gcode_list = self._scene.gcode_dict[
+            self._start_slice_job_build_plate]  # type: ignore #Because we generate this attribute dynamically.
+        for index, line in enumerate(gcode_list):
+            replaced = line.replace("{print_time}", str(
+                self._application.getPrintInformation().currentPrintTime.getDisplayString(
+                    DurationFormat.Format.ISO8601)))
+            replaced = replaced.replace("{filament_amount}",
+                                        str(self._application.getPrintInformation().materialLengths))
+            replaced = replaced.replace("{filament_weight}",
+                                        str(self._application.getPrintInformation().materialWeights))
+            replaced = replaced.replace("{filament_cost}", str(self._application.getPrintInformation().materialCosts))
+            replaced = replaced.replace("{jobname}", str(self._application.getPrintInformation().jobName))
 
-        if self._process_cli_job is job:
-            self._process_cli_job = None
+            gcode_list[index] = replaced
+
         if self._slice_start_time:
             Logger.log("d", "Slicing took %s seconds", time() - self._slice_start_time)
         Logger.log("d", "Number of models per buildplate: %s", dict(self._numObjectsPerBuildPlate()))
@@ -498,6 +630,8 @@ class CylindricalBackend(QObject, MultiBackend):
         if self._build_plates_to_be_sliced:
             self.enableTimer()  # manually enable timer to be able to invoke slice, also when in manual slice mode
             self._invokeSlice()
+        self._backends["CLIParserBackend"]._message_handlers = {}
+        self._slicing = False
 
     def _startProcessSlicedLayersJob(self, build_plate_number: int) -> None:
         self._process_layers_job = ProcessSlicedLayersJob(self._stored_optimized_layer_data[build_plate_number])

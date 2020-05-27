@@ -44,7 +44,7 @@ class StartJobResult(IntEnum):
     ObjectsWithDisabledExtruder = 8
 
 class StartSliceJob(Job):
-    def __init__(self, backends: List[Backend]) -> None:
+    def __init__(self, backends: Dict[str, Backend]) -> None:
         super().__init__()
         self._backends = backends
         self._error_message = None  # type: Optional[Message] # Pop-up message that shows errors.
@@ -76,7 +76,7 @@ class StartSliceJob(Job):
             self._classic_start_slice_job = None
         self._slice_messages = []
         self._job_results = []
-        classic_backend = self._backends[0]
+        classic_backend = self._backends["CuraEngineBackend"]
         slice_message = classic_backend._socket.createMessage("cura.proto.Slice")
         self._classic_start_slice_job = CuraEngineBackend.StartSliceJob(slice_message)
         self._classic_start_slice_job.setBuildPlate(self._start_slice_job_build_plate)
@@ -89,7 +89,7 @@ class StartSliceJob(Job):
             self._slice_messages.append(self._classic_start_slice_job.getSliceMessage())
         self._classic_start_slice_job = None
 
-        cylindrical_backend = self._backends[1] #type: CliParserBackend.CliParserBackend
+        cylindrical_backend = self._backends["CLIParserBackend"] #type: CliParserBackend.CliParserBackend
         slice_message = cylindrical_backend.getGlicerEngineCommand()
         arcus_message = cylindrical_backend._socket.createMessage("cliparser.proto.Process")
         self._cylindrical_start_slice_job = CliParserBackend.StartSliceJob(slice_message, arcus_message)

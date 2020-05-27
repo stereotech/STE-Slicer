@@ -124,7 +124,7 @@ geometry41core =
         } else {
             size_x = v_line_dim[1].x / 2 + 0.01;  // radius, and make it nicely overlapping
         }
-        size_y = v_line_dim[1].y / 2 + 0.01;
+        size_y = v_line_dim[1].x / 2 + 0.01;
 
         g_vertex_delta = gl_in[1].gl_Position - gl_in[0].gl_Position;
         g_vertex_normal_horz_head = normalize(vec3(-g_vertex_delta.x, -g_vertex_delta.y, -g_vertex_delta.z));
@@ -133,7 +133,7 @@ geometry41core =
         g_vertex_normal_horz = normalize(vec3(g_vertex_delta.z, g_vertex_delta.y, -g_vertex_delta.x));
 
         g_vertex_offset_horz = vec4(g_vertex_normal_horz * size_x, 0.0); //size * g_vertex_normal_horz;
-        g_vertex_normal_vert = vec3(0.0, 1.0, 0.0);
+        g_vertex_normal_vert = normalize(vec3(1.0, 1.0, 1.0));//vec3(0.0, 1.0, 0.0);
         g_vertex_offset_vert = vec4(g_vertex_normal_vert * size_y, 0.0);
 
         if ((v_line_type[0] == 8) || (v_line_type[0] == 9)) {

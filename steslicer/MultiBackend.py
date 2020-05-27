@@ -42,8 +42,8 @@ class MultiBackend(Backend):
         #super().__init__()
         self._backends = {} #type: Dict[str, Backend]
 
-    def getBackends(self) -> List[Backend]:
-        return [ v for v in self._backends.values() ]
+    def getBackends(self) -> Dict[str, Backend]:
+        return self._backends
 
     def addBackend(self, backend: Backend):
         if not backend.getPluginId() in self._backends:
