@@ -69,6 +69,7 @@ class CylindricalBackend(QObject, MultiBackend):
         self._start_slice_job_build_plate = None  # type: Optional[int]
         self._start_slice_job = None #type: Optional[StartSliceJob]
         self._generate_basement_job = None
+        self._glicer_process = None
         self._slicing = False  # type: bool # Are we currently slicing?
         self._restart = False  # type: bool # Back-end is currently restarting?
         self._tool_active = False  # type: bool # If a tool is active, some tasks do not have to do anything
@@ -289,6 +290,7 @@ class CylindricalBackend(QObject, MultiBackend):
             return
 
         self.backendStateChange.emit(BackendState.Processing)
+        self.processingProgress.emit(0.0)
         self._slice_messages = job.getSliceMessages()
 
         self._generate_basement_job = GenerateBasementJob()
@@ -315,33 +317,33 @@ class CylindricalBackend(QObject, MultiBackend):
         if self._generate_basement_job is job:
             self._generate_basement_job = None
         # sending to the first backend
-        for slice_message in self._slice_messages:
-            if isinstance(slice_message, PythonMessage):
-                self._backends["CuraEngineBackend"]._terminate()
-                self._backends["CuraEngineBackend"]._createSocket()
-                Logger.log("d", "Sending Arcus Message")
-                # Listeners for receiving messages from the back-end.
-                self._backends["CuraEngineBackend"]._message_handlers["cura.proto.Layer"] = self._onLayerMessage
-                self._backends["CuraEngineBackend"]._message_handlers[
-                    "cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
-                self._backends["CuraEngineBackend"]._message_handlers["cura.proto.Progress"] = self._onProgressMessage
-                self._backends["CuraEngineBackend"]._message_handlers[
-                    "cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
-                self._backends["CuraEngineBackend"]._message_handlers[
-                    "cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
-                self._backends["CuraEngineBackend"]._message_handlers[
-                    "cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
-                self._backends["CuraEngineBackend"]._message_handlers[
-                    "cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
-                self._backends["CuraEngineBackend"]._socket.sendMessage(slice_message)
+        slice_message = self._slice_messages[0]
+        if isinstance(slice_message, PythonMessage):
+            self._backends["CuraEngineBackend"]._terminate()
+            self._backends["CuraEngineBackend"]._createSocket()
+            Logger.log("d", "Sending Arcus Message")
+            # Listeners for receiving messages from the back-end.
+            self._backends["CuraEngineBackend"]._message_handlers["cura.proto.Layer"] = self._onLayerMessage
+            self._backends["CuraEngineBackend"]._message_handlers[
+                "cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
+            self._backends["CuraEngineBackend"]._message_handlers["cura.proto.Progress"] = self._onProgressMessage
+            self._backends["CuraEngineBackend"]._message_handlers[
+                "cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
+            self._backends["CuraEngineBackend"]._message_handlers[
+                "cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
+            self._backends["CuraEngineBackend"]._message_handlers[
+                "cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
+            self._backends["CuraEngineBackend"]._message_handlers[
+                "cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
+            self._backends["CuraEngineBackend"]._socket.sendMessage(slice_message)
 
-    def _sendSliceMessage(self, slice_message):
+    def _sendGlicerSliceMessage(self, slice_message):
         if isinstance(slice_message, List):
             Logger.log("d", "Sending Engine Message")
             slice_message.append('-o')
-            output_path = os.path.join(tempfile.tempdir, next(tempfile._get_candidate_names()))
-            slice_message.append(output_path)
-            self._process = self._runEngineProcess(slice_message)
+            output_path = [os.path.join(tempfile.tempdir, next(tempfile._get_candidate_names())) + ".cli"]
+            slice_message.extend(output_path)
+            self._glicer_process = self._runGlicerEngineProcess(slice_message)
             self._startProcessCliLayersJob(output_path, self._application.getMultiBuildPlateModel().activeBuildPlate)
         if self._slice_start_time:
             Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time)
@@ -420,10 +422,10 @@ class CylindricalBackend(QObject, MultiBackend):
             gcode_list[index] = replaced
 
         # Launch GlicerBackend here
-        for slice_message in self._slice_messages:
-            self._sendSliceMessage(slice_message)
+        slice_message = self._slice_messages[1]
+        self._sendGlicerSliceMessage(slice_message)
 
-    def _runEngineProcess(self, command_list) -> Optional[subprocess.Popen]:
+    def _runGlicerEngineProcess(self, command_list) -> Optional[subprocess.Popen]:
         try:
             return subprocess.Popen(command_list)
         except PermissionError:
@@ -432,20 +434,11 @@ class CylindricalBackend(QObject, MultiBackend):
             Logger.logException("e", "Unable to find backend executable: %s", command_list[0])
         return None
 
-    def _startProcessCliLayersJob(self, output_path: str, build_plate_number: int) -> None:
-        self._process_cli_job = ProcessCliJob(self._process, output_path)
+    def _startProcessCliLayersJob(self, output_path: List[str], build_plate_number: int) -> None:
+        self._process_cli_job = ProcessCliJob(self._glicer_process, output_path, self._slice_messages[2])
         self._process_cli_job.setBuildPlate(build_plate_number)
         self._process_cli_job.finished.connect(self._onProcessCliFinished)
-        # self._process_cli_job.processingCliGCodeParsed.connect(self._onProcessingCliGCodeParsed)
-        # self._process_cli_job.processingCliLayersDataGenerated.connect(self._onProcessingCliLayersDataGenerated)
-        self._process_cli_job.processingProgress.connect(self._onCliProgressMessage)
-        # self._process_cli_job.timeMaterialEstimates.connect(self._onTimeMaterialEstimates)
         self._process_cli_job.start()
-
-    def _onCliProgressMessage(self, amount) -> None:
-        self.processingProgress.emit(0.55 + amount / 2.23)
-        self.backendStateChange.emit(BackendState.Processing)
-
 
     def _onTimeMaterialEstimates(self, material_amounts, times):
         zipped_amounts = zip(self._material_amounts, material_amounts)

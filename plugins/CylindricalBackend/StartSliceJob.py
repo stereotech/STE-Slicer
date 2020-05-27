@@ -101,6 +101,7 @@ class StartSliceJob(Job):
         self._job_results.append(self._cylindrical_start_slice_job.getResult())
         if self._job_results[1] == StartJobResult.Finished:
             self._slice_messages.append(self._cylindrical_start_slice_job.getSliceMessage())
+            self._slice_messages.append(self._cylindrical_start_slice_job.getArcusMessage())
         self._cylindrical_start_slice_job = None
         if any(result > 1 for result in self._job_results):
             self.setResult(max(self._job_results))
