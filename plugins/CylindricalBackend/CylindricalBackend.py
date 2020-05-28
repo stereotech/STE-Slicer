@@ -397,26 +397,32 @@ class CylindricalBackend(QObject, MultiBackend):
                                                                                                 "replace"))  # type: ignore #Because we generate this attribute dynamically.
 
     def _onPrintTimeMaterialEstimates(self, message: Arcus.PythonMessage) -> None:
-        self._material_amounts = []
+        material_amounts = []
         for index in range(message.repeatedMessageCount("materialEstimates")):
-            self._material_amounts.append(message.getRepeatedMessage("materialEstimates", index).material_amount)
+            material_amounts.append(message.getRepeatedMessage("materialEstimates", index).material_amount)
+        if len(self._material_amounts) > 0:
+            zipped_amounts = zip(self._material_amounts, material_amounts)
+            # sum items in two lists
+            self._material_amounts = [x + y for (x, y) in zipped_amounts]
+        else:
+            self._material_amounts = material_amounts
 
         self._times = self._parseMessagePrintTimes(message)
         self.printDurationMessage.emit(self._start_slice_job_build_plate, self._times, self._material_amounts)
 
     def _parseMessagePrintTimes(self, message: Arcus.PythonMessage) -> Dict[str, float]:
         result = {
-            "inset_0": message.time_inset_0,
-            "inset_x": message.time_inset_x,
-            "skin": message.time_skin,
-            "infill": message.time_infill,
-            "support_infill": message.time_support_infill,
-            "support_interface": message.time_support_interface,
-            "support": message.time_support,
-            "skirt": message.time_skirt,
-            "travel": message.time_travel,
-            "retract": message.time_retract,
-            "none": message.time_none
+            "inset_0": self._times.get("inset_0", 0) + message.time_inset_0,
+            "inset_x": self._times.get("inset_x", 0) + message.time_inset_x,
+            "skin": self._times.get("skin", 0) + message.time_skin,
+            "infill": self._times.get("infill", 0) + message.time_infill,
+            "support_infill": self._times.get("support_infill", 0) + message.time_support_infill,
+            "support_interface": self._times.get("support_interface", 0) + message.time_support_interface,
+            "support": self._times.get("support", 0) + message.time_support,
+            "skirt": self._times.get("skirt", 0) + message.time_skirt,
+            "travel": self._times.get("travel", 0) + message.time_travel,
+            "retract": self._times.get("retract", 0) + message.time_retract,
+            "none": self._times.get("none", 0) + message.time_none
         }
         return result
 
