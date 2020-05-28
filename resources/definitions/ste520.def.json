@@ -52,7 +52,10 @@
             "default_value": true
         },
         "machine_start_gcode": {
-            "default_value": ";STE Slicer 5D Gcode\nG21 ;metric values\nG90 ;absolute positioning\nM82 ;set extruder to absolute mode\nM107 ;start with the fan off\nG28;homing\nG92 E0 C0 ;zero the extruded length\nG1 F200 E6 ;extrude 6 mm of feed stock\nG92 E0 ;zero the extruded length again\nG55 ;Move to the first coordinate system"
+            "default_value": ";STE Slicer 5D Gcode\nG21 ;metric values\nG90 ;absolute positioning\nM82 ;set extruder to absolute mode\nM107 ;start with the fan off\nG28;homing\nG92 E0 C0 ;zero the extruded length\nG1 F200 E6 ;extrude 6 mm of feed stock\nG92 E0 ;zero the extruded length again\n{coordinate_system};Move to the first coordinate system"
+        },
+        "machine_middle_gcode": {
+            "default_value": "G91\nG1 E-2\nG0 Z2\nG90\nG54\nG0 X0 Y20\nG92 E0 C0\n{cylindrical_rotate}\n{coordinate_system}\nG1 E1"
         },
         "machine_end_gcode": {
             "default_value": "G54 ; Move to the MCS;\nM104 T0 S0 ;1st extruder heater off\nM104 T1 S0 ;2nd extruder heater off\nG91 ;relative positioning\nG1 E-1 F300  ;retract the filament a bit before lifting the nozzle, to release some of the pressure\nG1 Z+0.5 E-5 X-20 Y-20 F9000 ;move Z up a bit and retract filament even more\nG0 Z100\nG28 X0 Y0 ;move X/Y to min endstops, so the head is out of the way\nG92 E0 C0\nG90 ;absolute positioning"

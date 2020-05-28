@@ -72,6 +72,7 @@ class CylindricalBackend(QObject, MultiBackend):
         self._generate_basement_job = None
         self._glicer_process = None
         self._layers_size = 0
+        self._classic_layers_size = 0
         self._slicing = False  # type: bool # Are we currently slicing?
         self._restart = False  # type: bool # Back-end is currently restarting?
         self._tool_active = False  # type: bool # If a tool is active, some tasks do not have to do anything
@@ -315,7 +316,8 @@ class CylindricalBackend(QObject, MultiBackend):
             if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
                 self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
         self._stored_optimized_layer_data[self._start_slice_job_build_plate].extend(job.getLayersData())
-        self._layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate])
+        self._classic_layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate])
+        self._layers_size = self._classic_layers_size
         if self._generate_basement_job is job:
             self._generate_basement_job = None
         # sending to the first backend
@@ -363,7 +365,7 @@ class CylindricalBackend(QObject, MultiBackend):
         if self._start_slice_job_build_plate is not None:
             if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
                 self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
-            message.id += self._layers_size
+            message.id += self._classic_layers_size
             self._stored_optimized_layer_data[self._start_slice_job_build_plate].append(message)
 
     def _onProgressMessage(self, message: Arcus.PythonMessage) -> None:
@@ -380,8 +382,8 @@ class CylindricalBackend(QObject, MultiBackend):
         if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
             self._scene.gcode_dict[self._start_slice_job_build_plate] = []
         msg = message.data.decode("utf-8", "replace") # type: str
+        #TODO: Remove this since new basement will have start and end gcode
         if msg.startswith(";Generated with Cura_SteamEngine"):
-            msg = msg.replace("G55", "G56")
             self._scene.gcode_dict[self._start_slice_job_build_plate].insert(0, msg)
         else:
             self._scene.gcode_dict[self._start_slice_job_build_plate].append(msg) #type: ignore #Because we generate this attribute dynamically.
@@ -419,7 +421,8 @@ class CylindricalBackend(QObject, MultiBackend):
         return result
 
     def _onSlicingFinishedMessage(self, message: Arcus.PythonMessage) -> None:
-        self._layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate]) - self._layers_size
+        self._classic_layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate]) - self._classic_layers_size
+        self._layers_size += self._classic_layers_size
 
         self.backendStateChange.emit(BackendState.Processing)
         self.processingProgress.emit(0.5)
@@ -592,6 +595,7 @@ class CylindricalBackend(QObject, MultiBackend):
 
 
     def _onCliParserFinishedMessage(self, message: Arcus.PythonMessage) -> None:
+        self._classic_layers_size = 0
         self._layers_size = 0
         self.backendStateChange.emit(BackendState.Done)
         self.processingProgress.emit(1.0)

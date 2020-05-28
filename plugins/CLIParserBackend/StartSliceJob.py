@@ -570,6 +570,10 @@ class StartSliceJob(Job):
         result["time"] = time.strftime("%H:%M:%S")  # Some extra settings.
         result["date"] = time.strftime("%d-%m-%Y")
         result["day"] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
+        printing_mode = result["printing_mode"]
+        if printing_mode in ["cylindrical_full", "cylindrical"]:
+            result["cylindrical_rotate"] = "G0 A90"
+            result["coordinate_system"] = "G56"
 
         initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
@@ -658,6 +662,7 @@ class StartSliceJob(Job):
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
 
         settings["machine_start_gcode"] = self._expandGcodeTokens(settings["machine_start_gcode"], initial_extruder_nr)
+        settings["machine_middle_gcode"] = self._expandGcodeTokens(settings["machine_middle_gcode"], initial_extruder_nr)
         settings["machine_end_gcode"] = self._expandGcodeTokens(settings["machine_end_gcode"], initial_extruder_nr)
 
         # Add all sub-messages for each individual setting.
