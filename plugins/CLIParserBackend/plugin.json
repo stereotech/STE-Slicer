@@ -1,0 +1,8 @@
+{
+    "name": "CliParser Backend",
+    "author": "Stereotech LLC",
+    "description": "Provides the link to the CliParser backend.",
+    "api": 5,
+    "version": "1.0.0",
+    "i18n-catalog": "steslicer"
+}

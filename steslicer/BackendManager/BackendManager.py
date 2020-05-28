@@ -37,7 +37,10 @@ class BackendManager:
             self._onSettingChanged)
         printing_mode = self._global_container_stack.getProperty("printing_mode", "value")
         if printing_mode in backend_types:
+            if self._current_backend:
+                self._current_backend.setCurrent(False)
             self._current_backend = self.getBackendByType(printing_mode)
+            self._current_backend.setCurrent(True)
 
     def initialize(self):
         PluginRegistry.addType("backend", self.addBackendEngine)
@@ -56,6 +59,7 @@ class BackendManager:
                 self._backends_id_to_type_map[backend.getPluginId()] = backend_type
             if self._current_backend is None:
                 self._current_backend = self._backends_by_id[backend.getPluginId()]
+                self._current_backend.setCurrent(True)
                 self.currendBackendChanged.emit()
         else:
             raise BackendAlreadyAdded("Backend with id %s was already added. Backends must have unique ids.", backend.getPluginId())
@@ -86,5 +90,7 @@ class BackendManager:
                 if current_type != value and value in backend_types:
                     new_backend = self.getBackendByType(value)
                     if new_backend is not None:
+                        self._current_backend.setCurrent(False)
                         self._current_backend = new_backend
+                        self._current_backend.setCurrent(True)
                         self.currendBackendChanged.emit()

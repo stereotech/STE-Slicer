@@ -153,8 +153,10 @@ class ProcessSlicedLayersJob(Job):
                     if polygon.point_type == 0:  # Point2D
                         points = points.reshape((-1,
                                                  2))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
-                    else:  # Point3D
+                    elif polygon.point_type == 1:  # Point3D
                         points = points.reshape((-1, 3))
+                    else: # Point6D
+                        points = points.reshape((-1, 6))
 
                     line_widths = numpy.fromstring(polygon.line_width, dtype="f4")  # Convert bytearray to numpy array
                     line_widths = line_widths.reshape((-1,
@@ -172,15 +174,25 @@ class ProcessSlicedLayersJob(Job):
                     # Create a new 3D-array, copy the 2D points over and insert the right height.
                     # This uses manual array creation + copy rather than numpy.insert since this is
                     # faster.
-                    new_points = numpy.empty((len(points), 3), numpy.float32)
+                    if polygon.point_type in [0, 1]:
+                        new_points = numpy.empty((len(points), 3), numpy.float32)
+                    else:
+                        new_points = numpy.empty((len(points), 6), numpy.float32)
                     if polygon.point_type == 0:  # Point2D
                         new_points[:, 0] = points[:, 0]
                         new_points[:, 1] = layer.height / 1000  # layer height value is in backend representation
                         new_points[:, 2] = -points[:, 1]
-                    else:  # Point3D
+                    elif polygon.point_type == 1:  # Point3D
                         new_points[:, 0] = points[:, 0]
                         new_points[:, 1] = points[:, 2]
                         new_points[:, 2] = -points[:, 1]
+                    else:
+                        new_points[:, 0] = points[:, 0]
+                        new_points[:, 1] = points[:, 2]
+                        new_points[:, 2] = -points[:, 1]
+                        new_points[:, 3] = -points[:, 4]
+                        new_points[:, 4] = points[:, 5]
+                        new_points[:, 5] = -points[:, 3]
 
                     this_poly = LayerPolygon.LayerPolygon(extruder, line_types, new_points, line_widths, line_thicknesses,
                                                           line_feedrates)

@@ -51,6 +51,15 @@
                     "settable_per_extruder": false,
                     "settable_per_meshgroup": false
                 },
+                "machine_middle_gcode": {
+                    "label": "Middle G-code",
+                    "description": "G-code commands to be executed when coordinate system changed - separated by \\n.",
+                    "default_value": ";Machine middle Gcode\n",
+                    "type": "str",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
+                },
                 "machine_end_gcode": {
                     "label": "End G-code",
                     "description": "G-code commands to be executed at the very end - separated by \\n.",

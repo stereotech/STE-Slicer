@@ -393,6 +393,13 @@ class StartSliceJob(Job):
         result["time"] = time.strftime("%H:%M:%S") #Some extra settings.
         result["date"] = time.strftime("%d-%m-%Y")
         result["day"] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
+        printing_mode = result["printing_mode"]
+        if printing_mode in ["cylindrical", "cylindrical_full"]:
+            result["cylindrical_rotate"] = "G0 A90"
+            result["coordinate_system"] = "G56"
+        elif printing_mode in ["classic"]:
+            result["cylindrical_rotate"] = "G0 A0"
+            result["coordinate_system"] = "G55"
 
         initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
