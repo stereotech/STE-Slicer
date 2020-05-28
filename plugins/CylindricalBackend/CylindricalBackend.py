@@ -464,6 +464,9 @@ class CylindricalBackend(QObject, MultiBackend):
         self.printDurationMessage.emit(self._start_slice_job_build_plate, self._times, self._material_amounts)
 
     def _onProcessCliFinished(self, job: ProcessCliJob):
+        # remove end gcode from Curaengine
+        del self._scene.gcode_dict[self._start_slice_job_build_plate][-1]
+
         self._backends["CLIParserBackend"]._terminate()
         self._backends["CLIParserBackend"]._createSocket()
         self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.LayerOptimized"] = self._onCliOptimizedLayerMessage
