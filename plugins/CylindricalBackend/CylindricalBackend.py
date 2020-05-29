@@ -478,6 +478,7 @@ class CylindricalBackend(QObject, MultiBackend):
 
         self._backends["CLIParserBackend"]._terminate()
         self._backends["CLIParserBackend"]._createSocket()
+        Logger.log("d", "Sending Arcus Message")
         self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.LayerOptimized"] = self._onCliOptimizedLayerMessage
         self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.Progress"] = self._onCliParserProgressMessage
         self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.GCodeLayer"] = self._onGCodeLayerMessage
@@ -485,111 +486,9 @@ class CylindricalBackend(QObject, MultiBackend):
         self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
         self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.SlicingFinished"] = self._onCliParserFinishedMessage
 
-        if self._error_message:
-            self._error_message.hide()
-
         # Note that cancelled slice jobs can still call this method.
         if self._process_cli_job is job:
             self._process_cli_job = None
-
-        if job.isCancelled() or job.getError() or job.getResult() == StartJobResult.Error:
-            self.backendStateChange.emit(BackendState.Error)
-            self.backendError.emit(job)
-            return
-
-        if job.getResult() == StartJobResult.MaterialIncompatible:
-            if self._application.platformActivity:
-                self._error_message = Message(catalog.i18nc("@info:status",
-                                            "Unable to slice with the current material as it is incompatible with the selected machine or configuration."), title = catalog.i18nc("@info:title", "Unable to slice"))
-                self._error_message.show()
-                self.backendStateChange.emit(BackendState.Error)
-                self.backendError.emit(job)
-            else:
-                self.backendStateChange.emit(BackendState.NotStarted)
-            return
-
-        if job.getResult() == StartJobResult.SettingError:
-            if self._application.platformActivity:
-                if not self._global_container_stack:
-                    Logger.log("w", "Global container stack not assigned to CuraEngineBackend!")
-                    return
-                extruders = ExtruderManager.getInstance().getActiveExtruderStacks()
-                error_keys = [] #type: List[str]
-                for extruder in extruders:
-                    error_keys.extend(extruder.getErrorKeys())
-                if not extruders:
-                    error_keys = self._global_container_stack.getErrorKeys()
-                error_labels = set()
-                for key in error_keys:
-                    for stack in [self._global_container_stack] + extruders: #Search all container stacks for the definition of this setting. Some are only in an extruder stack.
-                        definitions = cast(DefinitionContainerInterface, stack.getBottom()).findDefinitions(key = key)
-                        if definitions:
-                            break #Found it! No need to continue search.
-                    else: #No stack has a definition for this setting.
-                        Logger.log("w", "When checking settings for errors, unable to find definition for key: {key}".format(key = key))
-                        continue
-                    error_labels.add(definitions[0].label)
-
-                self._error_message = Message(catalog.i18nc("@info:status", "Unable to slice with the current settings. The following settings have errors: {0}").format(", ".join(error_labels)),
-                                              title = catalog.i18nc("@info:title", "Unable to slice"))
-                self._error_message.show()
-                self.backendStateChange.emit(BackendState.Error)
-                self.backendError.emit(job)
-            else:
-                self.backendStateChange.emit(BackendState.NotStarted)
-            return
-
-        elif job.getResult() == StartJobResult.ObjectSettingError:
-            errors = {}
-            for node in DepthFirstIterator(self._application.getController().getScene().getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
-                stack = node.callDecoration("getStack")
-                if not stack:
-                    continue
-                for key in stack.getErrorKeys():
-                    if not self._global_container_stack:
-                        Logger.log("e", "CuraEngineBackend does not have global_container_stack assigned.")
-                        continue
-                    definition = cast(DefinitionContainerInterface, self._global_container_stack.getBottom()).findDefinitions(key = key)
-                    if not definition:
-                        Logger.log("e", "When checking settings for errors, unable to find definition for key {key} in per-object stack.".format(key = key))
-                        continue
-                    errors[key] = definition[0].label
-            self._error_message = Message(catalog.i18nc("@info:status", "Unable to slice due to some per-model settings. The following settings have errors on one or more models: {error_labels}").format(error_labels = ", ".join(errors.values())),
-                                          title = catalog.i18nc("@info:title", "Unable to slice"))
-            self._error_message.show()
-            self.backendStateChange.emit(BackendState.Error)
-            self.backendError.emit(job)
-            return
-
-        if job.getResult() == StartJobResult.BuildPlateError:
-            if self._application.platformActivity:
-                self._error_message = Message(catalog.i18nc("@info:status", "Unable to slice because the prime tower or prime position(s) are invalid."),
-                                              title = catalog.i18nc("@info:title", "Unable to slice"))
-                self._error_message.show()
-                self.backendStateChange.emit(BackendState.Error)
-                self.backendError.emit(job)
-            else:
-                self.backendStateChange.emit(BackendState.NotStarted)
-
-        if job.getResult() == StartJobResult.ObjectsWithDisabledExtruder:
-            self._error_message = Message(catalog.i18nc("@info:status", "Unable to slice because there are objects associated with disabled Extruder %s." % job.getMessage()),
-                                          title = catalog.i18nc("@info:title", "Unable to slice"))
-            self._error_message.show()
-            self.backendStateChange.emit(BackendState.Error)
-            self.backendError.emit(job)
-            return
-
-        if job.getResult() == StartJobResult.NothingToSlice:
-            if self._application.platformActivity:
-                self._error_message = Message(catalog.i18nc("@info:status", "Nothing to slice because none of the models fit the build volume. Please scale or rotate models to fit."),
-                                              title = catalog.i18nc("@info:title", "Unable to slice"))
-                self._error_message.show()
-                self.backendStateChange.emit(BackendState.Error)
-                self.backendError.emit(job)
-            else:
-                self.backendStateChange.emit(BackendState.NotStarted)
-            self._invokeSlice()
-            return
 
         self._backends["CLIParserBackend"]._socket.sendMessage(job.getSliceMessage())
 
