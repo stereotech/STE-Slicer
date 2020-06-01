@@ -19,7 +19,7 @@ class PathOptimizer(Script):
             }
         }"""
 
-    def execute(self, data: List[str]):
+    def execute(self, data: List[str]) -> List[str]:
         for layer_idx, layer in enumerate(data):
             gcode = layer.split("\n")
             scanned_line_idx = 0

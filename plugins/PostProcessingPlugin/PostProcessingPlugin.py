@@ -195,7 +195,9 @@ class PostProcessingPlugin(QObject, Extension):
                     Logger.logException("e", "Exception occurred while loading post processing plugin: {error_msg}".format(error_msg = str(e)))
 
         if "PathOptimizer" in self._loaded_scripts and len(self._hidden_list) < 1:
-            self._hidden_list.append(self._loaded_scripts["PathOptimizer"])
+            new_script = self._loaded_scripts["PathOptimizer"]()
+            new_script.initialize()
+            self._hidden_list.append(new_script)
 
     loadedScriptListChanged = pyqtSignal()
     @pyqtProperty("QVariantList", notify = loadedScriptListChanged)
