@@ -42,6 +42,7 @@ class PostProcessingPlugin(QObject, Extension):
         # Script list contains instances of scripts in loaded_scripts.
         # There can be duplicates, which will be executed in sequence.
         self._script_list = []  # type: List[Script]
+        self._hidden_list = [] #type: List[Script]  #hidden list of scripts that always execute
         self._selected_script_index = -1
 
         Application.getInstance().getOutputDeviceManager().writeStarted.connect(self.execute)
@@ -92,6 +93,15 @@ class PostProcessingPlugin(QObject, Extension):
             setattr(scene, "gcode_dict", gcode_dict)
         else:
             Logger.log("e", "Already post processed")
+
+        if len(self._hidden_list):
+            for script in self._hidden_list:
+                try:
+                    gcode_list = script.execute(gcode_list)
+                except Exception:
+                    Logger.logException("e", "Exception in post-processing script.")
+            gcode_dict[active_build_plate_id] = gcode_list
+            setattr(scene, "gcode_dict", gcode_dict)
 
     @pyqtSlot(int)
     def setSelectedScriptIndex(self, index: int) -> None:
@@ -183,6 +193,9 @@ class PostProcessingPlugin(QObject, Extension):
                         Logger.log("e", "Script %s.py has no implemented settings", script_name)
                 except Exception as e:
                     Logger.logException("e", "Exception occurred while loading post processing plugin: {error_msg}".format(error_msg = str(e)))
+
+        if "PathOptimizer" in self._loaded_scripts and len(self._hidden_list) < 1:
+            self._hidden_list.append(self._loaded_scripts["PathOptimizer"])
 
     loadedScriptListChanged = pyqtSignal()
     @pyqtProperty("QVariantList", notify = loadedScriptListChanged)

@@ -276,6 +276,22 @@ class CliParserBackend(QObject, Backend):
             except Exception as e:  # terminating a process that is already terminating causes an exception, silently ignore this.
                 Logger.log("d", "Exception occurred while trying to kill the engine %s", str(e))
 
+        Logger.log("d", "Attempting to kill the engine process")
+
+        if self._application.getUseExternalBackend():
+            return
+
+        if self._process is not None:  # type: ignore
+            Logger.log("d", "Killing engine process")
+            try:
+                self._process.terminate()  # type: ignore
+                Logger.log("d", "Engine process is killed. Received return code %s",
+                           self._process.wait())  # type: ignore
+                self._process = None  # type: ignore
+
+            except Exception as e:  # terminating a process that is already terminating causes an exception, silently ignore this.
+                Logger.log("d", "Exception occurred while trying to kill the engine %s", str(e))
+
     def _onStartSliceCompleted(self, job: StartSliceJob) -> None:
         if self._error_message:
             self._error_message.hide()
