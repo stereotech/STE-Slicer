@@ -84,6 +84,23 @@
             }
         }
     },
+    "CLIParserBackend": {
+        "package_info": {
+            "package_id": "CLIParserBackend",
+            "package_type": "plugin",
+            "display_name": "CliParser Backend",
+            "description": "Provides the link to the CliParser backend.",
+            "package_version": "1.0.0",
+            "sdk_version": 5,
+            "website": "https://stereotech.org",
+            "author": {
+                "author_id": "StereotechPackages",
+                "display_name": "Stereotech LLC.",
+                "email": "dev@ste3d.ru",
+                "website": "https://stereotech.org"
+            }
+        }
+    },
     "GlicerBackend":  {
         "package_info": {
             "package_id": "GlicerBackend",
