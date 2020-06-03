@@ -271,7 +271,8 @@ Column
                                 color: buttonColor(index)
 
                                 font: UM.Theme.getFont("large_nonbold")
-                                text: catalog.i18nc("@label", "Extruder")
+                                //text: catalog.i18nc("@label", "Extruder")
+                                text: model.name
                                 visible: width < (control.width - extruderIconItem.width - UM.Theme.getSize("default_margin").width)
                                 elide: Text.ElideRight
                             }

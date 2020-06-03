@@ -665,6 +665,10 @@ class StartSliceJob(Job):
         settings["machine_middle_gcode"] = self._expandGcodeTokens(settings["machine_middle_gcode"], initial_extruder_nr)
         settings["machine_end_gcode"] = self._expandGcodeTokens(settings["machine_end_gcode"], initial_extruder_nr)
 
+        printing_mode = settings["printing_mode"]
+        if printing_mode in ["cylindrical", "cylindrical_full"]:
+            settings["infill_extruder_nr"] = settings["cylindrical_infill_extruder_nr"]
+
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():
             setting_message = self._arcus_message.getMessage("global_settings").addRepeatedMessage("settings")
@@ -738,6 +742,7 @@ class StartSliceJob(Job):
         extruder_nr = stack.getProperty("extruder_nr", "value")
         settings["machine_extruder_start_code"] = self._expandGcodeTokens(settings["machine_extruder_start_code"], extruder_nr)
         settings["machine_extruder_end_code"] = self._expandGcodeTokens(settings["machine_extruder_end_code"], extruder_nr)
+        settings["machine_fiber_cut_code"] = self._expandGcodeTokens(settings["machine_fiber_cut_code"], extruder_nr)
 
         for key, value in settings.items():
             # Do not send settings that are not settable_per_extruder.

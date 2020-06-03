@@ -1,9 +1,9 @@
 {
     "version": 2,
-    "name": "Extruder 2",
+    "name": "Fiber Extruder",
     "inherits": "fdmextruder",
     "metadata": {
-        "machine": "ste320",
+        "machine": "ste520",
         "position": "1"
     },
     "overrides": {
@@ -21,25 +21,19 @@
             "default_value": 0.4
         },
         "material_diameter": {
-            "default_value": 1.75
+            "default_value": 0.4
         },
-        "machine_extruder_start_pos_abs": {
+        "machine_fiber_extruder": {
             "default_value": true
         },
-        "machine_extruder_start_pos_x": {
-            "value": "prime_tower_position_x"
+        "machine_fiber_cut_distance": {
+            "default_value": 45
         },
-        "machine_extruder_start_pos_y": {
-            "value": "prime_tower_position_y"
+        "machine_fiber_restart_length": {
+            "default_value": 44
         },
-        "machine_extruder_end_pos_abs": {
-            "default_value": true
-        },
-        "machine_extruder_end_pos_x": {
-            "value": "prime_tower_position_x"
-        },
-        "machine_extruder_end_pos_y": {
-            "value": "prime_tower_position_y"
+        "machine_fiber_cut_code": {
+            "default_value": "M400\nM280 P0 S30\nG4 P100\nM280 P0 S90\nM400"
         }
     }
 }
