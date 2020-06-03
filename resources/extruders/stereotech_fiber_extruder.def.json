@@ -3,7 +3,7 @@
     "name": "Fiber Extruder",
     "inherits": "fdmextruder",
     "metadata": {
-        "machine": "ste520",
+        "machine": "sfe520",
         "position": "1"
     },
     "overrides": {
