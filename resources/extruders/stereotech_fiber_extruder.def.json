@@ -29,11 +29,17 @@
         "machine_fiber_cut_distance": {
             "default_value": 45
         },
+        "machine_fiber_cut_min_distance": {
+            "default_value": 46
+        },
         "machine_fiber_restart_length": {
             "default_value": 44
         },
         "machine_fiber_cut_code": {
-            "default_value": "M400\nM280 P0 S30\nG4 P100\nM280 P0 S90\nM400"
+            "default_value": ";FIBER CUT\nM400\nM280 P0 S30\nG4 P100\nM280 P0 S90\nM400\n;END FIBER CUT"
+        },
+        "machine_extruder_start_code": {
+            "default_value": ";PRIME FIBER\nG1 F1200 E{machine_fiber_restart_length}\nG92 E0"
         }
     }
 }

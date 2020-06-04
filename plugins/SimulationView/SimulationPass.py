@@ -126,8 +126,8 @@ class SimulationPass(RenderPass):
                             for polygon in layer_data.getLayer(layer).polygons:
                                 # The size indicates all values in the two-dimension array, and the second dimension is
                                 # always size 3 because we have 3D points.
-                                if index >= polygon.data.size // 3 - offset:
-                                    index -= polygon.data.size // 3 - offset
+                                if index >= polygon.data.size // 6 - offset:
+                                    index -= polygon.data.size // 6 - offset
                                     offset = 1  # This is to avoid the first point when there is more than one polygon, since has the same value as the last point in the previous polygon
                                     continue
                                 # The head position is calculated and translated

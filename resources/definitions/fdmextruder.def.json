@@ -65,6 +65,17 @@
                     "settable_per_meshgroup": false,
                     "settable_globally": false
                 },
+                "machine_fiber_cut_min_distance": {
+                    "label": "Fiber cut min distance",
+                    "description": "Min distance of the extrusion path to perform fiber cutting",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 0,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "settable_per_meshgroup": false,
+                    "settable_globally": false
+                },
                 "machine_fiber_restart_length": {
                     "label": "Fiber restart length",
                     "description": "Length, which will be extruded before fiber printing starts",
