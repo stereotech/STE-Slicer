@@ -36,10 +36,10 @@
             "default_value": 44
         },
         "machine_fiber_cut_code": {
-            "default_value": ";FIBER CUT\nM400\nM280 P0 S30\nG4 P100\nM280 P0 S90\nM400\n;END FIBER CUT"
+            "default_value": ";FIBER CUT\nM400\nM280 P0 S30\nG4 P100\nM280 P0 S90\n;PRIME FIBER\nG1 F1200 E{machine_fiber_restart_length}\nG92 E0\nM400\n;END FIBER CUT"
         },
         "machine_extruder_start_code": {
-            "default_value": ";PRIME FIBER\nG1 F1200 E{machine_fiber_restart_length}\nG92 E0"
+            "default_value": ""
         }
     }
 }
