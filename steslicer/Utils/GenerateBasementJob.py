@@ -160,7 +160,7 @@ class GenerateBasementJob(Job):
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
         height = self._cylindrical_raft_base_height - layer_number * (self._cylindrical_raft_base_height / layer_count) + self._raft_base_line_width
-        points = self._generateHelix(radius, height, False)
+        points = self._generateHelix(radius, height, layer_number, False)
 
         new_position, new_gcode_position = points[0]
 
@@ -253,7 +253,7 @@ class GenerateBasementJob(Job):
             self._addToPath(path, [x, y, z, a, b, c, feedrate, e, LayerPolygon.SkirtType])
         return gcode_line
 
-    def _generateHelix(self, radius: float, height: float, reverse_twist: bool, chordal_err: float = 0.05):
+    def _generateHelix(self, radius: float, height: float, layer_number: int, reverse_twist: bool,  chordal_err: float = 0.025):
         pitch = self._raft_base_line_width
         max_t = numpy.pi * 2 + height / pitch
         result = []
@@ -263,6 +263,24 @@ class GenerateBasementJob(Job):
             x = radius * cos(t)
             y = radius * (sin(t) if not reverse_twist else -sin(t))
             z = - self._raft_base_line_width / 2 if max_t - t <= (numpy.pi + chordal_err) * 2 else - (height - pitch * t)
+            length = numpy.sqrt(x ** 2 + y ** 2)
+            i = x / length if length != 0 else 0
+            j = y / length if length != 0 else 0
+            k = 0
+            new_position = Position(x, y, z, i, j, k, 0, [0])
+            new_gcode_position = self._transformCoordinates(x, y, z, i, j, k, gcode_position)
+            new_position.e[self._extruder_number] = position.e[self._extruder_number] + self._calculateExtrusion(
+                [x, y, z],
+                position) if t > 0.0 else position.e[self._extruder_number]
+            new_gcode_position.e[self._extruder_number] = new_position.e[self._extruder_number]
+            position = new_position
+            gcode_position = new_gcode_position
+            result.append((new_position, new_gcode_position))
+        #if layer_number == 0:
+        for t in numpy.arange(max_t, 2 * max_t - numpy.pi * 2, chordal_err):
+            x = -radius * cos(t - numpy.pi)
+            y = radius * (sin(t) if reverse_twist else -sin(t - numpy.pi))
+            z = - pitch * (t - max_t)
             length = numpy.sqrt(x ** 2 + y ** 2)
             i = x / length if length != 0 else 0
             j = y / length if length != 0 else 0
