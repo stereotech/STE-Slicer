@@ -159,7 +159,7 @@ class GenerateBasementJob(Job):
 
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
-        height = self._cylindrical_raft_base_height - layer_number * (self._cylindrical_raft_base_height / layer_count) + self._raft_base_line_width
+        height = self._cylindrical_raft_base_height - layer_number * self._raft_base_line_width / 3
         points = self._generateHelix(radius, height, layer_number, False)
 
         new_position, new_gcode_position = points[0]
