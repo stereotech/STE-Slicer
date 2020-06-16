@@ -1542,7 +1542,33 @@
                     "settable_per_extruder": false,
                     "settable_per_meshgroup": true,
                     "settable_globally": true,
-                    "enabled": "extruders_enabled_count > 1"
+                    "enabled": "extruders_enabled_count > 1",
+                    "children": {
+                        "classic_infill_extruder_nr": {
+                            "label": "Classic Infill Extruder",
+                            "description": "The extruder train used for printing infill. This is used in multi-extrusion.",
+                            "type": "optional_extruder",
+                            "value": "infill_extruder_nr",
+                            "default_value": "-1",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": true,
+                            "settable_globally": true,
+                            "enabled": "extruders_enabled_count > 1"
+                        },
+                        "cylindrical_infill_extruder_nr": {
+                            "label": "Cylindrical Infill Extruder",
+                            "description": "The extruder train used for printing infill. This is used in multi-extrusion.",
+                            "type": "optional_extruder",
+                            "value": "infill_extruder_nr",
+                            "default_value": "-1",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": true,
+                            "settable_globally": true,
+                            "enabled": "extruders_enabled_count > 1 and printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full'"
+                        }
+                    }
                 },
                 "infill_sparse_density": {
                     "label": "Infill Density",

@@ -484,6 +484,10 @@ class StartSliceJob(Job):
         settings["machine_start_gcode"] = self._expandGcodeTokens(settings["machine_start_gcode"], initial_extruder_nr)
         settings["machine_end_gcode"] = self._expandGcodeTokens(settings["machine_end_gcode"], initial_extruder_nr)
 
+        printing_mode = settings["printing_mode"]
+        if printing_mode in ["classic", "cylindrical_full"]:
+            settings["infill_extruder_nr"] = settings["classic_infill_extruder_nr"]
+
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():
             setting_message = self._slice_message.getMessage("global_settings").addRepeatedMessage("settings")

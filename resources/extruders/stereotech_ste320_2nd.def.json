@@ -3,7 +3,7 @@
     "name": "Extruder 2",
     "inherits": "fdmextruder",
     "metadata": {
-        "machine": "stereotech_ste320",
+        "machine": "ste320",
         "position": "1"
     },
     "overrides": {

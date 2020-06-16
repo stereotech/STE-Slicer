@@ -1,0 +1,45 @@
+{
+    "version": 2,
+    "name": "Fiber Extruder",
+    "inherits": "fdmextruder",
+    "metadata": {
+        "machine": "sfe520",
+        "position": "1"
+    },
+    "overrides": {
+        "extruder_nr": {
+            "default_value": 1,
+            "maximum_value": "1"
+        },
+        "machine_nozzle_offset_x": {
+            "default_value": 18.0
+        },
+        "machine_nozzle_offset_y": {
+            "default_value": 0.0
+        },
+        "machine_nozzle_size": {
+            "default_value": 0.4
+        },
+        "material_diameter": {
+            "default_value": 0.4
+        },
+        "machine_fiber_extruder": {
+            "default_value": true
+        },
+        "machine_fiber_cut_distance": {
+            "default_value": 45
+        },
+        "machine_fiber_cut_min_distance": {
+            "default_value": 46
+        },
+        "machine_fiber_restart_length": {
+            "default_value": 44
+        },
+        "machine_fiber_cut_code": {
+            "default_value": ";FIBER CUT\nM400\nM280 P0 S30\nG4 P100\nM280 P0 S90\n;PRIME FIBER\nG1 F1200 E{machine_fiber_restart_length}\nG92 E0\nM400\n;END FIBER CUT"
+        },
+        "machine_extruder_start_code": {
+            "default_value": ""
+        }
+    }
+}
