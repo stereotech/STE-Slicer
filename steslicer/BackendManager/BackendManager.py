@@ -7,7 +7,7 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.SettingInstance import SettingInstance
 from UM.Signal import Signal
 
-backend_types = ["classic", "cylindrical", "cylindrical_full"]
+backend_types = ["classic", "cylindrical", "cylindrical_full", "spherical", "spherical_full"]
 
 class BackendAlreadyAdded(Exception):
     pass
@@ -61,6 +61,15 @@ class BackendManager:
                 self._current_backend = self._backends_by_id[backend.getPluginId()]
                 self._current_backend.setCurrent(True)
                 self.currendBackendChanged.emit()
+            metadata_types = metadata["backend_engine"].get("types", [])
+            for metadata_type in metadata_types:
+                if metadata_type in backend_types:
+                    self._backends_by_type[metadata_type] = backend
+                    self._backends_id_to_type_map[backend.getPluginId()] = metadata_type
+                if self._current_backend is None:
+                    self._current_backend = self._backends_by_id[backend.getPluginId()]
+                    self._current_backend.setCurrent(True)
+                    self.currendBackendChanged.emit()
         else:
             raise BackendAlreadyAdded("Backend with id %s was already added. Backends must have unique ids.", backend.getPluginId())
 
