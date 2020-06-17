@@ -706,7 +706,9 @@
                     "options": {
                         "classic": "Classic",
                         "cylindrical": "5D Spiral",
-                        "cylindrical_full": "5D Spiral Full"
+                        "cylindrical_full": "5D Spiral Full",
+                        "spherical": "5D Spherical",
+                        "spherical_full": "5D Spherical Full"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
@@ -722,6 +724,18 @@
                     "default_value": 6,
                     "enabled": "resolveOrValue('printing_mode') in ['cylindrical', 'cylindrical_full']",
                     "minimum_value": "4",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "spherical_mode_base_radius": {
+                    "label": "Base Radius",
+                    "description": "Radius of sphere base in 5D Spherical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false

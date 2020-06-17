@@ -397,6 +397,9 @@ class StartSliceJob(Job):
         if printing_mode in ["cylindrical", "cylindrical_full"]:
             result["cylindrical_rotate"] = "G0 A90"
             result["coordinate_system"] = "G56"
+        elif printing_mode in ["spherical", "spherical_full"]:
+            result["cylindrical_rotate"] = "G0 A0"
+            result["coordinate_system"] = "G55"
         elif printing_mode in ["classic"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"

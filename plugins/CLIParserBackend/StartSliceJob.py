@@ -153,6 +153,10 @@ params_dict = {
             "stack_key": "skin_line_width",
             "default_value": 0.4
         },
+        "split_layer_contours": {
+            "stack_key": "",
+            "default_value": 1
+        }
     },
     "GCodeSupport": {
         "first_offset": {
@@ -370,7 +374,7 @@ class StartSliceJob(Job):
 
             object_groups = []
             printing_mode = stack.getProperty("printing_mode", "value")
-            if printing_mode in ["cylindrical", "cylindrical_full"]:
+            if printing_mode in ["cylindrical", "cylindrical_full", "spherical", "spherical_full"]:
                 temp_list = []
                 has_printing_mesh = False
                 for node in DepthFirstIterator(
@@ -506,14 +510,26 @@ class StartSliceJob(Job):
         output_mesh.fix_normals()
         # create_cutting_cylinder
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
-        radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("layer_height", "value")
-        height = global_stack.getProperty("machine_height", "value") * 2
-        cutting_cylinder = trimesh.primitives.Cylinder(
-            radius=radius, height=height, sections=64)
-
-        # cut mesh by cylinder
+        printing_mode = global_stack.getProperty("printing_mode", "value")
         try:
-            result = output_mesh.difference(cutting_cylinder, engine="scad")
+            if printing_mode in ["cylindrical", "cylindrical_full"]:
+                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("layer_height", "value")
+                height = global_stack.getProperty("machine_height", "value") * 2
+                cutting_mesh = trimesh.primitives.Cylinder(
+                    radius=radius, height=height, sections=64)
+            elif printing_mode in ["spherical", "spherical_full"]:
+                radius = global_stack.getProperty("spherical_mode_base_radius", "value")
+                if radius > 0:
+                    radius += global_stack.getProperty(
+                        "layer_height", "value")
+                else:
+                    raise ValueError
+                cutting_mesh = trimesh.primitives.Sphere(
+                    radius=radius, subdivisions = 3
+                )
+            # cut mesh by cylinder
+
+            result = output_mesh.difference(cutting_mesh, engine="scad")
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
@@ -631,9 +647,18 @@ class StartSliceJob(Job):
                     if name == "supportangle":
                         supports_enabled = settings.get("support_enable_cylindrical", False)
                         setting_value = 90 - setting_value if supports_enabled else "0"
-
                 else:
                     setting_value = value.get("default_value", "")
+                    if name == "round":
+                        printing_mode = settings.get("printing_mode", "classic")
+                        if printing_mode in ["cylindrical", "cylindrical_full"]:
+                            setting_value = 1
+                        elif printing_mode in ["spherical", "spherical_full"]:
+                            setting_value = 2
+                    if name == "support_base_r":
+                        printing_mode = settings.get("printing_mode", "classic")
+                        if printing_mode in ["spherical", "spherical_full"]:
+                            setting_value = 0
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
         settings_string = eltree.tostring(root, encoding='Windows-1251').decode("Windows-1251")
