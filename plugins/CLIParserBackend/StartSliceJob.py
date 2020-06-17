@@ -511,19 +511,24 @@ class StartSliceJob(Job):
         # create_cutting_cylinder
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         printing_mode = global_stack.getProperty("printing_mode", "value")
-        if printing_mode in ["cylindrical", "cylindrical_full"]:
-            radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("layer_height", "value")
-            height = global_stack.getProperty("machine_height", "value") * 2
-            cutting_mesh = trimesh.primitives.Cylinder(
-                radius=radius, height=height, sections=64)
-        elif printing_mode in ["spherical", "spherical_full"]:
-            radius = global_stack.getProperty("spherical_mode_base_radius", "value") + global_stack.getProperty(
-                "layer_height", "value")
-            cutting_mesh = trimesh.primitives.Sphere(
-                radius=radius, subdivisions = 3
-            )
-        # cut mesh by cylinder
         try:
+            if printing_mode in ["cylindrical", "cylindrical_full"]:
+                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("layer_height", "value")
+                height = global_stack.getProperty("machine_height", "value") * 2
+                cutting_mesh = trimesh.primitives.Cylinder(
+                    radius=radius, height=height, sections=64)
+            elif printing_mode in ["spherical", "spherical_full"]:
+                radius = global_stack.getProperty("spherical_mode_base_radius", "value")
+                if radius > 0:
+                    radius += global_stack.getProperty(
+                        "layer_height", "value")
+                else:
+                    raise ValueError
+                cutting_mesh = trimesh.primitives.Sphere(
+                    radius=radius, subdivisions = 3
+                )
+            # cut mesh by cylinder
+
             result = output_mesh.difference(cutting_mesh, engine="scad")
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
@@ -650,6 +655,10 @@ class StartSliceJob(Job):
                             setting_value = 1
                         elif printing_mode in ["spherical", "spherical_full"]:
                             setting_value = 2
+                    if name == "support_base_r":
+                        printing_mode = settings.get("printing_mode", "classic")
+                        if printing_mode in ["spherical", "spherical_full"]:
+                            setting_value = 0
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
         settings_string = eltree.tostring(root, encoding='Windows-1251').decode("Windows-1251")

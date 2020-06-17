@@ -735,7 +735,7 @@
                     "unit": "mm",
                     "default_value": 10,
                     "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
-                    "minimum_value": "4",
+                    "minimum_value": "0",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false

@@ -354,7 +354,8 @@ class CliParserBackend(QObject, Backend):
         self.backendStateChange.emit(BackendState.Processing)
         slice_message = job.getSliceMessage()
         slice_message.append('-o')
-        output_path = [os.path.join(tempfile.tempdir, next(tempfile._get_candidate_names()) + ".cli")]
+        filename = next(tempfile._get_candidate_names())
+        output_path = [os.path.join(tempfile.tempdir, filename + ".cli")]
         slice_message.extend(output_path)
 
         self._glicer_process = self._runGlicerEngineProcess(slice_message)
