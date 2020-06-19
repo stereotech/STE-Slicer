@@ -645,8 +645,8 @@ class StartSliceJob(Job):
                         setting_value /= 2
                         if name == "support_base_r":
                             setting_value += settings.get("layer_height", 0.2)
-                    #if name == "skin_width":
-                    #    setting_value = setting_value if setting_value <= 4 else 4
+                    if name == "skin_width":
+                       setting_value = setting_value if setting_value < 100 else 100
                     if name == "supportangle":
                         supports_enabled = settings.get("support_enable_cylindrical", False)
                         setting_value = 90 - setting_value if supports_enabled else "0"
