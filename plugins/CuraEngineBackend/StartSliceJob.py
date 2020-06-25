@@ -220,9 +220,9 @@ class StartSliceJob(Job):
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty("cylindrical_mode_base_diameter", "value") / 2
                     for node in temp_list:
                         height = node.getBoundingBox().height * 2
-                        cutting_cylinder = trimesh.primitives.Cylinder(
+                        cutting_sphere = trimesh.primitives.Cylinder(
                             radius=radius, height=height, sections=64)
-                        cutting_cylinder.apply_transform(
+                        cutting_sphere.apply_transform(
                             trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
 
                         mesh_data = node.getMeshData()
@@ -241,7 +241,7 @@ class StartSliceJob(Job):
                         mesh = trimesh.Trimesh(vertices=verts, faces=faces)
 
                         try:
-                            cutting_result = mesh.intersection(cutting_cylinder, engine="scad")
+                            cutting_result = mesh.intersection(cutting_sphere, engine="scad")
                             if cutting_result and cutting_result.is_watertight:
                                 cutting_result.fill_holes()
                                 cutting_result.fix_normals()
@@ -253,7 +253,7 @@ class StartSliceJob(Job):
                                 cutting_node.addDecorator(node.getDecorator(SettingOverrideDecorator))
                         except Exception as e:
                             Logger.log("e", "Failed to intersect model! %s", e)
-                            cutting_result = cutting_cylinder
+                            cutting_result = cutting_sphere
                             if cutting_result and cutting_result.is_watertight:
                                 cutting_result.fill_holes()
                                 cutting_result.fix_normals()
@@ -268,6 +268,101 @@ class StartSliceJob(Job):
                                     stack = cutting_node.callDecoration("getStack")
                                 settings = stack.getTop()
                                 if not (settings.getInstance("support_mesh") and settings.getProperty("support_mesh", "value")):
+                                    definition = stack.getSettingDefinition("support_mesh")
+                                    new_instance = SettingInstance(definition, settings)
+                                    new_instance.setProperty("value", True, emit_signals=False)
+                                    new_instance.resetState()  # Ensure that the state is not seen as a user state.
+                                    settings.addInstance(new_instance)
+
+                        cutting_node.setName("cut_" + node.getName())
+                        cutting_node.setMeshData(data)
+
+                        cut_list.append(cutting_node)
+
+                    object_groups.append(cut_list)
+            elif printing_mode == "spherical_full":
+                temp_list = []
+                has_printing_mesh = False
+
+                for node in DepthFirstIterator(
+                        self._scene.getRoot()):  # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
+                    if node.callDecoration(
+                            "isSliceable") and node.getMeshData() and node.getMeshData().getVertices() is not None:
+                        per_object_stack = node.callDecoration("getStack")
+                        is_non_printing_mesh = False
+                        if per_object_stack:
+                            is_non_printing_mesh = any(
+                                per_object_stack.getProperty(key, "value") for key in NON_PRINTING_MESH_SETTINGS)
+
+                        # Find a reason not to add the node
+                        if node.callDecoration("getBuildPlateNumber") != self._build_plate_number:
+                            continue
+                        if getattr(node, "_outside_buildarea", False) and not is_non_printing_mesh:
+                            continue
+
+                        temp_list.append(node)
+                        if not is_non_printing_mesh:
+                            has_printing_mesh = True
+
+                    Job.yieldThread()
+
+                # If the list doesn't have any model with suitable settings then clean the list
+                # otherwise CuraEngine will crash
+                if not has_printing_mesh:
+                    temp_list.clear()
+
+                if temp_list:
+                    cut_list = []
+                    radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "spherical_mode_base_radius", "value")
+                    for node in temp_list:
+                        cutting_sphere = trimesh.primitives.Sphere(
+                            radius=radius)
+                        mesh_data = node.getMeshData()
+                        if mesh_data.hasIndices():
+                            faces = mesh_data.getIndices()
+                        else:
+                            num_verts = mesh_data.getVertexCount()
+                            faces = numpy.empty((int(num_verts / 3 + 1), 3), numpy.int32)
+                            for i in range(0, num_verts - 2, 3):
+                                faces[int(i / 3):] = [i, i + 1, i + 2]
+                        verts = mesh_data.getVertices()
+                        rot_scale = node.getWorldTransformation().getTransposed().getData()[0:3, 0:3]
+                        translate = node.getWorldTransformation().getData()[:3, 3]
+                        verts = verts.dot(rot_scale)
+                        verts += translate
+                        mesh = trimesh.Trimesh(vertices=verts, faces=faces)
+
+                        try:
+                            cutting_result = mesh.intersection(cutting_sphere, engine="scad")
+                            if cutting_result and cutting_result.is_watertight:
+                                cutting_result.fill_holes()
+                                cutting_result.fix_normals()
+
+                                data = MeshData.MeshData(vertices=cutting_result.vertices.astype('float32'),
+                                                         normals=cutting_result.face_normals.astype('float32'),
+                                                         indices=cutting_result.faces.astype('int64'))
+                                cutting_node = SteSlicerSceneNode(node.getParent(), no_setting_override=True)
+                                cutting_node.addDecorator(node.getDecorator(SettingOverrideDecorator))
+                        except Exception as e:
+                            Logger.log("e", "Failed to intersect model! %s", e)
+                            cutting_result = cutting_sphere
+                            if cutting_result and cutting_result.is_watertight:
+                                cutting_result.fill_holes()
+                                cutting_result.fix_normals()
+
+                                data = MeshData.MeshData(vertices=cutting_result.vertices.astype('float32'),
+                                                         normals=cutting_result.face_normals.astype('float32'),
+                                                         indices=cutting_result.faces.astype('int64'))
+                                cutting_node = SteSlicerSceneNode(node.getParent(), no_setting_override=True)
+                                stack = cutting_node.callDecoration(
+                                    "getStack")  # Don't try to get the active extruder since it may be None anyway.
+                                if not stack:
+                                    cutting_node.addDecorator(SettingOverrideDecorator())
+                                    stack = cutting_node.callDecoration("getStack")
+                                settings = stack.getTop()
+                                if not (settings.getInstance("support_mesh") and settings.getProperty("support_mesh",
+                                                                                                      "value")):
                                     definition = stack.getSettingDefinition("support_mesh")
                                     new_instance = SettingInstance(definition, settings)
                                     new_instance.setProperty("value", True, emit_signals=False)
