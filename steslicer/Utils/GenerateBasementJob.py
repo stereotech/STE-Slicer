@@ -51,6 +51,7 @@ class GenerateBasementJob(Job):
         }
         self._position = Position(0, 0, 0, 0, 0, 1, 0, [0])
         self._gcode_position = Position(999, 999, 999, 0, 0, 0, 0, [0])
+        self._first_move = True
         self._rot_nwp = Matrix()
         self._rot_nws = Matrix()
         self._pi_faction = 0
@@ -137,6 +138,7 @@ class GenerateBasementJob(Job):
 
         self._position = Position(0, 0, 0, 0, 0, 1, 0, [0])
         self._gcode_position = Position(999, 999, 999, 0, 0, 0, 0, [0])
+        self._first_move = True
         current_path = []  # type: List[List[float]]
 
         layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness) + self._raft_margin / 2)
@@ -164,12 +166,14 @@ class GenerateBasementJob(Job):
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
         height = self._cylindrical_raft_base_height - layer_number * self._raft_base_line_width / 3
+        if height < self._raft_base_line_width * 2:
+            height = self._raft_base_line_width * 2
         points = self._generateHelix(radius, height, layer_number, False)
 
         new_position, new_gcode_position = points[0]
 
         is_retraction = self._enable_retraction and self._positionLength(
-            self._position, new_position) > self._retraction_min_travel
+            self._position, new_position) > self._retraction_min_travel and not self._first_move
         if is_retraction:
             # we have retraction move
             new_extruder_position = self._position.e[self._extruder_number] - self._retraction_amount
@@ -229,7 +233,7 @@ class GenerateBasementJob(Job):
         self._gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
         self._addToPath(path, [x, y, z, a, b, c, feedrate, e,
                                LayerPolygon.MoveCombingType])
-
+        self._first_move = False
         if is_retraction:
             # we have retraction move
             new_extruder_position = self._position.e[self._extruder_number] + self._retraction_amount
