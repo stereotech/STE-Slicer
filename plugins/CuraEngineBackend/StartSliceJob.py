@@ -220,9 +220,9 @@ class StartSliceJob(Job):
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty("cylindrical_mode_base_diameter", "value") / 2
                     for node in temp_list:
                         height = node.getBoundingBox().height * 2
-                        cutting_sphere = trimesh.primitives.Cylinder(
+                        cutting_cylinder = trimesh.primitives.Cylinder(
                             radius=radius, height=height, sections=64)
-                        cutting_sphere.apply_transform(
+                        cutting_cylinder.apply_transform(
                             trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
 
                         mesh_data = node.getMeshData()
@@ -239,10 +239,9 @@ class StartSliceJob(Job):
                         verts = verts.dot(rot_scale)
                         verts += translate
                         mesh = trimesh.Trimesh(vertices=verts, faces=faces)
-
                         try:
-                            cutting_result = mesh.intersection(cutting_sphere, engine="scad")
-                            if cutting_result and cutting_result.is_watertight:
+                            cutting_result = mesh.intersection(cutting_cylinder, engine="scad")
+                            if cutting_result:
                                 cutting_result.fill_holes()
                                 cutting_result.fix_normals()
 
@@ -253,8 +252,8 @@ class StartSliceJob(Job):
                                 cutting_node.addDecorator(node.getDecorator(SettingOverrideDecorator))
                         except Exception as e:
                             Logger.log("e", "Failed to intersect model! %s", e)
-                            cutting_result = cutting_sphere
-                            if cutting_result and cutting_result.is_watertight:
+                            cutting_result = cutting_cylinder
+                            if cutting_result:
                                 cutting_result.fill_holes()
                                 cutting_result.fix_normals()
 
@@ -273,11 +272,11 @@ class StartSliceJob(Job):
                                     new_instance.setProperty("value", True, emit_signals=False)
                                     new_instance.resetState()  # Ensure that the state is not seen as a user state.
                                     settings.addInstance(new_instance)
+                        if cutting_node is not None:
+                            cutting_node.setName("cut_" + node.getName())
+                            cutting_node.setMeshData(data)
 
-                        cutting_node.setName("cut_" + node.getName())
-                        cutting_node.setMeshData(data)
-
-                        cut_list.append(cutting_node)
+                            cut_list.append(cutting_node)
 
                     object_groups.append(cut_list)
             elif printing_mode == "spherical_full":
