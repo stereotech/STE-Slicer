@@ -1,9 +1,9 @@
 {
     "version": 2,
-    "name": "Extruder 2",
+    "name": "Fake Fiber",
     "inherits": "fdmextruder",
     "metadata": {
-        "machine": "ste320",
+        "machine": "sfe520",
         "position": "1"
     },
     "overrides": {
@@ -12,7 +12,7 @@
             "maximum_value": "1"
         },
         "machine_nozzle_offset_x": {
-            "default_value": 18.0
+            "default_value": -18.0
         },
         "machine_nozzle_offset_y": {
             "default_value": 0.0
@@ -23,23 +23,41 @@
         "material_diameter": {
             "default_value": 1.75
         },
+        "machine_fiber_extruder": {
+            "default_value": true
+        },
+        "machine_fiber_cut_distance": {
+            "default_value": 45
+        },
+        "machine_fiber_cut_min_distance": {
+            "default_value": 46
+        },
+        "machine_fiber_restart_length": {
+            "default_value": 44
+        },
+        "machine_fiber_cut_code": {
+            "default_value": ";FIBER CUT\nM400\nM280 P0 S30\nG4 P100\nM280 P0 S90\n;PRIME FIBER\nG92 E0\nG1 F1200 E2\nG92 E0\nM400\n;END FIBER CUT"
+        },
+        "machine_extruder_start_code": {
+            "default_value": ""
+        },
         "machine_extruder_start_pos_abs": {
             "default_value": false
         },
         "machine_extruder_start_pos_x": {
-            "value": "prime_tower_position_x"
+            "value": 0
         },
         "machine_extruder_start_pos_y": {
-            "value": "prime_tower_position_y"
+            "value": 0
         },
         "machine_extruder_end_pos_abs": {
-            "default_value": true
+            "default_value": false
         },
         "machine_extruder_end_pos_x": {
-            "value": "prime_tower_position_x"
+            "value": 0
         },
         "machine_extruder_end_pos_y": {
-            "value": "prime_tower_position_y"
+            "value": 0
         }
     }
 }

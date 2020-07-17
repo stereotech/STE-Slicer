@@ -74,3 +74,5 @@ CuraEngine
 openscad.*
 *.dll
 *.bak
+*.3mf
+*.stl

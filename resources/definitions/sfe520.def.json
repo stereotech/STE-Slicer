@@ -17,7 +17,7 @@
         "has_materials": true,
         "machine_extruder_trains": {
             "0": "stereotech_ste320_1st",
-            "1": "stereotech_fiber_extruder"
+            "1": "stereotech_fake_fiber_extruder"
         },
         "first_start_actions": [
 
