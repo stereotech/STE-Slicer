@@ -87,6 +87,10 @@ params_dict = {
             "stack_key": "",
             "default_value": 1
         },
+        "support_model_delta_round": {
+            "stack_key": "",
+            "default_value": 1
+        }
     },
     "GCode": {
         "cli_quality": {
@@ -164,7 +168,7 @@ params_dict = {
             "default_value": 0
         },
         "main_offset": {
-            "stack_key": "",
+            "stack_key": "support_offset",
             "default_value": 0.1
         },
         "last_offset": {
@@ -662,6 +666,8 @@ class StartSliceJob(Job):
                         printing_mode = settings.get("printing_mode", "classic")
                         if printing_mode in ["spherical", "spherical_full"]:
                             setting_value = 0
+                    if name == "support_model_delta_round":
+                        setting_value = settings.get("support_z_distance", 0.1) / settings.get("layer_height", 0.1)
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
         settings_string = eltree.tostring(root, encoding='Windows-1251').decode("Windows-1251")
