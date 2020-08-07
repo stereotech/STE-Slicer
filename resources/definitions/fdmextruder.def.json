@@ -97,6 +97,16 @@
                     "settable_per_meshgroup": false,
                     "settable_globally": false
                 },
+                "machine_fiber_prime_code": {
+                    "label": "Fiber Prime G-Code",
+                    "description": "Fiber Prime G-Code",
+                    "type": "str",
+                    "default_value": "",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "settable_per_meshgroup": false,
+                    "settable_globally": false
+                },
                 "machine_nozzle_offset_x": {
                     "label": "Nozzle X Offset",
                     "description": "The x-coordinate of the offset of the nozzle.",
