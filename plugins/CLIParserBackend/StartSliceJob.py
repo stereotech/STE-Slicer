@@ -654,6 +654,10 @@ class StartSliceJob(Job):
                     if name == "supportangle":
                         supports_enabled = settings.get("support_enable_cylindrical", False)
                         setting_value = 90 - setting_value if supports_enabled else "0"
+                    if name == "perimeter_count":
+                        printing_mode = settings.get("printing_mode", "classic")
+                        if printing_mode in ["spherical", "spherical_full"]:
+                            setting_value = -1
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "round":
@@ -668,6 +672,7 @@ class StartSliceJob(Job):
                             setting_value = 0
                     if name == "support_model_delta_round":
                         setting_value = settings.get("support_z_distance", 0.1) / settings.get("layer_height", 0.1)
+
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
         settings_string = eltree.tostring(root, encoding='Windows-1251').decode("Windows-1251")
