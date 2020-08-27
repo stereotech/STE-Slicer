@@ -1,4 +1,5 @@
-
+import os
+import subprocess
 
 import numpy
 from string import Formatter
@@ -496,7 +497,7 @@ class StartSliceJob(Job):
                     self._handlePerObjectSettings(object, cli)
 
                     Job.yieldThread()
-            self._buildObjectFiles(indicies_collection, vertices_collection)
+        self._buildObjectFiles(indicies_collection, vertices_collection)
 
         self.setResult(StartJobResult.Finished)
 
@@ -532,15 +533,12 @@ class StartSliceJob(Job):
                     radius=radius, subdivisions = 3
                 )
             # cut mesh by cylinder
-
             result = output_mesh.difference(cutting_mesh, engine="scad")
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
         temp_mesh = tempfile.NamedTemporaryFile('w', delete=False)
         result.export(temp_mesh.name, 'stl')
-
-
         self._slice_message.append('-m')
         self._slice_message.append(temp_mesh.name)
 
@@ -791,3 +789,15 @@ class StartSliceJob(Job):
             setting.name = key
             setting.value = str(value).encode("utf-8")
             Job.yieldThread()
+
+    def getQuickCsgCommand(self) -> List[str]:
+        executable_name = "occ-csg.exe"
+        default_engine_location = executable_name
+        if os.path.exists(os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)):
+            default_engine_location = os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)
+        if not default_engine_location:
+            raise EnvironmentError("Could not find OCC CSG")
+
+        Logger.log("i", "Found Quick CSG at: %s", default_engine_location)
+        default_engine_location = os.path.abspath(default_engine_location)
+        return [default_engine_location]

@@ -215,7 +215,7 @@ class CylindricalBackend(QObject, MultiBackend):
         self.stopSlicing()
 
         self.processingProgress.emit(0.0)
-        self.backendStateChange.emit(BackendState.NotStarted)
+        self.backendStateChange.emit(BackendState.Processing)
 
         self._scene.gcode_dict[build_plate_to_be_sliced] = []
         self._slicing = True
@@ -293,7 +293,7 @@ class CylindricalBackend(QObject, MultiBackend):
             return
 
         self.backendStateChange.emit(BackendState.Processing)
-        self.processingProgress.emit(0.0)
+        self.processingProgress.emit(0.1)
         self._slice_messages = job.getSliceMessages()
 
         self._generate_basement_job = GenerateBasementJob()
@@ -302,7 +302,7 @@ class CylindricalBackend(QObject, MultiBackend):
         self._generate_basement_job.start()
 
     def _onGenerateBasementProcessingProgress(self, amount):
-        self.processingProgress.emit(amount / 10)
+        self.processingProgress.emit(0.1 + amount / 10)
         self.backendStateChange.emit(BackendState.Processing)
 
     def _onGenerateBasementJobFinished(self, job: GenerateBasementJob):
