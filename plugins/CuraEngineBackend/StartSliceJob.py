@@ -255,6 +255,8 @@ class StartSliceJob(Job):
                 verts += translate
                 mesh = trimesh.Trimesh(vertices=verts, faces=faces)
                 try:
+                    mesh.fill_holes()
+                    mesh.fix_normals()
                     cutting_result = mesh.intersection(cutting_mesh, engine="scad")
                     if cutting_result:
                         cutting_result.fill_holes()
@@ -408,7 +410,8 @@ class StartSliceJob(Job):
         result["day"] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
         printing_mode = result["printing_mode"]
         if printing_mode in ["cylindrical", "cylindrical_full"]:
-            result["cylindrical_rotate"] = "G0 A90"
+            result["cylindrical_rotate"] = "G0 A%.2f" % (
+                        90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
             result["coordinate_system"] = "G56"
         elif printing_mode in ["spherical", "spherical_full"]:
             result["cylindrical_rotate"] = "G0 A0"

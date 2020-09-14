@@ -93,6 +93,13 @@ class GenerateBasementJob(Job):
         self._prime_speed = self._global_stack.getProperty(
             "retraction_prime_speed", "value")
 
+        self._machine_a_axis_coefficient = self._global_stack.getProperty(
+            "machine_a_axis_multiplier", "value") / self._global_stack.getProperty(
+            "machine_a_axis_divider", "value")
+        self._machine_c_axis_coefficient = self._global_stack.getProperty(
+            "machine_c_axis_multiplier", "value") / self._global_stack.getProperty(
+            "machine_c_axis_divider", "value")
+
     def abort(self):
         self._abort_requested = True
 
@@ -457,11 +464,11 @@ class GenerateBasementJob(Job):
         if numpy.abs(gcode_position.z - self._gcode_position.z) > 0.0001:
             gcode_command += " Z%.2f" % gcode_position.z
         if numpy.abs(gcode_position.a - self._gcode_position.a) > 0.0001:
-            gcode_command += " A%.2f" % gcode_position.a
+            gcode_command += " A%.2f" % (gcode_position.a * self._machine_a_axis_coefficient)
         if numpy.abs(gcode_position.b - self._gcode_position.b) > 0.0001:
             gcode_command += " B%.2f" % gcode_position.b
         if numpy.abs(gcode_position.c - self._gcode_position.c) > 0.0001:
-            gcode_command += " C%.3f" % (gcode_position.c / 3)
+            gcode_command += " C%.3f" % (gcode_position.c * self._machine_c_axis_coefficient)
         if numpy.abs(feedrate - self._gcode_position.f) > 0.0001:
             gcode_command += " F%.0f" % (feedrate * 60)
         if numpy.abs(gcode_position.e[self._extruder_number] - self._gcode_position.e[

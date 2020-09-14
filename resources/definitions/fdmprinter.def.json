@@ -690,6 +690,42 @@
                     "default_value": 10.0,
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
+                },
+                "machine_a_axis_multiplier": {
+                    "label": "A Axis Multiplier",
+                    "description": "A Axis Multiplier",
+                    "type": "float",
+                    "default_value": 1.0,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
+                },
+                "machine_a_axis_divider": {
+                    "label": "A Axis Divider",
+                    "description": "A Axis Divider",
+                    "type": "float",
+                    "default_value": 1.0,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
+                },
+                "machine_c_axis_multiplier": {
+                    "label": "C Axis Multiplier",
+                    "description": "C Axis Multiplier",
+                    "type": "float",
+                    "default_value": 1.0,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
+                },
+                "machine_c_axis_divider": {
+                    "label": "C Axis Divider",
+                    "description": "C Axis Divider",
+                    "type": "float",
+                    "default_value": 1.0,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
                 }
             }
         },

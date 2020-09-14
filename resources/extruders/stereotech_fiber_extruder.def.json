@@ -27,16 +27,16 @@
             "default_value": true
         },
         "machine_fiber_cut_distance": {
-            "default_value": 45
+            "default_value": 15.4
         },
         "machine_fiber_cut_min_distance": {
-            "default_value": 46
+            "default_value": 15.4
         },
         "machine_fiber_restart_length": {
-            "default_value": 44
+            "default_value": 15.4
         },
         "machine_fiber_cut_code": {
-            "default_value": ";FIBER CUT\nM400\nM280 P0 S30\nG4 P100\nM280 P0 S90"
+            "default_value": ";FIBER CUT\nM400\nM280 S6\nG4 P100\nM280 S8\nG4 P100\nM280 S0"
         },
         "machine_fiber_prime_code": {
             "default_value": ";PRIME FIBER\nM400\nG92 E0\nG1 F1200 E{machine_fiber_restart_length}\nG92 E0\nM400\n;END FIBER CUT"

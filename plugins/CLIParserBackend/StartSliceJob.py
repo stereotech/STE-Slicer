@@ -96,7 +96,7 @@ params_dict = {
     "GCode": {
         "cli_quality": {
             "stack_key": "",
-            "default_value": 3
+            "default_value": 4
         },
         "head_size": {
             "stack_key": "",
@@ -590,7 +590,7 @@ class StartSliceJob(Job):
         result["day"] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
         printing_mode = result["printing_mode"]
         if printing_mode in ["cylindrical_full", "cylindrical"]:
-            result["cylindrical_rotate"] = "G0 A90"
+            result["cylindrical_rotate"] = "G0 A%.2f" % (90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
             result["coordinate_system"] = "G56"
         elif printing_mode in ["spherical_full", "spherical"]:
             result["cylindrical_rotate"] = "G0 A0"
