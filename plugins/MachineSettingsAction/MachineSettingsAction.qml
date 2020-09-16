@@ -167,6 +167,27 @@ SteSlicer.MachineAction
                                 property bool forceUpdateOnChange: true
                             }
 
+                            Loader
+                            {
+                                id: aAxisDividerField
+                                sourceComponent: numericTextFieldWithUnit
+                                property string settingKey: "machine_a_axis_divider"
+                                property string label: catalog.i18nc("@label", "A Axis Divider")
+                                property string unit: catalog.i18nc("@label", "")
+                                property bool forceUpdateOnChange: true
+                            }
+
+                            Loader
+                            {
+                                id: cAxisDividerField
+                                sourceComponent: numericTextFieldWithUnit
+                                property string settingKey: "machine_c_axis_divider"
+                                property string label: catalog.i18nc("@label", "C Axis Divider")
+                                property string unit: catalog.i18nc("@label", "")
+                                property bool forceUpdateOnChange: true
+                                
+                            }
+
                             Item { width: UM.Theme.getSize("default_margin").width; height: UM.Theme.getSize("default_margin").height }
 
                             Loader

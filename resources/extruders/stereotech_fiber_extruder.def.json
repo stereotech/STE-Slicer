@@ -12,7 +12,7 @@
             "maximum_value": "1"
         },
         "machine_nozzle_offset_x": {
-            "default_value": 18.0
+            "default_value": 17.3
         },
         "machine_nozzle_offset_y": {
             "default_value": 0.0
@@ -36,10 +36,10 @@
             "default_value": 15.4
         },
         "machine_fiber_cut_code": {
-            "default_value": ";FIBER CUT\nM400\nM280 S6\nG4 P100\nM280 S8\nG4 P100\nM280 S0"
+            "default_value": ";FIBER CUT\nM400\nG92 B0\nG0 B1 F100\nG92 B0\nM400\n;END FIBER CUT"
         },
         "machine_fiber_prime_code": {
-            "default_value": ";PRIME FIBER\nM400\nG92 E0\nG1 F1200 E{machine_fiber_restart_length}\nG92 E0\nM400\n;END FIBER CUT"
+            "default_value": ";PRIME FIBER\nM400\nG92 E0\nG1 F1200 E{machine_fiber_restart_length}\nG92 E0\nM400\n;END FIBER PRIME"
         },
         "machine_extruder_start_code": {
             "default_value": ""
