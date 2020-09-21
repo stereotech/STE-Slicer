@@ -2419,7 +2419,37 @@
                             "value": "speed_print",
                             "enabled": "infill_sparse_density > 0",
                             "limit_to_extruder": "infill_extruder_nr",
-                            "settable_per_mesh": true
+                            "settable_per_mesh": true,
+                            "children": {
+                                "speed_infill_classic": {
+                                    "label": "Classic Infill Speed",
+                                    "description": "The speed at which classic infill is printed.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "150",
+                                    "default_value": 60,
+                                    "value": "speed_print",
+                                    "enabled": "infill_sparse_density > 0",
+                                    "limit_to_extruder": "infill_extruder_nr",
+                                    "settable_per_mesh": true
+                                },
+                                "speed_infill_cylindrical": {
+                                    "label": "Cylindrical Infill Speed",
+                                    "description": "The speed at which cylindrical infill is printed.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "150",
+                                    "default_value": 60,
+                                    "value": "speed_print",
+                                    "enabled": "infill_sparse_density > 0",
+                                    "limit_to_extruder": "infill_extruder_nr",
+                                    "settable_per_mesh": true
+                                }
+                            }
                         },
                         "speed_wall": {
                             "label": "Wall Speed",
@@ -2444,7 +2474,35 @@
                                     "default_value": 30,
                                     "value": "speed_wall",
                                     "limit_to_extruder": "wall_0_extruder_nr",
-                                    "settable_per_mesh": true
+                                    "settable_per_mesh": true,
+                                    "children": {
+                                        "speed_wall_0_classic": {
+                                            "label": "Classic Outer Wall Speed",
+                                            "description": "The speed at which the classic outermost walls are printed. Printing the outer wall at a lower speed improves the final skin quality. However, having a large difference between the inner wall speed and the outer wall speed will affect quality in a negative way.",
+                                            "unit": "mm/s",
+                                            "type": "float",
+                                            "minimum_value": "0.1",
+                                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                            "maximum_value_warning": "150",
+                                            "default_value": 30,
+                                            "value": "speed_wall",
+                                            "limit_to_extruder": "wall_0_extruder_nr",
+                                            "settable_per_mesh": true
+                                        },
+                                        "speed_wall_0_cylindrical": {
+                                            "label": "Cylindrical Outer Wall Speed",
+                                            "description": "The speed at which the cylindrical outermost walls are printed. Printing the outer wall at a lower speed improves the final skin quality. However, having a large difference between the inner wall speed and the outer wall speed will affect quality in a negative way.",
+                                            "unit": "mm/s",
+                                            "type": "float",
+                                            "minimum_value": "0.1",
+                                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                            "maximum_value_warning": "150",
+                                            "default_value": 30,
+                                            "value": "speed_wall",
+                                            "limit_to_extruder": "wall_0_extruder_nr",
+                                            "settable_per_mesh": true
+                                        }
+                                    }
                                 },
                                 "speed_wall_x": {
                                     "label": "Inner Wall Speed",
@@ -2457,7 +2515,35 @@
                                     "default_value": 60,
                                     "value": "speed_wall * 2",
                                     "limit_to_extruder": "wall_x_extruder_nr",
-                                    "settable_per_mesh": true
+                                    "settable_per_mesh": true,
+                                    "children": {
+                                        "speed_wall_x_classic": {
+                                            "label": "Classic Inner Wall Speed",
+                                            "description": "The speed at which all classic inner walls are printed. Printing the inner wall faster than the outer wall will reduce printing time. It works well to set this in between the outer wall speed and the infill speed.",
+                                            "unit": "mm/s",
+                                            "type": "float",
+                                            "minimum_value": "0.1",
+                                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                            "maximum_value_warning": "150",
+                                            "default_value": 60,
+                                            "value": "speed_wall * 2",
+                                            "limit_to_extruder": "wall_x_extruder_nr",
+                                            "settable_per_mesh": true
+                                        },
+                                        "speed_wall_x_cylindrical": {
+                                            "label": "Cylindrical Inner Wall Speed",
+                                            "description": "The speed at which all cylindrical inner walls are printed. Printing the inner wall faster than the outer wall will reduce printing time. It works well to set this in between the outer wall speed and the infill speed.",
+                                            "unit": "mm/s",
+                                            "type": "float",
+                                            "minimum_value": "0.1",
+                                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                            "maximum_value_warning": "150",
+                                            "default_value": 60,
+                                            "value": "speed_wall * 2",
+                                            "limit_to_extruder": "wall_x_extruder_nr",
+                                            "settable_per_mesh": true
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -2473,8 +2559,37 @@
                             "value": "speed_topbottom",
                             "limit_to_extruder": "roofing_extruder_nr",
                             "settable_per_mesh": true,
-                            "enabled": "roofing_layer_count > 0 and top_layers > 0"
-                        },
+                            "enabled": "roofing_layer_count > 0 and top_layers > 0",
+                            "children": {
+                                "speed_roofing_classic": {
+                                    "label": "Classic Top Surface Skin Speed",
+                                    "description": "The speed at which classic top surface skin layers are printed.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "150",
+                                    "default_value": 25,
+                                    "value": "speed_topbottom",
+                                    "limit_to_extruder": "roofing_extruder_nr",
+                                    "settable_per_mesh": true,
+                                    "enabled": "roofing_layer_count > 0 and top_layers > 0"
+                                },
+                                "speed_roofing_cylindrical": {
+                                    "label": "Cylindrical Top Surface Skin Speed",
+                                    "description": "The speed at which cylindrical top surface skin layers are printed.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "150",
+                                    "default_value": 25,
+                                    "value": "speed_topbottom",
+                                    "limit_to_extruder": "roofing_extruder_nr",
+                                    "settable_per_mesh": true,
+                                    "enabled": "roofing_layer_count > 0 and top_layers > 0"
+                                }
+                            },
                         "speed_topbottom": {
                             "label": "Top/Bottom Speed",
                             "description": "The speed at which top/bottom layers are printed.",
@@ -2487,7 +2602,37 @@
                             "value": "speed_print / 2",
                             "limit_to_extruder": "top_bottom_extruder_nr",
                             "enabled": "top_layers > 0 or bottom_layers > 0",
-                            "settable_per_mesh": true
+                            "settable_per_mesh": true,
+                            "children": {
+                                "speed_topbottom_classic": {
+                                    "label": "Classic Top/Bottom Speed",
+                                    "description": "The speed at which classic top/bottom layers are printed.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "150",
+                                    "default_value": 30,
+                                    "value": "speed_print / 2",
+                                    "limit_to_extruder": "top_bottom_extruder_nr",
+                                    "enabled": "top_layers > 0 or bottom_layers > 0",
+                                    "settable_per_mesh": true
+                                },
+                                "speed_topbottom_cylindrical": {
+                                    "label": "Cylindrical Top/Bottom Speed",
+                                    "description": "The speed at which cylindrical top/bottom layers are printed.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "150",
+                                    "default_value": 30,
+                                    "value": "speed_print / 2",
+                                    "limit_to_extruder": "top_bottom_extruder_nr",
+                                    "enabled": "top_layers > 0 or bottom_layers > 0",
+                                    "settable_per_mesh": true
+                                }
+                            }
                         },
                         "speed_support": {
                             "label": "Support Speed",
@@ -2517,7 +2662,39 @@
                                     "enabled": "support_enable",
                                     "limit_to_extruder": "support_infill_extruder_nr",
                                     "settable_per_mesh": false,
-                                    "settable_per_extruder": true
+                                    "settable_per_extruder": true,
+                                    "children": {
+                                        "speed_support_infill_classic": {
+                                            "label": "Classic Support Infill Speed",
+                                            "description": "The speed at which the classic infill of support is printed. Printing the infill at lower speeds improves stability.",
+                                            "unit": "mm/s",
+                                            "type": "float",
+                                            "default_value": 60,
+                                            "minimum_value": "0.1",
+                                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                            "maximum_value_warning": "150",
+                                            "value": "speed_support",
+                                            "enabled": "support_enable",
+                                            "limit_to_extruder": "support_infill_extruder_nr",
+                                            "settable_per_mesh": false,
+                                            "settable_per_extruder": true
+                                        },
+                                        "speed_support_infill_cylindrical": {
+                                            "label": "Cylindrical Support Infill Speed",
+                                            "description": "The speed at which the cylindrical infill of support is printed. Printing the infill at lower speeds improves stability.",
+                                            "unit": "mm/s",
+                                            "type": "float",
+                                            "default_value": 60,
+                                            "minimum_value": "0.1",
+                                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                            "maximum_value_warning": "150",
+                                            "value": "speed_support",
+                                            "enabled": "support_enable",
+                                            "limit_to_extruder": "support_infill_extruder_nr",
+                                            "settable_per_mesh": false,
+                                            "settable_per_extruder": true
+                                        }
+                                    }
                                 },
                                 "speed_support_interface": {
                                     "label": "Support Interface Speed",
@@ -2595,7 +2772,36 @@
                     "maximum_value_warning": "300",
                     "value": "speed_print if magic_spiralize else 120",
                     "settable_per_mesh": false,
-                    "settable_per_extruder": true
+                    "settable_per_extruder": true,
+                    "children": {
+                        "speed_travel_classic": {
+                            "label": "Classic Travel Speed",
+                            "description": "The speed at which classic travel moves are made.",
+                            "unit": "mm/s",
+                            "type": "float",
+                            "default_value": 120,
+                            "minimum_value": "0.1",
+                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                            "maximum_value_warning": "300",
+                            "value": "speed_print if magic_spiralize else 120",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        },
+                        "speed_travel_cylindrical": {
+                            "label": "Cylindrical Travel Speed",
+                            "description": "The speed at which cylindrical travel moves are made.",
+                            "unit": "mm/s",
+                            "type": "float",
+                            "default_value": 120,
+                            "minimum_value": "0.1",
+                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                            "maximum_value_warning": "300",
+                            "value": "speed_print if magic_spiralize else 120",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        }
+                    }
+
                 },
                 "speed_layer_0": {
                     "label": "Initial Layer Speed",
@@ -2619,7 +2825,34 @@
                             "minimum_value": "0.1",
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                             "maximum_value_warning": "300",
-                            "settable_per_mesh": true
+                            "settable_per_mesh": true,
+                            "children": {
+                                "speed_print_layer_0_classic": {
+                                    "label": "Classic Initial Layer Print Speed",
+                                    "description": "The speed of printing for the classic initial layer. A lower value is advised to improve adhesion to the build plate.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "default_value": 30,
+                                    "value": "speed_layer_0",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "300",
+                                    "settable_per_mesh": true
+                                },
+                                "speed_print_layer_0_cylindrical": {
+                                    "label": "Cylindrical Initial Layer Print Speed",
+                                    "description": "The speed of printing for the cylindrical initial layer. A lower value is advised to improve adhesion to the build plate.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "default_value": 30,
+                                    "value": "speed_layer_0",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "300",
+                                    "settable_per_mesh": true
+                                }
+                            }
+
                         },
                         "speed_travel_layer_0": {
                             "label": "Initial Layer Travel Speed",
@@ -2632,7 +2865,36 @@
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                             "maximum_value_warning": "300",
                             "settable_per_extruder": true,
-                            "settable_per_mesh": false
+                            "settable_per_mesh": false,
+                            "children": {
+                                "speed_travel_layer_0_classic": {
+                                    "label": "Classic Initial Layer Travel Speed",
+                                    "description": "The speed of travel moves in the classic initial layer. A lower value is advised to prevent pulling previously printed parts away from the build plate. The value of this setting can automatically be calculated from the ratio between the Travel Speed and the Print Speed.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "default_value": 60,
+                                    "value": "speed_layer_0 * speed_travel / speed_print",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "300",
+                                    "settable_per_extruder": true,
+                                    "settable_per_mesh": false
+                                },
+                                "speed_travel_layer_0_cylindrical": {
+                                    "label": "Cylindrical Initial Layer Travel Speed",
+                                    "description": "The speed of travel moves in the cylindrical initial layer. A lower value is advised to prevent pulling previously printed parts away from the build plate. The value of this setting can automatically be calculated from the ratio between the Travel Speed and the Print Speed.",
+                                    "unit": "mm/s",
+                                    "type": "float",
+                                    "default_value": 60,
+                                    "value": "speed_layer_0 * speed_travel / speed_print",
+                                    "minimum_value": "0.1",
+                                    "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                                    "maximum_value_warning": "300",
+                                    "settable_per_extruder": true,
+                                    "settable_per_mesh": false
+                                }
+                            }
+
                         }
                     }
                 },
@@ -3376,7 +3638,25 @@
                     "type": "bool",
                     "default_value": true,
                     "settable_per_mesh": false,
-                    "settable_per_extruder": true
+                    "settable_per_extruder": true,
+                    "children": {
+                        "cool_fan_enabled_classic": {
+                            "label": "Enable Print Cooling on Classic",
+                            "description": "Enables the print cooling fans while printing classic. The fans improve print quality on layers with short layer times and bridging / overhangs.",
+                            "type": "bool",
+                            "default_value": true,
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        },
+                        "cool_fan_enabled_cylindrical": {
+                            "label": "Enable Print Cooling on Cylindrical",
+                            "description": "Enables the print cooling fans while printing cylindrical. The fans improve print quality on layers with short layer times and bridging / overhangs.",
+                            "type": "bool",
+                            "default_value": true,
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        }
+                    }
                 },
                 "cool_fan_speed": {
                     "label": "Fan Speed",
@@ -3402,7 +3682,35 @@
                             "default_value": 100,
                             "enabled": "cool_fan_enabled",
                             "settable_per_mesh": false,
-                            "settable_per_extruder": true
+                            "settable_per_extruder": true,
+                            "children": {
+                                "cool_fan_speed_min_classic": {
+                                    "label": "Regular Fan Speed Classic",
+                                    "description": "The speed at which the fans spin before hitting the threshold in classic. When a layer prints faster than the threshold, the fan speed gradually inclines towards the maximum fan speed.",
+                                    "unit": "%",
+                                    "type": "float",
+                                    "minimum_value": "0",
+                                    "maximum_value": "100",
+                                    "value": "cool_fan_speed",
+                                    "default_value": 100,
+                                    "enabled": "cool_fan_enabled",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": true
+                                },
+                                "cool_fan_speed_min_cylindrical": {
+                                    "label": "Regular Fan Speed Cylindrical",
+                                    "description": "The speed at which the fans spin before hitting the threshold in cylindrical. When a layer prints faster than the threshold, the fan speed gradually inclines towards the maximum fan speed.",
+                                    "unit": "%",
+                                    "type": "float",
+                                    "minimum_value": "0",
+                                    "maximum_value": "100",
+                                    "value": "cool_fan_speed",
+                                    "default_value": 100,
+                                    "enabled": "cool_fan_enabled",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": true
+                                }
+                            }
                         },
                         "cool_fan_speed_max": {
                             "label": "Maximum Fan Speed",
@@ -3415,7 +3723,35 @@
                             "enabled": "cool_fan_enabled",
                             "value": "cool_fan_speed",
                             "settable_per_mesh": false,
-                            "settable_per_extruder": true
+                            "settable_per_extruder": true,
+                            "children": {
+                                "cool_fan_speed_max_classic": {
+                                    "label": "Maximum Fan Speed Classic",
+                                    "description": "The speed at which the fans spin on the minimum layer time in classic. The fan speed gradually increases between the regular fan speed and maximum fan speed when the threshold is hit.",
+                                    "unit": "%",
+                                    "type": "float",
+                                    "minimum_value": "max(0, cool_fan_speed_min)",
+                                    "maximum_value": "100",
+                                    "default_value": 100,
+                                    "enabled": "cool_fan_enabled",
+                                    "value": "cool_fan_speed",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": true
+                                },
+                                "cool_fan_speed_max_cylindrical": {
+                                    "label": "Maximum Fan Speed Cylindrical",
+                                    "description": "The speed at which the fans spin on the minimum layer time in cylindrical. The fan speed gradually increases between the regular fan speed and maximum fan speed when the threshold is hit.",
+                                    "unit": "%",
+                                    "type": "float",
+                                    "minimum_value": "max(0, cool_fan_speed_min)",
+                                    "maximum_value": "100",
+                                    "default_value": 100,
+                                    "enabled": "cool_fan_enabled",
+                                    "value": "cool_fan_speed",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": true
+                                }
+                            }
                         }
                     }
                 },

@@ -503,6 +503,20 @@ class StartSliceJob(Job):
         printing_mode = settings["printing_mode"]
         if printing_mode in ["classic", "cylindrical_full"]:
             settings["infill_extruder_nr"] = settings["classic_infill_extruder_nr"]
+            settings["speed_infill"] = settings["speed_infill_classic"]
+            settings["speed_wall_0"] = settings["speed_wall_0_classic"]
+            settings["speed_wall_x"] = settings["speed_wall_x_classic"]
+            settings["speed_roofing"] = settings["speed_roofing_classic"]
+            settings["speed_topbottom"] = settings["speed_topbottom_classic"]
+            settings["speed_support_infill"] = settings["speed_support_infill_classic"]
+            settings["speed_travel"] = settings["speed_travel_classic"]
+            settings["speed_print_layer_0"] = settings["speed_print_layer_0_classic"]
+            settings["speed_travel_layer_0"] = settings["speed_travel_layer_0_classic"]
+
+            settings["cool_fan_enabled"] = settings["cool_fan_enabled_classic"]
+            settings["cool_fan_speed_min"] = settings["cool_fan_speed_min_classic"]
+            settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_classic"]
+
 
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():
