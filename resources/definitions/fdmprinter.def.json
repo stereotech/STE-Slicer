@@ -2589,7 +2589,8 @@
                                     "settable_per_mesh": true,
                                     "enabled": "roofing_layer_count > 0 and top_layers > 0"
                                 }
-                            },
+                            }
+                        },
                         "speed_topbottom": {
                             "label": "Top/Bottom Speed",
                             "description": "The speed at which top/bottom layers are printed.",
@@ -2801,7 +2802,6 @@
                             "settable_per_extruder": true
                         }
                     }
-
                 },
                 "speed_layer_0": {
                     "label": "Initial Layer Speed",
@@ -2852,7 +2852,6 @@
                                     "settable_per_mesh": true
                                 }
                             }
-
                         },
                         "speed_travel_layer_0": {
                             "label": "Initial Layer Travel Speed",
@@ -2894,7 +2893,6 @@
                                     "settable_per_mesh": false
                                 }
                             }
-
                         }
                     }
                 },

@@ -150,7 +150,11 @@ params_dict = {
             "stack_key": "",
             "default_value": "C"
         },
-        "skin_width": {
+        "upskin_width": {
+            "stack_key": "top_layers",
+            "default_value": 4
+        },
+        "downskin_width": {
             "stack_key": "bottom_layers",
             "default_value": 4
         },
@@ -647,7 +651,7 @@ class StartSliceJob(Job):
                         setting_value /= 2
                         if name == "support_base_r":
                             setting_value += settings.get("layer_height", 0.2)
-                    if name == "skin_width":
+                    if name in ["upskin_width", "downskin_width"]:
                        setting_value = setting_value if setting_value < 100 else 100
                     if name == "supportangle":
                         supports_enabled = settings.get("support_enable_cylindrical", False)
