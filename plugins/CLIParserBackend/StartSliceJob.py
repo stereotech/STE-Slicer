@@ -542,6 +542,14 @@ class StartSliceJob(Job):
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
         temp_mesh = tempfile.NamedTemporaryFile('w', delete=False)
+        raft_thickness = (
+                global_stack.getProperty("raft_base_thickness", "value") +
+                global_stack.getProperty("raft_interface_thickness", "value") +
+                global_stack.getProperty("raft_surface_layers", "value") *
+                global_stack.getProperty("raft_surface_thickness", "value") +
+                global_stack.getProperty("raft_airgap", "value") -
+                global_stack.getProperty("layer_0_z_overlap", "value"))
+        result.apply_translation([0,0,raft_thickness])
         result.export(temp_mesh.name, 'stl')
         self._slice_message.append('-m')
         self._slice_message.append(temp_mesh.name)
