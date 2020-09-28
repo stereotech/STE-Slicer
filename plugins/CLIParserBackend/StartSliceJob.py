@@ -158,6 +158,14 @@ params_dict = {
             "stack_key": "bottom_layers",
             "default_value": 4
         },
+        "infill_round_double": {
+          "stack_key": "infill_pattern",
+          "default_value": 0
+        },
+        "infill_round_connect": {
+          "stack_key": "zig_zaggify_infill",
+          "default_value": 0
+        },
         "infill_round_width": {
             "stack_key": "skin_line_width",
             "default_value": 0.4
@@ -666,8 +674,16 @@ class StartSliceJob(Job):
                         setting_value = 90 - setting_value if supports_enabled else "0"
                     if name == "perimeter_count":
                         printing_mode = settings.get("printing_mode", "classic")
+                        infill_pattern = settings.get("infill_pattern", "lines")
                         if printing_mode in ["spherical", "spherical_full"]:
                             setting_value = -1
+                    if name == "infill_round_double":
+                        if setting_value == "grid":
+                            setting_value = "1"
+                        elif setting_value == "concentric":
+                            setting_value = "2"
+                        else:
+                            setting_value = "0"
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "round":
@@ -682,6 +698,7 @@ class StartSliceJob(Job):
                             setting_value = 0
                     if name == "support_model_delta_round":
                         setting_value = settings.get("support_z_distance", 0.1) / settings.get("layer_height", 0.1)
+
 
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
