@@ -748,6 +748,8 @@ class StartSliceJob(Job):
             settings["cool_fan_speed_min"] = settings["cool_fan_speed_min_cylindrical"]
             settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_cylindrical"]
 
+            settings["magic_spiralize"] = False
+
 
 
         # Add all sub-messages for each individual setting.
