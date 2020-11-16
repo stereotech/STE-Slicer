@@ -154,7 +154,8 @@ class CliParserBackend(QObject, Backend):
         default_engine_location = executable_name
         if os.path.exists(os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)):
             default_engine_location = os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)
-
+        if hasattr(sys, "frozen"):
+            default_engine_location = os.path.join(os.path.dirname(os.path.abspath(sys.executable)), executable_name)
         self._application = SteSlicerApplication.getInstance()  # type: SteSlicerApplication
         self._multi_build_plate_model = None  # type: Optional[MultiBuildPlateModel]
         self._machine_error_checker = None  # type: Optional[MachineErrorChecker]
