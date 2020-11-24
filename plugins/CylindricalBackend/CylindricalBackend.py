@@ -160,7 +160,7 @@ class CylindricalBackend(QObject, MultiBackend):
 
         if self._process_cli_job is not None:
             Logger.log("d", "Aborting process cli job...")
-            self._process_cli_job.abort()
+            self._process_cli_job.cancel()
             self._process_cli_job = None
 
         if self._process_layers_job is not None:

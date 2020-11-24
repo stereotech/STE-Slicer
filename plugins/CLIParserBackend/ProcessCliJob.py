@@ -65,6 +65,8 @@ class ProcessCliJob(Job):
     def run(self):
         while self._process.poll() is None:
             Job.yieldThread()
+            if self._is_cancelled:
+                return
 
         if self._build_plate_number is None:
             self.setResult(StartJobResult.Error)
