@@ -148,7 +148,7 @@ class GenerateBasementJob(Job):
         self._first_move = True
         current_path = []  # type: List[List[float]]
 
-        layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness) + self._raft_margin / 2)
+        layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness) + 15 / 2)
 
         for layer_number in range(0, layer_count):
             if self._abort_requested:

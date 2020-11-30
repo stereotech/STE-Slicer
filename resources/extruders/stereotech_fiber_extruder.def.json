@@ -18,7 +18,7 @@
             "default_value": 0.0
         },
         "machine_nozzle_size": {
-            "default_value": 0.4
+            "default_value": 1.1
         },
         "material_diameter": {
             "default_value": 0.4
@@ -30,13 +30,13 @@
             "default_value": 15.4
         },
         "machine_fiber_cut_min_distance": {
-            "default_value": 15.4
+            "value": "2 * machine_fiber_cut_distance"
         },
         "machine_fiber_restart_length": {
             "default_value": 15.4
         },
         "machine_fiber_cut_code": {
-            "default_value": ";FIBER CUT\nM400\nG92 B0\nG0 B1 F100\nG92 B0\nM400\n;END FIBER CUT"
+            "default_value": ";FIBER CUT\nM400\nG92 B0\nG0 B1\nG92 B0\nM400\n;END FIBER CUT"
         },
         "machine_fiber_prime_code": {
             "default_value": ";PRIME FIBER\nM400\nG92 E0\nG1 F1200 E{machine_fiber_restart_length}\nG92 E0\nM400\n;END FIBER PRIME"

@@ -557,7 +557,8 @@ class StartSliceJob(Job):
                 global_stack.getProperty("raft_surface_thickness", "value") +
                 global_stack.getProperty("raft_airgap", "value") -
                 global_stack.getProperty("layer_0_z_overlap", "value"))
-        result.apply_translation([0,0,raft_thickness])
+        if global_stack.getProperty("adhesion_type", "value") == "raft":
+            result.apply_translation([0,0,raft_thickness])
         result.export(temp_mesh.name, 'stl')
         self._slice_message.append('-m')
         self._slice_message.append(temp_mesh.name)
