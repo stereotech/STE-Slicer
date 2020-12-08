@@ -790,6 +790,62 @@
                 }
             }
         },
+        "reinforcement": {
+            "label": "Reinforcement",
+            "type": "category",
+            "icon": "transit-connection-variant",
+            "description": "All settings that add reinforcment (continious fiber) in the printed model",
+            "children": {
+                "reinforcement_start_height": {
+                    "label": "Reinforcement start height",
+                    "description": "Height, where reinforcement printing starts",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.1,
+                    "minimum_value": "0.001",
+                    "enabled": "max(extruderValues('machine_fiber_extruder'))",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "children": {
+                        "reinforcement_start_layer": {
+                            "label": "Reinforcement start layer",
+                            "description": "Layer number, where reinforcement printing starts",
+                            "type": "int",
+                            "default_value": 2,
+                            "minimum_value": "1",
+                            "enabled": "max(extruderValues('machine_fiber_extruder'))",
+                            "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
+                },
+                "reinforcement_height": {
+                    "label": "Reinforcement height",
+                    "description": "Height, where reinforcement printing is used",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.1,
+                    "minimum_value": "0.001",
+                    "enabled": "max(extruderValues('machine_fiber_extruder'))",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "children": {
+                        "reinforcement_layer_count": {
+                            "label": "Reinforcement layer count",
+                            "description": "How many layers will be reinforced",
+                            "type": "int",
+                            "default_value": 2,
+                            "minimum_value": "1",
+                            "enabled": "max(extruderValues('machine_fiber_extruder'))",
+                            "value": "max(1, round((reinforcement_height) / layer_height) + 1) if layer_height != 0 else 0",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
+                }
+            }
+        },
         "resolution": {
             "label": "Quality",
             "type": "category",

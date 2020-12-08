@@ -466,6 +466,8 @@ class StartSliceJob(Job):
         extruder_nr = stack.getProperty("extruder_nr", "value")
         settings["machine_extruder_start_code"] = self._expandGcodeTokens(settings["machine_extruder_start_code"], extruder_nr)
         settings["machine_extruder_end_code"] = self._expandGcodeTokens(settings["machine_extruder_end_code"], extruder_nr)
+        settings["machine_fiber_cut_code"] = self._expandGcodeTokens(settings["machine_fiber_cut_code"], extruder_nr)
+        settings["machine_fiber_prime_code"] = self._expandGcodeTokens(settings["machine_fiber_prime_code"], extruder_nr)
 
         for key, value in settings.items():
             # Do not send settings that are not settable_per_extruder.
