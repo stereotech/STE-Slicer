@@ -173,6 +173,10 @@ params_dict = {
         "split_layer_contours": {
             "stack_key": "",
             "default_value": 1
+        },
+        "infill_main_offset": {
+            "stack_key": "fill_perimeter_gaps",
+            "default_value": 1
         }
     },
     "GCodeSupport": {
@@ -685,6 +689,13 @@ class StartSliceJob(Job):
                             setting_value = "2"
                         else:
                             setting_value = "0"
+                    if name == "fill_perimeter_gaps":
+                        if setting_value == "nowhere":
+                            setting_value = "0"
+                        elif setting_value == "everywhere":
+                            setting_value = "1"
+                        else:
+                            setting_value = "1"
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "round":
