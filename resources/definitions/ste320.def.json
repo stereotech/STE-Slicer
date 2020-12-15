@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "name": "Stereotech STE320",
+    "name": "Stereotech 320",
     "inherits": "steprinter",
     "metadata": {
         "author": "Stereotech",
@@ -28,7 +28,7 @@
     },
     "overrides": {
         "machine_name": {
-            "default_value": "Stereotech STE320"
+            "default_value": "Stereotech 320"
         },
         "machine_width": {
             "default_value": 218

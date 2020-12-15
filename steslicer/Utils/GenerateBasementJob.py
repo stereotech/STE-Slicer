@@ -51,6 +51,7 @@ class GenerateBasementJob(Job):
         }
         self._position = Position(0, 0, 0, 0, 0, 1, 0, [0])
         self._gcode_position = Position(999, 999, 999, 0, 0, 0, 0, [0])
+        self._first_move = True
         self._rot_nwp = Matrix()
         self._rot_nws = Matrix()
         self._pi_faction = 0
@@ -69,7 +70,11 @@ class GenerateBasementJob(Job):
         extruder = self._global_stack.extruders.get("%s" % self._extruder_number, None)  # type: Optional[ExtruderStack]
         self._filament_diameter = extruder.getProperty(
             "material_diameter", "value")
-        self._cylindrical_mode_base_diameter = self._global_stack.getProperty("cylindrical_mode_base_diameter", "value")
+        printing_mode = self._global_stack.getProperty("printing_mode", "value")
+        if printing_mode in ["cylindrical_full"]:
+            self._cylindrical_mode_base_diameter = self._global_stack.getProperty("cylindrical_mode_base_diameter", "value")
+        elif printing_mode in ["spherical_full"]:
+            self._cylindrical_mode_base_diameter = self._global_stack.getProperty("spherical_mode_base_radius", "value") * 2
         self._non_printing_base_diameter = self._global_stack.getProperty("non_printing_base_diameter", "value")
         self._cylindrical_raft_base_height = self._global_stack.getProperty("cylindrical_raft_base_height", "value")
 
@@ -87,6 +92,13 @@ class GenerateBasementJob(Job):
             "retraction_retract_speed", "value")
         self._prime_speed = self._global_stack.getProperty(
             "retraction_prime_speed", "value")
+
+        self._machine_a_axis_coefficient = self._global_stack.getProperty(
+            "machine_a_axis_multiplier", "value") / self._global_stack.getProperty(
+            "machine_a_axis_divider", "value")
+        self._machine_c_axis_coefficient = self._global_stack.getProperty(
+            "machine_c_axis_multiplier", "value") / self._global_stack.getProperty(
+            "machine_c_axis_divider", "value")
 
     def abort(self):
         self._abort_requested = True
@@ -133,9 +145,10 @@ class GenerateBasementJob(Job):
 
         self._position = Position(0, 0, 0, 0, 0, 1, 0, [0])
         self._gcode_position = Position(999, 999, 999, 0, 0, 0, 0, [0])
+        self._first_move = True
         current_path = []  # type: List[List[float]]
 
-        layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness) + self._raft_margin / 2)
+        layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness) + 15 / 2)
 
         for layer_number in range(0, layer_count):
             if self._abort_requested:
@@ -159,13 +172,15 @@ class GenerateBasementJob(Job):
 
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
-        height = self._cylindrical_raft_base_height - layer_number * (self._cylindrical_raft_base_height / layer_count) + self._raft_base_line_width
-        points = self._generateHelix(radius, height, False)
+        height = self._cylindrical_raft_base_height - layer_number * self._raft_base_line_width / 3
+        if height < self._raft_base_line_width * 2:
+            height = self._raft_base_line_width * 2
+        points = self._generateHelix(radius, height, layer_number, False)
 
         new_position, new_gcode_position = points[0]
 
         is_retraction = self._enable_retraction and self._positionLength(
-            self._position, new_position) > self._retraction_min_travel
+            self._position, new_position) > self._retraction_min_travel and not self._first_move
         if is_retraction:
             # we have retraction move
             new_extruder_position = self._position.e[self._extruder_number] - self._retraction_amount
@@ -225,7 +240,7 @@ class GenerateBasementJob(Job):
         self._gcode_position = Position(gx, gy, gz, ga, gb, gc, feedrate, ge)
         self._addToPath(path, [x, y, z, a, b, c, feedrate, e,
                                LayerPolygon.MoveCombingType])
-
+        self._first_move = False
         if is_retraction:
             # we have retraction move
             new_extruder_position = self._position.e[self._extruder_number] + self._retraction_amount
@@ -253,7 +268,7 @@ class GenerateBasementJob(Job):
             self._addToPath(path, [x, y, z, a, b, c, feedrate, e, LayerPolygon.SkirtType])
         return gcode_line
 
-    def _generateHelix(self, radius: float, height: float, reverse_twist: bool, chordal_err: float = 0.05):
+    def _generateHelix(self, radius: float, height: float, layer_number: int, reverse_twist: bool,  chordal_err: float = 0.025):
         pitch = self._raft_base_line_width
         max_t = numpy.pi * 2 + height / pitch
         result = []
@@ -263,6 +278,24 @@ class GenerateBasementJob(Job):
             x = radius * cos(t)
             y = radius * (sin(t) if not reverse_twist else -sin(t))
             z = - self._raft_base_line_width / 2 if max_t - t <= (numpy.pi + chordal_err) * 2 else - (height - pitch * t)
+            length = numpy.sqrt(x ** 2 + y ** 2)
+            i = x / length if length != 0 else 0
+            j = y / length if length != 0 else 0
+            k = 0
+            new_position = Position(x, y, z, i, j, k, 0, [0])
+            new_gcode_position = self._transformCoordinates(x, y, z, i, j, k, gcode_position)
+            new_position.e[self._extruder_number] = position.e[self._extruder_number] + self._calculateExtrusion(
+                [x, y, z],
+                position) if t > 0.0 else position.e[self._extruder_number]
+            new_gcode_position.e[self._extruder_number] = new_position.e[self._extruder_number]
+            position = new_position
+            gcode_position = new_gcode_position
+            result.append((new_position, new_gcode_position))
+        #if layer_number == 0:
+        for t in numpy.arange(max_t, 2 * max_t - numpy.pi * 2, chordal_err):
+            x = -radius * cos(t - numpy.pi)
+            y = radius * (sin(t) if reverse_twist else -sin(t - numpy.pi))
+            z = - pitch * (t - max_t)
             length = numpy.sqrt(x ** 2 + y ** 2)
             i = x / length if length != 0 else 0
             j = y / length if length != 0 else 0
@@ -431,11 +464,11 @@ class GenerateBasementJob(Job):
         if numpy.abs(gcode_position.z - self._gcode_position.z) > 0.0001:
             gcode_command += " Z%.2f" % gcode_position.z
         if numpy.abs(gcode_position.a - self._gcode_position.a) > 0.0001:
-            gcode_command += " A%.2f" % gcode_position.a
+            gcode_command += " A%.2f" % (gcode_position.a * self._machine_a_axis_coefficient)
         if numpy.abs(gcode_position.b - self._gcode_position.b) > 0.0001:
             gcode_command += " B%.2f" % gcode_position.b
         if numpy.abs(gcode_position.c - self._gcode_position.c) > 0.0001:
-            gcode_command += " C%.3f" % (gcode_position.c / 3)
+            gcode_command += " C%.3f" % (gcode_position.c * self._machine_c_axis_coefficient)
         if numpy.abs(feedrate - self._gcode_position.f) > 0.0001:
             gcode_command += " F%.0f" % (feedrate * 60)
         if numpy.abs(gcode_position.e[self._extruder_number] - self._gcode_position.e[

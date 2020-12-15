@@ -3,7 +3,7 @@
     "name": "Extruder 1",
     "inherits": "fdmextruder",
     "metadata": {
-        "machine": "stereotech_ste520_chocolate",
+        "machine": "ste520_chocolate",
         "position": "0"
     },
     "overrides": {
@@ -24,7 +24,7 @@
             "default_value": 2.55
         },
         "machine_extruder_start_pos_abs": {
-            "default_value": true
+            "default_value": false
         },
         "machine_extruder_start_pos_x": {
             "value": "prime_tower_position_x"

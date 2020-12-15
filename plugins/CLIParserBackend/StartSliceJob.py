@@ -1,4 +1,5 @@
-
+import os
+import subprocess
 
 import numpy
 from string import Formatter
@@ -87,11 +88,15 @@ params_dict = {
             "stack_key": "",
             "default_value": 1
         },
+        "support_model_delta_round": {
+            "stack_key": "",
+            "default_value": 1
+        }
     },
     "GCode": {
         "cli_quality": {
             "stack_key": "",
-            "default_value": 3
+            "default_value": 4
         },
         "head_size": {
             "stack_key": "",
@@ -145,14 +150,34 @@ params_dict = {
             "stack_key": "",
             "default_value": "C"
         },
-        "skin_width": {
+        "upskin_width": {
+            "stack_key": "top_layers",
+            "default_value": 4
+        },
+        "downskin_width": {
             "stack_key": "bottom_layers",
             "default_value": 4
+        },
+        "infill_round_double": {
+          "stack_key": "infill_pattern",
+          "default_value": 0
+        },
+        "infill_round_connect": {
+          "stack_key": "zig_zaggify_infill",
+          "default_value": 0
         },
         "infill_round_width": {
             "stack_key": "skin_line_width",
             "default_value": 0.4
         },
+        "split_layer_contours": {
+            "stack_key": "",
+            "default_value": 1
+        },
+        "infill_main_offset": {
+            "stack_key": "fill_perimeter_gaps",
+            "default_value": 1
+        }
     },
     "GCodeSupport": {
         "first_offset": {
@@ -160,7 +185,7 @@ params_dict = {
             "default_value": 0
         },
         "main_offset": {
-            "stack_key": "",
+            "stack_key": "support_offset",
             "default_value": 0.1
         },
         "last_offset": {
@@ -370,7 +395,7 @@ class StartSliceJob(Job):
 
             object_groups = []
             printing_mode = stack.getProperty("printing_mode", "value")
-            if printing_mode in ["cylindrical", "cylindrical_full"]:
+            if printing_mode in ["cylindrical", "cylindrical_full", "spherical", "spherical_full"]:
                 temp_list = []
                 has_printing_mesh = False
                 for node in DepthFirstIterator(
@@ -488,7 +513,7 @@ class StartSliceJob(Job):
                     self._handlePerObjectSettings(object, cli)
 
                     Job.yieldThread()
-            self._buildObjectFiles(indicies_collection, vertices_collection)
+        self._buildObjectFiles(indicies_collection, vertices_collection)
 
         self.setResult(StartJobResult.Finished)
 
@@ -506,21 +531,39 @@ class StartSliceJob(Job):
         output_mesh.fix_normals()
         # create_cutting_cylinder
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
-        radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("layer_height", "value")
-        height = global_stack.getProperty("machine_height", "value") * 2
-        cutting_cylinder = trimesh.primitives.Cylinder(
-            radius=radius, height=height, sections=64)
-
-        # cut mesh by cylinder
+        printing_mode = global_stack.getProperty("printing_mode", "value")
         try:
-            result = output_mesh.difference(cutting_cylinder, engine="scad")
+            if printing_mode in ["cylindrical", "cylindrical_full"]:
+                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("layer_height", "value")
+                height = global_stack.getProperty("machine_height", "value") * 2
+                cutting_mesh = trimesh.primitives.Cylinder(
+                    radius=radius, height=height, sections=64)
+            elif printing_mode in ["spherical", "spherical_full"]:
+                radius = global_stack.getProperty("spherical_mode_base_radius", "value")
+                if radius > 0:
+                    radius += global_stack.getProperty(
+                        "layer_height", "value")
+                else:
+                    raise ValueError
+                cutting_mesh = trimesh.primitives.Sphere(
+                    radius=radius, subdivisions = 3
+                )
+            # cut mesh by cylinder
+            result = output_mesh.difference(cutting_mesh, engine="scad")
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
         temp_mesh = tempfile.NamedTemporaryFile('w', delete=False)
+        raft_thickness = (
+                global_stack.getProperty("raft_base_thickness", "value") +
+                global_stack.getProperty("raft_interface_thickness", "value") +
+                global_stack.getProperty("raft_surface_layers", "value") *
+                global_stack.getProperty("raft_surface_thickness", "value") +
+                global_stack.getProperty("raft_airgap", "value") -
+                global_stack.getProperty("layer_0_z_overlap", "value"))
+        if global_stack.getProperty("adhesion_type", "value") == "raft":
+            result.apply_translation([0,0,raft_thickness])
         result.export(temp_mesh.name, 'stl')
-
-
         self._slice_message.append('-m')
         self._slice_message.append(temp_mesh.name)
 
@@ -572,8 +615,11 @@ class StartSliceJob(Job):
         result["day"] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
         printing_mode = result["printing_mode"]
         if printing_mode in ["cylindrical_full", "cylindrical"]:
-            result["cylindrical_rotate"] = "G0 A90"
+            result["cylindrical_rotate"] = "G0 A%.2f" % (90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
             result["coordinate_system"] = "G56"
+        elif printing_mode in ["spherical_full", "spherical"]:
+            result["cylindrical_rotate"] = "G0 A0"
+            result["coordinate_system"] = "G55"
 
         initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
@@ -626,14 +672,46 @@ class StartSliceJob(Job):
                         setting_value /= 2
                         if name == "support_base_r":
                             setting_value += settings.get("layer_height", 0.2)
-                    if name == "skin_width":
-                        setting_value = setting_value if setting_value <= 4 else 4
+                    if name in ["upskin_width", "downskin_width"]:
+                       setting_value = setting_value if setting_value < 100 else 100
                     if name == "supportangle":
                         supports_enabled = settings.get("support_enable_cylindrical", False)
                         setting_value = 90 - setting_value if supports_enabled else "0"
-
+                    if name == "perimeter_count":
+                        printing_mode = settings.get("printing_mode", "classic")
+                        infill_pattern = settings.get("infill_pattern", "lines")
+                        if printing_mode in ["spherical", "spherical_full"]:
+                            setting_value = -1
+                    if name == "infill_round_double":
+                        if setting_value == "grid":
+                            setting_value = "1"
+                        elif setting_value == "concentric":
+                            setting_value = "2"
+                        else:
+                            setting_value = "0"
+                    if name == "fill_perimeter_gaps":
+                        if setting_value == "nowhere":
+                            setting_value = "0"
+                        elif setting_value == "everywhere":
+                            setting_value = "1"
+                        else:
+                            setting_value = "1"
                 else:
                     setting_value = value.get("default_value", "")
+                    if name == "round":
+                        printing_mode = settings.get("printing_mode", "classic")
+                        if printing_mode in ["cylindrical", "cylindrical_full"]:
+                            setting_value = 1
+                        elif printing_mode in ["spherical", "spherical_full"]:
+                            setting_value = 2
+                    if name == "support_base_r":
+                        printing_mode = settings.get("printing_mode", "classic")
+                        if printing_mode in ["spherical", "spherical_full"]:
+                            setting_value = 0
+                    if name == "support_model_delta_round":
+                        setting_value = settings.get("support_z_distance", 0.1) / settings.get("layer_height", 0.1)
+
+
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
         settings_string = eltree.tostring(root, encoding='Windows-1251').decode("Windows-1251")
@@ -664,6 +742,27 @@ class StartSliceJob(Job):
         settings["machine_start_gcode"] = self._expandGcodeTokens(settings["machine_start_gcode"], initial_extruder_nr)
         settings["machine_middle_gcode"] = self._expandGcodeTokens(settings["machine_middle_gcode"], initial_extruder_nr)
         settings["machine_end_gcode"] = self._expandGcodeTokens(settings["machine_end_gcode"], initial_extruder_nr)
+
+        printing_mode = settings["printing_mode"]
+        if printing_mode in ["cylindrical", "cylindrical_full"]:
+            settings["infill_extruder_nr"] = settings["cylindrical_infill_extruder_nr"]
+            settings["speed_infill"] = settings["speed_infill_cylindrical"]
+            settings["speed_wall_0"] = settings["speed_wall_0_cylindrical"]
+            settings["speed_wall_x"] = settings["speed_wall_x_cylindrical"]
+            settings["speed_roofing"] = settings["speed_roofing_cylindrical"]
+            settings["speed_topbottom"] = settings["speed_topbottom_cylindrical"]
+            settings["speed_support_infill"] = settings["speed_support_infill_cylindrical"]
+            settings["speed_travel"] = settings["speed_travel_cylindrical"]
+            settings["speed_print_layer_0"] = settings["speed_print_layer_0_cylindrical"]
+            settings["speed_travel_layer_0"] = settings["speed_travel_layer_0_cylindrical"]
+
+            settings["cool_fan_enabled"] = settings["cool_fan_enabled_cylindrical"]
+            settings["cool_fan_speed_min"] = settings["cool_fan_speed_min_cylindrical"]
+            settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_cylindrical"]
+
+            settings["magic_spiralize"] = False
+
+
 
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():
@@ -738,6 +837,8 @@ class StartSliceJob(Job):
         extruder_nr = stack.getProperty("extruder_nr", "value")
         settings["machine_extruder_start_code"] = self._expandGcodeTokens(settings["machine_extruder_start_code"], extruder_nr)
         settings["machine_extruder_end_code"] = self._expandGcodeTokens(settings["machine_extruder_end_code"], extruder_nr)
+        settings["machine_fiber_cut_code"] = self._expandGcodeTokens(settings["machine_fiber_cut_code"], extruder_nr)
+        settings["machine_fiber_prime_code"] = self._expandGcodeTokens(settings["machine_fiber_prime_code"], extruder_nr)
 
         for key, value in settings.items():
             # Do not send settings that are not settable_per_extruder.
@@ -747,3 +848,15 @@ class StartSliceJob(Job):
             setting.name = key
             setting.value = str(value).encode("utf-8")
             Job.yieldThread()
+
+    def getQuickCsgCommand(self) -> List[str]:
+        executable_name = "occ-csg.exe"
+        default_engine_location = executable_name
+        if os.path.exists(os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)):
+            default_engine_location = os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)
+        if not default_engine_location:
+            raise EnvironmentError("Could not find OCC CSG")
+
+        Logger.log("i", "Found Quick CSG at: %s", default_engine_location)
+        default_engine_location = os.path.abspath(default_engine_location)
+        return [default_engine_location]

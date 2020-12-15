@@ -44,6 +44,69 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
+                "machine_fiber_extruder": {
+                    "label": "Fiber Extruder",
+                    "description": "If the extruder is able to print with continious fiber",
+                    "type": "bool",
+                    "default_value": false,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "settable_per_meshgroup": false,
+                    "settable_globally": false
+                },
+                "machine_fiber_cut_distance": {
+                    "label": "Fiber cut distance",
+                    "description": "Length between end of the nozzle and fiber cutter",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 0,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "settable_per_meshgroup": false,
+                    "settable_globally": false
+                },
+                "machine_fiber_cut_min_distance": {
+                    "label": "Fiber cut min distance",
+                    "description": "Min distance of the extrusion path to perform fiber cutting",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 0,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "settable_per_meshgroup": false,
+                    "settable_globally": false
+                },
+                "machine_fiber_restart_length": {
+                    "label": "Fiber restart length",
+                    "description": "Length, which will be extruded before fiber printing starts",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 0,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "settable_per_meshgroup": false,
+                    "settable_globally": false
+                },
+                "machine_fiber_cut_code": {
+                    "label": "Fiber Cut G-Code",
+                    "description": "Fiber cut G-Code",
+                    "type": "str",
+                    "default_value": "",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "settable_per_meshgroup": false,
+                    "settable_globally": false
+                },
+                "machine_fiber_prime_code": {
+                    "label": "Fiber Prime G-Code",
+                    "description": "Fiber Prime G-Code",
+                    "type": "str",
+                    "default_value": "",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "settable_per_meshgroup": false,
+                    "settable_globally": false
+                },
                 "machine_nozzle_offset_x": {
                     "label": "Nozzle X Offset",
                     "description": "The x-coordinate of the offset of the nozzle.",

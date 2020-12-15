@@ -36,9 +36,9 @@ catalog = i18nCatalog("steslicer")
 
 class BackendIndexes(IntEnum):
     Classic = 0
-    Cylindrical = 1
+    Spherical = 1
 
-class CylindricalBackend(QObject, MultiBackend):
+class SphericalBackend(QObject, MultiBackend):
     printDurationMessage = Signal()
     slicingStarted = Signal()
     slicingCancelled = Signal()
@@ -135,13 +135,13 @@ class CylindricalBackend(QObject, MultiBackend):
 
     def _loadBackends(self) -> None:
         classic_backend = self._backend_manager.getBackendByType("classic")
-        cylindrical_backend = self._backend_manager.getBackendByType("cylindrical")
-        if classic_backend is None or cylindrical_backend is None:
+        spherical_backend = self._backend_manager.getBackendByType("spherical")
+        if classic_backend is None or spherical_backend is None:
             raise ModuleNotFoundError("Not all Backends found")
         self._states = [BackendState.NotStarted, BackendState.NotStarted]
 
         self.addBackend(classic_backend)
-        self.addBackend(cylindrical_backend)
+        self.addBackend(spherical_backend)
 
     def close(self) -> None:
         for name, backend in self.getBackends().items():
@@ -160,7 +160,7 @@ class CylindricalBackend(QObject, MultiBackend):
 
         if self._process_cli_job is not None:
             Logger.log("d", "Aborting process cli job...")
-            self._process_cli_job.cancel()
+            self._process_cli_job.abort()
             self._process_cli_job = None
 
         if self._process_layers_job is not None:
@@ -215,7 +215,7 @@ class CylindricalBackend(QObject, MultiBackend):
         self.stopSlicing()
 
         self.processingProgress.emit(0.0)
-        self.backendStateChange.emit(BackendState.Processing)
+        self.backendStateChange.emit(BackendState.NotStarted)
 
         self._scene.gcode_dict[build_plate_to_be_sliced] = []
         self._slicing = True
@@ -293,7 +293,7 @@ class CylindricalBackend(QObject, MultiBackend):
             return
 
         self.backendStateChange.emit(BackendState.Processing)
-        self.processingProgress.emit(0.1)
+        self.processingProgress.emit(0.0)
         self._slice_messages = job.getSliceMessages()
 
         self._generate_basement_job = GenerateBasementJob()
@@ -302,7 +302,7 @@ class CylindricalBackend(QObject, MultiBackend):
         self._generate_basement_job.start()
 
     def _onGenerateBasementProcessingProgress(self, amount):
-        self.processingProgress.emit(0.1 + amount / 10)
+        self.processingProgress.emit(amount / 10)
         self.backendStateChange.emit(BackendState.Processing)
 
     def _onGenerateBasementJobFinished(self, job: GenerateBasementJob):

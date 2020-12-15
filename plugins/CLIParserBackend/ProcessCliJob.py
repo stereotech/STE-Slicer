@@ -65,6 +65,8 @@ class ProcessCliJob(Job):
     def run(self):
         while self._process.poll() is None:
             Job.yieldThread()
+            if self._is_cancelled:
+                return
 
         if self._build_plate_number is None:
             self.setResult(StartJobResult.Error)
@@ -73,5 +75,6 @@ class ProcessCliJob(Job):
         for index in range(len(self._output_path)):
             cli = cli_list.getRepeatedMessage("cli", index)
             cli.filename = self._output_path[index]
+            #cli.filename = 'C:\\Users\\frylo\\AppData\\Local\\Temp\\test2_perimeterinflll.cli'
 
         self.setResult(StartJobResult.Finished)

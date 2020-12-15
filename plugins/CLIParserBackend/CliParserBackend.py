@@ -154,7 +154,8 @@ class CliParserBackend(QObject, Backend):
         default_engine_location = executable_name
         if os.path.exists(os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)):
             default_engine_location = os.path.join(SteSlicerApplication.getInstallPrefix(), "bin", executable_name)
-
+        if hasattr(sys, "frozen"):
+            default_engine_location = os.path.join(os.path.dirname(os.path.abspath(sys.executable)), executable_name)
         self._application = SteSlicerApplication.getInstance()  # type: SteSlicerApplication
         self._multi_build_plate_model = None  # type: Optional[MultiBuildPlateModel]
         self._machine_error_checker = None  # type: Optional[MachineErrorChecker]
@@ -240,7 +241,7 @@ class CliParserBackend(QObject, Backend):
         self._engine_is_fresh = False  # Yes we're going to use the engine
 
         self.processingProgress.emit(0.0)
-        self.backendStateChange.emit(BackendState.NotStarted)
+        self.backendStateChange.emit(BackendState.Processing)
 
         self._scene.gcode_dict[build_plate_to_be_sliced] = []
         self._slicing = True
@@ -351,10 +352,12 @@ class CliParserBackend(QObject, Backend):
             self._invokeSlice()
             return
 
+        self.processingProgress.emit(0.1)
         self.backendStateChange.emit(BackendState.Processing)
         slice_message = job.getSliceMessage()
         slice_message.append('-o')
-        output_path = [os.path.join(tempfile.tempdir, next(tempfile._get_candidate_names()) + ".cli")]
+        filename = next(tempfile._get_candidate_names())
+        output_path = [os.path.join(tempfile.tempdir, filename + ".cli")]
         slice_message.extend(output_path)
 
         self._glicer_process = self._runGlicerEngineProcess(slice_message)
@@ -502,7 +505,7 @@ class CliParserBackend(QObject, Backend):
 
         # Notify the user that it's now up to the backend to do it's job
         self.backendStateChange.emit(BackendState.Processing)
-        self.processingProgress.emit(0.2)
+        self.processingProgress.emit(0.3)
 
         if self._slice_start_time:
             Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time )
@@ -666,7 +669,7 @@ class CliParserBackend(QObject, Backend):
             self._stored_optimized_layer_data[self._start_slice_job_build_plate].append(message)
 
     def _onProgressMessage(self, message: Arcus.PythonMessage) -> None:
-        self.processingProgress.emit(message.amount * 0.8 + 0.2)
+        self.processingProgress.emit(message.amount * 0.7 + 0.3)
         self.backendStateChange.emit(BackendState.Processing)
 
     def _invokeSlice(self) -> None:

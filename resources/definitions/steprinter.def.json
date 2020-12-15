@@ -67,6 +67,12 @@
         },
         "switch_extruder_retraction_amount": {
             "value": "4"
+        },
+        "machine_a_axis_divider": {
+            "value": 1.5
+        },
+        "machine_c_axis_divider": {
+            "value": 3
         }
     }
 }

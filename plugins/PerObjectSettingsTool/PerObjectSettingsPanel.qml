@@ -17,7 +17,7 @@ Item {
 
     width: childrenRect.width;
     height: childrenRect.height;
-    property var all_categories_except_support: [ "machine_settings", "printing_mode_category", "resolution", "shell", "infill", "material", "speed",
+    property var all_categories_except_support: [ "machine_settings", "printing_mode_category", "reinforcement", "resolution", "shell", "infill", "material", "speed",
                                     "travel", "cooling", "platform_adhesion", "dual", "meshfix", "blackmagic", "experimental"]
 
     Column
