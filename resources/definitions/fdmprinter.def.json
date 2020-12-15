@@ -198,6 +198,15 @@
                     "settable_per_extruder": false,
                     "settable_per_meshgroup": false
                 },
+                "machine_hybrid": {
+                    "label": "Is hybrid device",
+                    "description": "Is the machine has abolity to change heated bed and five axis module",
+                    "default_value": false,
+                    "type": "bool",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
+                },
                 "machine_heated_build_volume": {
                     "label": "Has Build Volume Temperature Stabilization",
                     "description": "Whether the machine is able to stabilize the build volume temperature.",

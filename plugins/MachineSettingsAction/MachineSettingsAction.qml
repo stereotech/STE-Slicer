@@ -169,6 +169,15 @@ SteSlicer.MachineAction
 
                             Loader
                             {
+                                id: hybridCheckBox
+                                sourceComponent: simpleCheckBox
+                                property var settingKey: "machine_hybrid"
+                                property string label: catalog.i18nc("@option:check", "Hybrid")
+                                property bool forceUpdateOnChange: true
+                            }
+
+                            Loader
+                            {
                                 id: aAxisDividerField
                                 sourceComponent: numericTextFieldWithUnit
                                 property string settingKey: "machine_a_axis_divider"

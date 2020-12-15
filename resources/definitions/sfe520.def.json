@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "name": "Stereotech SFE520 Fiber",
+    "name": "Stereotech 520 Fiber",
     "inherits": "steprinter",
     "metadata": {
         "author": "Stereotech",
@@ -28,7 +28,7 @@
     },
     "overrides": {
         "machine_name": {
-            "default_value": "Stereotech STE520"
+            "default_value": "Stereotech 520 Fiber"
         },
         "machine_width": {
             "default_value": 210

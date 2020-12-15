@@ -416,9 +416,13 @@ class StartSliceJob(Job):
         elif printing_mode in ["spherical", "spherical_full"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
+        elif printing_mode in ["classic"] and result["machine_hybrid"]:
+            result["cylindrical_rotate"] = "G4 P100"
+            result["coordinate_system"] = "G54"
         elif printing_mode in ["classic"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
+
 
         initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")

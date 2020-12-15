@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "name": "Stereotech HGE520 Glaze",
+    "name": "Stereotech 520 Glaze",
     "inherits": "steprinter",
     "metadata": {
         "author": "Stereotech",
@@ -29,7 +29,7 @@
     },
     "overrides": {
         "machine_name": {
-            "default_value": "Stereotech HGE520"
+            "default_value": "Stereotech 520 Glaze"
         },
         "machine_width": {
             "default_value": 210
