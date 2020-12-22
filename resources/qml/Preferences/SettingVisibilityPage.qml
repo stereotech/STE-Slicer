@@ -28,7 +28,7 @@ UM.PreferencesPage
 
         // After calling this function update Setting visibility preset combobox.
         // Reset should set default setting preset ("Basic")
-        visibilityPreset.currentIndex = 1
+        visibilityPreset.currentIndex = 2
     }
     resetEnabled: true;
 
