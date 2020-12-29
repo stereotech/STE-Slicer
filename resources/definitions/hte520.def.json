@@ -1,0 +1,69 @@
+{
+    "version": 2,
+    "name": "Stereotech 520 Hybrid",
+    "inherits": "steprinter",
+    "metadata": {
+        "author": "Stereotech",
+        "manufacturer": "Stereotech",
+        "visible": true,
+        "file_formats": "text/x-gcode",
+        "has_materials": true,
+        "machine_extruder_trains": {
+            "0": "stereotech_ste320_1st",
+            "1": "stereotech_ste320_2nd"
+        },
+        "first_start_actions": [
+
+        ],
+        "supported_actions": [
+
+        ]
+    },
+    "overrides": {
+        "machine_name": {
+            "default_value": "Stereotech 520 Hybrid"
+        },
+        "machine_width": {
+            "default_value": 200,
+            "value": "200 if resolveOrValue('printing_mode') in ['classic'] else 230"
+        },
+        "machine_height": {
+            "default_value": 200,
+            "value": "200 if resolveOrValue('printing_mode') in ['classic'] else 150"
+        },
+        "machine_depth": {
+            "default_value": 200,
+            "value": "200 if resolveOrValue('printing_mode') in ['classic'] else 230"
+        },
+        "machine_hybrid": {
+            "default_value": true
+        },
+        "machine_center_is_zero": {
+            "default_value": true,
+            "value": "resolveOrValue('printing_mode') not in ['classic']"
+        },
+        "machine_heated_bed": {
+            "default_value": false,
+            "value": "resolveOrValue('printing_mode') in ['classic']"
+        },
+        "machine_shape": {
+            "default_value": "elliptic",
+            "value": "'rectangular' if resolveOrValue('printing_mode') in ['classic'] else 'elliptic'"
+        },
+        "machine_five_axis": {
+            "default_value": true
+        },
+        "machine_start_gcode": {
+            "default_value": ";STE Slicer 5D Gcode\nG21 ;metric values\nG90 ;absolute positioning\nM82 ;set extruder to absolute mode\nM107 ;start with the fan off\nG28;homing\nG92 E0 C0 ;zero the extruded length\nG1 F200 E15 ;extrude 15 mm of feed stock\nG1 F200 E13.5 ;make retraction\nG92 E0 ;zero the extruded length again\n{coordinate_system};Move to the first coordinate system"
+        },
+        "machine_middle_gcode": {
+            "default_value": "G91\nG1 F200 E-4\nG0 Z2\nG90\nG54\nG0 X0 Y20\nG92 E0 C0\n{cylindrical_rotate}\n{coordinate_system}\nG1 F200 E6\nG92 E0"
+        },
+        "machine_end_gcode": {
+            "default_value": "G54 ; Move to the MCS;\nM104 T0 S0 ;1st extruder heater off\nM104 T1 S0 ;2nd extruder heater off\nG91 ;relative positioning\nG1 E-1 F300  ;retract the filament a bit before lifting the nozzle, to release some of the pressure\nG1 Z+0.5 E-5 X-20 Y-20 F9000 ;move Z up a bit and retract filament even more\nG0 Z10\nG28 X0 Y0 ;move X/Y to min endstops, so the head is out of the way\nG92 E0 C0\nG90 ;absolute positioning"
+        },
+        "machine_extruder_count": {
+            "default_value": 2
+        }
+    }
+}
