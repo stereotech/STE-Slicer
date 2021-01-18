@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QApplication
 
 from UM.Application import Application
+from UM.Logger import Logger
 from UM.Math.Vector import Vector
 from UM.Tool import Tool
 from UM.Event import Event, MouseEvent
@@ -24,6 +25,7 @@ from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
 
 from UM.Settings.SettingInstance import SettingInstance
 
+import trimesh
 import numpy
 
 class SupportEraser(Tool):
@@ -97,7 +99,7 @@ class SupportEraser(Tool):
 
         node.setName("Eraser")
         node.setSelectable(True)
-        mesh = self._createCube(10)
+        mesh = self._createPlane(100)#self._createCube(10)
         node.setMeshData(mesh.build())
 
         active_build_plate = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
@@ -119,6 +121,23 @@ class SupportEraser(Tool):
         op.addOperation(SetParentOperation(node, parent))
         op.push()
         node.setPosition(position, SteSlicerSceneNode.TransformSpace.World)
+
+        mesh_data = parent.getMeshData().getTransformed(node.getWorldTransformation())
+        verts = mesh_data.getVertices()
+        faces = None
+        if mesh_data.hasIndices():
+            faces = mesh_data.getIndices()
+        else:
+            num_verts = mesh_data.getVertexCount()
+            faces = numpy.empty((int(num_verts / 3 + 1), 3), numpy.int32)
+            for i in range(0, num_verts - 2, 3):
+                faces[int(i / 3):] = [i, i + 1, i + 2]
+        vertices = []
+        for vert in verts:
+            vertices.append([vert[0], -vert[2], vert[1]])
+        trmesh = trimesh.Trimesh(vertices=vertices, faces=faces)
+        trmesh = trmesh.slice_plane(position.getData(), mesh.getNormals()[0])
+        parent.setMeshData(self._getCut(trmesh).build())
 
         SteSlicerApplication.getInstance().getController().getScene().sceneChanged.emit(node)
 
@@ -160,6 +179,35 @@ class SupportEraser(Tool):
             self._skip_press = False
 
         self._had_selection = has_selection
+
+    def _createPlane(self, size):
+        mesh = MeshBuilder()
+        s = size / 2
+        verts = [# 1 face with 4 corners
+            [-s, 0, -s], [s, 0, -s], [s, 0, s], [-s, 0, s],
+        ]
+        mesh.setVertices(numpy.asarray(verts, dtype=numpy.float32))
+
+        indices = []
+        for i in range(0, 4, 4):  # All 1 quad (2 triangles)
+            indices.append([i, i + 2, i + 1])
+            indices.append([i, i + 3, i + 2])
+        mesh.setIndices(numpy.asarray(indices, dtype=numpy.int32))
+
+        mesh.calculateNormals()
+        Logger.log("d", "Normals %s", mesh.getNormals())
+        return mesh
+
+    def _getCut(self, trmesh: trimesh.Trimesh):
+        mesh = MeshBuilder()
+        mesh.setVertices(numpy.asarray(trmesh.vertices, dtype=numpy.float32))
+        indices = []
+        for i in range(0, len(trmesh.vertices), 4):  # All 1 quad (2 triangles)
+            indices.append([i, i + 2, i + 1])
+            indices.append([i, i + 3, i + 2])
+        mesh.setIndices(numpy.asarray(indices, dtype=numpy.int32))
+        mesh.calculateNormals()
+        return mesh
 
     def _createCube(self, size):
         mesh = MeshBuilder()
