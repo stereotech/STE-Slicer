@@ -7,7 +7,7 @@ def getMetaData():
     return {
         "backend_engine": {
             "types": [
-                "descrete"
+                "discrete"
             ]
         }
     }
