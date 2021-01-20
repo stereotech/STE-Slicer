@@ -1,5 +1,3 @@
-
-
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QApplication
 
@@ -11,6 +9,7 @@ from UM.Event import Event, MouseEvent
 from UM.Mesh.MeshBuilder import MeshBuilder
 from UM.Scene.Selection import Selection
 
+from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.PickingPass import PickingPass
@@ -28,15 +27,20 @@ from UM.Settings.SettingInstance import SettingInstance
 import trimesh
 import numpy
 
-class SupportEraser(Tool):
+class PlaneSplitter(Tool):
     def __init__(self):
         super().__init__()
-        self._shortcut_key = Qt.Key_E
+        self._shortcut_key = Qt.Key_P
         self._controller = self.getController()
 
-        self._selection_pass = None
-        SteSlicerApplication.getInstance().globalContainerStackChanged.connect(self._updateEnabled)
+        self._visible = False
 
+        self._selection_pass = None
+
+        self._global_container_stack = None
+        SteSlicerApplication.getInstance().globalContainerStackChanged.connect(self._onStackChanged)
+        self._onStackChanged()
+        self._printing_mode = None
         # Note: if the selection is cleared with this tool active, there is no way to switch to
         # another tool than to reselect an object (by clicking it) because the tool buttons in the
         # toolbar will have been disabled. That is why we need to ignore the first press event
@@ -77,10 +81,12 @@ class SupportEraser(Tool):
             node_stack = picked_node.callDecoration("getStack")
             if node_stack:
                 if node_stack.getProperty("anti_overhang_mesh", "value"):
-                    self._removeEraserMesh(picked_node)
+                    self._removeSplittingPlane(picked_node)
                     return
 
-                elif node_stack.getProperty("support_mesh", "value") or node_stack.getProperty("infill_mesh", "value") or node_stack.getProperty("cutting_mesh", "value"):
+                elif node_stack.getProperty("support_mesh", "value") or node_stack.getProperty("infill_mesh",
+                                                                                               "value") or node_stack.getProperty(
+                        "cutting_mesh", "value"):
                     # Only "normal" meshes can have anti_overhang_meshes added to them
                     return
 
@@ -97,16 +103,17 @@ class SupportEraser(Tool):
     def _createEraserMesh(self, parent: SteSlicerSceneNode, position: Vector):
         node = SteSlicerSceneNode()
 
-        node.setName("Eraser")
+        node.setName("Plane")
         node.setSelectable(True)
-        mesh = self._createCube(10)
+        mesh = self._createPlane(100)
         node.setMeshData(mesh.build())
 
         active_build_plate = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
         node.addDecorator(BuildPlateDecorator(active_build_plate))
         node.addDecorator(SliceableObjectDecorator())
 
-        stack = node.callDecoration("getStack") # created by SettingOverrideDecorator that is automatically added to SteSlicerSceneNode
+        stack = node.callDecoration(
+            "getStack")  # created by SettingOverrideDecorator that is automatically added to SteSlicerSceneNode
         settings = stack.getTop()
 
         definition = stack.getSettingDefinition("anti_overhang_mesh")
@@ -124,7 +131,7 @@ class SupportEraser(Tool):
 
         SteSlicerApplication.getInstance().getController().getScene().sceneChanged.emit(node)
 
-    def _removeEraserMesh(self, node: SteSlicerSceneNode):
+    def _removeSplittingPlane(self, node: SteSlicerSceneNode):
         parent = node.getParent()
         if parent == self._controller.getScene().getRoot():
             parent = None
@@ -142,9 +149,29 @@ class SupportEraser(Tool):
 
         global_container_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if global_container_stack:
-            plugin_enabled = global_container_stack.getProperty("anti_overhang_mesh", "enabled")
+            plugin_enabled = global_container_stack.getProperty("printing_mode", "value") in ["discrete"]
 
         SteSlicerApplication.getInstance().getController().toolEnabledChanged.emit(self._plugin_id, plugin_enabled)
+
+    def _onSettingPropertyChanged(self, setting_key: str, property_name: str):
+        if property_name != "value" and setting_key != "printing_mode":
+            return
+        self._updateEnabled()
+
+    def _onStackChanged(self):
+        if self._global_container_stack:
+            self._global_container_stack.propertyChanged.disconnect(self._onSettingPropertyChanged)
+            extruders = ExtruderManager.getInstance().getActiveExtruderStacks()
+            for extruder in extruders:
+                extruder.propertyChanged.disconnect(self._onSettingPropertyChanged)
+
+        self._global_container_stack = Application.getInstance().getGlobalContainerStack()
+
+        if self._global_container_stack:
+            self._global_container_stack.propertyChanged.connect(self._onSettingPropertyChanged)
+            extruders = ExtruderManager.getInstance().getActiveExtruderStacks()
+            for extruder in extruders:
+                extruder.propertyChanged.connect(self._onSettingPropertyChanged)
 
     def _onSelectionChanged(self):
         # When selection is passed from one object to another object, first the selection is cleared
@@ -163,26 +190,18 @@ class SupportEraser(Tool):
 
         self._had_selection = has_selection
 
-    def _createCube(self, size):
+    def _createPlane(self, size):
         mesh = MeshBuilder()
-
-        # Can't use MeshBuilder.addCube() because that does not get per-vertex normals
-        # Per-vertex normals require duplication of vertices
         s = size / 2
-        verts = [ # 6 faces with 4 corners each
-            [-s, -s,  s], [-s,  s,  s], [ s,  s,  s], [ s, -s,  s],
-            [-s,  s, -s], [-s, -s, -s], [ s, -s, -s], [ s,  s, -s],
-            [ s, -s, -s], [-s, -s, -s], [-s, -s,  s], [ s, -s,  s],
-            [-s,  s, -s], [ s,  s, -s], [ s,  s,  s], [-s,  s,  s],
-            [-s, -s,  s], [-s, -s, -s], [-s,  s, -s], [-s,  s,  s],
-            [ s, -s, -s], [ s, -s,  s], [ s,  s,  s], [ s,  s, -s]
+        verts = [# 1 face with 4 corners
+            [-s, 0, -s], [s, 0, -s], [s, 0, s], [-s, 0, s],
         ]
         mesh.setVertices(numpy.asarray(verts, dtype=numpy.float32))
 
         indices = []
-        for i in range(0, 24, 4): # All 6 quads (12 triangles)
-            indices.append([i, i+2, i+1])
-            indices.append([i, i+3, i+2])
+        for i in range(0, 4, 4):  # All 1 quad (2 triangles)
+            indices.append([i, i + 2, i + 1])
+            indices.append([i, i + 3, i + 2])
         mesh.setIndices(numpy.asarray(indices, dtype=numpy.int32))
 
         mesh.calculateNormals()
