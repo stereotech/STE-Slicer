@@ -217,13 +217,13 @@ class DescreteSlicerBackend(QObject, Backend):
     ##  Perform a slice of the scene.
     def slice(self) -> None:
         # Listeners for receiving messages from the back-end.
-        self._message_handlers["cura.proto.Layer"] = self._onLayerMessage
-        self._message_handlers["cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
-        self._message_handlers["cura.proto.Progress"] = self._onProgressMessage
-        self._message_handlers["cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
-        self._message_handlers["cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
-        self._message_handlers["cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
-        self._message_handlers["cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
+        self._message_handlers["discreteslicer.proto.Layer"] = self._onLayerMessage
+        self._message_handlers["discreteslicer.proto.LayerOptimized"] = self._onOptimizedLayerMessage
+        self._message_handlers["discreteslicer.proto.Progress"] = self._onProgressMessage
+        self._message_handlers["discreteslicer.proto.GCodeLayer"] = self._onGCodeLayerMessage
+        self._message_handlers["discreteslicer.proto.GCodePrefix"] = self._onGCodePrefixMessage
+        self._message_handlers["discreteslicer.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
+        self._message_handlers["discreteslicer.proto.SlicingFinished"] = self._onSlicingFinishedMessage
 
         Logger.log("d", "Starting to slice...")
         self._slice_start_time = time()
@@ -272,7 +272,7 @@ class DescreteSlicerBackend(QObject, Backend):
 
         self.determineAutoSlicing()  # Switch timer on or off if appropriate
 
-        slice_message = self._socket.createMessage("cura.proto.Slice")
+        slice_message = self._socket.createMessage("discreteslicer.proto.Slice")
         self._start_slice_job = StartSliceJob(slice_message)
         self._start_slice_job_build_plate = build_plate_to_be_sliced
         self._start_slice_job.setBuildPlate(self._start_slice_job_build_plate)
@@ -700,7 +700,7 @@ class DescreteSlicerBackend(QObject, Backend):
             if not plugin_path:
                 Logger.log("e", "Could not get plugin path!", self.getPluginId())
                 return
-            protocol_file = os.path.abspath(os.path.join(plugin_path, "Cura.proto"))
+            protocol_file = os.path.abspath(os.path.join(plugin_path, "DiscreteSlicer.proto"))
         super()._createSocket(protocol_file)
         self._engine_is_fresh = True
 

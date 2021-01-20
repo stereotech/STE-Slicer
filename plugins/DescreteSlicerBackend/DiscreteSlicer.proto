@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package cura.proto;
+package discreteslicer.proto;
 
 message ObjectList
 {
@@ -29,7 +29,7 @@ message Object
     bytes normals = 3; //An array of 3 floats.
     bytes indices = 4; //An array of ints.
     repeated Setting settings = 5; // Setting override per object, overruling the global settings.
-    string name = 6; 
+    string name = 6; //Mesh name
 }
 
 message Progress
@@ -80,6 +80,7 @@ message PathSegment {
     enum PointType {
         Point2D = 0;
         Point3D = 1;
+        Point6D = 2;
     }
     PointType point_type = 2;
     bytes points = 3; // The points defining the line segments, bytes of float[2/3] array of length N+1
