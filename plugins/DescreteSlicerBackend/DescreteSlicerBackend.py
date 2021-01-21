@@ -66,9 +66,9 @@ class DescreteSlicerBackend(QObject, Backend):
         self._machine_error_checker = None #type: Optional[MachineErrorChecker]
 
         if not default_engine_location:
-            raise EnvironmentError("Could not find CuraEngine")
+            raise EnvironmentError("Could not find DiscreteSlicer")
 
-        Logger.log("i", "Found CuraEngine at: %s", default_engine_location)
+        Logger.log("i", "Found DiscreteSlicer at: %s", default_engine_location)
 
         default_engine_location = os.path.abspath(default_engine_location)
         self._application.getPreferences().addPreference("backend/location", default_engine_location)
@@ -92,15 +92,6 @@ class DescreteSlicerBackend(QObject, Backend):
         # to start the auto-slicing timer again.
         #
         self._global_container_stack = None #type: Optional[ContainerStack]
-
-        # Listeners for receiving messages from the back-end.
-        #self._message_handlers["cura.proto.Layer"] = self._onLayerMessage
-        #self._message_handlers["cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
-        #self._message_handlers["cura.proto.Progress"] = self._onProgressMessage
-        #self._message_handlers["cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
-        #self._message_handlers["cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
-        #self._message_handlers["cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
-        #self._message_handlers["cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
 
         self._start_slice_job = None #type: Optional[StartSliceJob]
         self._start_slice_job_build_plate = None #type: Optional[int]

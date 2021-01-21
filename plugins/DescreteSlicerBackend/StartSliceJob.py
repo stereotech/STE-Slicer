@@ -131,66 +131,33 @@ class StartSliceJob(Job):
             object_groups = []
             printing_mode = stack.getProperty("printing_mode", "value")
             if printing_mode == "discrete":
-                if stack.getProperty("print_sequence", "value") == "one_at_a_time":
-                    for node in OneAtATimeIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
-                        temp_list = []
-
-                        # Node can't be printed, so don't bother sending it.
-                        if getattr(node, "_outside_buildarea", False):
-                            continue
-
-                        # Filter on current build plate
-                        build_plate_number = node.callDecoration("getBuildPlateNumber")
-                        if build_plate_number is not None and build_plate_number != self._build_plate_number:
-                            continue
-
-                        children = node.getAllChildren()
-                        children.append(node)
-                        for child_node in children:
-                            if child_node.getMeshData() and child_node.getMeshData().getVertices() is not None:
-                                temp_list.append(child_node)
-
-
-                        if temp_list:
-                            object_groups.append(temp_list)
-                        Job.yieldThread()
-                    if len(object_groups) == 0:
-                        Logger.log("w", "No objects suitable for one at a time found, or no correct order found")
-                else:
+                for node in OneAtATimeIterator(
+                        self._scene.getRoot()):  # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
                     temp_list = []
-                    has_printing_mesh = False
-                    for node in DepthFirstIterator(self._scene.getRoot()): #type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
-                        if node.callDecoration("isSliceable") and node.getMeshData() and node.getMeshData().getVertices() is not None:
-                            per_object_stack = node.callDecoration("getStack")
-                            is_non_printing_mesh = False
-                            if per_object_stack:
-                                is_non_printing_mesh = any(per_object_stack.getProperty(key, "value") for key in NON_PRINTING_MESH_SETTINGS)
 
-                            # Find a reason not to add the node
-                            if node.callDecoration("getBuildPlateNumber") != self._build_plate_number:
-                                continue
-                            if getattr(node, "_outside_buildarea", False) and not is_non_printing_mesh:
-                                continue
+                    # Node can't be printed, so don't bother sending it.
+                    if getattr(node, "_outside_buildarea", False):
+                        continue
 
-                            temp_list.append(node)
-                            if not is_non_printing_mesh:
-                                has_printing_mesh = True
+                    # Filter on current build plate
+                    build_plate_number = node.callDecoration("getBuildPlateNumber")
+                    if build_plate_number is not None and build_plate_number != self._build_plate_number:
+                        continue
 
-                        Job.yieldThread()
-
-                    #If the list doesn't have any model with suitable settings then clean the list
-                    # otherwise CuraEngine will crash
-                    if not has_printing_mesh:
-                        temp_list.clear()
+                    children = node.getAllChildren()
+                    children.append(node)
+                    for child_node in children:
+                        if child_node.getMeshData() and child_node.getMeshData().getVertices() is not None:
+                            temp_list.append(child_node)
 
                     if temp_list:
                         object_groups.append(temp_list)
-
+                    Job.yieldThread()
+                if len(object_groups) == 0:
+                    Logger.log("w", "No objects suitable for one at a time found, or no correct order found")
             else:
                 self.setResult(StartJobResult.ObjectSettingError)
                 return
-
-
 
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if not global_stack:
