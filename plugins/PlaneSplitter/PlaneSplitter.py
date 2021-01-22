@@ -9,6 +9,7 @@ from UM.Event import Event, MouseEvent
 from UM.Mesh.MeshBuilder import MeshBuilder
 from UM.Scene.Selection import Selection
 
+from steslicer.Scene.SplittingPlaneDecorator import SplittingPlaneDecorator
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
@@ -103,7 +104,7 @@ class PlaneSplitter(Tool):
     def _createEraserMesh(self, parent: SteSlicerSceneNode, position: Vector):
         node = SteSlicerSceneNode()
 
-        node.setName("Plane")
+        node.setName("SplittingPlane")
         node.setSelectable(True)
         mesh = self._createPlane(100)
         node.setMeshData(mesh.build())
@@ -111,6 +112,7 @@ class PlaneSplitter(Tool):
         active_build_plate = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
         node.addDecorator(BuildPlateDecorator(active_build_plate))
         node.addDecorator(SliceableObjectDecorator())
+        node.addDecorator(SplittingPlaneDecorator())
 
         stack = node.callDecoration(
             "getStack")  # created by SettingOverrideDecorator that is automatically added to SteSlicerSceneNode

@@ -6,6 +6,7 @@ from enum import IntEnum
 import time
 import trimesh
 from trimesh.primitives import Box
+import trimesh.intersections
 from typing import Any, cast, Dict, List, Optional, Set
 import re
 import Arcus #For typing.
@@ -29,6 +30,7 @@ from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.OneAtATimeIterator import OneAtATimeIterator
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.GcodeStartEndFormatter import GcodeStartEndFormatter
+from steslicer.Utils.SplitPlane import SplitByPlane
 
 NON_PRINTING_MESH_SETTINGS = ["anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
 
@@ -192,6 +194,36 @@ class StartSliceJob(Job):
         if not filtered_object_groups:
             self.setResult(StartJobResult.NothingToSlice)
             return
+
+        for object_group in filtered_object_groups:
+            printable_meshes = []
+            splitting_planes = []
+            for object in object_group:
+                stack = object.callDecoration("getStack")
+                settings = stack.getTop()
+                anti_overhang_mesh = settings.getProperty("anti_overhang_mesh", "value")
+                splitting_plane = object.callDecoration("isSplittingPlane")
+                if anti_overhang_mesh and splitting_plane:
+                    splitting_planes.append(object)
+                elif not anti_overhang_mesh:
+                    printable_meshes.append(object)
+            for plane in splitting_planes:
+                plane_mesh_data  = plane.getMeshDataTransformed()
+                for mesh in printable_meshes:
+                    mesh_data = mesh.getMeshDataTransformed()
+                    if mesh_data.hasIndices():
+                        faces = mesh_data.getIndices()
+                    else:
+                        num_verts = mesh_data.getVertexCount()
+                        faces = numpy.empty((int(num_verts / 3 + 1), 3), numpy.int32)
+                        for i in range(0, num_verts - 2, 3):
+                            faces[int(i / 3):] = [i, i + 1, i + 2]
+                    trmesh = trimesh.Trimesh(vertices=mesh_data.getVertices(), faces=faces)
+                    trmesh.fill_holes()
+                    trmesh.remove_duplicate_faces()
+                    v, f = SplitByPlane(trmesh, plane_mesh_data.getNormals()[0], plane_mesh_data.getVertices()[0], False)
+                    trimesh.Trimesh(vertices=v, faces=f)
+                    new_mesh = MeshData.MeshData(vertices=v, indices=f)
 
         self._buildGlobalSettingsMessage(stack)
         self._buildGlobalInheritsStackMessage(stack)
