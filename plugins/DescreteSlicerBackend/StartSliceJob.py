@@ -209,6 +209,8 @@ class StartSliceJob(Job):
                     printable_meshes.append(object)
             for plane in splitting_planes:
                 plane_mesh_data  = plane.getMeshDataTransformed()
+                plane_normal = plane_mesh_data.getNormals()[0]
+                plane_origin = plane_mesh_data.getVertices()[0]
                 for mesh in printable_meshes:
                     mesh_data = mesh.getMeshDataTransformed()
                     if mesh_data.hasIndices():
@@ -221,7 +223,7 @@ class StartSliceJob(Job):
                     trmesh = trimesh.Trimesh(vertices=mesh_data.getVertices(), faces=faces)
                     trmesh.fill_holes()
                     trmesh.remove_duplicate_faces()
-                    v, f = SplitByPlane(trmesh, plane_mesh_data.getNormals()[0], plane_mesh_data.getVertices()[0], False)
+                    v, f = SplitByPlane(trmesh, plane_normal, plane_origin, False) #TODO: make cap available
                     trimesh.Trimesh(vertices=v, faces=f)
                     new_mesh = MeshData.MeshData(vertices=v, indices=f)
 
