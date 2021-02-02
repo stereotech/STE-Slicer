@@ -4969,8 +4969,32 @@
                     "settable_per_extruder": true,
                     "limit_to_extruder": "adhesion_extruder_nr"
                 },
+                "cylindrical_raft_enabled": {
+                    "label": "Print cylindrical raft",
+                    "description": "Print cylindrical raft on basement",
+                    "type": "bool",
+                    "value": "machine_five_axis and not (resolveOrValue('printing_mode') == 'classic' and machine_hybrid) and resolveOrValue('printing_mode') in ['classic', 'cylindrical_full', 'spherical_full']",
+                    "default_value": true,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "enabled": true
+                },
+                "cylindrical_raft_diameter": {
+                    "label": "Cylindrical Raft diameter",
+                    "description": "Base diameter of Cylindrical Raft",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 15,
+                    "value": "resolveOrValue('cylindrical_mode_base_diameter') if resolveOrValue('printing_mode') == 'cylindrical_full' else resolveOrValue('spherical_mode_base_radius') * 2 if resolveOrValue('printing_mode') == 'spherical_full' else 15",
+                    "minimum_value": "10",
+                    "minimum_value_warning": "11",
+                    "maximum_value_warning": "50",
+                    "enabled": "cylindrical_raft_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "cylindrical_raft_base_height": {
-                    "label": "",
+                    "label": "Cylindrical Raft height",
                     "description": "Base height of Cylindrical Raft",
                     "unit": "mm",
                     "type": "float",
@@ -4978,7 +5002,7 @@
                     "minimum_value": "10",
                     "minimum_value_warning": "11",
                     "maximum_value_warning": "50",
-                    "enabled": "resolveOrValue('machine_five_axis')",
+                    "enabled": "cylindrical_raft_enabled",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },

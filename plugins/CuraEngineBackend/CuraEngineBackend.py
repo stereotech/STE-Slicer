@@ -25,7 +25,8 @@ from UM.Mesh.MeshData import MeshData #For typing.
 
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Settings.ExtruderManager import ExtruderManager
-from .ProcessSlicedLayersJob import ProcessSlicedLayersJob
+from steslicer.Utils.GenerateBasementJob import GenerateBasementJob
+from steslicer.Utils.ProcessSlicedLayersJob import ProcessSlicedLayersJob
 from .StartSliceJob import StartSliceJob, StartJobResult
 
 import Arcus
@@ -109,7 +110,8 @@ class CuraEngineBackend(QObject, Backend):
         #self._message_handlers["cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
         #self._message_handlers["cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
         #self._message_handlers["cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
-
+        self._generate_basement_job = None
+        self._slice_message = None
         self._start_slice_job = None #type: Optional[StartSliceJob]
         self._start_slice_job_build_plate = None #type: Optional[int]
         self._slicing = False #type: bool # Are we currently slicing?
@@ -206,6 +208,11 @@ class CuraEngineBackend(QObject, Backend):
         if self._slicing:  # We were already slicing. Stop the old job.
             self._terminate()
             self._createSocket()
+
+        if self._generate_basement_job is not None:
+            Logger.log("d", "Aborting generate basement job...")
+            self._generate_basement_job.abort()
+            self._generate_basement_job = None
 
         if self._process_layers_job is not None:  # We were processing layers. Stop that, the layers are going to change soon.
             Logger.log("d", "Aborting process layers job...")
@@ -428,14 +435,46 @@ class CuraEngineBackend(QObject, Backend):
             self._invokeSlice()
             return
 
+        self._slice_message = job.getSliceMessage()
+
+        self._generate_basement_job = GenerateBasementJob()
+        self._generate_basement_job.processingProgress.connect(self._onGenerateBasementProcessingProgress)
+        self._generate_basement_job.finished.connect(self._onGenerateBasementJobFinished)
+        self._generate_basement_job.start()
+
+
+
+
+    def _onGenerateBasementProcessingProgress(self, amount):
+        self.processingProgress.emit(0.1 + amount / 10)
+        self.backendStateChange.emit(BackendState.Processing)
+
+
+    def _onGenerateBasementJobFinished(self, job: GenerateBasementJob):
+        if not self._scene.gcode_dict:
+            self._scene.gcode_dict = {0: []}
+        if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
+            self._scene.gcode_dict[self._start_slice_job_build_plate] = []
+        self._scene.gcode_dict[self._start_slice_job_build_plate].extend(job.getGCodeList())
+
+        if self._start_slice_job_build_plate is not None:
+            if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
+                self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
+        self._stored_optimized_layer_data[self._start_slice_job_build_plate].extend(job.getLayersData())
+        self._classic_layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate])
+        self._layers_size = self._classic_layers_size
+        if self._generate_basement_job is job:
+            self._generate_basement_job = None
+
         # Preparation completed, send it to the backend.
-        self._socket.sendMessage(job.getSliceMessage())
+        self._socket.sendMessage(self._slice_message)
+        self._slice_message = None
 
         # Notify the user that it's now up to the backend to do it's job
         self.backendStateChange.emit(BackendState.Processing)
 
         if self._slice_start_time:
-            Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time )
+            Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time)
 
     ##  Determine enable or disable auto slicing. Return True for enable timer and False otherwise.
     #   It disables when
@@ -691,7 +730,13 @@ class CuraEngineBackend(QObject, Backend):
             self._scene.gcode_dict = {0: []}
         if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
             self._scene.gcode_dict[self._start_slice_job_build_plate] = []
-        self._scene.gcode_dict[self._start_slice_job_build_plate].append(message.data.decode("utf-8", "replace")) #type: ignore #Because we generate this attribute dynamically.
+        msg = message.data.decode("utf-8", "replace")  # type: str
+        # TODO: Remove this since new basement will have start and end gcode
+        if msg.startswith(";Generated with Cura_SteamEngine"):
+            self._scene.gcode_dict[self._start_slice_job_build_plate].insert(0, msg)
+        else:
+            self._scene.gcode_dict[self._start_slice_job_build_plate].append(
+                msg)  # type: ignore #Because we generate this attribute dynamically.
 
     ##  Called when a g-code prefix message is received from the engine.
     #
