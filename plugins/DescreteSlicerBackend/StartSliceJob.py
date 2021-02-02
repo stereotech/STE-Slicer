@@ -207,8 +207,10 @@ class StartSliceJob(Job):
                     splitting_planes.append(object)
                 elif not anti_overhang_mesh:
                     printable_meshes.append(object)
+            plane_matrix = numpy.diagflat([1, 1, 1])
             for plane in splitting_planes:
-                plane_mesh_data  = plane.getMeshDataTransformed()
+                plane_mesh_data = plane.getMeshDataTransformed()
+                plane_matrix = plane.getOrientation().toMatrix().getData()[:3, :3]
                 plane_normal = plane_mesh_data.getNormals()[0]
                 plane_origin = plane_mesh_data.getVertices()[0]
                 for mesh in printable_meshes:
@@ -223,9 +225,12 @@ class StartSliceJob(Job):
                     trmesh = trimesh.Trimesh(vertices=mesh_data.getVertices(), faces=faces)
                     trmesh.fill_holes()
                     trmesh.remove_duplicate_faces()
-                    v, f = SplitByPlane(trmesh, plane_normal, plane_origin, False) #TODO: make cap available
-                    trimesh.Trimesh(vertices=v, faces=f)
-                    new_mesh = MeshData.MeshData(vertices=v, indices=f)
+
+                    cut_mesh, start_mesh = SplitByPlane(trmesh, plane_normal, plane_origin, True)
+                    cut_mesh.export("cut_mesh.stl", "stl")
+                    start_mesh.export("start_mesh.stl", "stl")
+
+
 
         self._buildGlobalSettingsMessage(stack)
         self._buildGlobalInheritsStackMessage(stack)

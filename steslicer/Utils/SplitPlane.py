@@ -18,6 +18,17 @@ def SplitByPlane(mesh,
                 cap=False,
                 cached_dots=None,
                 **kwargs):
+    mesh1 = SplitByPlaneOneSide(mesh, plane_normal, plane_origin, cap, cached_dots, **kwargs)
+    mesh2 = SplitByPlaneOneSide(mesh, -plane_normal, plane_origin, cap, cached_dots, True, **kwargs)
+    return mesh1, mesh2
+
+def SplitByPlaneOneSide(mesh,
+                plane_normal,
+                plane_origin,
+                cap=False,
+                cached_dots=None,
+                reversed=False,
+                **kwargs):
     """
     Slice a mesh with a plane, returning a new mesh that is the
     portion of the original mesh to the positive normal side of the plane
@@ -95,8 +106,14 @@ def SplitByPlane(mesh,
                 raise ValueError('Input mesh must be watertight to cap slice')
             path = sliced_mesh.section(plane_normal=normal,
                                        plane_origin=origin)
+            if not path:
+                if reversed:
+                    return sliced_mesh
+                else:
+                    return None
             # transform Path3D onto XY plane for triangulation
             on_plane, to_3D = path.to_planar()
+
             # triangulate each closed region of 2D cap
             # without adding any new vertices
             v, f = [], []
@@ -126,11 +143,11 @@ def SplitByPlane(mesh,
                 to_3D)
 
             # check to see if our new faces are aligned with our normal
-            check = windings_aligned(vf[ff], normal)
-
-            # if 50% of our new faces are aligned with the normal flip
-            if check.astype(np.float64).mean() > 0.5:
-                ff = np.fliplr(ff)
+            #check = windings_aligned(vf[ff], normal)
+#
+            ## if 50% of our new faces are aligned with the normal flip
+            #if check.astype(np.float64).mean() > 0.5:
+            #    ff = np.fliplr(ff)
 
             # add cap vertices and faces and reindex
             vertices, faces = util.append_faces([vertices, vf], [faces, ff])
@@ -139,4 +156,5 @@ def SplitByPlane(mesh,
             sliced_mesh = Trimesh(vertices=vertices, faces=faces)
             vertices, faces = sliced_mesh.vertices.copy(), sliced_mesh.faces.copy()
 
-    return vertices, faces
+    return sliced_mesh
+

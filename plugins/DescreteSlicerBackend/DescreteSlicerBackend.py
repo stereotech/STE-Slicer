@@ -71,7 +71,7 @@ class DescreteSlicerBackend(QObject, Backend):
         Logger.log("i", "Found DiscreteSlicer at: %s", default_engine_location)
 
         default_engine_location = os.path.abspath(default_engine_location)
-        self._application.getPreferences().addPreference("backend/location", default_engine_location)
+        self._application.getPreferences().addPreference("discrete_backend/location", default_engine_location)
 
         # Workaround to disable layer view processing if layer view is not active.
         self._layer_view_active = False #type: bool
@@ -162,7 +162,7 @@ class DescreteSlicerBackend(QObject, Backend):
     #   This is useful for debugging and used to actually start the engine.
     #   \return list of commands and args / parameters.
     def getEngineCommand(self) -> List[str]:
-        command = [self._application.getPreferences().getValue("backend/location"), "connect", "127.0.0.1:{0}".format(self._port), ""]
+        command = [self._application.getPreferences().getValue("discrete_backend/location"), "connect", "127.0.0.1:{0}".format(self._port), ""]
 
         parser = argparse.ArgumentParser(prog = "steslicer", add_help = False)
         parser.add_argument("--debug", action = "store_true", default = False, help = "Turn on the debug mode by setting this option.")

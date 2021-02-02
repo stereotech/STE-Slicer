@@ -35,6 +35,7 @@ class PlaneSplitter(Tool):
         self._controller = self.getController()
 
         self._visible = False
+        self._plane_size = 100
 
         self._selection_pass = None
 
@@ -106,7 +107,7 @@ class PlaneSplitter(Tool):
 
         node.setName("SplittingPlane")
         node.setSelectable(True)
-        mesh = self._createPlane(100)
+        mesh = self._createPlane(self._plane_size)
         node.setMeshData(mesh.build())
 
         active_build_plate = SteSlicerApplication.getInstance().getMultiBuildPlateModel().activeBuildPlate
@@ -152,11 +153,14 @@ class PlaneSplitter(Tool):
         global_container_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if global_container_stack:
             plugin_enabled = global_container_stack.getProperty("printing_mode", "value") in ["discrete"]
-
+            machine_width = global_container_stack.getProperty("machine_width", "value")
+            machine_depth = global_container_stack.getProperty("machine_depth", "value")
+            self._plane_size = max(machine_width, machine_depth, 100)
+            
         SteSlicerApplication.getInstance().getController().toolEnabledChanged.emit(self._plugin_id, plugin_enabled)
 
     def _onSettingPropertyChanged(self, setting_key: str, property_name: str):
-        if property_name != "value" and setting_key != "printing_mode":
+        if property_name != "value" and setting_key not in ["printing_mode", "machine_width", "machine_depth"]:
             return
         self._updateEnabled()
 
