@@ -802,9 +802,11 @@
                     "label": "Mesh Rotation Matrix",
                     "description": "Transformation matrix to be applied to the model when loading it from file.",
                     "type": "str",
-                    "default_value": "[[1,0,0], [0,0.707,0.707], [0,-0.707,0.707]]",
+                    "default_value": "[[1,0,0], [0,1,0], [0,0,1]]",
                     "enabled": false,
-                    "settable_per_mesh": true
+                    "settable_per_mesh": true,
+                    "settable_per_meshgroup": true,
+                    "settable_per_extruder": false
                 }
             }
         },
