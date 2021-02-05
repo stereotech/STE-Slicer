@@ -1,0 +1,8 @@
+{
+    "name": "Plane Splitter",
+    "author": "Stereotech LLC",
+    "version": "1.0.0",
+    "description": "Creates planes for 5D Discrete printing mode",
+    "api": 5,
+    "i18n-catalog": "steslicer"
+}

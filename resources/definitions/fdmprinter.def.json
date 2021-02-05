@@ -753,7 +753,8 @@
                         "cylindrical": "5D Spiral",
                         "cylindrical_full": "5D Spiral Full",
                         "spherical": "5D Spherical",
-                        "spherical_full": "5D Spherical Full"
+                        "spherical_full": "5D Spherical Full",
+                        "discrete": "5D Discrete"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
@@ -795,6 +796,16 @@
                     "minimum_value": "4",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "descrete_mode_mesh_rotation_matrix": {
+                    "label": "Mesh Rotation Matrix",
+                    "description": "Transformation matrix to be applied to the model when loading it from file.",
+                    "type": "str",
+                    "default_value": "[[1,0,0], [0,1,0], [0,0,1]]",
+                    "enabled": false,
+                    "settable_per_mesh": true,
+                    "settable_per_meshgroup": true,
                     "settable_per_extruder": false
                 }
             }

@@ -1,0 +1,8 @@
+{
+    "name": "Descrete Slicer Backend",
+    "author": "Stereotech LLC",
+    "description": "Provides the link to the DescreteSlicer slicing backend.",
+    "api": 5,
+    "version": "1.0.0",
+    "i18n-catalog": "steslicer"
+}

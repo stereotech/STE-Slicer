@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QApplication
 
 from UM.Application import Application
+from UM.Logger import Logger
 from UM.Math.Vector import Vector
 from UM.Tool import Tool
 from UM.Event import Event, MouseEvent
@@ -24,6 +25,7 @@ from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
 
 from UM.Settings.SettingInstance import SettingInstance
 
+import trimesh
 import numpy
 
 class SupportEraser(Tool):
