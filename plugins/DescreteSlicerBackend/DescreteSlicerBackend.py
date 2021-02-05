@@ -23,6 +23,7 @@ from UM.Mesh.MeshData import MeshData #For typing.
 
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Settings.ExtruderManager import ExtruderManager
+from steslicer.Utils.GenerateBasementJob import GenerateBasementJob
 from steslicer.Utils.ProcessSlicedLayersJob import ProcessSlicedLayersJob
 from .StartSliceJob import StartSliceJob, StartJobResult
 
@@ -91,6 +92,7 @@ class DescreteSlicerBackend(QObject, Backend):
         # If there is an error check, stop the auto-slicing timer, and only wait for the error check to be finished
         # to start the auto-slicing timer again.
         #
+        self._generate_basement_job = None
         self._global_container_stack = None #type: Optional[ContainerStack]
 
         self._start_slice_job = None #type: Optional[StartSliceJob]
@@ -190,6 +192,11 @@ class DescreteSlicerBackend(QObject, Backend):
         if self._slicing:  # We were already slicing. Stop the old job.
             self._terminate()
             self._createSocket()
+
+        if self._generate_basement_job is not None:
+            Logger.log("d", "Aborting generate basement job...")
+            self._generate_basement_job.abort()
+            self._generate_basement_job = None
 
         if self._process_layers_job is not None:  # We were processing layers. Stop that, the layers are going to change soon.
             Logger.log("d", "Aborting process layers job...")
@@ -412,15 +419,43 @@ class DescreteSlicerBackend(QObject, Backend):
             self._invokeSlice()
             return
 
+        self._slice_message = job.getSliceMessage()
+
+        self._generate_basement_job = GenerateBasementJob()
+        self._generate_basement_job.processingProgress.connect(self._onGenerateBasementProcessingProgress)
+        self._generate_basement_job.finished.connect(self._onGenerateBasementJobFinished)
+        self._generate_basement_job.start()
+
+    def _onGenerateBasementProcessingProgress(self, amount):
+        self.processingProgress.emit(0.1 + amount / 10)
+        self.backendStateChange.emit(BackendState.Processing)
+
         # Preparation completed, send it to the backend.
-        self._socket.sendMessage(job.getSliceMessage())
+    def _onGenerateBasementJobFinished(self, job: GenerateBasementJob):
+        if not self._scene.gcode_dict:
+            self._scene.gcode_dict = {0: []}
+        if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
+            self._scene.gcode_dict[self._start_slice_job_build_plate] = []
+        self._scene.gcode_dict[self._start_slice_job_build_plate].extend(job.getGCodeList())
+
+        if self._start_slice_job_build_plate is not None:
+            if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
+                self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
+        self._stored_optimized_layer_data[self._start_slice_job_build_plate].extend(job.getLayersData())
+        self._classic_layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate])
+        self._layers_size = self._classic_layers_size
+        if self._generate_basement_job is job:
+            self._generate_basement_job = None
+
+        # Preparation completed, send it to the backend.
+        self._socket.sendMessage(self._slice_message)
+        self._slice_message = None
 
         # Notify the user that it's now up to the backend to do it's job
         self.backendStateChange.emit(BackendState.Processing)
 
         if self._slice_start_time:
-            Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time )
-
+            Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time)
     ##  Determine enable or disable auto slicing. Return True for enable timer and False otherwise.
     #   It disables when
     #   - preference auto slice is off
