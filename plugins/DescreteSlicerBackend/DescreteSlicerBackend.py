@@ -710,7 +710,13 @@ class DescreteSlicerBackend(QObject, Backend):
             self._scene.gcode_dict = {0: []}
         if not self._scene.gcode_dict[self._start_slice_job_build_plate]:
             self._scene.gcode_dict[self._start_slice_job_build_plate] = []
-        self._scene.gcode_dict[self._start_slice_job_build_plate].append(message.data.decode("utf-8", "replace")) #type: ignore #Because we generate this attribute dynamically.
+        msg = message.data.decode("utf-8", "replace")  # type: str
+        # TODO: Remove this since new basement will have start and end gcode
+        if msg.startswith(";Generated with DiscreteSlicer_SteamEngine"):
+            self._scene.gcode_dict[self._start_slice_job_build_plate].insert(0, msg)
+        else:
+            self._scene.gcode_dict[self._start_slice_job_build_plate].append(
+                msg)  # type: ignore #Because we generate this attribute dynamically.
 
     ##  Called when a g-code prefix message is received from the engine.
     #

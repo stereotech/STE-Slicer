@@ -58,6 +58,7 @@ class GenerateBasementJob(Job):
 
 
         self._global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
+        stack = self._global_stack.getTop()
         self._travel_speed = self._global_stack.getProperty(
             "speed_travel", "value")
         self._raft_base_thickness = self._global_stack.getProperty("raft_base_thickness", "value")
@@ -71,7 +72,9 @@ class GenerateBasementJob(Job):
         self._filament_diameter = extruder.getProperty(
             "material_diameter", "value")
 
-        self._cylindrical_raft_enabled = self._global_stack.getProperty("cylindrical_raft_enabled", "value")
+        self._cylindrical_raft_enabled = stack.getProperty("cylindrical_raft_enabled", "value")
+        if self._cylindrical_raft_enabled is None:
+            self._cylindrical_raft_enabled = self._global_stack.getProperty("cylindrical_raft_enabled", "value")
         self._cylindrical_mode_base_diameter = self._global_stack.getProperty("cylindrical_raft_diameter", "value")
         self._non_printing_base_diameter = self._global_stack.getProperty("non_printing_base_diameter", "value")
         self._cylindrical_raft_base_height = self._global_stack.getProperty("cylindrical_raft_base_height", "value")
