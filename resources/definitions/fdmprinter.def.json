@@ -4997,7 +4997,7 @@
                     "type": "float",
                     "default_value": 15,
                     "value": "resolveOrValue('cylindrical_mode_base_diameter') if resolveOrValue('printing_mode') == 'cylindrical_full' else resolveOrValue('spherical_mode_base_radius') * 2 if resolveOrValue('printing_mode') == 'spherical_full' else 15",
-                    "minimum_value": "10",
+                    "minimum_value": "6",
                     "minimum_value_warning": "11",
                     "maximum_value_warning": "50",
                     "enabled": "cylindrical_raft_enabled",
