@@ -77,3 +77,5 @@ openscad.*
 *.3mf
 *.stl
 glicer_console_spherical.exe
+*.exe
+*.new
