@@ -133,8 +133,7 @@ class SimulationPass(RenderPass):
                                 # The head position is calculated and translated
                                 head_position = Vector(polygon.data[index+offset][0], polygon.data[index+offset][1], polygon.data[index+offset][2]) + node.getWorldPosition()
                                 if len(polygon.data[index+offset]) > 3:
-                                    head_rotation = Quaternion(
-                                        polygon.data[index+offset][3], polygon.data[index+offset][4], polygon.data[index+offset][5])
+                                    head_rotation = Quaternion.rotationTo(Vector(0,1,0), Vector(polygon.data[index+offset][3], polygon.data[index+offset][4], polygon.data[index+offset][5]))
                                 else:
                                     head_rotation = Quaternion(y=-1)
                                 break
@@ -185,9 +184,13 @@ class SimulationPass(RenderPass):
         if not self._switching_layers and not self._compatibility_mode and self._layer_view.getActivity() and nozzle_node is not None:
             if head_position is not None:
                 nozzle_node.setVisible(True)
+
                 if head_rotation is not None:
-                    nozzle_node.setOrientation(head_rotation, 3)
+                    nozzle_node.setOrientation(head_rotation, SceneNode.TransformSpace.Local)
+
+
                 nozzle_node.setPosition(head_position)
+
                 
                 nozzle_batch = RenderBatch(self._nozzle_shader, type = RenderBatch.RenderType.Transparent)
                 nozzle_batch.addItem(nozzle_node.getWorldTransformation(), mesh = nozzle_node.getMeshData())

@@ -1,19 +1,12 @@
 {
     "version": 2,
-    "name": "Stereotech 520",
+    "name": "Stereotech 520 Hybrid",
     "inherits": "steprinter",
     "metadata": {
         "author": "Stereotech",
         "manufacturer": "Stereotech",
         "visible": true,
         "file_formats": "text/x-gcode",
-        "platform": "stereotech_ste520_platform.obj",
-        "platform_texture": "StereotechSte320backplate.png",
-        "platform_offset": [
-            0,
-            -97.8,
-            18
-        ],
         "has_materials": true,
         "machine_extruder_trains": {
             "0": "stereotech_ste320_1st",
@@ -28,25 +21,34 @@
     },
     "overrides": {
         "machine_name": {
-            "default_value": "Stereotech 520"
+            "default_value": "Stereotech 520 Hybrid"
         },
         "machine_width": {
-            "default_value": 210
+            "default_value": 200,
+            "value": "200 if resolveOrValue('printing_mode') in ['classic'] else 230"
         },
         "machine_height": {
-            "default_value": 150
+            "default_value": 200,
+            "value": "200 if resolveOrValue('printing_mode') in ['classic'] else 150"
         },
         "machine_depth": {
-            "default_value": 210
+            "default_value": 200,
+            "value": "200 if resolveOrValue('printing_mode') in ['classic'] else 230"
         },
-        "machine_center_is_zero": {
+        "machine_hybrid": {
             "default_value": true
         },
+        "machine_center_is_zero": {
+            "default_value": true,
+            "value": "resolveOrValue('printing_mode') not in ['classic']"
+        },
         "machine_heated_bed": {
-            "default_value": false
+            "default_value": false,
+            "value": "resolveOrValue('printing_mode') in ['classic']"
         },
         "machine_shape": {
-            "default_value": "elliptic"
+            "default_value": "elliptic",
+            "value": "'rectangular' if resolveOrValue('printing_mode') in ['classic'] else 'elliptic'"
         },
         "machine_five_axis": {
             "default_value": true

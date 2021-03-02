@@ -79,3 +79,5 @@ openscad.*
 glicer_console_spherical.exe
 *.exe
 *.new
+*.bak2
+

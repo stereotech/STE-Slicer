@@ -753,7 +753,8 @@
                         "cylindrical": "5D Spiral",
                         "cylindrical_full": "5D Spiral Full",
                         "spherical": "5D Spherical",
-                        "spherical_full": "5D Spherical Full"
+                        "spherical_full": "5D Spherical Full",
+                        "discrete": "5D Discrete"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
@@ -795,6 +796,16 @@
                     "minimum_value": "4",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "descrete_mode_mesh_rotation_matrix": {
+                    "label": "Mesh Rotation Matrix",
+                    "description": "Transformation matrix to be applied to the model when loading it from file.",
+                    "type": "str",
+                    "default_value": "[[1,0,0], [0,1,0], [0,0,1]]",
+                    "enabled": false,
+                    "settable_per_mesh": true,
+                    "settable_per_meshgroup": true,
                     "settable_per_extruder": false
                 }
             }
@@ -2708,7 +2719,7 @@
                             "minimum_value": "0.1",
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                             "maximum_value_warning": "150",
-                            "default_value": 60,
+                            "default_value": 30,
                             "value": "speed_print",
                             "enabled": "support_enable",
                             "settable_per_mesh": false,
@@ -2720,7 +2731,7 @@
                                     "description": "The speed at which the infill of support is printed. Printing the infill at lower speeds improves stability.",
                                     "unit": "mm/s",
                                     "type": "float",
-                                    "default_value": 60,
+                                    "default_value": 30,
                                     "minimum_value": "0.1",
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
@@ -2735,7 +2746,7 @@
                                             "description": "The speed at which the classic infill of support is printed. Printing the infill at lower speeds improves stability.",
                                             "unit": "mm/s",
                                             "type": "float",
-                                            "default_value": 60,
+                                            "default_value": 30,
                                             "minimum_value": "0.1",
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
@@ -2750,7 +2761,7 @@
                                             "description": "The speed at which the cylindrical infill of support is printed. Printing the infill at lower speeds improves stability.",
                                             "unit": "mm/s",
                                             "type": "float",
-                                            "default_value": 60,
+                                            "default_value": 30,
                                             "minimum_value": "0.1",
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
@@ -2832,11 +2843,11 @@
                     "description": "The speed at which travel moves are made.",
                     "unit": "mm/s",
                     "type": "float",
-                    "default_value": 120,
+                    "default_value": 60,
                     "minimum_value": "0.1",
                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                     "maximum_value_warning": "300",
-                    "value": "speed_print if magic_spiralize else 120",
+                    "value": "speed_print if magic_spiralize else 60",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true,
                     "children": {
@@ -2858,11 +2869,11 @@
                             "description": "The speed at which cylindrical travel moves are made.",
                             "unit": "mm/s",
                             "type": "float",
-                            "default_value": 120,
+                            "default_value": 60,
                             "minimum_value": "0.1",
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                             "maximum_value_warning": "300",
-                            "value": "speed_print if magic_spiralize else 120",
+                            "value": "speed_print if magic_spiralize else 60",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         }
@@ -4969,8 +4980,32 @@
                     "settable_per_extruder": true,
                     "limit_to_extruder": "adhesion_extruder_nr"
                 },
+                "cylindrical_raft_enabled": {
+                    "label": "Print cylindrical raft",
+                    "description": "Print cylindrical raft on basement",
+                    "type": "bool",
+                    "value": "machine_five_axis and not (resolveOrValue('printing_mode') == 'classic' and machine_hybrid) and resolveOrValue('printing_mode') in ['classic', 'discrete', 'cylindrical_full', 'spherical_full']",
+                    "default_value": true,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "enabled": true
+                },
+                "cylindrical_raft_diameter": {
+                    "label": "Cylindrical Raft diameter",
+                    "description": "Base diameter of Cylindrical Raft",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 15,
+                    "value": "resolveOrValue('cylindrical_mode_base_diameter') if resolveOrValue('printing_mode') == 'cylindrical_full' else resolveOrValue('spherical_mode_base_radius') * 2 if resolveOrValue('printing_mode') == 'spherical_full' else 15",
+                    "minimum_value": "6",
+                    "minimum_value_warning": "11",
+                    "maximum_value_warning": "50",
+                    "enabled": "cylindrical_raft_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "cylindrical_raft_base_height": {
-                    "label": "",
+                    "label": "Cylindrical Raft height",
                     "description": "Base height of Cylindrical Raft",
                     "unit": "mm",
                     "type": "float",
@@ -4978,7 +5013,7 @@
                     "minimum_value": "10",
                     "minimum_value_warning": "11",
                     "maximum_value_warning": "50",
-                    "enabled": "resolveOrValue('machine_five_axis')",
+                    "enabled": "cylindrical_raft_enabled",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },

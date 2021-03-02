@@ -23,13 +23,13 @@ class SettingVisibilityPresetsModel(QObject):
         self._items = []  # type: List[SettingVisibilityPreset]
         self._populate()
 
-        basic_item = self.getVisibilityPresetById("basic")
+        basic_item = self.getVisibilityPresetById("spiral")
         basic_visibile_settings = ";".join(basic_item.settings)
 
         self._preferences = preferences
 
         # Preference to store which preset is currently selected
-        self._preferences.addPreference("steslicer/active_setting_visibility_preset", "basic")
+        self._preferences.addPreference("steslicer/active_setting_visibility_preset", "spiral")
 
         # Preference that stores the "custom" set so it can always be restored (even after a restart)
         self._preferences.addPreference("steslicer/custom_visible_settings", basic_visibile_settings)

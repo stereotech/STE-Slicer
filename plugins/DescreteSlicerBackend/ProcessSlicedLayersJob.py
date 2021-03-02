@@ -1,28 +1,30 @@
+#Copyright (c) 2017 Ultimaker B.V.
+#Cura is released under the terms of the LGPLv3 or higher.
+
 import gc
-import subprocess
 import sys
-from time import time
 
-import Arcus
-import numpy
-from UM.Application import Application
 from UM.Job import Job
-from UM.Logger import Logger
-from UM.Math.Vector import Vector
+from UM.Application import Application
 from UM.Mesh.MeshData import MeshData
-from UM.Message import Message
-from UM.Signal import Signal
 from UM.View.GL.OpenGLContext import OpenGLContext
-from UM.i18n import i18nCatalog
 
-from steslicer import LayerDataBuilder, LayerPolygon, LayerDataDecorator
-from steslicer.Layer import Layer
+from UM.Message import Message
+from UM.i18n import i18nCatalog
+from UM.Logger import Logger
+
+from UM.Math.Vector import Vector
+
 from steslicer.Scene.BuildPlateDecorator import BuildPlateDecorator
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.Settings.ExtruderManager import ExtruderManager
-from steslicer.Settings.ExtrudersModel import ExtrudersModel
-from steslicer.Utils.CliParser import CliParser
+from steslicer import LayerDataBuilder
+from steslicer import LayerDataDecorator
+from steslicer import LayerPolygon
 
+import numpy
+from time import time
+from steslicer.Settings.ExtrudersModel import ExtrudersModel
 catalog = i18nCatalog("steslicer")
 
 
@@ -80,7 +82,7 @@ class ProcessSlicedLayersJob(Job):
         Application.getInstance().getController().activeViewChanged.connect(self._onActiveViewChanged)
 
         # The no_setting_override is here because adding the SettingOverrideDecorator will trigger a reslice
-        new_node = SteSlicerSceneNode(no_setting_override=True)
+        new_node = SteSlicerSceneNode(no_setting_override = True)
         new_node.addDecorator(BuildPlateDecorator(self._build_plate_number))
 
         # Force garbage collection.
@@ -103,106 +105,75 @@ class ProcessSlicedLayersJob(Job):
         min_layer_number = sys.maxsize
         negative_layers = 0
         for layer in self._layers:
-            if isinstance(layer, Arcus.PythonMessage):
-                if layer.repeatedMessageCount("path_segment") > 0:
-                    if layer.id < min_layer_number:
-                        min_layer_number = layer.id
-                    if layer.id < 0:
-                        negative_layers += 1
-            else:
+            if layer.repeatedMessageCount("path_segment") > 0:
                 if layer.id < min_layer_number:
                     min_layer_number = layer.id
                 if layer.id < 0:
                     negative_layers += 1
 
         current_layer = 0
-        additional_first_layers = 0
+
         for layer in self._layers:
-            if isinstance(layer, Layer):
-                layer_data.addLayer(current_layer, layer)
-                additional_first_layers += 1
-            else:
+            # If the layer is below the minimum, it means that there is no data, so that we don't create a layer
+            # data. However, if there are empty layers in between, we compute them.
+            if layer.id < min_layer_number:
+                continue
 
-                # If the layer is below the minimum, it means that there is no data, so that we don't create a layer
-                # data. However, if there are empty layers in between, we compute them.
-                if layer.id < min_layer_number:
-                    continue
+            # Layers are offset by the minimum layer number. In case the raft (negative layers) is being used,
+            # then the absolute layer number is adjusted by removing the empty layers that can be in between raft
+            # and the model
+            abs_layer_number = layer.id - min_layer_number
+            if layer.id >= 0 and negative_layers != 0:
+                abs_layer_number += (min_layer_number + negative_layers)
 
-                # Layers are offset by the minimum layer number. In case the raft (negative layers) is being used,
-                # then the absolute layer number is adjusted by removing the empty layers that can be in between raft
-                # and the model
-                abs_layer_number = layer.id - min_layer_number
-                abs_layer_number += additional_first_layers
-                if layer.id >= 0 and negative_layers != 0:
-                    abs_layer_number += (min_layer_number + negative_layers)
+            layer_data.addLayer(abs_layer_number)
+            this_layer = layer_data.getLayer(abs_layer_number)
+            layer_data.setLayerHeight(abs_layer_number, layer.height)
+            layer_data.setLayerThickness(abs_layer_number, layer.thickness)
 
-                layer_data.addLayer(abs_layer_number)
-                this_layer = layer_data.getLayer(abs_layer_number)
-                layer_data.setLayerHeight(abs_layer_number, layer.height)
-                layer_data.setLayerThickness(abs_layer_number, layer.thickness)
+            for p in range(layer.repeatedMessageCount("path_segment")):
+                polygon = layer.getRepeatedMessage("path_segment", p)
 
-                for p in range(layer.repeatedMessageCount("path_segment")):
-                    polygon = layer.getRepeatedMessage("path_segment", p)
+                extruder = polygon.extruder
 
-                    extruder = polygon.extruder
+                line_types = numpy.fromstring(polygon.line_type, dtype="u1")  # Convert bytearray to numpy array
+                line_types = line_types.reshape((-1,1))
 
-                    line_types = numpy.fromstring(polygon.line_type, dtype="u1")  # Convert bytearray to numpy array
-                    line_types = line_types.reshape((-1, 1))
+                points = numpy.fromstring(polygon.points, dtype="f4")  # Convert bytearray to numpy array
+                if polygon.point_type == 0: # Point2D
+                    points = points.reshape((-1,2))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
+                else:  # Point3D
+                    points = points.reshape((-1,3))
 
-                    points = numpy.fromstring(polygon.points, dtype="f4")  # Convert bytearray to numpy array
-                    if polygon.point_type == 0:  # Point2D
-                        points = points.reshape((-1,
-                                                 2))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
-                    elif polygon.point_type == 1:  # Point3D
-                        points = points.reshape((-1, 3))
-                    else: # Point6D
-                        points = points.reshape((-1, 6))
+                line_widths = numpy.fromstring(polygon.line_width, dtype="f4")  # Convert bytearray to numpy array
+                line_widths = line_widths.reshape((-1,1))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
 
-                    line_widths = numpy.fromstring(polygon.line_width, dtype="f4")  # Convert bytearray to numpy array
-                    line_widths = line_widths.reshape((-1,
-                                                       1))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
+                line_thicknesses = numpy.fromstring(polygon.line_thickness, dtype="f4")  # Convert bytearray to numpy array
+                line_thicknesses = line_thicknesses.reshape((-1,1))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
 
-                    line_thicknesses = numpy.fromstring(polygon.line_thickness,
-                                                        dtype="f4")  # Convert bytearray to numpy array
-                    line_thicknesses = line_thicknesses.reshape((-1,
-                                                                 1))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
+                line_feedrates = numpy.fromstring(polygon.line_feedrate, dtype="f4")  # Convert bytearray to numpy array
+                line_feedrates = line_feedrates.reshape((-1,1))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
 
-                    line_feedrates = numpy.fromstring(polygon.line_feedrate, dtype="f4")  # Convert bytearray to numpy array
-                    line_feedrates = line_feedrates.reshape((-1,
-                                                             1))  # We get a linear list of pairs that make up the points, so make numpy interpret them correctly.
+                # Create a new 3D-array, copy the 2D points over and insert the right height.
+                # This uses manual array creation + copy rather than numpy.insert since this is
+                # faster.
+                new_points = numpy.empty((len(points), 3), numpy.float32)
+                if polygon.point_type == 0:  # Point2D
+                    new_points[:, 0] = points[:, 0]
+                    new_points[:, 1] = layer.height / 1000  # layer height value is in backend representation
+                    new_points[:, 2] = -points[:, 1]
+                else: # Point3D
+                    new_points[:, 0] = points[:, 0]
+                    new_points[:, 1] = points[:, 2]
+                    new_points[:, 2] = -points[:, 1]
 
-                    # Create a new 3D-array, copy the 2D points over and insert the right height.
-                    # This uses manual array creation + copy rather than numpy.insert since this is
-                    # faster.
-                    if polygon.point_type in [0, 1]:
-                        new_points = numpy.empty((len(points), 3), numpy.float32)
-                    else:
-                        new_points = numpy.empty((len(points), 6), numpy.float32)
-                    if polygon.point_type == 0:  # Point2D
-                        new_points[:, 0] = points[:, 0]
-                        new_points[:, 1] = layer.height / 1000  # layer height value is in backend representation
-                        new_points[:, 2] = -points[:, 1]
-                    elif polygon.point_type == 1:  # Point3D
-                        new_points[:, 0] = points[:, 0]
-                        new_points[:, 1] = points[:, 2]
-                        new_points[:, 2] = -points[:, 1]
-                    else:
-                        new_points[:, 0] = points[:, 0]
-                        new_points[:, 1] = points[:, 2]
-                        new_points[:, 2] = -points[:, 1]
-                        new_points[:, 3] = points[:, 3]
-                        new_points[:, 4] = points[:, 5]
-                        new_points[:, 5] = -points[:, 4]
+                this_poly = LayerPolygon.LayerPolygon(extruder, line_types, new_points, line_widths, line_thicknesses, line_feedrates)
+                this_poly.buildCache()
 
-                    this_poly = LayerPolygon.LayerPolygon(extruder, line_types, new_points, line_widths, line_thicknesses,
-                                                          line_feedrates)
-                    this_poly.buildCache()
+                this_layer.polygons.append(this_poly)
 
-                    this_layer.polygons.append(this_poly)
-
-                    Job.yieldThread()
+                Job.yieldThread()
             Job.yieldThread()
-            contains_arcus_layers = False
             current_layer += 1
             progress = (current_layer / layer_count) * 99
             # TODO: Rebuild the layer data mesh once the layer has been processed.
@@ -240,8 +211,7 @@ class ProcessSlicedLayersJob(Job):
             material_color_map[0, :] = color
 
         # We have to scale the colors for compatibility mode
-        if OpenGLContext.isLegacyOpenGL() or bool(
-                Application.getInstance().getPreferences().getValue("view/force_layer_view_compatibility_mode")):
+        if OpenGLContext.isLegacyOpenGL() or bool(Application.getInstance().getPreferences().getValue("view/force_layer_view_compatibility_mode")):
             line_type_brightness = 0.5  # for compatibility mode
         else:
             line_type_brightness = 1.0
@@ -265,8 +235,7 @@ class ProcessSlicedLayersJob(Job):
 
         settings = Application.getInstance().getGlobalContainerStack()
         if not settings.getProperty("machine_center_is_zero", "value"):
-            new_node.setPosition(Vector(-settings.getProperty("machine_width", "value") / 2, 0.0,
-                                        settings.getProperty("machine_depth", "value") / 2))
+            new_node.setPosition(Vector(-settings.getProperty("machine_width", "value") / 2, 0.0, settings.getProperty("machine_depth", "value") / 2))
 
         if self._progress_message:
             self._progress_message.setProgress(100)
@@ -283,12 +252,10 @@ class ProcessSlicedLayersJob(Job):
         if self.isRunning():
             if Application.getInstance().getController().getActiveView().getPluginId() == "SimulationView":
                 if not self._progress_message:
-                    self._progress_message = Message(catalog.i18nc("@info:status", "Processing Layers"), 0, False, 0,
-                                                     catalog.i18nc("@info:title", "Information"))
+                    self._progress_message = Message(catalog.i18nc("@info:status", "Processing Layers"), 0, False, 0, catalog.i18nc("@info:title", "Information"))
                 if self._progress_message.getProgress() != 100:
                     self._progress_message.show()
             else:
                 if self._progress_message:
                     self._progress_message.hide()
-
 

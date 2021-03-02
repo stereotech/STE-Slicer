@@ -1,3 +1,4 @@
+import math
 from copy import deepcopy, copy
 
 import numpy
@@ -5,7 +6,12 @@ from string import Formatter
 from enum import IntEnum
 import time
 import trimesh
+from UM.Math.Matrix import Matrix
+from UM.Math.Quaternion import Quaternion
+from UM.Math.Vector import Vector
+from UM.Mesh.MeshBuilder import MeshBuilder
 from trimesh.primitives import Box
+import trimesh.intersections
 from typing import Any, cast, Dict, List, Optional, Set
 import re
 import Arcus  # For typing.
@@ -23,12 +29,14 @@ from UM.Scene.Scene import Scene  # For typing.
 from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
 
+from steslicer.Scene.SplittingPlaneDecorator import SplittingPlaneDecorator
 from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.OneAtATimeIterator import OneAtATimeIterator
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.GcodeStartEndFormatter import GcodeStartEndFormatter
+from steslicer.Utils.SplitPlane import SplitByPlane
 
 NON_PRINTING_MESH_SETTINGS = [
     "anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
@@ -43,6 +51,7 @@ class StartJobResult(IntEnum):
     BuildPlateError = 6
     ObjectSettingError = 7  # When an error occurs in per-object settings.
     ObjectsWithDisabledExtruder = 8
+
 
 # Job class that builds up the message of scene data to send to CuraEngine.
 
@@ -59,6 +68,7 @@ class StartSliceJob(Job):
 
         # type: Optional[Dict[str, Any]] # cache for all setting values from all stacks (global & extruder) for the current machine
         self._all_extruders_settings = None
+        self._direction_matrices = {}  # type: Dict[int, str]
 
     def getSliceMessage(self) -> Arcus.PythonMessage:
         return self._slice_message
@@ -130,14 +140,15 @@ class StartSliceJob(Job):
             # Remove old layer data.
             # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
             for node in DepthFirstIterator(self._scene.getRoot()):
-                if node.callDecoration("getLayerData") and node.callDecoration("getBuildPlateNumber") == self._build_plate_number:
+                if node.callDecoration("getLayerData") and node.callDecoration(
+                        "getBuildPlateNumber") == self._build_plate_number:
                     node.getParent().removeChild(node)
                     break
 
             # Get the objects in their groups to print.
             object_groups = []
             printing_mode = stack.getProperty("printing_mode", "value")
-            if printing_mode == "classic":
+            if printing_mode == "discrete":
                 if stack.getProperty("print_sequence", "value") == "one_at_a_time":
                     # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
                     for node in OneAtATimeIterator(self._scene.getRoot()):
@@ -170,7 +181,8 @@ class StartSliceJob(Job):
                     has_printing_mesh = False
                     # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
                     for node in DepthFirstIterator(self._scene.getRoot()):
-                        if node.callDecoration("isSliceable") and node.getMeshData() and node.getMeshData().getVertices() is not None:
+                        if node.callDecoration(
+                                "isSliceable") and node.getMeshData() and node.getMeshData().getVertices() is not None:
                             per_object_stack = node.callDecoration("getStack")
                             is_non_printing_mesh = False
                             if per_object_stack:
@@ -196,131 +208,9 @@ class StartSliceJob(Job):
 
                     if temp_list:
                         object_groups.append(temp_list)
-            elif printing_mode in ["cylindrical_full", "spherical_full"]:
-                temp_list = []
-                has_printing_mesh = False
-
-                for node in DepthFirstIterator(
-                        self._scene.getRoot()):  # type: ignore #Ignore type error because iter() should get called automatically by Python syntax.
-                    if node.callDecoration(
-                            "isSliceable") and node.getMeshData() and node.getMeshData().getVertices() is not None:
-                        per_object_stack = node.callDecoration("getStack")
-                        is_non_printing_mesh = False
-                        if per_object_stack:
-                            is_non_printing_mesh = any(
-                                per_object_stack.getProperty(key, "value") for key in NON_PRINTING_MESH_SETTINGS)
-
-                        # Find a reason not to add the node
-                        if node.callDecoration("getBuildPlateNumber") != self._build_plate_number:
-                            continue
-                        if getattr(node, "_outside_buildarea", False) and not is_non_printing_mesh:
-                            continue
-
-                        temp_list.append(node)
-                        if not is_non_printing_mesh:
-                            has_printing_mesh = True
-
-                    Job.yieldThread()
-
-                # If the list doesn't have any model with suitable settings then clean the list
-                # otherwise CuraEngine will crash
-                if not has_printing_mesh:
-                    temp_list.clear()
-
             else:
                 self.setResult(StartJobResult.ObjectSettingError)
                 return
-
-        if temp_list and printing_mode in ["cylindrical_full", "spherical_full"]:
-            cut_list = []
-            for node in temp_list:
-                if printing_mode == "cylindrical_full":
-                    radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
-                        "cylindrical_mode_base_diameter", "value") / 2
-                    height = node.getBoundingBox().height * 2
-                    cutting_mesh = trimesh.primitives.Cylinder(
-                        radius=radius, height=height, sections=64)
-                    cutting_mesh.apply_transform(
-                        trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
-                elif printing_mode == "spherical_full":
-                    radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
-                        "spherical_mode_base_radius", "value")
-                    cutting_mesh = trimesh.primitives.Sphere(
-                        radius=radius, subdivisions=3
-                    )
-                else:
-                    cutting_mesh = None
-
-                mesh_data = node.getMeshData()
-                if mesh_data.hasIndices():
-                    faces = mesh_data.getIndices()
-                else:
-                    num_verts = mesh_data.getVertexCount()
-                    faces = numpy.empty(
-                        (int(num_verts / 3 + 1), 3), numpy.int32)
-                    for i in range(0, num_verts - 2, 3):
-                        faces[int(i / 3):] = [i, i + 1, i + 2]
-                verts = mesh_data.getVertices()
-                rot_scale = node.getWorldTransformation().getTransposed().getData()[
-                    0:3, 0:3]
-                translate = node.getWorldTransformation().getData()[:3, 3]
-                verts = verts.dot(rot_scale)
-                verts += translate
-                mesh = trimesh.Trimesh(vertices=verts, faces=faces)
-                try:
-                    mesh.fill_holes()
-                    mesh.fix_normals()
-                    cutting_result = mesh.intersection(
-                        cutting_mesh, engine="scad")
-                    if cutting_result:
-                        cutting_result.fill_holes()
-                        cutting_result.fix_normals()
-
-                        data = MeshData.MeshData(vertices=cutting_result.vertices.astype('float32'),
-                                                 normals=cutting_result.face_normals.astype(
-                                                     'float32'),
-                                                 indices=cutting_result.faces.astype('int64'))
-                        cutting_node = SteSlicerSceneNode(
-                            node.getParent(), no_setting_override=True)
-                        cutting_node.addDecorator(
-                            node.getDecorator(SettingOverrideDecorator))
-                except Exception as e:
-                    Logger.log("e", "Failed to intersect model! %s", e)
-                    cutting_result = cutting_mesh
-                    if cutting_result:
-                        cutting_result.fill_holes()
-                        cutting_result.fix_normals()
-
-                        data = MeshData.MeshData(vertices=cutting_result.vertices.astype('float32'),
-                                                 normals=cutting_result.face_normals.astype(
-                                                     'float32'),
-                                                 indices=cutting_result.faces.astype('int64'))
-                        cutting_node = SteSlicerSceneNode(
-                            node.getParent(), no_setting_override=True)
-                        stack = cutting_node.callDecoration(
-                            "getStack")  # Don't try to get the active extruder since it may be None anyway.
-                        if not stack:
-                            cutting_node.addDecorator(
-                                SettingOverrideDecorator())
-                            stack = cutting_node.callDecoration("getStack")
-                        settings = stack.getTop()
-                        if not (settings.getInstance("support_mesh") and settings.getProperty("support_mesh", "value")):
-                            definition = stack.getSettingDefinition(
-                                "support_mesh")
-                            new_instance = SettingInstance(
-                                definition, settings)
-                            new_instance.setProperty(
-                                "value", True, emit_signals=False)
-                            # Ensure that the state is not seen as a user state.
-                            new_instance.resetState()
-                            settings.addInstance(new_instance)
-                if cutting_node is not None:
-                    cutting_node.setName("cut_" + node.getName())
-                    cutting_node.setMeshData(data)
-
-                    cut_list.append(cutting_node)
-
-            object_groups.append(cut_list)
 
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if not global_stack:
@@ -360,6 +250,29 @@ class StartSliceJob(Job):
             self.setResult(StartJobResult.NothingToSlice)
             return
 
+        cancelled = self._is_cancelled
+        self._is_cancelled = False
+
+        processed_object_groups = []
+        for object_group in filtered_object_groups:
+            printable_meshes = []
+            splitting_planes = []
+            for object in object_group:
+                per_object_stack = object.callDecoration("getStack")
+                settings = per_object_stack.getTop()
+                anti_overhang_mesh = settings.getProperty(
+                    "anti_overhang_mesh", "value")
+                splitting_plane = object.callDecoration("isSplittingPlane")
+                if anti_overhang_mesh and splitting_plane:
+                    splitting_planes.append(object)
+                elif not anti_overhang_mesh:
+                    printable_meshes.append(object)
+
+            for mesh in printable_meshes:
+                processed_nodes = self.generateSplitTree(mesh, splitting_planes)
+                for child in reversed(processed_nodes):
+                    processed_object_groups.append([child])
+
         self._buildGlobalSettingsMessage(stack)
         self._buildGlobalInheritsStackMessage(stack)
 
@@ -371,7 +284,7 @@ class StartSliceJob(Job):
         for _, extruder_stack in extruder_stack_list:
             self._buildExtruderMessage(extruder_stack)
 
-        for group in filtered_object_groups:
+        for group in processed_object_groups:
             group_message = self._slice_message.addRepeatedMessage(
                 "object_lists")
             if group[0].getParent() is not None and group[0].getParent().callDecoration("isGroup"):
@@ -380,14 +293,13 @@ class StartSliceJob(Job):
             for object in group:
                 mesh_data = object.getMeshData()
                 rot_scale = object.getWorldTransformation().getTransposed().getData()[
-                    0:3, 0:3]
+                            0:3, 0:3]
                 translate = object.getWorldTransformation().getData()[:3, 3]
 
                 # This effectively performs a limited form of MeshData.getTransformed that ignores normals.
                 verts = mesh_data.getVertices()
                 verts = verts.dot(rot_scale)
-                if printing_mode == "classic":
-                    verts += translate
+                verts += translate
 
                 # Convert from Y up axes to Z up axes. Equals a 90 degree rotation.
                 verts[:, [1, 2]] = verts[:, [2, 1]]
@@ -409,6 +321,71 @@ class StartSliceJob(Job):
                 Job.yieldThread()
 
         self.setResult(StartJobResult.Finished)
+
+    def generateSplitTree(self, node: SceneNode, planes: List[SceneNode]):
+        result = []
+        new_node = copy(node)
+        new_nodes = [new_node]
+        for plane_idx, plane in reversed(list(enumerate(planes))):
+            new_nodes = self.splitNode(new_node, plane)
+            new_node = new_nodes[0]
+            if len(new_nodes) > 1:
+                result.append(new_nodes[-1])
+        result.append(new_node)
+        return result
+
+    def splitNode(self, node: SceneNode, plane: SceneNode) -> List[SceneNode]:
+        mesh_data = node.getMeshData()
+        if mesh_data.hasIndices():
+            faces = mesh_data.getIndices()
+        else:
+            num_verts = mesh_data.getVertexCount()
+            faces = numpy.empty((int(num_verts / 3 + 1), 3), numpy.int32)
+            for i in range(0, num_verts - 2, 3):
+                faces[int(i / 3):] = [i, i + 1, i + 2]
+        trmesh = trimesh.Trimesh(vertices=node.getMeshDataTransformed().getVertices(), faces=faces)
+        trmesh.fill_holes()
+        trmesh.fix_normals()
+        trmesh.remove_duplicate_faces()
+        plane_mesh_data = plane.getMeshDataTransformed()
+        plane_normal = plane_mesh_data.getNormals()[0]
+        plane_origin = plane_mesh_data.getVertices()[0]
+        cut_mesh, start_mesh = SplitByPlane(
+            trmesh, plane_normal, plane_origin, True)
+        start_mesh.fill_holes()
+        start_mesh.remove_duplicate_faces()
+        start_mesh.fix_normals()
+        start_node = SteSlicerSceneNode(node.getParent(), no_setting_override=True)
+        if node.hasChildren():
+            for child in node.getAllChildren():
+                if not child.getDecorator(SplittingPlaneDecorator):
+                    start_node.addChild(child)
+        start_node.setMeshData(MeshData.MeshData(vertices=start_mesh.vertices.astype('float32'),
+                                                 normals=start_mesh.face_normals.astype(
+                                                     'float32'),
+                                                 indices=start_mesh.faces.astype('int64')))
+        start_node.addDecorator(node.getDecorator(SettingOverrideDecorator))
+        if cut_mesh:
+            cut_mesh.fill_holes()
+            cut_mesh.fix_normals()
+            cut_mesh.remove_duplicate_faces()
+            q = Quaternion.rotationTo(Vector(0,0,1), Vector(-plane_normal[0], plane_normal[2], plane_normal[1]))
+            plane_matrix = q.toMatrix()
+            cut_node = SteSlicerSceneNode(
+                node.getParent(), no_setting_override=True)
+            cut_node.setMeshData(MeshData.MeshData(vertices=cut_mesh.vertices.astype('float32'),
+                                                   normals=cut_mesh.face_normals.astype(
+                                                       'float32'),
+                                                   indices=cut_mesh.faces.astype('int64')))
+            cut_node.addDecorator(
+                node.getDecorator(SettingOverrideDecorator))
+            self._direction_matrices[id(cut_node)] = (numpy.array2string(
+                plane_matrix.getData()[0:3, 0:3], separator=", ", precision=3, suppress_small=True)).replace('\n',
+                                                                                                             ' ').replace(
+                '\r', '')
+
+            return [start_node, cut_node]
+        return [start_node]
 
     def cancel(self) -> None:
         super().cancel()
@@ -444,7 +421,7 @@ class StartSliceJob(Job):
         printing_mode = result["printing_mode"]
         if printing_mode in ["cylindrical", "cylindrical_full"]:
             result["cylindrical_rotate"] = "G0 A%.2f" % (
-                90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
+                    90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
             result["coordinate_system"] = "G56"
         elif printing_mode in ["spherical", "spherical_full"]:
             result["cylindrical_rotate"] = "G0 A0"
@@ -453,6 +430,9 @@ class StartSliceJob(Job):
             result["cylindrical_rotate"] = "G4 P100"
             result["coordinate_system"] = "G54"
         elif printing_mode in ["classic"]:
+            result["cylindrical_rotate"] = "G0 A0"
+            result["coordinate_system"] = "G55"
+        elif printing_mode in ["discrete"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
 
@@ -541,8 +521,10 @@ class StartSliceJob(Job):
         pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(bed_temperature_settings)
         settings["material_bed_temp_prepend"] = re.search(
             pattern, start_gcode) == None
-        print_temperature_settings = ["material_print_temperature", "material_print_temperature_layer_0", "default_material_print_temperature",
-                                      "material_initial_print_temperature", "material_final_print_temperature", "material_standby_temperature"]
+        print_temperature_settings = ["material_print_temperature", "material_print_temperature_layer_0",
+                                      "default_material_print_temperature",
+                                      "material_initial_print_temperature", "material_final_print_temperature",
+                                      "material_standby_temperature"]
         # match {setting} as well as {setting, extruder_nr}
         pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(print_temperature_settings)
         settings["material_print_temp_prepend"] = re.search(
@@ -561,7 +543,7 @@ class StartSliceJob(Job):
             settings["machine_end_gcode"], initial_extruder_nr)
 
         printing_mode = settings["printing_mode"]
-        if printing_mode in ["classic", "cylindrical_full"]:
+        if printing_mode in ["discrete"]:
             settings["infill_extruder_nr"] = settings["classic_infill_extruder_nr"]
             settings["speed_infill"] = settings["speed_infill_classic"]
             settings["speed_wall_0"] = settings["speed_wall_0_classic"]
@@ -609,6 +591,11 @@ class StartSliceJob(Job):
     #   \param message object_lists message to put the per object settings in
     def _handlePerObjectSettings(self, node: SteSlicerSceneNode, message: Arcus.PythonMessage):
         stack = node.callDecoration("getStack")
+
+        if id(node) in self._direction_matrices.keys():
+            setting = message.addRepeatedMessage("settings")
+            setting.name = "descrete_mode_mesh_rotation_matrix"
+            setting.value = self._direction_matrices.get(id(node)).encode("utf-8")
 
         # Check if the node has a stack attached to it and the stack has any settings in the top container.
         if not stack:

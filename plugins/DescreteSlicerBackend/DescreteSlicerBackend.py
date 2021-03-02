@@ -1,5 +1,3 @@
-
-
 import argparse #To run the engine in debug mode if the front-end is in debug mode.
 from collections import defaultdict
 import os
@@ -40,20 +38,14 @@ if TYPE_CHECKING:
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
 
-
-class CuraEngineBackend(QObject, Backend):
+class DescreteSlicerBackend(QObject, Backend):
     backendError = Signal()
 
-    ##  Starts the back-end plug-in.
-    #
-    #   This registers all the signal listeners and prepares for communication
-    #   with the back-end in general.
-    #   CuraEngineBackend is exposed to qml as well.
     def __init__(self) -> None:
         super().__init__()
         # Find out where the engine is located, and how it is called.
         # This depends on how Cura is packaged and which OS we are running on.
-        executable_name = "CuraEngine"
+        executable_name = "DiscreteSlicer"
         if Platform.isWindows():
             executable_name += ".exe"
         default_engine_location = executable_name
@@ -75,12 +67,12 @@ class CuraEngineBackend(QObject, Backend):
         self._machine_error_checker = None #type: Optional[MachineErrorChecker]
 
         if not default_engine_location:
-            raise EnvironmentError("Could not find CuraEngine")
+            raise EnvironmentError("Could not find DiscreteSlicer")
 
-        Logger.log("i", "Found CuraEngine at: %s", default_engine_location)
+        Logger.log("i", "Found DiscreteSlicer at: %s", default_engine_location)
 
         default_engine_location = os.path.abspath(default_engine_location)
-        self._application.getPreferences().addPreference("backend/location", default_engine_location)
+        self._application.getPreferences().addPreference("discrete_backend/location", default_engine_location)
 
         # Workaround to disable layer view processing if layer view is not active.
         self._layer_view_active = False #type: bool
@@ -100,18 +92,9 @@ class CuraEngineBackend(QObject, Backend):
         # If there is an error check, stop the auto-slicing timer, and only wait for the error check to be finished
         # to start the auto-slicing timer again.
         #
+        self._generate_basement_job = None
         self._global_container_stack = None #type: Optional[ContainerStack]
 
-        # Listeners for receiving messages from the back-end.
-        #self._message_handlers["cura.proto.Layer"] = self._onLayerMessage
-        #self._message_handlers["cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
-        #self._message_handlers["cura.proto.Progress"] = self._onProgressMessage
-        #self._message_handlers["cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
-        #self._message_handlers["cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
-        #self._message_handlers["cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
-        #self._message_handlers["cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
-        self._generate_basement_job = None
-        self._slice_message = None
         self._start_slice_job = None #type: Optional[StartSliceJob]
         self._start_slice_job_build_plate = None #type: Optional[int]
         self._slicing = False #type: bool # Are we currently slicing?
@@ -143,6 +126,7 @@ class CuraEngineBackend(QObject, Backend):
         self._application.getPreferences().preferenceChanged.connect(self._onPreferencesChanged)
 
         self._application.initializationFinished.connect(self.initialize)
+
 
     def initialize(self) -> None:
         self._multi_build_plate_model = self._application.getMultiBuildPlateModel()
@@ -180,7 +164,7 @@ class CuraEngineBackend(QObject, Backend):
     #   This is useful for debugging and used to actually start the engine.
     #   \return list of commands and args / parameters.
     def getEngineCommand(self) -> List[str]:
-        command = [self._application.getPreferences().getValue("backend/location"), "connect", "127.0.0.1:{0}".format(self._port), ""]
+        command = [self._application.getPreferences().getValue("discrete_backend/location"), "connect", "127.0.0.1:{0}".format(self._port), ""]
 
         parser = argparse.ArgumentParser(prog = "steslicer", add_help = False)
         parser.add_argument("--debug", action = "store_true", default = False, help = "Turn on the debug mode by setting this option.")
@@ -231,13 +215,13 @@ class CuraEngineBackend(QObject, Backend):
     ##  Perform a slice of the scene.
     def slice(self) -> None:
         # Listeners for receiving messages from the back-end.
-        self._message_handlers["cura.proto.Layer"] = self._onLayerMessage
-        self._message_handlers["cura.proto.LayerOptimized"] = self._onOptimizedLayerMessage
-        self._message_handlers["cura.proto.Progress"] = self._onProgressMessage
-        self._message_handlers["cura.proto.GCodeLayer"] = self._onGCodeLayerMessage
-        self._message_handlers["cura.proto.GCodePrefix"] = self._onGCodePrefixMessage
-        self._message_handlers["cura.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
-        self._message_handlers["cura.proto.SlicingFinished"] = self._onSlicingFinishedMessage
+        self._message_handlers["discreteslicer.proto.Layer"] = self._onLayerMessage
+        self._message_handlers["discreteslicer.proto.LayerOptimized"] = self._onOptimizedLayerMessage
+        self._message_handlers["discreteslicer.proto.Progress"] = self._onProgressMessage
+        self._message_handlers["discreteslicer.proto.GCodeLayer"] = self._onGCodeLayerMessage
+        self._message_handlers["discreteslicer.proto.GCodePrefix"] = self._onGCodePrefixMessage
+        self._message_handlers["discreteslicer.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
+        self._message_handlers["discreteslicer.proto.SlicingFinished"] = self._onSlicingFinishedMessage
 
         Logger.log("d", "Starting to slice...")
         self._slice_start_time = time()
@@ -286,7 +270,7 @@ class CuraEngineBackend(QObject, Backend):
 
         self.determineAutoSlicing()  # Switch timer on or off if appropriate
 
-        slice_message = self._socket.createMessage("cura.proto.Slice")
+        slice_message = self._socket.createMessage("discreteslicer.proto.Slice")
         self._start_slice_job = StartSliceJob(slice_message)
         self._start_slice_job_build_plate = build_plate_to_be_sliced
         self._start_slice_job.setBuildPlate(self._start_slice_job_build_plate)
@@ -442,14 +426,11 @@ class CuraEngineBackend(QObject, Backend):
         self._generate_basement_job.finished.connect(self._onGenerateBasementJobFinished)
         self._generate_basement_job.start()
 
-
-
-
     def _onGenerateBasementProcessingProgress(self, amount):
         self.processingProgress.emit(0.1 + amount / 10)
         self.backendStateChange.emit(BackendState.Processing)
 
-
+        # Preparation completed, send it to the backend.
     def _onGenerateBasementJobFinished(self, job: GenerateBasementJob):
         if not self._scene.gcode_dict:
             self._scene.gcode_dict = {0: []}
@@ -475,7 +456,6 @@ class CuraEngineBackend(QObject, Backend):
 
         if self._slice_start_time:
             Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time)
-
     ##  Determine enable or disable auto slicing. Return True for enable timer and False otherwise.
     #   It disables when
     #   - preference auto slice is off
@@ -732,7 +712,7 @@ class CuraEngineBackend(QObject, Backend):
             self._scene.gcode_dict[self._start_slice_job_build_plate] = []
         msg = message.data.decode("utf-8", "replace")  # type: str
         # TODO: Remove this since new basement will have start and end gcode
-        if msg.startswith(";Generated with Cura_SteamEngine"):
+        if msg.startswith(";Generated with DiscreteSlicer_SteamEngine"):
             self._scene.gcode_dict[self._start_slice_job_build_plate].insert(0, msg)
         else:
             self._scene.gcode_dict[self._start_slice_job_build_plate].append(
@@ -752,7 +732,7 @@ class CuraEngineBackend(QObject, Backend):
             if not plugin_path:
                 Logger.log("e", "Could not get plugin path!", self.getPluginId())
                 return
-            protocol_file = os.path.abspath(os.path.join(plugin_path, "Cura.proto"))
+            protocol_file = os.path.abspath(os.path.join(plugin_path, "DiscreteSlicer.proto"))
         super()._createSocket(protocol_file)
         self._engine_is_fresh = True
 
