@@ -12,6 +12,27 @@
         "machine_max_feedrate_e": {
             "default_value": 45
         },
+        "machine_max_feedrate_x": {
+            "default_value": 150
+        },
+        "machine_max_feedrate_y": {
+            "default_value": 150
+        },
+        "machine_max_feedrate_z": {
+            "default_value": 25
+        },
+        "machine_acceleration": {
+            "default_value": 1000
+        },
+        "machine_max_acceleration_z": {
+            "default_value": 200
+        },
+        "machine_max_jerk_xy": {
+            "default_value": 1.58
+        },
+        "machine_max_jerk_z": {
+            "default_value": 0.7
+        },
         "material_print_temperature": {
             "minimum_value": "0"
         },
