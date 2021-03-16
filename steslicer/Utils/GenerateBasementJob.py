@@ -145,6 +145,8 @@ class GenerateBasementJob(Job):
         Logger.log("d", "Generating basement...")
 
         if not self._cylindrical_raft_enabled:
+            self._gcode_list.append(
+                "G0 A0 F600\nG92 E0 C0\n")
             return
 
         self._position = Position(0, 0, 0, 0, 0, 1, 0, [0])
@@ -152,7 +154,7 @@ class GenerateBasementJob(Job):
         self._first_move = True
         current_path = []  # type: List[List[float]]
 
-        layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness) + 15 / 2)
+        layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness))
 
         for layer_number in range(0, layer_count):
             if self._abort_requested:
@@ -172,7 +174,7 @@ class GenerateBasementJob(Job):
 
             Job.yieldThread()
 
-        self._gcode_list.append("G91\nG0 Z50\nG90\nG54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again")
+        self._gcode_list.append("G91\nG0 Z50\nG90\nG54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again\n")
 
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
