@@ -916,6 +916,44 @@
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
                 },
+                "reinforcement_type": {
+                    "label": "Fiber fill type",
+                    "description": "The fiber fill type chooses the algorithms which control how fiber will be used to reinforce the part.\n\nConcentric is good for reinforcing the walls of a part while Isotropic makes a part relatively stiff in all directions.",
+                    "type": "enum",
+                    "options": {
+                        "concentric": "Concentric",
+                        "isotropic": "Isotropic"
+                    },
+                    "default_value": "concentric",
+                    "enabled": "reinforcement_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "reinforcement_walls_to_reinforce": {
+                    "label": "Walls to Reinforce",
+                    "description": "Select which walls will be reinforced with concentric fill",
+                    "type": "enum",
+                    "options": {
+                        "all": "All Walls",
+                        "outer": "Outer Walls",
+                        "inner": "Inner Walls"
+                    },
+                    "default_value": "all",
+                    "enabled": "reinforcement_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "reinforcement_concentric_fiber_rings": {
+                    "label": "Concentric Fiber Rings",
+                    "description": "The number of rings of concentric fiber fill added per layer. The more rings, the stronger your part.",
+                    "default_value": 2,
+                    "minimum_value": "0",
+                    "maximum_value_warning": "10",
+                    "type": "int",
+                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "minimum_value_warning": "0",
+                    "settable_per_mesh": true
+                },
                 "reinforcement_min_fiber_line_length": {
                     "label": "Minimal Fiber Infill Distance",
                     "description": "The length of material extruded in straight line in the infill",
@@ -2607,6 +2645,20 @@
                     "default_value": 60,
                     "settable_per_mesh": true,
                     "children": {
+                        "speed_fiber_infill": {
+                            "label": "Fiber Infill Speed",
+                            "description": "The speed at which infill is printed.",
+                            "unit": "mm/s",
+                            "type": "float",
+                            "minimum_value": "0.1",
+                            "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
+                            "maximum_value_warning": "50",
+                            "default_value": 10,
+                            "value": "speed_print / 6",
+                            "enabled": "reinforcement_enabled",
+                            "limit_to_extruder": "fiber_infill_extruder_nr",
+                            "settable_per_mesh": true
+                        },
                         "speed_infill": {
                             "label": "Infill Speed",
                             "description": "The speed at which infill is printed.",
