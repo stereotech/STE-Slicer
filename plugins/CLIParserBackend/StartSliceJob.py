@@ -177,6 +177,34 @@ params_dict = {
         "infill_main_offset": {
             "stack_key": "fill_perimeter_gaps",
             "default_value": 1
+        },
+        "composite_layer_start": {
+            "stack_key": "reinforcement_start_layer",
+            "default": 10
+        },
+        "composite_layer_count": {
+            "stack_key": "reinforcement_layer_count",
+            "default": 2
+        },
+        "composite_width": {
+            "stack_key": "fiber_infill_line_width",
+            "default": 0.9
+        },
+        "composite_round_segm": {
+            "stack_key": "",
+            "default": 16
+        },
+        "composite_round_radius": {
+            "stack_key": "",
+            "default": 1
+        },
+        "composite_round": {
+            "stack_key": "",
+            "default": 4
+        },
+        "composite_min_length": {
+            "stack_key": "reinforcement_min_fiber_line_length",
+            "default": 4
         }
     },
     "GCodeSupport": {
@@ -759,6 +787,8 @@ class StartSliceJob(Job):
             settings["cool_fan_enabled"] = settings["cool_fan_enabled_cylindrical"]
             settings["cool_fan_speed_min"] = settings["cool_fan_speed_min_cylindrical"]
             settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_cylindrical"]
+
+            settings["fiber_infill_extruder_nr"] = settings["cylindrical_fiber_infill_extruder_nr"]
 
             settings["magic_spiralize"] = False
 
