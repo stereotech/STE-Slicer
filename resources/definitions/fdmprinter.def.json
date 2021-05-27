@@ -807,6 +807,17 @@
                     "settable_per_mesh": true,
                     "settable_per_meshgroup": true,
                     "settable_per_extruder": false
+                },
+                "descrete_mode_intermediate_planes": {
+                    "label": "Intermediate planes",
+                    "description": "Additional planes that will divide mesh between base planes",
+                    "type": "int",
+                    "minimum_value": "0",
+                    "default_value": 0,
+                    "settable_per_extruder": false,
+                     "settable_per_mesh": false,
+                    "settable_per_meshgroup": false,
+                    "enabled": "resolveOrValue('printing_mode') == 'discrete'"
                 }
             }
         },

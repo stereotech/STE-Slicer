@@ -12,7 +12,7 @@ from UM.Math.Vector import Vector
 from UM.Mesh.MeshBuilder import MeshBuilder
 from trimesh.primitives import Box
 import trimesh.intersections
-from typing import Any, cast, Dict, List, Optional, Set
+from typing import Any, cast, Dict, List, Optional, Set, NamedTuple
 import re
 import Arcus  # For typing.
 
@@ -54,7 +54,7 @@ class StartJobResult(IntEnum):
 
 
 # Job class that builds up the message of scene data to send to CuraEngine.
-
+SplitPlane = NamedTuple("SplitPlane", [("normal", Any), ("origin", Any)])
 
 class StartSliceJob(Job):
     def __init__(self, slice_message: Arcus.PythonMessage) -> None:
@@ -326,7 +326,8 @@ class StartSliceJob(Job):
         result = []
         new_node = copy(node)
         new_nodes = [new_node]
-        for plane_idx, plane in reversed(list(enumerate(planes))):
+        converted_planes = self.convertPlanes(planes)
+        for plane_idx, plane in reversed(list(enumerate(converted_planes))):
             new_nodes = self.splitNode(new_node, plane)
             new_node = new_nodes[0]
             if len(new_nodes) > 1:
@@ -334,7 +335,41 @@ class StartSliceJob(Job):
         result.append(new_node)
         return result
 
-    def splitNode(self, node: SceneNode, plane: SceneNode) -> List[SceneNode]:
+    def convertPlanes(self, planes: List[SceneNode]) -> List[SplitPlane]:
+        ret = []
+        for plane in planes:
+            plane_mesh_data = plane.getMeshDataTransformed()
+            plane_normal = plane_mesh_data.getNormals()[0]
+            plane_origin = plane_mesh_data.getVertices()[0] + 0.5 * (plane_mesh_data.getVertices()[2] - plane_mesh_data.getVertices()[0])
+            new_plane = SplitPlane(plane_normal, plane_origin)
+            ret.append(new_plane)
+        ret = self.addItermediatePlanes(ret)
+        return ret
+
+    def addItermediatePlanes(self, planes: List[SplitPlane]) -> List[SplitPlane]:
+        global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
+        if not global_stack:
+            return planes
+        intermediate_count = global_stack.getProperty("descrete_mode_intermediate_planes", "value")
+        if intermediate_count < 1:
+            return planes
+        ret = []
+        start_normal = numpy.array([0,1,0]).reshape(3)
+        start_origin = numpy.array([0,0,0]).reshape(3)
+        for plane in planes:
+            normal_delta = (plane.normal - start_normal) / (intermediate_count + 1)
+            origin_delta = (plane.origin - start_origin) / (intermediate_count + 1)
+            for sub_plane_idx in range(0, intermediate_count):
+                plane_normal = start_normal + (normal_delta * (sub_plane_idx + 1))
+                plane_origin = start_origin + (origin_delta * (sub_plane_idx + 1))
+                sub_plane = SplitPlane(plane_normal, plane_origin)
+                ret.append(sub_plane)
+            ret.append(plane)
+            start_normal = plane.normal
+            start_origin = plane.origin
+        return ret
+
+    def splitNode(self, node: SceneNode, plane: SplitPlane) -> List[SceneNode]:
         mesh_data = node.getMeshData()
         if mesh_data.hasIndices():
             faces = mesh_data.getIndices()
@@ -344,12 +379,11 @@ class StartSliceJob(Job):
             for i in range(0, num_verts - 2, 3):
                 faces[int(i / 3):] = [i, i + 1, i + 2]
         trmesh = trimesh.Trimesh(vertices=node.getMeshDataTransformed().getVertices(), faces=faces)
-        trmesh.fill_holes()
+        filled = trmesh.fill_holes()
         trmesh.fix_normals()
         trmesh.remove_duplicate_faces()
-        plane_mesh_data = plane.getMeshDataTransformed()
-        plane_normal = plane_mesh_data.getNormals()[0]
-        plane_origin = plane_mesh_data.getVertices()[0]
+        plane_normal = plane.normal
+        plane_origin = plane.origin
         cut_mesh, start_mesh = SplitByPlane(
             trmesh, plane_normal, plane_origin, True)
         start_mesh.fill_holes()
