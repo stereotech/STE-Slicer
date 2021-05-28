@@ -326,9 +326,13 @@ class StartSliceJob(Job):
         result = []
         new_node = copy(node)
         new_nodes = [new_node]
+        global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
+        if not global_stack:
+            return result
+        overlap = global_stack.getProperty("layer_height_0", "value") / 2
         converted_planes = self.convertPlanes(planes)
         for plane_idx, plane in reversed(list(enumerate(converted_planes))):
-            new_nodes = self.splitNode(new_node, plane)
+            new_nodes = self.splitNode(new_node, plane, overlap)
             new_node = new_nodes[0]
             if len(new_nodes) > 1:
                 result.append(new_nodes[-1])
@@ -369,7 +373,7 @@ class StartSliceJob(Job):
             start_origin = plane.origin
         return ret
 
-    def splitNode(self, node: SceneNode, plane: SplitPlane) -> List[SceneNode]:
+    def splitNode(self, node: SceneNode, plane: SplitPlane, overlap = 0) -> List[SceneNode]:
         mesh_data = node.getMeshData()
         if mesh_data.hasIndices():
             faces = mesh_data.getIndices()
@@ -385,7 +389,7 @@ class StartSliceJob(Job):
         plane_normal = plane.normal
         plane_origin = plane.origin
         cut_mesh, start_mesh = SplitByPlane(
-            trmesh, plane_normal, plane_origin, True)
+            trmesh, plane_normal, plane_origin, True, overlap=overlap)
         start_mesh.fill_holes()
         start_mesh.remove_duplicate_faces()
         start_mesh.fix_normals()
