@@ -1,0 +1,8 @@
+{
+    "name": "LayersProcessor Backend",
+    "author": "Stereotech LLC",
+    "description": "Provides the link to the LayersProcessor backend.",
+    "api": 5,
+    "version": "1.0.0",
+    "i18n-catalog": "steslicer"
+}

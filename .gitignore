@@ -82,3 +82,5 @@ glicer_console_spherical.exe
 DiscreteSlicer.exe
 *.old
 CliParser.exe.speed
+LayersProcessor.exe
+glicer_surface_console.exe
