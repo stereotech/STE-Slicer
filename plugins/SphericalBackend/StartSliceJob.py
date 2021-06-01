@@ -25,7 +25,7 @@ from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
 
 from plugins.CuraEngineBackend import CuraEngineBackend
-from plugins.CLIParserBackend import CliParserBackend
+from plugins.LayersProcessorBackend import LayersProcessorBackend
 from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
@@ -89,10 +89,10 @@ class StartSliceJob(Job):
             self._slice_messages.append(self._classic_start_slice_job.getSliceMessage())
         self._classic_start_slice_job = None
 
-        spherical_backend = self._backends["CLIParserBackend"] #type: CliParserBackend.CliParserBackend
+        spherical_backend = self._backends["LayersProcessorBackend"] #type: LayersProcessorBackend.LayersProcessorBackend
         slice_message = spherical_backend.getGlicerEngineCommand()
-        arcus_message = spherical_backend._socket.createMessage("cliparser.proto.Process")
-        self._spherical_start_slice_job = CliParserBackend.StartSliceJob(slice_message, arcus_message)
+        arcus_message = spherical_backend._socket.createMessage("layersprocessor.proto.Slice")
+        self._spherical_start_slice_job = LayersProcessorBackend.StartSliceJob(slice_message, arcus_message)
         self._spherical_start_slice_job.setBuildPlate(self._start_slice_job_build_plate)
         self._spherical_start_slice_job.start()
         while not self._spherical_start_slice_job.isFinished():

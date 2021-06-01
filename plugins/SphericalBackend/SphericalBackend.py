@@ -23,7 +23,7 @@ from UM.Signal import Signal
 from UM.Tool import Tool
 
 from steslicer.Utils.GenerateBasementJob import GenerateBasementJob
-from steslicer.Utils.ProcessCliJob import ProcessCliJob
+from steslicer.Utils.ProcessMeshJob import ProcessMeshJob
 from steslicer.Utils.ProcessSlicedLayersJob import ProcessSlicedLayersJob
 from .StartSliceJob import StartSliceJob, StartJobResult
 from steslicer.MultiBackend import MultiBackend
@@ -86,7 +86,7 @@ class SphericalBackend(QObject, MultiBackend):
             int)  # type: Dict[int, int] # Count number of objects to see if there is something changed
         self._postponed_scene_change_sources = []  # type: List[SceneNode] # scene change is postponed (by a tool)
         self._process_layers_job = None
-        self._process_cli_job = None
+        self._process_mesh_job = None
         self._slice_start_time = None  # type: Optional[float]
         self._is_disabled = False  # type: bool
 
@@ -158,10 +158,10 @@ class SphericalBackend(QObject, MultiBackend):
             self._generate_basement_job.abort()
             self._generate_basement_job = None
 
-        if self._process_cli_job is not None:
-            Logger.log("d", "Aborting process cli job...")
-            self._process_cli_job.abort()
-            self._process_cli_job = None
+        if self._process_mesh_job is not None:
+            Logger.log("d", "Aborting process mesh job...")
+            self._process_mesh_job.abort()
+            self._process_mesh_job = None
 
         if self._process_layers_job is not None:
             Logger.log("d", "Aborting process layers job...")
@@ -345,10 +345,13 @@ class SphericalBackend(QObject, MultiBackend):
         if isinstance(slice_message, List):
             Logger.log("d", "Sending Engine Message")
             slice_message.append('-o')
-            output_path = [os.path.join(tempfile.tempdir, next(tempfile._get_candidate_names())) + ".cli"]
+            filename = next(tempfile._get_candidate_names())
+            output_path = [os.path.join(tempfile.tempdir, filename)]
             slice_message.extend(output_path)
             self._glicer_process = self._runGlicerEngineProcess(slice_message)
-            self._startProcessCliLayersJob(output_path, self._application.getMultiBuildPlateModel().activeBuildPlate)
+
+            self._startProcessMeshLayersJob(output_path, self._application.getMultiBuildPlateModel().activeBuildPlate,
+                                            self._slice_messages[2])
         if self._slice_start_time:
             Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time)
 
@@ -361,7 +364,7 @@ class SphericalBackend(QObject, MultiBackend):
                 self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
             self._stored_optimized_layer_data[self._start_slice_job_build_plate].append(message)
 
-    def _onCliOptimizedLayerMessage(self, message: Arcus.PythonMessage) -> None:
+    def _onMeshOptimizedLayerMessage(self, message: Arcus.PythonMessage) -> None:
         if self._start_slice_job_build_plate is not None:
             if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
                 self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
@@ -372,7 +375,7 @@ class SphericalBackend(QObject, MultiBackend):
         self.processingProgress.emit(0.1 + message.amount / 2.5)
         self.backendStateChange.emit(BackendState.Processing)
 
-    def _onCliParserProgressMessage(self, message: Arcus.PythonMessage) -> None:
+    def _onLayersProcessorProgressMessage(self, message: Arcus.PythonMessage) -> None:
         self.processingProgress.emit(0.6 + message.amount / 2.5)
         self.backendStateChange.emit(BackendState.Processing)
 
@@ -458,11 +461,12 @@ class SphericalBackend(QObject, MultiBackend):
             Logger.logException("e", "Unable to find backend executable: %s", command_list[0])
         return None
 
-    def _startProcessCliLayersJob(self, output_path: List[str], build_plate_number: int) -> None:
-        self._process_cli_job = ProcessCliJob(self._glicer_process, output_path, self._slice_messages[2])
-        self._process_cli_job.setBuildPlate(build_plate_number)
-        self._process_cli_job.finished.connect(self._onProcessCliFinished)
-        self._process_cli_job.start()
+    def _startProcessMeshLayersJob(self, output_path: List[str], build_plate_number: int,
+                                   arcus_message: Arcus.PythonMessage) -> None:
+        self._process_mesh_job = ProcessMeshJob(self._glicer_process, output_path, arcus_message)
+        self._process_mesh_job.setBuildPlate(build_plate_number)
+        self._process_mesh_job.finished.connect(self._onProcessMeshFinished)
+        self._process_mesh_job.start()
 
     def _onTimeMaterialEstimates(self, material_amounts, times):
         zipped_amounts = zip(self._material_amounts, material_amounts)
@@ -472,25 +476,25 @@ class SphericalBackend(QObject, MultiBackend):
         self._times = {k: self._times.get(k, 0) + times.get(k, 0) for k in set(self._times)}
         self.printDurationMessage.emit(self._start_slice_job_build_plate, self._times, self._material_amounts)
 
-    def _onProcessCliFinished(self, job: ProcessCliJob):
+    def _onProcessMeshFinished(self, job: ProcessMeshJob):
         # remove end gcode from Curaengine
         del self._scene.gcode_dict[self._start_slice_job_build_plate][-1]
 
-        self._backends["CLIParserBackend"]._terminate()
-        self._backends["CLIParserBackend"]._createSocket()
+        self._backends["LayersProcessorBackend"]._terminate()
+        self._backends["LayersProcessorBackend"]._createSocket()
         Logger.log("d", "Sending Arcus Message")
-        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.LayerOptimized"] = self._onCliOptimizedLayerMessage
-        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.Progress"] = self._onCliParserProgressMessage
-        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.GCodeLayer"] = self._onGCodeLayerMessage
-        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.GCodePrefix"] = self._onGCodePrefixMessage
-        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
-        self._backends["CLIParserBackend"]._message_handlers["cliparser.proto.SlicingFinished"] = self._onCliParserFinishedMessage
+        self._backends["LayersProcessorBackend"]._message_handlers["layersprocessor.proto.LayerOptimized"] = self._onMeshOptimizedLayerMessage
+        self._backends["LayersProcessorBackend"]._message_handlers["layersprocessor.proto.Progress"] = self._onLayersProcessorProgressMessage
+        self._backends["LayersProcessorBackend"]._message_handlers["layersprocessor.proto.GCodeLayer"] = self._onGCodeLayerMessage
+        self._backends["LayersProcessorBackend"]._message_handlers["layersprocessor.proto.GCodePrefix"] = self._onGCodePrefixMessage
+        self._backends["LayersProcessorBackend"]._message_handlers["layersprocessor.proto.PrintTimeMaterialEstimates"] = self._onPrintTimeMaterialEstimates
+        self._backends["LayersProcessorBackend"]._message_handlers["layersprocessor.proto.SlicingFinished"] = self._onLayersProcessorFinishedMessage
 
         # Note that cancelled slice jobs can still call this method.
-        if self._process_cli_job is job:
-            self._process_cli_job = None
+        if self._process_mesh_job is job:
+            self._process_mesh_job = None
 
-        self._backends["CLIParserBackend"]._socket.sendMessage(job.getSliceMessage())
+        self._backends["LayersProcessorBackend"]._socket.sendMessage(job.getSliceMessage())
 
         self.backendStateChange.emit(BackendState.Processing)
         self.processingProgress.emit(0.6)
@@ -499,7 +503,7 @@ class SphericalBackend(QObject, MultiBackend):
             Logger.log("d", "Sending slice message took %s seconds", time() - self._slice_start_time )
 
 
-    def _onCliParserFinishedMessage(self, message: Arcus.PythonMessage) -> None:
+    def _onLayersProcessorFinishedMessage(self, message: Arcus.PythonMessage) -> None:
         self._classic_layers_size = 0
         self._layers_size = 0
         self.backendStateChange.emit(BackendState.Done)
@@ -542,7 +546,7 @@ class SphericalBackend(QObject, MultiBackend):
         if self._build_plates_to_be_sliced:
             self.enableTimer()  # manually enable timer to be able to invoke slice, also when in manual slice mode
             self._invokeSlice()
-        self._backends["CLIParserBackend"]._message_handlers = {}
+        self._backends["LayersProcessorBackend"]._message_handlers = {}
         self._slicing = False
 
     def _startProcessSlicedLayersJob(self, build_plate_number: int) -> None:

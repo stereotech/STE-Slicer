@@ -14,17 +14,15 @@ from UM.Signal import Signal
 from UM.Logger import Logger
 from UM.Message import Message
 from UM.PluginRegistry import PluginRegistry
-from UM.Resources import Resources
 from UM.Platform import Platform
 from UM.Qt.Duration import DurationFormat
 from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 from UM.Settings.Interfaces import DefinitionContainerInterface
 from UM.Settings.SettingInstance import SettingInstance #For typing.
 from UM.Tool import Tool #For typing.
-from UM.Mesh.MeshData import MeshData #For typing.
 
 from steslicer.Utils.ProcessSlicedLayersJob import ProcessSlicedLayersJob
-from .ProcessMeshJob import ProcessMeshJob
+from steslicer.Utils.ProcessMeshJob import ProcessMeshJob
 from .StartSliceJob import StartSliceJob, StartJobResult
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Settings.ExtruderManager import ExtruderManager
