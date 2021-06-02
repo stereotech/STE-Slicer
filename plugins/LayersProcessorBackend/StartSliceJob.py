@@ -502,9 +502,9 @@ class StartSliceJob(Job):
             indicies_collection = []
             vertices_collection = []
             for group in filtered_object_groups:
-                cli_list_message = self._arcus_message.addRepeatedMessage("cli_lists")
+                object_list_message = self._arcus_message.addRepeatedMessage("object_lists")
                 if group[0].getParent() is not None and group[0].getParent().callDecoration("isGroup"):
-                    self._handlePerObjectSettings(group[0].getParent(), cli_list_message)
+                    self._handlePerObjectSettings(group[0].getParent(), object_list_message)
                 for object in group:
                     mesh_data = object.getMeshData()
                     rot_scale = object.getWorldTransformation().getTransposed().getData()[0:3, 0:3]
@@ -535,10 +535,10 @@ class StartSliceJob(Job):
                     indicies_collection.append(faces)
                     vertices_collection.append(flat_verts)
 
-                    cli = cli_list_message.addRepeatedMessage("cli")
-                    cli.id = id(object)
-                    cli.name = object.getName()
-                    self._handlePerObjectSettings(object, cli)
+                    obj = object_list_message.addRepeatedMessage("objects")
+                    obj.id = id(object)
+                    obj.name = object.getName()
+                    self._handlePerObjectSettings(object, obj)
 
                     Job.yieldThread()
         self._buildObjectFiles(indicies_collection, vertices_collection)
@@ -568,11 +568,6 @@ class StartSliceJob(Job):
                     radius=radius, height=height, sections=64)
             elif printing_mode in ["spherical", "spherical_full"]:
                 radius = global_stack.getProperty("spherical_mode_base_radius", "value")
-                if radius > 0:
-                    radius += global_stack.getProperty(
-                        "layer_height", "value")
-                else:
-                    raise ValueError
                 cutting_mesh = trimesh.primitives.Sphere(
                     radius=radius, subdivisions = 3
                 )

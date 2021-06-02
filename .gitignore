@@ -80,4 +80,8 @@ glicer_console_spherical.exe
 *.exe
 *.new
 *.bak2
-
+DiscreteSlicer.exe
+*.old
+CliParser.exe.speed
+LayersProcessor.exe
+glicer_surface_console.exe

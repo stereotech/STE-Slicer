@@ -17,8 +17,9 @@ def SplitByPlane(mesh,
                 plane_origin,
                 cap=False,
                 cached_dots=None,
+                 overlap=0,
                 **kwargs):
-    mesh1 = SplitByPlaneOneSide(mesh, plane_normal, plane_origin, cap, cached_dots, **kwargs)
+    mesh1 = SplitByPlaneOneSide(mesh, plane_normal, plane_origin + (-plane_normal * overlap), cap, cached_dots, **kwargs)
     mesh2 = SplitByPlaneOneSide(mesh, -plane_normal, plane_origin, cap, cached_dots, True, **kwargs)
     return mesh1, mesh2
 
