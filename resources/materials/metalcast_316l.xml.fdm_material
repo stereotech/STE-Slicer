@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<fdmmaterial version="1.3" xmlns="">
+  <metadata>
+    <name>
+      <brand>Stereotech</brand>
+      <material>Metalcast</material>
+      <color></color>
+      <label>Metalcast-316L</label>
+    </name>
+    <compatible></compatible>
+    <version></version>
+    <adhesion_info></adhesion_info>
+    <description></description>
+    <color_code></color_code>
+    <GUID>8b3f79a1-38ea-4f37-96ae-aba7bcda488e</GUID>
+    <definition></definition>
+  </metadata>
+  <properties>
+    <diameter>1.75</diameter>
+    <density>7.5</density>
+    <weight></weight>
+  </properties>
+  <settings>
+    <setting key="standby temperature">100</setting>
+    <setting key="heated bed temperature"></setting>
+    <setting key="print temperature">170</setting>
+  </settings>
+</fdmmaterial>
