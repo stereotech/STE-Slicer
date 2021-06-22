@@ -16,13 +16,13 @@
     <definition></definition>
   </metadata>
   <properties>
-    <diameter></diameter>
+    <diameter>0.4</diameter>
     <density>1.45</density>
     <weight></weight>
   </properties>
   <settings>
-    <setting key="standby temperature">175</setting>
+    <setting key="standby temperature">200</setting>
     <setting key="heated bed temperature"></setting>
-    <setting key="print temperature"></setting>
+    <setting key="print temperature">270</setting>
   </settings>
 </fdmmaterial>
