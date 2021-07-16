@@ -255,16 +255,6 @@ Rectangle
         {
             id: modeMenuGroup
         }
-
-        ListView
-        {
-            id: modesList
-            model: modesListModel
-            delegate: wizardDelegate
-            anchors.top: parent.top
-            anchors.left: parent.left
-            width: parent.width
-        }
     }
 
    
@@ -551,15 +541,6 @@ Rectangle
         id: modesListModel
     }
 
-    SidebarSimple
-    {
-        id: sidebarSimple
-        visible: false
-
-        onShowTooltip: base.showTooltip(item, location, text)
-        onHideTooltip: base.hideTooltip()
-    }
-
     SidebarAdvanced
     {
         id: sidebarAdvanced
@@ -571,11 +552,6 @@ Rectangle
 
     Component.onCompleted:
     {
-        modesListModel.append({
-            text: catalog.i18nc("@title:tab", "Recommended"),
-            tooltipText: catalog.i18nc("@tooltip", "<b>Recommended Print Setup</b><br/><br/>Print with the recommended settings for the selected printer, material and quality."),
-            item: sidebarSimple
-        })
         modesListModel.append({
             text: catalog.i18nc("@title:tab", "Custom"),
             tooltipText: catalog.i18nc("@tooltip", "<b>Custom Print Setup</b><br/><br/>Print with finegrained control over every last bit of the slicing process."),
