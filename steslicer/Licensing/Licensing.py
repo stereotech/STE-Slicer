@@ -21,7 +21,7 @@ class Licensing(QObject, Extension):
         self._license_window = None
         self._license_context = None
         self._application.engineCreatedSignal.connect(self._onEngineCreated)
-        self._application.getPreferences().addPreference("general/license_show_window", True)
+        self._application.getPreferences().addPreference("general/license_show_window", False)
         self._application.getPreferences().addPreference("general/license_key", "")
         self.licenseKeyChanged.connect(self._onLicenseKeyChanged)
 
