@@ -818,6 +818,19 @@
                      "settable_per_mesh": false,
                     "settable_per_meshgroup": false,
                     "enabled": "resolveOrValue('printing_mode') == 'discrete'"
+                },
+                "descrete_mode_parts_intersection": {
+                    "label": "Parts Intersection",
+                    "description": "Intersection between separate parts of the print. This setting could improve adhesion between separate parts of the print",
+                   "type": "float",
+                    "unit": "mm",
+                    "default_value": 0.1,
+                    "value": "resolveOrValue('layer_height_0') / 2",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "0",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "enabled": "resolveOrValue('printing_mode') == 'discrete'"
                 }
             }
         },

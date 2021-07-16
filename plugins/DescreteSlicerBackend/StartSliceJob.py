@@ -329,7 +329,7 @@ class StartSliceJob(Job):
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if not global_stack:
             return result
-        overlap = global_stack.getProperty("layer_height_0", "value") / 2
+        overlap = global_stack.getProperty("descrete_mode_parts_intersection", "value")
         converted_planes = self.convertPlanes(planes)
         for plane_idx, plane in reversed(list(enumerate(converted_planes))):
             new_nodes = self.splitNode(new_node, plane, overlap)
