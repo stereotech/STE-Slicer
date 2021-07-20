@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<fdmmaterial version="1.3" xmlns="">
+  <metadata>
+    <name>
+      <brand>Stereotech</brand>
+      <material>ContiFiber</material>
+      <color></color>
+      <label>ContiFiber-CPA</label>
+    </name>
+    <compatible></compatible>
+    <version></version>
+    <adhesion_info></adhesion_info>
+    <description></description>
+    <color_code></color_code>
+    <GUID>0d5a3633-17e5-463f-a572-f1517ac9770b</GUID>
+    <definition></definition>
+  </metadata>
+  <properties>
+    <diameter>0.4</diameter>
+    <density>1.45</density>
+    <weight></weight>
+  </properties>
+  <settings>
+    <setting key="standby temperature">200</setting>
+    <setting key="heated bed temperature"></setting>
+    <setting key="print temperature">270</setting>
+  </settings>
+</fdmmaterial>
