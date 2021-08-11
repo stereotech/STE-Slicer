@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
 
-class DescreteSlicerBackend(QObject, Backend):
+class DiscreteSlicerBackend(QObject, Backend):
     backendError = Signal()
 
     def __init__(self) -> None:

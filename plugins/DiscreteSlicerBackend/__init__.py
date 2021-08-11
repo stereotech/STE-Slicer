@@ -11,4 +11,4 @@ def getMetaData():
     }
 
 def register(app):
-    return { "backend": DescreteSlicerBackend.DescreteSlicerBackend() }
+    return { "backend": DescreteSlicerBackend.DiscreteSlicerBackend()}

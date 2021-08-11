@@ -30,6 +30,14 @@ message Object
     bytes indices = 4; //An array of ints.
     repeated Setting settings = 5; // Setting override per object, overruling the global settings.
     string name = 6; //Mesh name
+    repeated Plane planes = 7;
+}
+
+message Plane
+{
+    int64 id = 1;
+    bytes origin = 2;
+    bytes normal = 3;
 }
 
 message Progress
