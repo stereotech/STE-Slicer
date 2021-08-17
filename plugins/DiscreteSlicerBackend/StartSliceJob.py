@@ -254,9 +254,10 @@ class StartSliceJob(Job):
         self._is_cancelled = False
 
         processed_object_groups = []
+        splitting_planes = []
         for object_group in filtered_object_groups:
             printable_meshes = []
-            splitting_planes = []
+
             for object in object_group:
                 per_object_stack = object.callDecoration("getStack")
                 settings = per_object_stack.getTop()
@@ -268,14 +269,17 @@ class StartSliceJob(Job):
                 elif not anti_overhang_mesh:
                     printable_meshes.append(object)
 
+
             for mesh in printable_meshes:
-                processed_nodes = self.generateSplitTree(mesh, splitting_planes)
-                for child in reversed(processed_nodes):
-                    processed_object_groups.append([child])
+
+                #processed_nodes = self.generateSplitTree(mesh, splitting_planes)
+                #for child in reversed(processed_nodes):
+                processed_object_groups.append([mesh])
 
         self._buildGlobalSettingsMessage(stack)
         self._buildGlobalInheritsStackMessage(stack)
 
+        planes = self.convertPlanes(splitting_planes)
         # Build messages for extruder stacks
         # Send the extruder settings in the order of extruder positions. Somehow, if you send e.g. extruder 3 first,
         # then CuraEngine can slice with the wrong settings. This I think should be fixed in CuraEngine as well.
@@ -316,6 +320,13 @@ class StartSliceJob(Job):
 
                 obj.vertices = flat_verts
 
+                for plane in planes:
+                    pln = obj.addRepeatedMessage("planes")
+                    pln.id = id(plane)
+                    pln.origin = plane.origin
+                    pln.normal = plane.normal
+
+
                 self._handlePerObjectSettings(object, obj)
 
                 Job.yieldThread()
@@ -347,7 +358,7 @@ class StartSliceJob(Job):
             plane_origin = plane_mesh_data.getVertices()[0] + 0.5 * (plane_mesh_data.getVertices()[2] - plane_mesh_data.getVertices()[0])
             new_plane = SplitPlane(plane_normal, plane_origin)
             ret.append(new_plane)
-        ret = self.addItermediatePlanes(ret)
+        #ret = self.addItermediatePlanes(ret)
         return ret
 
     def addItermediatePlanes(self, planes: List[SplitPlane]) -> List[SplitPlane]:
@@ -630,10 +641,10 @@ class StartSliceJob(Job):
     def _handlePerObjectSettings(self, node: SteSlicerSceneNode, message: Arcus.PythonMessage):
         stack = node.callDecoration("getStack")
 
-        if id(node) in self._direction_matrices.keys():
-            setting = message.addRepeatedMessage("settings")
-            setting.name = "descrete_mode_mesh_rotation_matrix"
-            setting.value = self._direction_matrices.get(id(node)).encode("utf-8")
+        #if id(node) in self._direction_matrices.keys():
+        #    setting = message.addRepeatedMessage("settings")
+        #    setting.name = "descrete_mode_mesh_rotation_matrix"
+        #    setting.value = self._direction_matrices.get(id(node)).encode("utf-8")
 
         # Check if the node has a stack attached to it and the stack has any settings in the top container.
         if not stack:

@@ -798,7 +798,7 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
-                "descrete_mode_mesh_rotation_matrix": {
+                "discrete_mode_mesh_rotation_matrix": {
                     "label": "Mesh Rotation Matrix",
                     "description": "Transformation matrix to be applied to the model when loading it from file.",
                     "type": "str",
@@ -808,7 +808,7 @@
                     "settable_per_meshgroup": true,
                     "settable_per_extruder": false
                 },
-                "descrete_mode_intermediate_planes": {
+                "discrete_mode_intermediate_planes": {
                     "label": "Intermediate planes",
                     "description": "Additional planes that will divide mesh between base planes",
                     "type": "int",
@@ -819,7 +819,7 @@
                     "settable_per_meshgroup": false,
                     "enabled": "resolveOrValue('printing_mode') == 'discrete'"
                 },
-                "descrete_mode_parts_intersection": {
+                "discrete_mode_parts_intersection": {
                     "label": "Parts Intersection",
                     "description": "Intersection between separate parts of the print. This setting could improve adhesion between separate parts of the print",
                    "type": "float",

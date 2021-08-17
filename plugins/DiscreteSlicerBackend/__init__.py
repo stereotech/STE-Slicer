@@ -1,4 +1,4 @@
-from . import DescreteSlicerBackend
+from . import DiscreteSlicerBackend
 
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
@@ -11,4 +11,4 @@ def getMetaData():
     }
 
 def register(app):
-    return { "backend": DescreteSlicerBackend.DiscreteSlicerBackend()}
+    return { "backend": DiscreteSlicerBackend.DiscreteSlicerBackend()}
