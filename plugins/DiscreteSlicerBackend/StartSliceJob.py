@@ -56,6 +56,7 @@ class StartJobResult(IntEnum):
 # Job class that builds up the message of scene data to send to CuraEngine.
 SplitPlane = NamedTuple("SplitPlane", [("normal", Any), ("origin", Any)])
 
+
 class StartSliceJob(Job):
     def __init__(self, slice_message: Arcus.PythonMessage) -> None:
         super().__init__()
@@ -269,11 +270,10 @@ class StartSliceJob(Job):
                 elif not anti_overhang_mesh:
                     printable_meshes.append(object)
 
-
             for mesh in printable_meshes:
 
                 #processed_nodes = self.generateSplitTree(mesh, splitting_planes)
-                #for child in reversed(processed_nodes):
+                # for child in reversed(processed_nodes):
                 processed_object_groups.append([mesh])
 
         self._buildGlobalSettingsMessage(stack)
@@ -297,7 +297,7 @@ class StartSliceJob(Job):
             for object in group:
                 mesh_data = object.getMeshData()
                 rot_scale = object.getWorldTransformation().getTransposed().getData()[
-                            0:3, 0:3]
+                    0:3, 0:3]
                 translate = object.getWorldTransformation().getData()[:3, 3]
 
                 # This effectively performs a limited form of MeshData.getTransformed that ignores normals.
@@ -323,9 +323,16 @@ class StartSliceJob(Job):
                 for plane in planes:
                     pln = obj.addRepeatedMessage("planes")
                     pln.id = id(plane)
-                    pln.origin = plane.origin
-                    pln.normal = plane.normal
-
+                    origin = numpy.ndarray(3, dtype=numpy.float32)
+                    origin[0] = plane.origin[0]
+                    origin[1] = -plane.origin[2]
+                    origin[2] = plane.origin[1]
+                    pln.origin = origin
+                    normal = numpy.ndarray(3, dtype=numpy.float32)
+                    normal[0] = plane.normal[0]
+                    normal[1] = -plane.normal[2]
+                    normal[2] = plane.normal[1]
+                    pln.normal = normal
 
                 self._handlePerObjectSettings(object, obj)
 
@@ -340,7 +347,8 @@ class StartSliceJob(Job):
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if not global_stack:
             return result
-        overlap = global_stack.getProperty("descrete_mode_parts_intersection", "value")
+        overlap = global_stack.getProperty(
+            "descrete_mode_parts_intersection", "value")
         converted_planes = self.convertPlanes(planes)
         for plane_idx, plane in reversed(list(enumerate(converted_planes))):
             new_nodes = self.splitNode(new_node, plane, overlap)
@@ -355,7 +363,8 @@ class StartSliceJob(Job):
         for plane in planes:
             plane_mesh_data = plane.getMeshDataTransformed()
             plane_normal = plane_mesh_data.getNormals()[0]
-            plane_origin = plane_mesh_data.getVertices()[0] + 0.5 * (plane_mesh_data.getVertices()[2] - plane_mesh_data.getVertices()[0])
+            plane_origin = plane_mesh_data.getVertices(
+            )[0] + 0.5 * (plane_mesh_data.getVertices()[2] - plane_mesh_data.getVertices()[0])
             new_plane = SplitPlane(plane_normal, plane_origin)
             ret.append(new_plane)
         #ret = self.addItermediatePlanes(ret)
@@ -365,18 +374,23 @@ class StartSliceJob(Job):
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         if not global_stack:
             return planes
-        intermediate_count = global_stack.getProperty("descrete_mode_intermediate_planes", "value")
+        intermediate_count = global_stack.getProperty(
+            "descrete_mode_intermediate_planes", "value")
         if intermediate_count < 1:
             return planes
         ret = []
-        start_normal = numpy.array([0,1,0]).reshape(3)
-        start_origin = numpy.array([0,0,0]).reshape(3)
+        start_normal = numpy.array([0, 1, 0]).reshape(3)
+        start_origin = numpy.array([0, 0, 0]).reshape(3)
         for plane in planes:
-            normal_delta = (plane.normal - start_normal) / (intermediate_count + 1)
-            origin_delta = (plane.origin - start_origin) / (intermediate_count + 1)
+            normal_delta = (plane.normal - start_normal) / \
+                (intermediate_count + 1)
+            origin_delta = (plane.origin - start_origin) / \
+                (intermediate_count + 1)
             for sub_plane_idx in range(0, intermediate_count):
-                plane_normal = start_normal + (normal_delta * (sub_plane_idx + 1))
-                plane_origin = start_origin + (origin_delta * (sub_plane_idx + 1))
+                plane_normal = start_normal + \
+                    (normal_delta * (sub_plane_idx + 1))
+                plane_origin = start_origin + \
+                    (origin_delta * (sub_plane_idx + 1))
                 sub_plane = SplitPlane(plane_normal, plane_origin)
                 ret.append(sub_plane)
             ret.append(plane)
@@ -384,7 +398,7 @@ class StartSliceJob(Job):
             start_origin = plane.origin
         return ret
 
-    def splitNode(self, node: SceneNode, plane: SplitPlane, overlap = 0) -> List[SceneNode]:
+    def splitNode(self, node: SceneNode, plane: SplitPlane, overlap=0) -> List[SceneNode]:
         mesh_data = node.getMeshData()
         if mesh_data.hasIndices():
             faces = mesh_data.getIndices()
@@ -393,7 +407,8 @@ class StartSliceJob(Job):
             faces = numpy.empty((int(num_verts / 3 + 1), 3), numpy.int32)
             for i in range(0, num_verts - 2, 3):
                 faces[int(i / 3):] = [i, i + 1, i + 2]
-        trmesh = trimesh.Trimesh(vertices=node.getMeshDataTransformed().getVertices(), faces=faces)
+        trmesh = trimesh.Trimesh(
+            vertices=node.getMeshDataTransformed().getVertices(), faces=faces)
         filled = trmesh.fill_holes()
         trmesh.fix_normals()
         trmesh.remove_duplicate_faces()
@@ -404,7 +419,8 @@ class StartSliceJob(Job):
         start_mesh.fill_holes()
         start_mesh.remove_duplicate_faces()
         start_mesh.fix_normals()
-        start_node = SteSlicerSceneNode(node.getParent(), no_setting_override=True)
+        start_node = SteSlicerSceneNode(
+            node.getParent(), no_setting_override=True)
         if node.hasChildren():
             for child in node.getAllChildren():
                 if not child.getDecorator(SplittingPlaneDecorator):
@@ -418,7 +434,8 @@ class StartSliceJob(Job):
             cut_mesh.fill_holes()
             cut_mesh.fix_normals()
             cut_mesh.remove_duplicate_faces()
-            q = Quaternion.rotationTo(Vector(0,0,1), Vector(-plane_normal[0], plane_normal[2], plane_normal[1]))
+            q = Quaternion.rotationTo(
+                Vector(0, 0, 1), Vector(-plane_normal[0], plane_normal[2], plane_normal[1]))
             plane_matrix = q.toMatrix()
             cut_node = SteSlicerSceneNode(
                 node.getParent(), no_setting_override=True)
@@ -470,7 +487,7 @@ class StartSliceJob(Job):
         printing_mode = result["printing_mode"]
         if printing_mode in ["cylindrical", "cylindrical_full"]:
             result["cylindrical_rotate"] = "G0 A%.2f" % (
-                    90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
+                90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
             result["coordinate_system"] = "G56"
         elif printing_mode in ["spherical", "spherical_full"]:
             result["cylindrical_rotate"] = "G0 A0"
@@ -641,7 +658,7 @@ class StartSliceJob(Job):
     def _handlePerObjectSettings(self, node: SteSlicerSceneNode, message: Arcus.PythonMessage):
         stack = node.callDecoration("getStack")
 
-        #if id(node) in self._direction_matrices.keys():
+        # if id(node) in self._direction_matrices.keys():
         #    setting = message.addRepeatedMessage("settings")
         #    setting.name = "descrete_mode_mesh_rotation_matrix"
         #    setting.value = self._direction_matrices.get(id(node)).encode("utf-8")
