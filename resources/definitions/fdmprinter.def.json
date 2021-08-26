@@ -2524,6 +2524,20 @@
                             "limit_to_extruder": "infill_extruder_nr",
                             "settable_per_mesh": true
                         },
+                        "fiber_infill_material_flow":
+                        {
+                            "label": "Fiber Infill Flow",
+                            "description": "Flow compensation on fiber infill lines.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "enabled": "reinforcement_enabled",
+                            "limit_to_extruder": "fiber_infill_extruder_nr",
+                            "settable_per_mesh": true
+                        },
                         "skirt_brim_material_flow":
                         {
                             "label": "Skirt/Brim Flow",
