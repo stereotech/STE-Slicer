@@ -183,8 +183,8 @@ params_dict = {
             "default": 10
         },
         "composite_layer_count": {
-            "stack_key": "reinforcement_layer_count",
-            "default": 2
+            "stack_key": "",#"reinforcement_layer_count",
+            "default": 0
         },
         "composite_width": {
             "stack_key": "fiber_infill_line_width",
