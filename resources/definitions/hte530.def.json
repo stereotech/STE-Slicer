@@ -24,8 +24,8 @@
             "default_value": "Stereotech 530 Hybrid"
         },
         "machine_width": {
-            "default_value": 300,
-            "value": "300 if resolveOrValue('printing_mode') in ['classic'] else 330"
+            "default_value": 315,
+            "value": "315 if resolveOrValue('printing_mode') in ['classic'] else 330"
         },
         "machine_height": {
             "default_value": 300,
@@ -64,6 +64,17 @@
         },
         "machine_extruder_count": {
             "default_value": 2
+        },
+        "machine_disallowed_areas": {
+            "default_value":[
+                [
+                    [-157.5, 150],
+                    [ -157.5, -150],
+                    [ -152.5, -150],
+                    [-152.5, 150]
+                ]
+            ],
+            "value": "[[[-157.5, 150],[ -157.5, -150],[ -152.5, -150],[-152.5, 150]]] if resolveOrValue('machine_shape') == 'rectangular' else []"
         }
     }
 }

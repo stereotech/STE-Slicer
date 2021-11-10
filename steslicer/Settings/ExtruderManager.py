@@ -306,6 +306,10 @@ class ExtruderManager(QObject):
         machine_extruder_count = global_stack.getProperty("machine_extruder_count", "value")
         return result_list[:machine_extruder_count]
 
+    def getEnabledExtruderStacks(self) -> List["ExtruderStack"]:
+        extruder_list = self.getActiveExtruderStacks()
+        return list(filter(lambda x: x.isEnabled, extruder_list))
+
     def _globalContainerStackChanged(self) -> None:
         # If the global container changed, the machine changed and might have extruders that were not registered yet
         self._addCurrentMachineExtruders()
