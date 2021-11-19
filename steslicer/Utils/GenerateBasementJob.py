@@ -259,7 +259,7 @@ class GenerateBasementJob(Job):
             # path.append([self._position.x, self._position.y, self._position.z, self._position.a, self._position.b,
             #             self._position.c, self._prime_speed, self._position.e, LayerPolygon.MoveRetractionType])
 
-        gcode_line += ";TYPE:SKIRT\n"
+        gcode_line += ";TYPE:SKIRT\nG92 E0\n"
         points.pop(0)
         for point in points:
             new_position, new_gcode_position = point
