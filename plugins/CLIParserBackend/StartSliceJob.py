@@ -73,11 +73,11 @@ params_dict = {
     }},
     "Slice": {
         "z_step": {
-            "stack_key": "layer_height",
+            "stack_key": "cylindrical_layer_height",
             "default_value": 0.2
         },
         "r_step": {
-            "stack_key": "layer_height",
+            "stack_key": "cylindrical_layer_height",
             "default_value": 0.2
         },
         "round": {
@@ -562,7 +562,7 @@ class StartSliceJob(Job):
         printing_mode = global_stack.getProperty("printing_mode", "value")
         try:
             if printing_mode in ["cylindrical", "cylindrical_full"]:
-                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("layer_height", "value")
+                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("cylindrical_layer_height", "value")
                 height = global_stack.getProperty("machine_height", "value") * 2
                 cutting_mesh = trimesh.primitives.Cylinder(
                     radius=radius, height=height, sections=64)
@@ -571,7 +571,7 @@ class StartSliceJob(Job):
                 overlap = global_stack.getProperty("cylindrical_mode_overlap", "value") / 2
                 if radius > 0:
                     radius += global_stack.getProperty(
-                        "layer_height", "value")
+                        "cylindrical_layer_height", "value")
                 else:
                     raise ValueError
                 cutting_mesh = trimesh.primitives.Sphere(
@@ -700,7 +700,7 @@ class StartSliceJob(Job):
                     if name in ["rsize", "first_offset", "last_offset", "support_base_r"]:
                         setting_value /= 2
                         if name == "support_base_r":
-                            setting_value += settings.get("layer_height", 0.2)
+                            setting_value += settings.get("cylindrical_layer_height", 0.2)
                     if name in ["upskin_width", "downskin_width"]:
                        setting_value = setting_value if setting_value < 100 else 100
                     if name == "supportangle":
@@ -738,7 +738,7 @@ class StartSliceJob(Job):
                         if printing_mode in ["spherical", "spherical_full"]:
                             setting_value = 0
                     if name == "support_model_delta_round":
-                        setting_value = settings.get("support_z_distance", 0.1) / settings.get("layer_height", 0.1)
+                        setting_value = settings.get("support_z_distance", 0.1) / settings.get("cylindrical_layer_height", 0.1)
 
 
                 sub.text = setting_value.__str__()

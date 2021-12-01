@@ -1067,7 +1067,35 @@
                     "minimum_value_warning": "0.04",
                     "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
                     "settable_per_mesh": false,
-                    "settable_per_extruder": false
+                    "settable_per_extruder": false,
+                    "children": {
+                        "classic_layer_height": {
+                            "label": "Classic Layer Height",
+                            "description": "The height of each layer in mm. Higher values produce faster prints in lower resolution, lower values produce slower prints in higher resolution.",
+                            "unit": "mm",
+                            "type": "float",
+                            "default_value": 0.1,
+                            "value": "layer_height",
+                            "minimum_value": "0.001",
+                            "minimum_value_warning": "0.04",
+                            "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "cylindrical_layer_height": {
+                            "label": "Cylindrical Layer Height",
+                            "description": "The height of each layer in mm. Higher values produce faster prints in lower resolution, lower values produce slower prints in higher resolution.",
+                            "unit": "mm",
+                            "type": "float",
+                            "default_value": 0.1,
+                            "value": "layer_height",
+                            "minimum_value": "0.001",
+                            "minimum_value_warning": "0.04",
+                            "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "layer_height_0": {
                     "label": "Initial Layer Height",
