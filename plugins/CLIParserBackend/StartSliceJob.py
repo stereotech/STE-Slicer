@@ -568,13 +568,14 @@ class StartSliceJob(Job):
                     radius=radius, height=height, sections=64)
             elif printing_mode in ["spherical", "spherical_full"]:
                 radius = global_stack.getProperty("spherical_mode_base_radius", "value")
+                overlap = global_stack.getProperty("cylindrical_mode_overlap", "value") / 2
                 if radius > 0:
                     radius += global_stack.getProperty(
                         "layer_height", "value")
                 else:
                     raise ValueError
                 cutting_mesh = trimesh.primitives.Sphere(
-                    radius=radius, subdivisions = 3
+                    radius=radius - overlap, subdivisions = 3
                 )
             # cut mesh by cylinder
             result = output_mesh.difference(cutting_mesh, engine="scad")

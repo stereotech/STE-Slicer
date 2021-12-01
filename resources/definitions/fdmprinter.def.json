@@ -774,6 +774,19 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
+                "cylindrical_mode_overlap": {
+                    "label": "Cylindrical Parts Overlap",
+                    "description": "The value of cylindrical and center parts overlap",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 0,
+                    "enabled": "resolveOrValue('printing_mode') in ['cylindrical', 'cylindrical_full']",
+                    "minimum_value": "0",
+                    "maximum_value_warning": "2",
+                    "maximum_value": "10",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "spherical_mode_base_radius": {
                     "label": "Base Radius",
                     "description": "Radius of sphere base in 5D Spherical printing mode",
