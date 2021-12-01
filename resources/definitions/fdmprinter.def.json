@@ -5406,6 +5406,20 @@
                     "settable_per_extruder": false,
                     "enabled": true
                 },
+                "cylindrical_raft_thickness": {
+                    "label": "Cylindrical Raft Thickness",
+                    "description": "Layer thickness of the cylindrical base raft. This should be a thick layer which sticks firmly to the printer build plate.",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.3,
+                    "value": "resolveOrValue('layer_height_0') * 1.2",
+                    "minimum_value": "0.001",
+                    "minimum_value_warning": "0.04",
+                    "maximum_value_warning": "0.75 * raft_base_line_width",
+                    "enabled": "cylindrical_raft_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "cylindrical_raft_diameter": {
                     "label": "Cylindrical Raft diameter",
                     "description": "Base diameter of Cylindrical Raft",

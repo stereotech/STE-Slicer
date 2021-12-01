@@ -61,7 +61,7 @@ class GenerateBasementJob(Job):
         stack = self._global_stack.getTop()
         self._travel_speed = self._global_stack.getProperty(
             "speed_travel", "value")
-        self._raft_base_thickness = self._global_stack.getProperty("raft_base_thickness", "value")
+        self._raft_base_thickness = self._global_stack.getProperty("cylindrical_raft_thickness", "value")
         self._raft_base_line_width = self._global_stack.getProperty("raft_base_line_width", "value")
         self._raft_base_line_spacing = self._global_stack.getProperty("raft_base_line_spacing", "value")
         self._raft_speed = self._global_stack.getProperty("raft_speed", "value")
@@ -155,6 +155,8 @@ class GenerateBasementJob(Job):
         current_path = []  # type: List[List[float]]
 
         layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness))
+        if layer_count < 1:
+            layer_count = 1
 
         for layer_number in range(0, layer_count):
             if self._abort_requested:
