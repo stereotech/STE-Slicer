@@ -183,8 +183,8 @@ params_dict = {
             "default": 10
         },
         "composite_layer_count": {
-            "stack_key": "",#"reinforcement_layer_count",
-            "default": 0
+            "stack_key": "reinforcement_layer_count",
+            "default": 2
         },
         "composite_width": {
             "stack_key": "fiber_infill_line_width",
@@ -203,8 +203,16 @@ params_dict = {
             "default": 4
         },
         "composite_min_length": {
-            "stack_key": "reinforcement_min_fiber_line_length",
-            "default": 4
+            "stack_key": "",#"reinforcement_min_fiber_line_length",
+            "default": 999999
+        },
+        "composite_bottom_skin": {
+            "stack_key": "reinforcement_bottom_skin_layers",
+            "default": 4,
+        },
+        "composite_top_skin": {
+            "stack_key": "reinforcement_top_skin_layers",
+            "default": 1
         }
     },
     "GCodeSupport": {

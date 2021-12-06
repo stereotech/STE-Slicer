@@ -937,7 +937,7 @@
                     "minimum_value_warning": "2",
                     "default_value": 4,
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled_classic",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
                 },
@@ -948,7 +948,7 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled_classic",
                     "minimum_value_warning": "0",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
@@ -962,7 +962,7 @@
                         "isotropic": "Isotropic"
                     },
                     "default_value": "concentric",
-                    "enabled": "reinforcement_enabled",
+                    "enabled": "reinforcement_enabled_classic",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
@@ -976,7 +976,7 @@
                         "inner": "Inner Walls"
                     },
                     "default_value": "all",
-                    "enabled": "reinforcement_enabled",
+                    "enabled": "reinforcement_enabled_classic",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
@@ -987,7 +987,7 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "10",
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled_classic",
                     "minimum_value_warning": "0",
                     "settable_per_mesh": true
                 },
