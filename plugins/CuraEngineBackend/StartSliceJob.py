@@ -237,9 +237,10 @@ class StartSliceJob(Job):
                 if printing_mode == "cylindrical_full":
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
                         "cylindrical_mode_base_diameter", "value") / 2
+                    overlap = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty("cylindrical_mode_overlap", "value") / 2
                     height = node.getBoundingBox().height * 2
                     cutting_mesh = trimesh.primitives.Cylinder(
-                        radius=radius, height=height, sections=64)
+                        radius=radius + overlap, height=height, sections=64)
                     cutting_mesh.apply_transform(
                         trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
                 elif printing_mode == "spherical_full":
@@ -576,6 +577,8 @@ class StartSliceJob(Job):
             settings["cool_fan_enabled"] = settings["cool_fan_enabled_classic"]
             settings["cool_fan_speed_min"] = settings["cool_fan_speed_min_classic"]
             settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_classic"]
+
+            settings["layer_height"] = settings["classic_layer_height"]
 
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():

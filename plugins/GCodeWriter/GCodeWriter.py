@@ -4,6 +4,7 @@ import re  # For escaping characters in the settings.
 import json
 import copy
 
+from UM.Math.AxisAlignedBox import AxisAlignedBox
 from UM.Mesh.MeshWriter import MeshWriter
 from UM.Logger import Logger
 from UM.Application import Application
@@ -75,6 +76,8 @@ class GCodeWriter(MeshWriter):
         gcode_list = gcode_dict.get(active_build_plate, None)
         if gcode_list is not None:
             has_settings = False
+            scene_size = self._getSerializedBounding()
+            stream.write(scene_size)
             for gcode in gcode_list:
                 if gcode[:len(self._setting_keyword)] == self._setting_keyword:
                     has_settings = True
@@ -193,3 +196,14 @@ class GCodeWriter(MeshWriter):
         for pos in range(0, len(escaped_string), 80 - prefix_length):
             result += prefix + escaped_string[pos: pos + 80 - prefix_length] + "\n"
         return result
+
+    def _getSerializedBounding(self):
+        aabb = self._application.getSceneBoundingBox() #type: AxisAlignedBox
+        return ";MINX:%(MINX).1f\n;MINY%(MINY).1f\n;MINZ:%(MINZ).1f\n" \
+               ";MAXX:%(MAXX).1f\n;MAXY%(MAXY).1f\n;MAXZ:%(MAXZ).1f\n" % \
+               {'MINX': aabb.left.item(),
+                'MINY': aabb.back.item(),
+                'MINZ': aabb.bottom.item(),
+                'MAXX': aabb.right.item(),
+                'MAXY': aabb.front.item(),
+                'MAXZ': aabb.top.item()}

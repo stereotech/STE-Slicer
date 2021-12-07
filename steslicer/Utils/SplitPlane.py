@@ -104,7 +104,10 @@ def SplitByPlaneOneSide(mesh,
         if cap:
             # check if mesh is watertight (can't cap if not)
             if not sliced_mesh.is_watertight:
-                raise ValueError('Input mesh must be watertight to cap slice')
+                if reversed:
+                    return sliced_mesh
+                else:
+                    return None
             path = sliced_mesh.section(plane_normal=normal,
                                        plane_origin=origin)
             if not path:
