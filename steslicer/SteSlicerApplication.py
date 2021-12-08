@@ -101,7 +101,6 @@ from . import MachineActionManager
 
 from steslicer.TaskManagement.OnExitCallbackManager import OnExitCallbackManager
 
-from steslicer.Licensing.Licensing import Licensing
 from steslicer.Settings.MachineManager import MachineManager
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.Settings.UserChangesModel import UserChangesModel
@@ -169,7 +168,6 @@ class SteSlicerApplication(QtApplication):
                          tray_icon_name = "steslicer-icon-32.png",
                          **kwargs)
 
-        self._license_manager = None
         self.default_theme = "material"
 
         self.change_log_url = "https://stereotech.org/steslicer/whats-new"
@@ -245,7 +243,6 @@ class SteSlicerApplication(QtApplication):
         self._update_platform_activity_timer = None
 
         self._need_to_show_user_agreement = True
-        self._need_to_show_license = True
 
         self._sidebar_custom_menu_items = []  # type: list # Keeps list of custom menu items for the side bar
 
@@ -515,7 +512,6 @@ class SteSlicerApplication(QtApplication):
         preferences.addPreference("steslicer/expanded_brands", "")
         preferences.addPreference("steslicer/expanded_types", "")
 
-        self._license_manager = Licensing(self)
 
         self._need_to_show_user_agreement = not preferences.getValue("general/accepted_user_agreement")
         self._need_to_show_license = preferences.getValue("general/license_show_window")
@@ -546,12 +542,6 @@ class SteSlicerApplication(QtApplication):
     def setNeedToShowUserAgreement(self, set_value = True) -> None:
         self._need_to_show_user_agreement = set_value
 
-    @pyqtProperty(bool)
-    def needToShowLicense(self) -> bool:
-        return self._need_to_show_license
-
-    def setNeedToShowLicense(self, set_value = True) -> None:
-        self._need_to_show_license = set_value
 
     # DO NOT call this function to close the application, use checkAndExitApplication() instead which will perform
     # pre-exit checks such as checking for in-progress USB printing, etc.
@@ -865,9 +855,6 @@ class SteSlicerApplication(QtApplication):
 
     def getVariantManager(self, *args) -> VariantManager:
         return self._variant_manager
-
-    def getLicenseManager(self) -> Licensing:
-        return self._license_manager
 
     @pyqtSlot(result = QObject)
     def getMaterialManager(self, *args) -> "MaterialManager":

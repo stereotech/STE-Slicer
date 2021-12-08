@@ -30,9 +30,6 @@ class SteSlicerActions(QObject):
     def __init__(self, parent: QObject = None) -> None:
         super().__init__(parent)
 
-    @pyqtSlot()
-    def showLicenseWindow(self) -> None:
-        steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().getLicenseManager().showLicenseWindow()
 
     @pyqtSlot()
     def openDocumentation(self) -> None:
