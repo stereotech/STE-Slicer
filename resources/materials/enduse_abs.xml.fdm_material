@@ -6,13 +6,17 @@
       <brand>Stereotech</brand>
       <material>Enduse</material>
       <color></color>
-      <label>Enduse-ABS</label>
+      <label>Enduse ABS</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
-    <adhesion_info></adhesion_info>
-    <description></description>
-    <color_code></color_code>
+    <adhesion_info>печать на столе: нанести клей-адгезив на чистое
+обезжиренное стекло;
+печать на цилиндрическом основании: наклеить
+малярный скотч на основание и нанести клей-адгезив</adhesion_info>
+    <description>Ударопрочный инженерный полимер. Предназначен для корпусов, держателей и
+оснастки.</description>
+    <color_code>#0000FF</color_code>
     <GUID>15332acf-86f6-438f-81e9-f3e7c1288d8a</GUID>
     <definition>fdmprinter</definition>
   </metadata>
@@ -22,8 +26,12 @@
     <weight></weight>
   </properties>
   <settings>
+    <setting key="print temperature">250</setting>
     <setting key="standby temperature">175</setting>
     <setting key="heated bed temperature">100</setting>
-    <setting key="print temperature">240</setting>
+    <setting key="print cooling">0.0</setting>
+    <setting key="retraction amount">6.5</setting>
+    <setting key="retraction speed">25</setting>
+    <setting key="speed print">50</setting>
   </settings>
 </fdmmaterial>

@@ -6,13 +6,17 @@
       <brand>Stereotech</brand>
       <material>Enduse</material>
       <color></color>
-      <label>Enduse-PP</label>
+      <label>Enduse PP</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
-    <adhesion_info></adhesion_info>
-    <description></description>
-    <color_code></color_code>
+    <adhesion_info>печать на столе: наклеить на стол прозрачный
+скотч;
+печать на цилиндрическом основании: наклеить
+прозрачный скотч на основание</adhesion_info>
+    <description>Полимерный материал с высокой химической стойкостью и эластичностью.
+Предназначен для печати изделий, работающих в агрессивной среде.</description>
+    <color_code>#FFFFFF</color_code>
     <GUID>9ce250c9-db0b-4993-a4e9-1e9fbb31146f</GUID>
     <definition>fdmprinter</definition>
   </metadata>
@@ -22,8 +26,12 @@
     <weight></weight>
   </properties>
   <settings>
+    <setting key="print temperature">230</setting>
     <setting key="standby temperature">175</setting>
-    <setting key="heated bed temperature">50</setting>
-    <setting key="print temperature">220</setting>
+    <setting key="heated bed temperature">60</setting>
+    <setting key="print cooling">0.0</setting>
+    <setting key="retraction amount">3.0</setting>
+    <setting key="retraction speed">25</setting>
+    <setting key="speed print">40</setting>
   </settings>
 </fdmmaterial>
