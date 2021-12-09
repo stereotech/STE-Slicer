@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<fdmmaterial version="1.3" xmlns="">
+<fdmmaterial version="1.3"
+  xmlns="http://www.ultimaker.com/material">
   <metadata>
     <name>
       <brand>Stereotech</brand>
@@ -7,13 +8,13 @@
       <color></color>
       <label>Fiberpart-TPU C5</label>
     </name>
-    <compatible></compatible>
-    <version></version>
+    <compatible>True</compatible>
+    <version>7</version>
     <adhesion_info></adhesion_info>
     <description></description>
     <color_code></color_code>
     <GUID>d75839c9-7e46-41d0-b39e-b33c9e26055a</GUID>
-    <definition></definition>
+    <definition>fdmprinter</definition>
   </metadata>
   <properties>
     <diameter>1.75</diameter>

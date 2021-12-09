@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<fdmmaterial version="1.3" xmlns="">
+<fdmmaterial version="1.3"
+  xmlns="http://www.ultimaker.com/material">
   <metadata>
     <name>
       <brand>Stereotech</brand>
@@ -7,13 +8,13 @@
       <color></color>
       <label>ContiFiber-CPA</label>
     </name>
-    <compatible></compatible>
-    <version></version>
+    <compatible>True</compatible>
+    <version>7</version>
     <adhesion_info></adhesion_info>
     <description></description>
     <color_code></color_code>
     <GUID>0d5a3633-17e5-463f-a572-f1517ac9770b</GUID>
-    <definition></definition>
+    <definition>fdmprinter</definition>
   </metadata>
   <properties>
     <diameter>0.4</diameter>
