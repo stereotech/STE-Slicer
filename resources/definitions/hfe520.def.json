@@ -7,8 +7,6 @@
         "manufacturer": "Stereotech",
         "visible": true,
         "file_formats": "text/x-gcode",
-        "platform": "stereotech_ste520_platform.obj",
-        "platform_texture": "StereotechSte320backplate.png",
         "platform_offset": [
             0,
             -97.8,
@@ -19,12 +17,8 @@
             "0": "stereotech_ste320_1st",
             "1": "stereotech_fiber_extruder"
         },
-        "first_start_actions": [
-
-        ],
-        "supported_actions": [
-
-        ]
+        "first_start_actions": [],
+        "supported_actions": []
     },
     "overrides": {
         "machine_name": {
