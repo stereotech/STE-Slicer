@@ -6,13 +6,18 @@
       <brand>Stereotech</brand>
       <material>Metalcast</material>
       <color></color>
-      <label>Metalcast-316L</label>
+      <label>Metalcast 316L</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
-    <adhesion_info></adhesion_info>
-    <description></description>
-    <color_code></color_code>
+    <adhesion_info>Печать на столе: чистое стекло или каптоновая плёнка
+Печать на цилиндрическом основании: каптоновая плёнка
+(spiral – закрепить плёнку клеящим слоем наружу или
+использовать кольцевые поддержки для снятия детали)</adhesion_info>
+    <description>Нержавеющая конструкционная сталь марки AISI 316L. Предназначена для
+изготовления деталей промышленного оборудования в химической, пищевой,
+фармацевтической и химической промышленностях.</description>
+    <color_code>#AAAAAA</color_code>
     <GUID>8b3f79a1-38ea-4f37-96ae-aba7bcda488e</GUID>
     <definition>fdmprinter</definition>
   </metadata>
@@ -22,8 +27,12 @@
     <weight></weight>
   </properties>
   <settings>
+    <setting key="print temperature">160</setting>
     <setting key="standby temperature">100</setting>
-    <setting key="heated bed temperature"></setting>
-    <setting key="print temperature">170</setting>
+    <setting key="heated bed temperature">40</setting>
+    <setting key="print cooling">20.0</setting>
+    <setting key="retraction amount">2.0</setting>
+    <setting key="retraction speed">10</setting>
+    <setting key="speed print">30</setting>
   </settings>
 </fdmmaterial>
