@@ -6,24 +6,35 @@
       <brand>Stereotech</brand>
       <material>Fiberpart</material>
       <color></color>
-      <label>Fiberpart-ABSPA G8</label>
+      <label>Fiberpart ABSPA G8</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
-    <adhesion_info></adhesion_info>
-    <description></description>
-    <color_code></color_code>
+    <adhesion_info>печать на столе: нанести клей-адгезив на
+чистое обезжиренное стекло;
+печать на цилиндрическом основании:
+наклеить малярный скотч на основание и
+нанести клей-адгезив</adhesion_info>
+    <description>Композит на основе ABS/PA армированный стекловолокном. Применяется для печати
+функциональных изделий, конструктивных элементов, где требуется высокая
+ударопрочность и стойкость к ультрафиолету. Инертен к большинству доступных
+химических растворителей</description>
+    <color_code>#333333</color_code>
     <GUID>3a747b85-c844-473e-80fe-5cd4aa73eefe</GUID>
     <definition>fdmprinter</definition>
   </metadata>
   <properties>
     <diameter>1.75</diameter>
-    <density>1.07</density>
+    <density>1.12</density>
     <weight></weight>
   </properties>
   <settings>
-    <setting key="standby temperature">175</setting>
-    <setting key="heated bed temperature">115</setting>
     <setting key="print temperature">280</setting>
+    <setting key="standby temperature">175</setting>
+    <setting key="heated bed temperature">110</setting>
+    <setting key="print cooling">0.0</setting>
+    <setting key="retraction amount">6.5</setting>
+    <setting key="retraction speed">30</setting>
+    <setting key="speed print">40</setting>
   </settings>
 </fdmmaterial>
