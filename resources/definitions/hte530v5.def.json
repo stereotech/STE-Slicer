@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "Stereotech 530 Hybrid V5",
+  "name": "Stereotech Hybrid 530 V5",
   "inherits": "steprinter_v5",
   "metadata": {
     "author": "Stereotech",
