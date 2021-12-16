@@ -158,12 +158,16 @@ class GenerateBasementJob(Job):
         if layer_count < 1:
             layer_count = 1
 
+
         for layer_number in range(0, layer_count):
             if self._abort_requested:
                 Logger.log("d", "Parsing basement file cancelled")
                 return
             self.processingProgress.emit(layer_number / layer_count)
             self._gcode_list.append(";LAYER:%s\n" % layer_number)
+
+            if self._first_move:
+                self._gcode_list[-1] += "G92 E0\n"
 
             self._gcode_list[-1] = self.processPolyline(layer_number, current_path, self._gcode_list[-1], layer_count)
 
@@ -261,7 +265,7 @@ class GenerateBasementJob(Job):
             # path.append([self._position.x, self._position.y, self._position.z, self._position.a, self._position.b,
             #             self._position.c, self._prime_speed, self._position.e, LayerPolygon.MoveRetractionType])
 
-        gcode_line += ";TYPE:SKIRT\nG92 E0\n"
+        gcode_line += ";TYPE:SKIRT\n"
         points.pop(0)
         for point in points:
             new_position, new_gcode_position = point
