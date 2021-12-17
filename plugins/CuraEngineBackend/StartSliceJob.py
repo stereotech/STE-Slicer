@@ -443,10 +443,14 @@ class StartSliceJob(Job):
         result["day"] = ["Sun", "Mon", "Tue", "Wed",
                          "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
         printing_mode = result["printing_mode"]
+        cylindrical_raft_enabled = result["cylindrical_raft_enabled"]
         if printing_mode in ["cylindrical", "cylindrical_full"]:
             result["cylindrical_rotate"] = "G0 A%.2f" % (
                 90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
-            result["coordinate_system"] = "G56"
+            if cylindrical_raft_enabled:
+                result["coordinate_system"] = "G56"
+            else:
+                result["coordinate_system"] = "G55"
         elif printing_mode in ["spherical", "spherical_full"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
