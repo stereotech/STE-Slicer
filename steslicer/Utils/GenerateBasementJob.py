@@ -167,7 +167,7 @@ class GenerateBasementJob(Job):
             self._gcode_list.append(";LAYER:%s\n" % layer_number)
 
             if self._first_move:
-                self._gcode_list[-1] += "G92 E0\n"
+                self._gcode_list[-1] += "G56;Set basement coordinate system\nG92 E0\n"
 
             self._gcode_list[-1] = self.processPolyline(layer_number, current_path, self._gcode_list[-1], layer_count)
 
