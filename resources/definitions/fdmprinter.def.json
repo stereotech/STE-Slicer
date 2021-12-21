@@ -5431,6 +5431,16 @@
                     "settable_per_extruder": false,
                     "enabled": true
                 },
+                "cylindrical_raft_extruder_nr": {
+                    "label": "Cylindrical Raft Extruder",
+                    "description": "The extruder train to use for printing the cylindrical raft. This is used in multi-extrusion.",
+                    "type": "extruder",
+                    "default_value": "0",
+                    "value": "defaultExtruderPosition()",
+                    "enabled": "extruders_enabled_count > 1 and cylindrical_raft_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "cylindrical_raft_thickness": {
                     "label": "Cylindrical Raft Thickness",
                     "description": "Layer thickness of the cylindrical base raft. This should be a thick layer which sticks firmly to the printer build plate.",
