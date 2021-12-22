@@ -4347,6 +4347,7 @@
                     "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
                     "type": "bool",
                     "default_value": false,
+                    "enabled": true,
                     "settable_per_mesh": true,
                     "settable_per_extruder": false,
                     "children": {

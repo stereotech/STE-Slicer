@@ -320,7 +320,8 @@ class StartSliceJob(Job):
                     cutting_node.setMeshData(data)
                     cut_list.append(cutting_node)
                     support_enable_top_support = stack.getProperty("support_enable_top_support", "value")
-                    if support_enable_top_support:
+                    support_enable = stack.getProperty("support_enable", "value")
+                    if support_enable and support_enable_top_support:
                         try:
                             cutting_support = cutting_mesh.difference(cutting_result, engine="scad")
                             cutting_support.fill_holes()
