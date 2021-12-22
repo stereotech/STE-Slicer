@@ -9,7 +9,7 @@ def getMetaData():
             "name": i18n_catalog.i18nc("@label", "Plane Splitter"),
             "description": i18n_catalog.i18nc("@info:tooltip", "Create planes for 5D Discrete"),
             "icon": "layers-plus.svg",
-            "weight": 4
+            "weight": 5
         }
     }
 
