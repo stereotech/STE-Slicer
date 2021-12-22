@@ -825,14 +825,14 @@
                     "minimum_value": "0",
                     "default_value": 0,
                     "settable_per_extruder": false,
-                     "settable_per_mesh": false,
+                    "settable_per_mesh": false,
                     "settable_per_meshgroup": false,
                     "enabled": "resolveOrValue('printing_mode') == 'discrete'"
                 },
                 "descrete_mode_parts_intersection": {
                     "label": "Parts Intersection",
                     "description": "Intersection between separate parts of the print. This setting could improve adhesion between separate parts of the print",
-                   "type": "float",
+                    "type": "float",
                     "unit": "mm",
                     "default_value": 0.1,
                     "value": "resolveOrValue('layer_height_0') / 2",
@@ -855,7 +855,8 @@
                     "description": "Enables the reinforcement.",
                     "type": "bool",
                     "default_value": false,
-                    "value": "any(extruderValues('machine_fiber_extruder'))",
+                    "enabled": "any(extruderValues('machine_fiber_extruder'))",
+                    "value": false,
                     "settable_per_mesh": false,
                     "settable_per_extruder": true,
                     "children": {
@@ -864,7 +865,8 @@
                             "description": "Enables the reinforcement while printing classic.",
                             "type": "bool",
                             "default_value": false,
-                            "value": "any(extruderValues('machine_fiber_extruder'))",
+                            "value": "reinforcement_enabled",
+                            "enabled": "reinforcement_enabled",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         },
@@ -873,7 +875,8 @@
                             "description": "Enables the reinforcement while printing cylindrical.",
                             "type": "bool",
                             "default_value": false,
-                            "value": "any(extruderValues('machine_fiber_extruder'))",
+                            "value": "reinforcement_enabled",
+                            "enabled": "reinforcement_enabled",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         }
@@ -2470,10 +2473,8 @@
                     "maximum_value_warning": "150",
                     "enabled": "machine_gcode_flavor != \"UltiGCode\"",
                     "settable_per_mesh": true,
-                    "children":
-                    {
-                        "wall_material_flow":
-                        {
+                    "children": {
+                        "wall_material_flow": {
                             "label": "Wall Flow",
                             "description": "Flow compensation on wall lines.",
                             "unit": "%",
@@ -2485,10 +2486,8 @@
                             "maximum_value_warning": "150",
                             "limit_to_extruder": "wall_0_extruder_nr if wall_x_extruder_nr == wall_0_extruder_nr else -1",
                             "settable_per_mesh": true,
-                            "children":
-                            {
-                                "wall_0_material_flow":
-                                {
+                            "children": {
+                                "wall_0_material_flow": {
                                     "label": "Outer Wall Flow",
                                     "description": "Flow compensation on the outermost wall line.",
                                     "unit": "%",
@@ -2501,8 +2500,7 @@
                                     "limit_to_extruder": "wall_0_extruder_nr",
                                     "settable_per_mesh": true
                                 },
-                                "wall_x_material_flow":
-                                {
+                                "wall_x_material_flow": {
                                     "label": "Inner Wall(s) Flow",
                                     "description": "Flow compensation on wall lines for all wall lines except the outermost one.",
                                     "unit": "%",
@@ -2517,8 +2515,7 @@
                                 }
                             }
                         },
-                        "skin_material_flow":
-                        {
+                        "skin_material_flow": {
                             "label": "Top/Bottom Flow",
                             "description": "Flow compensation on top/bottom lines.",
                             "unit": "%",
@@ -2532,8 +2529,7 @@
                             "limit_to_extruder": "top_bottom_extruder_nr",
                             "settable_per_mesh": true
                         },
-                        "roofing_material_flow":
-                        {
+                        "roofing_material_flow": {
                             "label": "Top Surface Skin Flow",
                             "description": "Flow compensation on lines of the areas at the top of the print.",
                             "unit": "%",
@@ -2547,8 +2543,7 @@
                             "settable_per_mesh": true,
                             "enabled": "roofing_layer_count > 0 and top_layers > 0"
                         },
-                        "infill_material_flow":
-                        {
+                        "infill_material_flow": {
                             "label": "Infill Flow",
                             "description": "Flow compensation on infill lines.",
                             "unit": "%",
@@ -2562,8 +2557,7 @@
                             "limit_to_extruder": "infill_extruder_nr",
                             "settable_per_mesh": true
                         },
-                        "fiber_infill_material_flow":
-                        {
+                        "fiber_infill_material_flow": {
                             "label": "Fiber Infill Flow",
                             "description": "Flow compensation on fiber infill lines.",
                             "unit": "%",
@@ -2576,8 +2570,7 @@
                             "limit_to_extruder": "fiber_infill_extruder_nr",
                             "settable_per_mesh": true
                         },
-                        "skirt_brim_material_flow":
-                        {
+                        "skirt_brim_material_flow": {
                             "label": "Skirt/Brim Flow",
                             "description": "Flow compensation on skirt or brim lines.",
                             "unit": "%",
@@ -2591,8 +2584,7 @@
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         },
-                        "support_material_flow":
-                        {
+                        "support_material_flow": {
                             "label": "Support Flow",
                             "description": "Flow compensation on support structure lines.",
                             "unit": "%",
@@ -2607,8 +2599,7 @@
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         },
-                        "support_interface_material_flow":
-                        {
+                        "support_interface_material_flow": {
                             "label": "Support Interface Flow",
                             "description": "Flow compensation on lines of support roof or floor.",
                             "unit": "%",
@@ -2622,10 +2613,8 @@
                             "limit_to_extruder": "support_interface_extruder_nr",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true,
-                            "children":
-                            {
-                                "support_roof_material_flow":
-                                {
+                            "children": {
+                                "support_roof_material_flow": {
                                     "label": "Support Roof Flow",
                                     "description": "Flow compensation on support roof lines.",
                                     "unit": "%",
@@ -2640,8 +2629,7 @@
                                     "settable_per_mesh": false,
                                     "settable_per_extruder": true
                                 },
-                                "support_bottom_material_flow":
-                                {
+                                "support_bottom_material_flow": {
                                     "label": "Support Floor Flow",
                                     "description": "Flow compensation on support floor lines.",
                                     "unit": "%",
@@ -2658,8 +2646,7 @@
                                 }
                             }
                         },
-                        "prime_tower_flow":
-                        {
+                        "prime_tower_flow": {
                             "label": "Prime Tower Flow",
                             "description": "Flow compensation on prime tower lines.",
                             "unit": "%",
@@ -4361,16 +4348,29 @@
                     "type": "bool",
                     "default_value": false,
                     "settable_per_mesh": true,
-                    "settable_per_extruder": false
-                },
-                "support_enable_cylindrical": {
-                    "label": "Generate Cylindrical Support",
-                    "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
-                    "type": "bool",
-                    "enabled": "support_enable",
-                    "default_value": false,
-                    "settable_per_mesh": true,
-                    "settable_per_extruder": false
+                    "settable_per_extruder": false,
+                    "children": {
+                        "support_enable_classic": {
+                            "label": "Generate Classic Support",
+                            "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
+                            "type": "bool",
+                            "enabled": "support_enable",
+                            "value": "support_enable",
+                            "default_value": false,
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": false
+                        },
+                        "support_enable_cylindrical": {
+                            "label": "Generate Cylindrical Support",
+                            "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
+                            "type": "bool",
+                            "enabled": "support_enable",
+                            "value": "support_enable",
+                            "default_value": false,
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "support_extruder_nr": {
                     "label": "Support Extruder",

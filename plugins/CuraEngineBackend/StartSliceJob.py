@@ -584,6 +584,8 @@ class StartSliceJob(Job):
 
             settings["layer_height"] = settings["classic_layer_height"]
 
+            settings["support_enable"] = settings["support_enable_classic"]
+
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():
             setting_message = self._slice_message.getMessage(
