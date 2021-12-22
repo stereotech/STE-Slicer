@@ -4450,6 +4450,15 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
+                "support_enable_top_support": {
+                    "label": "Generate Top Support",
+                    "description": "Generate top structures to support spiral parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
+                    "type": "bool",
+                    "enabled": "support_enable and printing_mode in ['cylindrical_full']",
+                    "default_value": false,
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": false
+                },
                 "support_angle": {
                     "label": "Support Overhang Angle",
                     "description": "The minimum angle of overhangs for which support is added. At a value of 0° all overhangs are supported, 90° will not provide any support.",

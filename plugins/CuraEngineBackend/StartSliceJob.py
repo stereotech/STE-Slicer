@@ -285,13 +285,13 @@ class StartSliceJob(Job):
                             node.getParent(), no_setting_override=True)
                         cutting_node.addDecorator(
                             node.getDecorator(SettingOverrideDecorator))
+
                 except Exception as e:
                     Logger.log("e", "Failed to intersect model! %s", e)
                     cutting_result = cutting_mesh
                     if cutting_result:
                         cutting_result.fill_holes()
                         cutting_result.fix_normals()
-
                         data = MeshData.MeshData(vertices=cutting_result.vertices.astype('float32'),
                                                  normals=cutting_result.face_normals.astype(
                                                      'float32'),
@@ -318,8 +318,41 @@ class StartSliceJob(Job):
                 if cutting_node is not None:
                     cutting_node.setName("cut_" + node.getName())
                     cutting_node.setMeshData(data)
-
                     cut_list.append(cutting_node)
+                    support_enable_top_support = stack.getProperty("support_enable_top_support", "value")
+                    if support_enable_top_support:
+                        try:
+                            cutting_support = cutting_mesh.difference(cutting_result, engine="scad")
+                            cutting_support.fill_holes()
+                            cutting_support.fix_normals()
+                            cutting_support_data = MeshData.MeshData(vertices=cutting_support.vertices.astype('float32'),
+                                                     normals=cutting_support.face_normals.astype(
+                                                         'float32'),
+                                                     indices=cutting_support.faces.astype('int64'))
+                            cutting_support_node = SteSlicerSceneNode(
+                                node.getParent(), no_setting_override=True)
+                            cutting_support_stack = cutting_support_node.callDecoration(
+                                "getStack")
+                            if not cutting_support_stack:
+                                cutting_support_node.addDecorator(
+                                    SettingOverrideDecorator())
+                                cutting_support_stack = cutting_support_node.callDecoration("getStack")
+                            settings = cutting_support_stack.getTop()
+                            if not (settings.getInstance("support_mesh") and settings.getProperty("support_mesh", "value")):
+                                definition = cutting_support_stack.getSettingDefinition(
+                                    "support_mesh")
+                                new_instance = SettingInstance(
+                                    definition, settings)
+                                new_instance.setProperty(
+                                    "value", True, emit_signals=False)
+                                # Ensure that the state is not seen as a user state.
+                                new_instance.resetState()
+                                settings.addInstance(new_instance)
+                            cutting_support_node.setName("cut_support_" + node.getName())
+                            cutting_support_node.setMeshData(cutting_support_data)
+                            cut_list.append(cutting_support_node)
+                        except Exception as e:
+                            Logger.log("e", "Failed to intersect model! %s", e)
 
             object_groups.append(cut_list)
 
