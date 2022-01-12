@@ -73,12 +73,15 @@ class GenerateBasementJob(Job):
         self._filament_diameter = extruder.getProperty(
             "material_diameter", "value")
 
+
         self._cylindrical_raft_enabled = stack.getProperty("cylindrical_raft_enabled", "value")
         if self._cylindrical_raft_enabled is None:
             self._cylindrical_raft_enabled = self._global_stack.getProperty("cylindrical_raft_enabled", "value")
         self._cylindrical_mode_base_diameter = self._global_stack.getProperty("cylindrical_raft_diameter", "value")
         self._non_printing_base_diameter = self._global_stack.getProperty("non_printing_base_diameter", "value")
         self._cylindrical_raft_base_height = self._global_stack.getProperty("cylindrical_raft_base_height", "value")
+
+        self._printing_mode = self._global_stack.getProperty("printing_mode", "value")
 
         self._enable_retraction = extruder.getProperty(
             "retraction_enable", "value")
@@ -145,7 +148,7 @@ class GenerateBasementJob(Job):
 
         Logger.log("d", "Generating basement...")
 
-        if not self._cylindrical_raft_enabled:
+        if not self._cylindrical_raft_enabled and self._printing_mode != "classic":
             self._gcode_list.append(
                 "G0 A0 F600\nG92 E0 C0\n")
             return
