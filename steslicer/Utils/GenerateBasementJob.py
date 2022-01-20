@@ -148,7 +148,9 @@ class GenerateBasementJob(Job):
 
         Logger.log("d", "Generating basement...")
 
-        if not self._cylindrical_raft_enabled and self._printing_mode != "classic":
+        if not self._cylindrical_raft_enabled:
+            if self._printing_mode == "classic":
+                return
             self._gcode_list.append(
                 "G0 A0 F600\nG92 E0 C0\n")
             return
