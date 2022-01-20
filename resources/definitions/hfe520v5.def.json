@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "Stereotech Hybrid 530 V5",
+  "name": "Stereotech Fiber 520 V5",
   "inherits": "steprinter_v5",
   "metadata": {
     "author": "Stereotech",
@@ -10,24 +10,24 @@
     "has_materials": true,
     "machine_extruder_trains": {
       "0": "stereotech_v5_extruder_main",
-      "1": "stereotech_v5_extruder_second"
+      "1": "stereotech_v5_fiber_extruder"
     },
     "first_start_actions": [],
     "supported_actions": []
   },
   "overrides": {
     "machine_name": {
-      "default_value": "Stereotech Hybrid 530 V5"
+      "default_value": "Stereotech Fiber 520 V5"
     },
     "machine_width": {
-      "default_value": 315
+      "default_value": 215
     },
     "machine_height": {
-      "default_value": 300,
-      "value": "300 if resolveOrValue('printing_mode') in ['classic'] else 250"
+      "default_value": 200,
+      "value": "200 if resolveOrValue('printing_mode') in ['classic'] else 180"
     },
     "machine_depth": {
-      "default_value": 300
+      "default_value": 200
     },
     "machine_hybrid": {
       "default_value": true

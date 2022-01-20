@@ -17,7 +17,7 @@
     },
     "overrides": {
         "machine_name": {
-            "default_value": "Stereotech 520 Hybrid V5"
+            "default_value": "Stereotech Hybrid 520 V5"
         },
         "machine_width": {
             "default_value": 215
