@@ -858,7 +858,7 @@
                     "enabled": "any(extruderValues('machine_fiber_extruder'))",
                     "value": false,
                     "settable_per_mesh": false,
-                    "settable_per_extruder": true,
+                    "settable_per_extruder": false,
                     "children": {
                         "reinforcement_enabled_classic": {
                             "label": "Enable Reinforcement on Classic",
@@ -868,7 +868,7 @@
                             "value": "reinforcement_enabled",
                             "enabled": "reinforcement_enabled",
                             "settable_per_mesh": false,
-                            "settable_per_extruder": true
+                            "settable_per_extruder": false
                         },
                         "reinforcement_enabled_cylindrical": {
                             "label": "Enable Reinforcement on Cylindrical",
@@ -878,7 +878,7 @@
                             "value": "reinforcement_enabled",
                             "enabled": "reinforcement_enabled",
                             "settable_per_mesh": false,
-                            "settable_per_extruder": true
+                            "settable_per_extruder": false
                         }
                     }
                 },
@@ -889,7 +889,7 @@
                     "type": "float",
                     "default_value": 0.1,
                     "minimum_value": "0.001",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "children": {
@@ -899,7 +899,7 @@
                             "type": "int",
                             "default_value": 2,
                             "minimum_value": "1",
-                            "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                            "enabled": "reinforcement_enabled",
                             "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -913,7 +913,7 @@
                     "type": "float",
                     "default_value": 0.1,
                     "minimum_value": "0.001",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "children": {
@@ -923,7 +923,7 @@
                             "type": "int",
                             "default_value": 2,
                             "minimum_value": "1",
-                            "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                            "enabled": "reinforcement_enabled",
                             "value": "max(1, round((reinforcement_height) / layer_height) + 1) if layer_height != 0 else 0",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -937,7 +937,7 @@
                     "minimum_value_warning": "2",
                     "default_value": 4,
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled_classic",
+                    "enabled": "reinforcement_enabled_classic",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
                 },
@@ -948,7 +948,7 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled_classic",
+                    "enabled": "reinforcement_enabled_classic",
                     "minimum_value_warning": "0",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
@@ -987,7 +987,7 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "10",
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled_classic",
+                    "enabled": "reinforcement_enabled_classic",
                     "minimum_value_warning": "0",
                     "settable_per_mesh": true
                 },
@@ -997,7 +997,7 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 5.5,
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled",
                     "minimum_value_warning": "-0.0001",
                     "maximum_value_warning": "10.0",
                     "settable_per_mesh": false,
@@ -1008,7 +1008,7 @@
                     "description": "A list of fiber integer line directions to use when the fiber layers are printed. Elements from the list are used sequentially as the layers progress and when the end of the list is reached, it starts at the beginning again. The list items are separated by commas and the whole list is contained in square brackets. Default is an empty list which means use the traditional default angles (45 and 135 degrees).",
                     "type": "[int]",
                     "default_value": "[ ]",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
                 },
@@ -1021,7 +1021,7 @@
                     "settable_per_extruder": false,
                     "settable_per_meshgroup": true,
                     "settable_globally": true,
-                    "enabled": "extruders_enabled_count > 1 and any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "extruders_enabled_count > 1 and reinforcement_enabled",
                     "children": {
                         "classic_fiber_infill_extruder_nr": {
                             "label": "Classic Fiber Infill Extruder",
@@ -1033,7 +1033,7 @@
                             "settable_per_extruder": false,
                             "settable_per_meshgroup": true,
                             "settable_globally": true,
-                            "enabled": "extruders_enabled_count > 1 and any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled"
+                            "enabled": "extruders_enabled_count > 1 and reinforcement_enabled"
                         },
                         "cylindrical_fiber_infill_extruder_nr": {
                             "label": "Cylindrical Fiber Infill Extruder",
@@ -1045,7 +1045,7 @@
                             "settable_per_extruder": false,
                             "settable_per_meshgroup": true,
                             "settable_globally": true,
-                            "enabled": "extruders_enabled_count > 1 and printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full' and any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled"
+                            "enabled": "extruders_enabled_count > 1 and printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full' and reinforcement_enabled"
                         }
                     }
                 }
