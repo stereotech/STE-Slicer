@@ -2594,7 +2594,7 @@
                             "minimum_value": "5",
                             "minimum_value_warning": "50",
                             "maximum_value_warning": "150",
-                            "enabled": "support_enable or support_meshes_present",
+                            "enabled": "support_enable",
                             "limit_to_extruder": "support_infill_extruder_nr",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
@@ -2609,7 +2609,7 @@
                             "minimum_value": "5",
                             "minimum_value_warning": "50",
                             "maximum_value_warning": "150",
-                            "enabled": "(support_enable or support_meshes_present) and support_interface_enable",
+                            "enabled": "(support_enable) and support_interface_enable",
                             "limit_to_extruder": "support_interface_extruder_nr",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true,
@@ -2624,7 +2624,7 @@
                                     "minimum_value": "5",
                                     "minimum_value_warning": "50",
                                     "maximum_value_warning": "150",
-                                    "enabled": "(support_enable or support_meshes_present) and support_roof_enable",
+                                    "enabled": "(support_enable) and support_roof_enable",
                                     "limit_to_extruder": "support_roof_extruder_nr",
                                     "settable_per_mesh": false,
                                     "settable_per_extruder": true
@@ -2639,7 +2639,7 @@
                                     "minimum_value": "5",
                                     "minimum_value_warning": "50",
                                     "maximum_value_warning": "150",
-                                    "enabled": "(support_enable or support_meshes_present) and support_bottom_enable",
+                                    "enabled": "(support_enable) and support_bottom_enable",
                                     "limit_to_extruder": "support_bottom_extruder_nr",
                                     "settable_per_mesh": false,
                                     "settable_per_extruder": true
