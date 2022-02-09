@@ -30,7 +30,7 @@
             "value": 50
         },
         "machine_extruder_start_pos_y": {
-            "value": 0
+            "value": 2
         },
         "machine_extruder_end_pos_abs": {
             "default_value": true
@@ -39,7 +39,7 @@
             "value": 50
         },
         "machine_extruder_end_pos_y": {
-            "value": 0
+            "value": 2
         }
     }
 }
