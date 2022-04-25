@@ -5452,7 +5452,7 @@
                     "label": "Print cylindrical raft",
                     "description": "Print cylindrical raft on basement",
                     "type": "bool",
-                    "value": "machine_five_axis and not (resolveOrValue('printing_mode') == 'classic' and machine_hybrid) and resolveOrValue('printing_mode') in ['classic', 'discrete', 'cylindrical_full', 'spherical_full']",
+                    "value": "machine_five_axis and not (resolveOrValue('printing_mode') == 'classic' and machine_hybrid) and resolveOrValue('printing_mode') in ['discrete', 'cylindrical_full', 'spherical_full']",
                     "default_value": true,
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
