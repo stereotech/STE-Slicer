@@ -3471,7 +3471,8 @@
                     "description": "The minimum value of the adjusted speed. if the calculated speed is less than this value, set this value.",
                     "type": "float",
                     "unit": "mm/s",
-                    "default_value": "1.0",
+                    "default_value": 1,
+                    "minimum_value": "0.1",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
