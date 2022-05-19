@@ -1048,7 +1048,33 @@
                             "enabled": "extruders_enabled_count > 1 and printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full' and reinforcement_enabled"
                         }
                     }
-                }
+                },
+                "fiber_density": {
+                    "label": "Fiber Density",
+                    "description": "Adjusts the density of fiber of the print.",
+                    "unit": "%",
+                    "type": "float",
+                    "default_value": 50,
+                    "minimum_value": "0",
+                    "maximum_value_warning": "100",
+                    "limit_to_extruder": "infill_extruder_nr",
+                    "settable_per_mesh": true,
+                    "children": {
+                         "fiber_line_distance": {
+                             "label": "Fiber Line Distance",
+                             "description": "Distance between the printed fiber lines. This setting is calculated by the fiber density and the fiber line width.",
+                             "unit": "mm",
+                             "type": "float",
+                             "default_value": 2,
+                             "minimum_value": "0",
+                             "minimum_value_warning": "fiber_line_width",
+                             "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
+                             "limit_to_extruder": "infill_extruder_nr",
+                             "settable_per_mesh": true
+                 }
+    }
+}
+
             }
         },
         "resolution": {
