@@ -4374,7 +4374,106 @@
                     "default_value": false,
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
-                }
+                },
+                "cool_chamber_fan_enabled": {
+                    "label": "Enable Chamber Cooling",
+                    "description": "Enables the chamber cooling fans while printing.",
+                    "type": "bool",
+                    "default_value": true,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed": {
+                    "label": "Chamber Fan Speed",
+                    "description": "The speed at which the chamber cooling fans spin.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "default_value": 100,
+                    "value": "100.0 if cool_chamber_fan_enabled else 0.0",
+                    "enabled": "cool_chamber_fan_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_min": {
+                    "label": "Regular Chamber Fan Speed",
+                    "description": "The speed at which the fans spin before hitting the threshold. When a layer prints faster than the threshold, the fan speed gradually inclines towards the maximum fan speed.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "value": "cool_chamber_fan_speed",
+                    "default_value": 100,
+                    "enabled": "cool_chamber_fan_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_min_classic": {
+                    "label": "Regular Chamber Fan Speed Classic",
+                    "description": "The speed at which the fans spin before hitting the threshold in classic. When a layer prints faster than the threshold, the fan speed gradually inclines towards the maximum fan speed.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "value": "cool_chamber_fan_speed",
+                    "default_value": 100,
+                    "enabled": "cool_chamber_fan_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_min_cylindrical": {
+                    "label": "Regular Chamber Fan Speed Cylindrical",
+                    "description": "The speed at which the fans spin before hitting the threshold in cylindrical. When a layer prints faster than the threshold, the fan speed gradually inclines towards the maximum fan speed.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "value": "cool_chamber_fan_speed",
+                    "default_value": 100,
+                    "enabled": "cool_chamber_fan_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_max": {
+                    "label": "Maximum Chamber Fan Speed",
+                    "description": "The speed at which the fans spin on the minimum layer time. The fan speed gradually increases between the regular fan speed and maximum fan speed when the threshold is hit.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "max(0, cool_chamber_fan_speed_min)",
+                    "maximum_value": "100",
+                    "default_value": 100,
+                    "enabled": "cool_chamber_fan_enabled",
+                    "value": "cool_chamber_fan_speed",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_max_classic": {
+                            "label": "Maximum Chamber Fan Speed Classic",
+                            "description": "The speed at which the fans spin on the minimum layer time in classic. The fan speed gradually increases between the regular fan speed and maximum fan speed when the threshold is hit.",
+                            "unit": "%",
+                            "type": "float",
+                            "minimum_value": "max(0, cool_chamber_fan_speed_min)",
+                            "maximum_value": "100",
+                            "default_value": 100,
+                            "enabled": "cool_chamber_fan_enabled",
+                            "value": "cool_chamber_fan_speed",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        },
+                "cool_chamber_fan_speed_max_cylindrical": {
+                            "label": "Maximum Chamber Fan Speed Cylindrical",
+                            "description": "The speed at which the fans spin on the minimum layer time in cylindrical. The fan speed gradually increases between the regular fan speed and maximum fan speed when the threshold is hit.",
+                            "unit": "%",
+                            "type": "float",
+                            "minimum_value": "max(0, cool_chamber_fan_speed_min)",
+                            "maximum_value": "100",
+                            "default_value": 100,
+                            "enabled": "cool_chamber_fan_enabled",
+                            "value": "cool_chamber_fan_speed",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        }
             }
         },
         "support": {
