@@ -76,6 +76,8 @@ class GCodeWriter(MeshWriter):
         gcode_list = gcode_dict.get(active_build_plate, None)
         if gcode_list is not None:
             has_settings = False
+            slicer_version = self._getSlicerVersion()
+            stream.write(slicer_version)
             scene_size = self._getSerializedBounding()
             stream.write(scene_size)
             for gcode in gcode_list:
@@ -199,11 +201,19 @@ class GCodeWriter(MeshWriter):
 
     def _getSerializedBounding(self):
         aabb = self._application.getSceneBoundingBox() #type: AxisAlignedBox
-        return ";MINX:%(MINX).1f\n;MINY%(MINY).1f\n;MINZ:%(MINZ).1f\n" \
-               ";MAXX:%(MAXX).1f\n;MAXY%(MAXY).1f\n;MAXZ:%(MAXZ).1f\n" % \
+
+        return ";MINX:%(MINX).1f\n;MINY:%(MINY).1f\n;MINZ:%(MINZ).1f\n" \
+               ";MAXX:%(MAXX).1f\n;MAXY:%(MAXY).1f\n;MAXZ:%(MAXZ).1f\n" % \
                {'MINX': aabb.left.item(),
                 'MINY': aabb.back.item(),
                 'MINZ': aabb.bottom.item(),
                 'MAXX': aabb.right.item(),
                 'MAXY': aabb.front.item(),
                 'MAXZ': aabb.top.item()}
+
+    def _getSlicerVersion(self):
+        version = self._application.getVersion()
+        return "VERSION:%(VERSION)s\n" % \
+               {
+                'VERSION': version
+               }
