@@ -991,6 +991,17 @@
                     "minimum_value_warning": "0",
                     "settable_per_mesh": true
                 },
+                "reinforcement_intermediate_layers": {
+                    "label": "Intermediate Layers",
+                    "description": "The number of intermediate layers between fiber layers",
+                    "default_value": 0,
+                    "minimum_value": "0",
+                    "maximum_value_warning": "10",
+                    "type": "int",
+                    "enabled": "reinforcement_enabled_classic",
+                    "minimum_value_warning": "0",
+                    "settable_per_mesh": true
+                },
                 "reinforcement_min_fiber_line_length": {
                     "label": "Minimal Fiber Infill Distance",
                     "description": "The length of material extruded in straight line in the infill",
@@ -5600,7 +5611,7 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 0.3,
-                    "value": "raft_base_thickness if resolveOrValue('printing_mode') == 'classic' else cylindrical_layer_height",
+                    "value": "raft_base_thickness",
                     "minimum_value": "0.001",
                     "minimum_value_warning": "0.04",
                     "maximum_value_warning": "0.75 * raft_base_line_width",
