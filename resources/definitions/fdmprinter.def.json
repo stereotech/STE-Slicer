@@ -991,6 +991,17 @@
                     "minimum_value_warning": "0",
                     "settable_per_mesh": true
                 },
+                "reinforcement_intermediate_layers": {
+                    "label": "Intermediate Layers",
+                    "description": "The number of intermediate layers between fiber layers.",
+                    "default_value": 0,
+                    "minimum_value": "0",
+                    "maximum_value_warning": "10",
+                    "type": "int",
+                    "enabled": "reinforcement_enabled_classic",
+                    "minimum_value_warning": "0",
+                    "settable_per_mesh": true
+                },
                 "reinforcement_min_fiber_line_length": {
                     "label": "Minimal Fiber Infill Distance",
                     "description": "The length of material extruded in straight line in the infill",
