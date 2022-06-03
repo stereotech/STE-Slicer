@@ -80,6 +80,14 @@ params_dict = {
             "stack_key": "cylindrical_layer_height",
             "default_value": 0.2
         },
+        "r_step0": {
+            "stack_key": "cylindrical_layer_height_0",
+            "default_value": 0.3
+        },
+        "r_start": {
+            "stack_key": "cylindrical_mode_base_diameter",
+            "default_value": 3
+        },
         "round": {
             "stack_key": "",
             "default_value": 1
@@ -733,6 +741,10 @@ class StartSliceJob(Job):
                             setting_value = "1"
                         else:
                             setting_value = "1"
+                    if name == "r_start":
+                        setting_value = (settings.get("cylindrical_mode_base_diameter")-settings.get("cylindrical_mode_overlap"))/2
+                    if name == "r_step0":
+                        setting_value = settings.get("cylindrical_layer_height_0")
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "round":
@@ -798,6 +810,8 @@ class StartSliceJob(Job):
             settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_cylindrical"]
 
             settings["fiber_infill_extruder_nr"] = settings["cylindrical_fiber_infill_extruder_nr"]
+
+            settings["layer_height_0"] = settings["cylindrical_layer_height_0"]
 
             settings["magic_spiralize"] = False
 

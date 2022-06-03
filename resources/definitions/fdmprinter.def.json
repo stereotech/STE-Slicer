@@ -1136,6 +1136,19 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
+                "cylindrical_layer_height_0": {
+                    "label": "Initial Cylindrical Layer Height",
+                    "description": "The height of the initial layer in mm. A thicker initial layer makes adhesion to the build plate easier.",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.3,
+                    "resolve": "min(extruderValues('cylindrical_layer_height_0'))",
+                    "minimum_value": "0.001",
+                    "minimum_value_warning": "0.1",
+                    "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "line_width": {
                     "label": "Line Width",
                     "description": "Width of a single line. Generally, the width of each line should correspond to the width of the nozzle. However, slightly reducing this value could produce better prints.",
