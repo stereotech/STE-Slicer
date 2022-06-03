@@ -15,6 +15,8 @@ from steslicer.Machines.QualityManager import getMachineDefinitionIDForQualitySe
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
 
+
+
 ##  Writes g-code to a file.
 #
 #   While this poses as a mesh writer, what this really does is take the g-code
