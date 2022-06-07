@@ -4390,7 +4390,7 @@
                     "label": "Enable Chamber Cooling",
                     "description": "Enables the chamber cooling fans while printing.",
                     "type": "bool",
-                    "default_value": true,
+                    "default_value": false,
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
