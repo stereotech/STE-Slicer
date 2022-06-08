@@ -213,7 +213,7 @@ class GCodeWriter(MeshWriter):
 
     def _getSlicerVersion(self):
         version = self._application.getVersion()
-        return "VERSION:%(VERSION)s\n" % \
+        return ";VERSION:%(VERSION)s\n" % \
                {
                 'VERSION': version
                }
