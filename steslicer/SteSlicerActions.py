@@ -36,12 +36,12 @@ class SteSlicerActions(QObject):
         # Starting a web browser from a signal handler connected to a menu will crash on windows.
         # So instead, defer the call to the next run of the event loop, since that does work.
         # Note that weirdly enough, only signal handlers that open a web browser fail like that.
-        event = CallFunctionEvent(self._openUrl, [QUrl("https://stereotech.org/manuals/steslicer")], {})
+        event = CallFunctionEvent(self._openUrl, [QUrl("https://support.stereotech.org")], {})
         steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().functionEvent(event)
 
     @pyqtSlot()
     def openBugReportPage(self) -> None:
-        event = CallFunctionEvent(self._openUrl, [QUrl("https://gitlab.com/stereotech/steslicer/ste-slicer/issues")], {})
+        event = CallFunctionEvent(self._openUrl, [QUrl("https://support.stereotech.org/ru/request")], {})
         steslicer.SteSlicerApplication.SteSlicerApplication.getInstance().functionEvent(event)
 
     ##  Reset camera position and direction to default
