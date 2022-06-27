@@ -590,6 +590,12 @@ class ThreeMFWorkspaceReader(WorkspaceReader):
         # Copy a number of settings from the temp preferences to the global
         global_preferences = application.getInstance().getPreferences()
 
+        auto_drop_down = temp_preferences.getValue("physics/automatic_drop_down")
+        if auto_drop_down is None:
+            Logger.log("w", "Workspace did not contain automatic_drop_down settings. Leaving visibility unchanged")
+        else:
+            global_preferences.setValue("physics/automatic_drop_down", auto_drop_down)
+
         visible_settings = temp_preferences.getValue("general/visible_settings")
         if visible_settings is None:
             Logger.log("w", "Workspace did not contain visible settings. Leaving visibility unchanged")
