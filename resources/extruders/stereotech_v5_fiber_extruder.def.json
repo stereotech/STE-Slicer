@@ -27,7 +27,7 @@
             "default_value": ""
         },
         "machine_extruder_start_pos_abs": {
-            "default_value": true
+            "default_value": false
         },
         "machine_extruder_start_pos_x": {
             "value": 50
@@ -36,7 +36,7 @@
             "value": 2
         },
         "machine_extruder_end_pos_abs": {
-            "default_value": true
+            "default_value": false
         },
         "machine_extruder_end_pos_x": {
             "value": 50
