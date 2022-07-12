@@ -43,6 +43,16 @@ class SetPauseScript(Script):
                        "maximum_value": "0.4",
                        "maximum_value_warning": "0.3",
                        "enabled": "pause_at == 'layer_no'"
+                   },
+                   "tmp_print":
+                   {
+                       "label": "Printing Temperature",
+                       "description": "Print temperature after pause.If the value is 0, the temperature change does not occur.",
+                       "unit": "°C",
+                       "type": "int",
+                       "default_value": 0,
+                       "maximum_value_warning": "285",
+                       "enabled": "pause_at == 'layer_no'"
                    }
                }
            }"""
@@ -51,6 +61,7 @@ class SetPauseScript(Script):
         """data is a list. Each index contains a layer"""
         pause_layer = self.getSettingValueByKey("pause_layer")
         z_offset = self.getSettingValueByKey("z_offset")
+        tmp_print = self.getSettingValueByKey("tmp_print")
 
         intermediate_data = data
         for index, layer in enumerate(data):
@@ -65,6 +76,7 @@ class SetPauseScript(Script):
                     intermediate_data.insert(index+i, my_list[i])
 
         layer_index = [idx for idx, layer in enumerate(intermediate_data) if ";LAYER:" in layer]
+
         prepend_gcode = ";TYPE:CUSTOM\n"
         prepend_gcode += ";added code by post processing\n"
         prepend_gcode += ";script: SetPauseScript.py\n"
@@ -72,8 +84,7 @@ class SetPauseScript(Script):
         prepend_gcode += "PAUSE\n"
         if z_offset > 0.0:
             prepend_gcode += "SET_GCODE_OFFSET Z_ADJUST=-{amount} MOVE=1\n".format(amount=z_offset)
-
-        # Override the data of this layer with the
-        # modified data
+        if tmp_print > 0:
+            prepend_gcode += self.putValue(M = 109, S = int(tmp_print)) + " ;resume temperature\n"
         intermediate_data[layer_index[pause_layer]] += prepend_gcode
         return intermediate_data
