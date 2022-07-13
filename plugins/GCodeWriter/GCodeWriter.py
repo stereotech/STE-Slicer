@@ -246,7 +246,7 @@ class GCodeWriter(MeshWriter):
             thumbnail_buffer = QBuffer()
             thumbnail_buffer.open(QBuffer.OpenModeFlag.ReadWrite)
             snapshot.save(thumbnail_buffer, "PNG")
-            base64_message = base64.b64encode(thumbnail_buffer.data()).decode('ascii')
+            base64_message = base64.b64encode(thumbnail_buffer.data()).decode('utf-8')
             thumbnail_buffer.close()
 
             return ";PREVIEW:%(PREVIEW)s\n" % \
