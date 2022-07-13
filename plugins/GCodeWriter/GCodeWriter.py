@@ -1,4 +1,4 @@
-
+import base64
 
 import re  # For escaping characters in the settings.
 import json
@@ -11,7 +11,11 @@ from UM.Application import Application
 from UM.Settings.InstanceContainer import InstanceContainer
 
 from steslicer.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
+from steslicer.Utils.Threading import call_on_qt_thread
+from steslicer.Snapshot import Snapshot
 
+
+from PyQt5.QtCore import QBuffer
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("steslicer")
 
@@ -64,6 +68,7 @@ class GCodeWriter(MeshWriter):
     #   \param mode Additional information on how to format the g-code in the
     #   file. This must always be text mode.
     def write(self, stream, nodes, mode = MeshWriter.OutputMode.TextMode):
+
         if mode != MeshWriter.OutputMode.TextMode:
             Logger.log("e", "GCodeWriter does not support non-text mode.")
             self.setInformation(catalog.i18nc("@error:not supported", "GCodeWriter does not support non-text mode."))
@@ -78,6 +83,9 @@ class GCodeWriter(MeshWriter):
         gcode_list = gcode_dict.get(active_build_plate, None)
         if gcode_list is not None:
             has_settings = False
+            preview_image = self._getPreviewImage()
+            if preview_image:
+                stream.write(preview_image)
             slicer_version = self._getSlicerVersion()
             stream.write(slicer_version)
             scene_size = self._getSerializedBounding()
@@ -93,6 +101,7 @@ class GCodeWriter(MeshWriter):
             return True
 
         self.setInformation(catalog.i18nc("@warning:status", "Please prepare G-code before exporting."))
+
         return False
 
     ##  Create a new container with container 2 as base and container 1 written over it.
@@ -219,3 +228,30 @@ class GCodeWriter(MeshWriter):
                {
                 'VERSION': version
                }
+    @call_on_qt_thread  # must be called from the main thread because of OpenGL
+    def _createSnapshot(self):
+        
+        Logger.log("d", "Creating thumbnail image...")
+        try:
+            snapshot = Snapshot.snapshot(width = 300, height = 300)
+        except:
+            Logger.logException("w", "Failed to create snapshot image")
+            return None
+
+        return snapshot
+
+    def _getPreviewImage(self):
+        snapshot = self._createSnapshot()
+        if snapshot:
+            thumbnail_buffer = QBuffer()
+            thumbnail_buffer.open(QBuffer.OpenModeFlag.ReadWrite)
+            snapshot.save(thumbnail_buffer, "PNG")
+            base64_message = base64.b64encode(thumbnail_buffer.data()).decode('utf-8')
+            thumbnail_buffer.close()
+
+            return ";PREVIEW:%(PREVIEW)s\n" % \
+                {
+                    'PREVIEW': base64_message
+                }
+        else:
+            return None
