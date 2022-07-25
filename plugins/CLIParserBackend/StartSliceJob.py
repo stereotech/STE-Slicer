@@ -578,10 +578,16 @@ class StartSliceJob(Job):
         printing_mode = global_stack.getProperty("printing_mode", "value")
         try:
             if printing_mode in ["cylindrical", "cylindrical_full"]:
-                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("cylindrical_layer_height", "value")
+                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 # + global_stack.getProperty("cylindrical_layer_height", "value")
                 height = global_stack.getProperty("machine_height", "value") * 2
+                if radius <= 15:
+                    section = 64
+                elif 15 < radius <= 30:
+                    section = 256
+                else:
+                    section = 1024
                 cutting_mesh = trimesh.primitives.Cylinder(
-                    radius=radius, height=height, sections=64)
+                    radius=radius, height=height, sections=section)
             elif printing_mode in ["spherical", "spherical_full"]:
                 radius = global_stack.getProperty("spherical_mode_base_radius", "value")
                 overlap = global_stack.getProperty("cylindrical_mode_overlap", "value") / 2
