@@ -85,6 +85,6 @@ class SetPauseScript(Script):
         if z_offset > 0.0:
             prepend_gcode += "SET_GCODE_OFFSET Z_ADJUST=-{amount} MOVE=1\n".format(amount=z_offset)
         if tmp_print > 0:
-            prepend_gcode += self.putValue(M = 109, S = int(tmp_print)) + " ;resume temperature\n"
+            prepend_gcode += self.putValue(M = 104, S = int(tmp_print)) + " ;resume temperature\n"
         intermediate_data[layer_index[pause_layer]] += prepend_gcode
         return intermediate_data
