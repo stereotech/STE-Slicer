@@ -239,8 +239,14 @@ class StartSliceJob(Job):
                         "cylindrical_mode_base_diameter", "value") / 2
                     overlap = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty("cylindrical_mode_overlap", "value") / 2
                     height = node.getBoundingBox().height * 2
+                    if radius <= 15:
+                        section = 64
+                    elif 15 < radius <= 30:
+                        section = 256
+                    else:
+                        section = 1024
                     cutting_mesh = trimesh.primitives.Cylinder(
-                        radius=radius + overlap, height=height, sections=64)
+                        radius=radius + overlap, height=height, sections=section)
                     cutting_mesh.apply_transform(
                         trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
                 elif printing_mode == "spherical_full":
