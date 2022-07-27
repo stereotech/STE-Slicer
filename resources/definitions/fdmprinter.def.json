@@ -4910,6 +4910,17 @@
                     "enabled": "support_enable",
                     "settable_per_mesh": true
                 },
+                "support_first_offset": {
+                    "label": "Support Offset",
+                    "description": "Sets the distance from the support to the wall of the part.",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.1,
+                    "minimum_value_warning": "-1 * machine_nozzle_size",
+                    "maximum_value_warning": "10 * machine_nozzle_size",
+                    "enabled":"support_enable",
+                    "settable_per_mesh": true
+                },
                 "support_infill_sparse_thickness": {
                     "label": "Support Infill Layer Thickness",
                     "description": "The thickness per layer of support infill material. This value should always be a multiple of the layer height and is otherwise rounded.",
