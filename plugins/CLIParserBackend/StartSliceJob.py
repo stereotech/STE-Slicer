@@ -225,8 +225,8 @@ params_dict = {
     },
     "GCodeSupport": {
         "first_offset": {
-            "stack_key": "",
-            "default_value": 0
+            "stack_key": "support_first_offset",
+            "default_value": 0.1
         },
         "main_offset": {
             "stack_key": "support_offset",
@@ -723,6 +723,8 @@ class StartSliceJob(Job):
                         setting_value /= 2
                         if name == "support_base_r":
                             setting_value += settings.get("cylindrical_layer_height", 0.2)
+                        if name == "first_offset" and region =="GCodeSupport":
+                            setting_value = settings.get("support_first_offset")
                     if name in ["upskin_width", "downskin_width"]:
                        setting_value = setting_value if setting_value < 100 else 100
                     if name == "supportangle":
