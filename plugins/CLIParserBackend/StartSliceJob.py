@@ -80,6 +80,14 @@ params_dict = {
             "stack_key": "cylindrical_layer_height",
             "default_value": 0.2
         },
+        "r_step0": {
+            "stack_key": "cylindrical_layer_height_0",
+            "default_value": 0.3
+        },
+        "r_start": {
+            "stack_key": "cylindrical_mode_base_diameter",
+            "default_value": 3
+        },
         "round": {
             "stack_key": "",
             "default_value": 1
@@ -217,8 +225,8 @@ params_dict = {
     },
     "GCodeSupport": {
         "first_offset": {
-            "stack_key": "",
-            "default_value": 0
+            "stack_key": "support_first_offset",
+            "default_value": 0.1
         },
         "main_offset": {
             "stack_key": "support_offset",
@@ -570,10 +578,16 @@ class StartSliceJob(Job):
         printing_mode = global_stack.getProperty("printing_mode", "value")
         try:
             if printing_mode in ["cylindrical", "cylindrical_full"]:
-                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 + global_stack.getProperty("cylindrical_layer_height", "value")
+                radius = global_stack.getProperty("cylindrical_mode_base_diameter", "value") / 2 # + global_stack.getProperty("cylindrical_layer_height", "value")
                 height = global_stack.getProperty("machine_height", "value") * 2
+                if radius <= 15:
+                    section = 64
+                elif 15 < radius <= 30:
+                    section = 256
+                else:
+                    section = 1024
                 cutting_mesh = trimesh.primitives.Cylinder(
-                    radius=radius, height=height, sections=64)
+                    radius=radius, height=height, sections=section)
             elif printing_mode in ["spherical", "spherical_full"]:
                 radius = global_stack.getProperty("spherical_mode_base_radius", "value")
                 overlap = global_stack.getProperty("cylindrical_mode_overlap", "value") / 2
@@ -709,6 +723,8 @@ class StartSliceJob(Job):
                         setting_value /= 2
                         if name == "support_base_r":
                             setting_value += settings.get("cylindrical_layer_height", 0.2)
+                        if name == "first_offset" and region =="GCodeSupport":
+                            setting_value = settings.get("support_first_offset")
                     if name in ["upskin_width", "downskin_width"]:
                        setting_value = setting_value if setting_value < 100 else 100
                     if name == "supportangle":
@@ -733,6 +749,10 @@ class StartSliceJob(Job):
                             setting_value = "1"
                         else:
                             setting_value = "1"
+                    if name == "r_start":
+                        setting_value = (settings.get("cylindrical_mode_base_diameter")-settings.get("cylindrical_mode_overlap"))/2
+                    if name == "r_step0":
+                        setting_value = settings.get("cylindrical_layer_height_0")
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "round":
@@ -798,6 +818,8 @@ class StartSliceJob(Job):
             settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_cylindrical"]
 
             settings["fiber_infill_extruder_nr"] = settings["cylindrical_fiber_infill_extruder_nr"]
+
+            settings["layer_height_0"] = settings["cylindrical_layer_height_0"]
 
             settings["magic_spiralize"] = False
 
