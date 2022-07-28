@@ -5635,7 +5635,7 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 0.3,
-                    "value": "raft_base_thickness",
+                    "value": "raft_base_thickness if resolveOrValue('printing_mode') == 'classic' else cylindrical_layer_height_0",
                     "minimum_value": "0.001",
                     "minimum_value_warning": "0.04",
                     "maximum_value_warning": "0.75 * raft_base_line_width",
