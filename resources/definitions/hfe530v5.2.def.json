@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "name": "Stereotech Fiber 520 V5.2",
-  "inherits": "steprinter520_v5",
+  "name": "Stereotech Fiber 530 V5.2",
+  "inherits": "steprinter530_v5",
   "metadata": {
     "author": "Stereotech",
     "manufacturer": "Stereotech",
@@ -17,7 +17,7 @@
   },
   "overrides": {
     "machine_name": {
-      "default_value": "Stereotech Fiber 520 V5.2"
+      "default_value": "Stereotech Fiber 530 V5.2"
     }
   }
 }
