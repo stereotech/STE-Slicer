@@ -599,6 +599,8 @@ class StartSliceJob(Job):
                 cutting_mesh = trimesh.primitives.Sphere(
                     radius=radius - overlap, subdivisions = 3
                 )
+           # elif printing_mode in ["conical", "conical_full"]:
+
             # cut mesh by cylinder
             result = output_mesh.difference(cutting_mesh, engine="scad")
         except Exception as e:
