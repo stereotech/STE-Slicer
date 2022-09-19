@@ -801,7 +801,7 @@
                     "settable_per_extruder": false
                 },
                 "conical_mode_base_radius":{
-                    "label": "Base Radius",
+                    "label": "Cone Radius",
                     "description": "Radius of the cone base in 5D Conical printing mode",
                     "type": "float",
                     "unit": "mm",
@@ -811,9 +811,6 @@
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
-                },
-                "conical_mode_angle": {
-
                 },
                 "non_printing_base_diameter": {
                     "label": "Non Printing Base Diameter",
