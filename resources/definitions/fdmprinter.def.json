@@ -3522,7 +3522,7 @@
                     "label": "Speed Control Enable",
                     "description": "Enabling speed adjustment.",
                     "type": "bool",
-                    "default_value": true,
+                    "default_value": false,
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
