@@ -360,6 +360,8 @@ class CylindricalBackend(QObject, MultiBackend):
             if self._start_slice_job_build_plate not in self._stored_optimized_layer_data:
                 self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
             self._stored_optimized_layer_data[self._start_slice_job_build_plate].append(message)
+            if message.id >= 0:
+                self._classic_layers_size += 1
 
     def _onCliOptimizedLayerMessage(self, message: Arcus.PythonMessage) -> None:
         if self._start_slice_job_build_plate is not None:
@@ -427,7 +429,8 @@ class CylindricalBackend(QObject, MultiBackend):
         return result
 
     def _onSlicingFinishedMessage(self, message: Arcus.PythonMessage) -> None:
-        self._classic_layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate]) - self._classic_layers_size
+        #self._classic_layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate])  - self._classic_layers_size
+
         self._layers_size += self._classic_layers_size
 
         self.backendStateChange.emit(BackendState.Processing)
