@@ -99,6 +99,10 @@ params_dict = {
         "support_model_delta_round": {
             "stack_key": "",
             "default_value": 1
+        },
+        "threads_round": {
+            "stack_key": "",
+            "default_value": 1
         }
     },
     "GCode": {
@@ -772,7 +776,8 @@ class StartSliceJob(Job):
                             setting_value = 0
                     if name == "support_model_delta_round":
                         setting_value = settings.get("support_z_distance", 0.1) / settings.get("cylindrical_layer_height", 0.1)
-
+                    if name == "threads_round":
+                        setting_value = os.cpu_count()
 
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
