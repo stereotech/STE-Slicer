@@ -751,7 +751,11 @@
                     "options": {
                         "classic": "Classic",
                         "cylindrical": "5D Spiral",
-                        "cylindrical_full": "5D Spiral Full"
+                        "cylindrical_full": "5D Spiral Full",
+                        "spherical": "5D Spherical",
+                        "spherical_full": "5D Spherical Full",
+                        "conical": "5D Conical",
+                        "conical_full": "5D Conical Full"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
@@ -791,6 +795,18 @@
                     "unit": "mm",
                     "default_value": 10,
                     "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "conical_mode_base_radius":{
+                    "label": "Cone Radius",
+                    "description": "Radius of the cone base in 5D Conical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "enabled": "resolveOrValue('printing_mode') in ['conical', 'conical_full']",
                     "minimum_value": "0",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
