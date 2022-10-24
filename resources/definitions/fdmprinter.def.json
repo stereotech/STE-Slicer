@@ -1148,7 +1148,7 @@
                             "settable_per_extruder": false
                         },
                         "cylindrical_layer_height": {
-                            "label": "Cylindrical Layer Height",
+                            "label": "5D Surface Layer Height",
                             "description": "The height of each layer in mm. Higher values produce faster prints in lower resolution, lower values produce slower prints in higher resolution.",
                             "unit": "mm",
                             "type": "float",
@@ -1176,7 +1176,7 @@
                     "settable_per_extruder": false
                 },
                 "cylindrical_layer_height_0": {
-                    "label": "Initial Cylindrical Layer Height",
+                    "label": "Initial 5D Surface Layer Height",
                     "description": "The height of the initial layer in mm. A thicker initial layer makes adhesion to the build plate easier.",
                     "unit": "mm",
                     "type": "float",
@@ -1974,7 +1974,7 @@
                             "enabled": "extruders_enabled_count > 1"
                         },
                         "cylindrical_infill_extruder_nr": {
-                            "label": "Cylindrical Infill Extruder",
+                            "label": "5D Surface Infill Extruder",
                             "description": "The extruder train used for printing infill. This is used in multi-extrusion.",
                             "type": "optional_extruder",
                             "value": "infill_extruder_nr",
@@ -3016,7 +3016,7 @@
                                     "settable_per_mesh": true
                                 },
                                 "speed_infill_cylindrical": {
-                                    "label": "Cylindrical Infill Speed",
+                                    "label": "5D Surface Infill Speed",
                                     "description": "The speed at which cylindrical infill is printed.",
                                     "unit": "mm/s",
                                     "type": "float",
@@ -3069,7 +3069,7 @@
                                             "settable_per_mesh": true
                                         },
                                         "speed_wall_0_cylindrical": {
-                                            "label": "Cylindrical Outer Wall Speed",
+                                            "label": "5D Surface Outer Wall Speed",
                                             "description": "The speed at which the cylindrical outermost walls are printed. Printing the outer wall at a lower speed improves the final skin quality. However, having a large difference between the inner wall speed and the outer wall speed will affect quality in a negative way.",
                                             "unit": "mm/s",
                                             "type": "float",
@@ -3110,7 +3110,7 @@
                                             "settable_per_mesh": true
                                         },
                                         "speed_wall_x_cylindrical": {
-                                            "label": "Cylindrical Inner Wall Speed",
+                                            "label": "5D Surface Inner Wall Speed",
                                             "description": "The speed at which all cylindrical inner walls are printed. Printing the inner wall faster than the outer wall will reduce printing time. It works well to set this in between the outer wall speed and the infill speed.",
                                             "unit": "mm/s",
                                             "type": "float",
@@ -3155,7 +3155,7 @@
                                     "enabled": "roofing_layer_count > 0 and top_layers > 0"
                                 },
                                 "speed_roofing_cylindrical": {
-                                    "label": "Cylindrical Top Surface Skin Speed",
+                                    "label": "5D Surface Top Surface Skin Speed",
                                     "description": "The speed at which cylindrical top surface skin layers are printed.",
                                     "unit": "mm/s",
                                     "type": "float",
@@ -3199,7 +3199,7 @@
                                     "settable_per_mesh": true
                                 },
                                 "speed_topbottom_cylindrical": {
-                                    "label": "Cylindrical Top/Bottom Speed",
+                                    "label": "5D Surface Top/Bottom Speed",
                                     "description": "The speed at which cylindrical top/bottom layers are printed.",
                                     "unit": "mm/s",
                                     "type": "float",
@@ -3260,7 +3260,7 @@
                                             "settable_per_extruder": true
                                         },
                                         "speed_support_infill_cylindrical": {
-                                            "label": "Cylindrical Support Infill Speed",
+                                            "label": "5D Surface Support Infill Speed",
                                             "description": "The speed at which the cylindrical infill of support is printed. Printing the infill at lower speeds improves stability.",
                                             "unit": "mm/s",
                                             "type": "float",
@@ -3368,7 +3368,7 @@
                             "settable_per_extruder": true
                         },
                         "speed_travel_cylindrical": {
-                            "label": "Cylindrical Travel Speed",
+                            "label": "5D Surface Travel Speed",
                             "description": "The speed at which cylindrical travel moves are made.",
                             "unit": "mm/s",
                             "type": "float",
@@ -3419,8 +3419,8 @@
                                     "settable_per_mesh": true
                                 },
                                 "speed_print_layer_0_cylindrical": {
-                                    "label": "Cylindrical Initial Layer Print Speed",
-                                    "description": "The speed of printing for the cylindrical initial layer. A lower value is advised to improve adhesion to the build plate.",
+                                    "label": "5D Surface Initial Layer Print Speed",
+                                    "description": "The speed of printing for the 5D Surface initial layer. A lower value is advised to improve adhesion to the build plate.",
                                     "unit": "mm/s",
                                     "type": "float",
                                     "default_value": 30,
@@ -3459,8 +3459,8 @@
                                     "settable_per_mesh": false
                                 },
                                 "speed_travel_layer_0_cylindrical": {
-                                    "label": "Cylindrical Initial Layer Travel Speed",
-                                    "description": "The speed of travel moves in the cylindrical initial layer. A lower value is advised to prevent pulling previously printed parts away from the build plate. The value of this setting can automatically be calculated from the ratio between the Travel Speed and the Print Speed.",
+                                    "label": "5D Surface Initial Layer Travel Speed",
+                                    "description": "The speed of travel moves in the 5D Surface initial layer. A lower value is advised to prevent pulling previously printed parts away from the build plate. The value of this setting can automatically be calculated from the ratio between the Travel Speed and the Print Speed.",
                                     "unit": "mm/s",
                                     "type": "float",
                                     "default_value": 60,
@@ -4554,7 +4554,7 @@
                             "settable_per_extruder": false
                         },
                         "support_enable_cylindrical": {
-                            "label": "Generate Cylindrical Support",
+                            "label": "Generate 5D Surface Support",
                             "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
                             "type": "bool",
                             "enabled": "support_enable",
