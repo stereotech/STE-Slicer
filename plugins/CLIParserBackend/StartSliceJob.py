@@ -194,7 +194,7 @@ params_dict = {
             "default_value": 1
         },
         "infill_main_offset": {
-            "stack_key": "fill_perimeter_gaps",
+            "stack_key": "",
             "default_value": 1
         },
         "composite_layer_start": {
@@ -235,23 +235,23 @@ params_dict = {
         },
         "3d_slicer_sweep_type": {
             "stack_key": "printing_mode",
-            "default": 0
+            "default_value": 0
         },
         "3d_slicer_min_line_len": {
             "stack_key": "",
-            "default": 0.1
+            "default_value": 0.1
         },
         "slicer3d_k": {
             "stack_key": "",
-            "default": 0.9999
+            "default_value": 0.9999
         },
         "slicer3d_sort_contours": {
             "stack_key": "",
-            "default": 2
+            "default_value": 2
         },
         "slicer3d_delete_short_contours": {
             "stack_key": "",
-            "default": 2
+            "default_value": 2
         }
     },
     "GCodeSupport": {
@@ -655,7 +655,7 @@ class StartSliceJob(Job):
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
-        cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0])
+        cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0.001])
         temp_mesh = tempfile.NamedTemporaryFile('w', delete=False)
         raft_thickness = (
                 global_stack.getProperty("raft_base_thickness", "value") +
