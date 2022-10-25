@@ -18,6 +18,7 @@ from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 from UM.Scene.Scene import Scene #For typing.
 from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
+from trimesh.transformations import rotation_matrix
 
 from steslicer.SteSlicerApplication import SteSlicerApplication
 from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
@@ -30,6 +31,8 @@ import tempfile
 import trimesh
 import trimesh.primitives
 import trimesh.repair
+
+from steslicer.Utils.TrimeshUtils import cone
 
 NON_PRINTING_MESH_SETTINGS = ["anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
 
@@ -447,7 +450,7 @@ class StartSliceJob(Job):
 
             object_groups = []
             printing_mode = stack.getProperty("printing_mode", "value")
-            if printing_mode in ["cylindrical", "cylindrical_full", "spherical", "spherical_full"]:
+            if printing_mode in ["cylindrical", "cylindrical_full", "spherical", "spherical_full", "conical", "conical_full"]:
                 temp_list = []
                 has_printing_mesh = False
                 for node in DepthFirstIterator(
@@ -597,16 +600,38 @@ class StartSliceJob(Job):
                 cutting_mesh = trimesh.primitives.Cylinder(
                     radius=radius, height=height, sections=section)
             elif printing_mode in ["spherical", "spherical_full"]:
-                radius = global_stack.getProperty("spherical_mode_base_radius", "value")
+                width = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                    "spherical_mode_base_width", "value")
+                height = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                    "spherical_mode_base_height", "value")
+                depth = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                    "spherical_mode_base_depth", "value")
+                radius = max(width, height, depth)
                 overlap = global_stack.getProperty("cylindrical_mode_overlap", "value") / 2
                 if radius > 0:
                     radius += global_stack.getProperty(
                         "cylindrical_layer_height", "value")
                 else:
                     raise ValueError
-                cutting_mesh = trimesh.primitives.Sphere(
-                    radius=radius - overlap, subdivisions = 3
-                )
+                cutting_mesh = trimesh.primitives.Sphere(radius=radius).to_mesh()
+                cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(width / radius, [0, 0, 0], [1, 0, 0]))
+                cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(depth / radius, [0, 0, 0], [0, 0, 1]))
+                cutting_mesh.apply_transform(
+                    trimesh.transformations.scale_matrix(height / radius, [0, 0, 0], [0, 1, 0]))
+                cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 1, 0], [0, 0, 0])
+            elif printing_mode in ["conical", "conical_full"]:
+                radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                    "conical_mode_base_radius", "value")
+                height = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                    "conical_mode_base_height", "value")
+                if radius <= 15:
+                    section = 64
+                elif 15 < radius <= 30:
+                    section = 256
+                else:
+                    section = 1024
+                cutting_mesh = cone(radius=radius, height=height, sections=section,
+                                    transform=rotation_matrix(-numpy.pi / 2, [1, 0, 0]))
             # cut mesh by cylinder
             result = output_mesh.difference(cutting_mesh, engine="scad")
         except Exception as e:
@@ -622,9 +647,16 @@ class StartSliceJob(Job):
                 global_stack.getProperty("layer_0_z_overlap", "value"))
         if global_stack.getProperty("adhesion_type", "value") == "raft":
             result.apply_translation([0,0,raft_thickness])
+            if printing_mode in ["spherical", "spherical_full", "conical", "conical_full"]:
+                cutting_mesh.apply_translation([0,0,raft_thickness])
         result.export(temp_mesh.name, 'stl')
         self._slice_message.append('-m')
         self._slice_message.append(temp_mesh.name)
+        if printing_mode in ["spherical", "spherical_full", "conical", "conical_full"]:
+            cutting_filename = tempfile.NamedTemporaryFile('w', delete=False)
+            cutting_mesh.export(cutting_filename.name, 'stl')
+            self._slice_message.append('-s')
+            self._slice_message.append(cutting_filename.name)
 
 
     ##  Replace setting tokens in a piece of g-code.
