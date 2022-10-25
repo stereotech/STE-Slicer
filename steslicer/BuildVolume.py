@@ -71,7 +71,9 @@ class BuildVolume(SceneNode):
         self._printing_mode = None
         self._cutting_cylinder_radius = 0.0
         self._cutting_cylinder_height = 0.0
-        self._cutting_sphere_radius = 0.0
+        self._cutting_sphere_width = 0.0
+        self._cutting_sphere_height = 0.0
+        self._cutting_sphere_depth = 0.0
         self._cutting_cone_radius = 0.0
         self._cutting_cone_height = 0.0
 
@@ -441,7 +443,7 @@ class BuildVolume(SceneNode):
         self._cutting_cylinder_mesh = mb.build()
 
         mb = MeshBuilder()
-        mb.addSphere(self._cutting_sphere_radius, color=self._disallowed_area_color)
+        mb.addSphere(self._cutting_sphere_width, self._cutting_sphere_height, self._cutting_sphere_depth, color=self._disallowed_area_color)
         self._cutting_sphere_mesh = mb.build()
 
         mb = MeshBuilderExt()
@@ -529,11 +531,17 @@ class BuildVolume(SceneNode):
             self._cutting_cylinder_height = self._global_container_stack.getProperty("machine_height", "value")
 
     def _updateCuttingSphere(self):
-        old_cutting_sphere_radius = self._cutting_sphere_radius
+        old_cutting_sphere_width = self._cutting_sphere_width
+        old_cutting_sphere_height = self._cutting_sphere_height
+        old_cutting_sphere_depth = self._cutting_sphere_depth
         self._printing_mode = self._global_container_stack.getProperty("printing_mode", "value")
-        self._cutting_sphere_radius = 0.0
+        self._cutting_sphere_width = 0.0
+        self._cutting_sphere_height = 0.0
+        self._cutting_sphere_depth = 0.0
         if self._printing_mode in ["spherical", "spherical_full"]:
-            self._cutting_sphere_radius = self._global_container_stack.getProperty("spherical_mode_base_radius", "value")
+            self._cutting_sphere_width = self._global_container_stack.getProperty("spherical_mode_base_width", "value")
+            self._cutting_sphere_height = self._global_container_stack.getProperty("spherical_mode_base_height", "value")
+            self._cutting_sphere_depth = self._global_container_stack.getProperty("spherical_mode_base_depth", "value")
 
     def _updateCuttingCone(self):
         old_cutting_cone_radius = self._cutting_cone_radius
@@ -1157,5 +1165,5 @@ class BuildVolume(SceneNode):
     _extruder_settings = ["support_enable", "support_bottom_enable", "support_roof_enable", "support_infill_extruder_nr", "support_extruder_nr_layer_0", "support_bottom_extruder_nr", "support_roof_extruder_nr", "brim_line_count", "adhesion_extruder_nr", "adhesion_type"] #Settings that can affect which extruders are used.
     _limit_to_extruder_settings = ["wall_extruder_nr", "wall_0_extruder_nr", "wall_x_extruder_nr", "top_bottom_extruder_nr", "infill_extruder_nr", "support_infill_extruder_nr", "support_extruder_nr_layer_0", "support_bottom_extruder_nr", "support_roof_extruder_nr", "adhesion_extruder_nr"]
     _cutting_cylinder_settings = ["printing_mode", "cylindrical_mode_base_diameter", "machine_height"]
-    _cutting_sphere_settings = ["printing_mode", "spherical_mode_base_radius"]
+    _cutting_sphere_settings = ["printing_mode", "spherical_mode_base_radius", "spherical_mode_base_height", "spherical_mode_base_width", "spherical_mode_base_depth"]
     _cutting_cone_settings = ["printing_mode", "conical_mode_base_height", "conical_mode_base_radius"]

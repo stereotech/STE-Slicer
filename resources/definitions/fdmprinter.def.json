@@ -800,6 +800,45 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
+                "spherical_mode_base_height": {
+                    "label": "Base Height",
+                    "description": "Height of sphere base in 5D Spherical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "value": "spherical_mode_base_radius",
+                    "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "spherical_mode_base_width": {
+                    "label": "Base Width",
+                    "description": "Width of sphere base in 5D Spherical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "value": "spherical_mode_base_radius",
+                    "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "spherical_mode_base_depth": {
+                    "label": "Base Depth",
+                    "description": "Depth of sphere base in 5D Spherical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "value": "spherical_mode_base_radius",
+                    "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "conical_mode_base_angle":{
                     "label": "Cone Angle",
                     "description": "Angle of the cone base in 5D Conical printing mode",
