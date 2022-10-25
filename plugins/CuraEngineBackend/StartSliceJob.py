@@ -22,6 +22,7 @@ from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 from UM.Scene.Scene import Scene  # For typing.
 from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
+from trimesh.transformations import rotation_matrix
 
 from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
 from steslicer.SteSlicerApplication import SteSlicerApplication
@@ -29,6 +30,7 @@ from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.OneAtATimeIterator import OneAtATimeIterator
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.GcodeStartEndFormatter import GcodeStartEndFormatter
+from steslicer.Utils.TrimeshUtils import cone
 
 NON_PRINTING_MESH_SETTINGS = [
     "anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
@@ -196,7 +198,7 @@ class StartSliceJob(Job):
 
                     if temp_list:
                         object_groups.append(temp_list)
-            elif printing_mode in ["cylindrical_full", "spherical_full"]:
+            elif printing_mode in ["cylindrical_full", "spherical_full", "conical_full"]:
                 temp_list = []
                 has_printing_mesh = False
 
@@ -231,7 +233,7 @@ class StartSliceJob(Job):
                 self.setResult(StartJobResult.ObjectSettingError)
                 return
 
-        if temp_list and printing_mode in ["cylindrical_full", "spherical_full"]:
+        if temp_list and printing_mode in ["cylindrical_full", "spherical_full", "conical_full"]:
             cut_list = []
             for node in temp_list:
                 if printing_mode == "cylindrical_full":
@@ -250,11 +252,29 @@ class StartSliceJob(Job):
                     cutting_mesh.apply_transform(
                         trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
                 elif printing_mode == "spherical_full":
+                    width = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "spherical_mode_base_width", "value")
+                    height = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "spherical_mode_base_height", "value")
+                    depth = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "spherical_mode_base_depth", "value")
+                    radius = max(width, height, depth)
+                    cutting_mesh = trimesh.primitives.Sphere(radius=radius).to_mesh()
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(width/radius, [0,0,0], [1,0,0]))
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(depth/radius, [0,0,0], [0,0,1]))
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(height/radius, [0,0,0], [0,1,0]))
+                elif printing_mode == "conical_full":
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
-                        "spherical_mode_base_radius", "value")
-                    cutting_mesh = trimesh.primitives.Sphere(
-                        radius=radius, subdivisions=3
-                    )
+                        "conical_mode_base_radius", "value")
+                    height = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "conical_mode_base_height", "value")
+                    if radius <= 15:
+                        section = 64
+                    elif 15 < radius <= 30:
+                        section = 256
+                    else:
+                        section = 1024
+                    cutting_mesh = cone(radius=radius, height=height, sections=section, transform=rotation_matrix(-numpy.pi / 2, [1, 0, 0]))
                 else:
                     cutting_mesh = None
 
@@ -606,7 +626,7 @@ class StartSliceJob(Job):
             settings["machine_end_gcode"], initial_extruder_nr)
 
         printing_mode = settings["printing_mode"]
-        if printing_mode in ["classic", "cylindrical_full"]:
+        if printing_mode in ["classic", "cylindrical_full", "spherical_full", "conical_full"]:
             settings["infill_extruder_nr"] = settings["classic_infill_extruder_nr"]
             settings["speed_infill"] = settings["speed_infill_classic"]
             settings["speed_wall_0"] = settings["speed_wall_0_classic"]
