@@ -655,6 +655,7 @@ class StartSliceJob(Job):
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
+        cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0])
         temp_mesh = tempfile.NamedTemporaryFile('w', delete=False)
         raft_thickness = (
                 global_stack.getProperty("raft_base_thickness", "value") +
@@ -672,7 +673,6 @@ class StartSliceJob(Job):
         self._slice_message.append(temp_mesh.name)
         if printing_mode in ["spherical", "spherical_full", "conical", "conical_full"]:
             cutting_filename = tempfile.NamedTemporaryFile('w', delete=False)
-            cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0])
             cutting_mesh.export(cutting_filename.name, 'stl')
             self._slice_message.append('-s')
             self._slice_message.append(cutting_filename.name)
