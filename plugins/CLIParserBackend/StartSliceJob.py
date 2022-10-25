@@ -232,6 +232,26 @@ params_dict = {
         "composite_top_skin": {
             "stack_key": "reinforcement_top_skin_layers",
             "default": 1
+        },
+        "3d_slicer_sweep_type": {
+            "stack_key": "printing_mode",
+            "default": 0
+        },
+        "3d_slicer_min_line_len": {
+            "stack_key": "",
+            "default": 0.1
+        },
+        "slicer3d_k": {
+            "stack_key": "",
+            "default": 0.9999
+        },
+        "slicer3d_sort_contours": {
+            "stack_key": "",
+            "default": 2
+        },
+        "slicer3d_delete_short_contours": {
+            "stack_key": "",
+            "default": 2
         }
     },
     "GCodeSupport": {
@@ -615,10 +635,9 @@ class StartSliceJob(Job):
                     raise ValueError
                 cutting_mesh = trimesh.primitives.Sphere(radius=radius).to_mesh()
                 cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(width / radius, [0, 0, 0], [1, 0, 0]))
-                cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(depth / radius, [0, 0, 0], [0, 0, 1]))
+                cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(depth / radius, [0, 0, 0], [0, 1, 0]))
                 cutting_mesh.apply_transform(
-                    trimesh.transformations.scale_matrix(height / radius, [0, 0, 0], [0, 1, 0]))
-                cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 1, 0], [0, 0, 0])
+                    trimesh.transformations.scale_matrix(height / radius, [0, 0, 0], [0, 0, 1]))
             elif printing_mode in ["conical", "conical_full"]:
                 radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
                     "conical_mode_base_radius", "value")
@@ -630,8 +649,7 @@ class StartSliceJob(Job):
                     section = 256
                 else:
                     section = 1024
-                cutting_mesh = cone(radius=radius, height=height, sections=section,
-                                    transform=rotation_matrix(-numpy.pi / 2, [1, 0, 0]))
+                cutting_mesh = cone(radius=radius, height=height, sections=section)
             # cut mesh by cylinder
             result = output_mesh.difference(cutting_mesh, engine="scad")
         except Exception as e:
@@ -654,6 +672,7 @@ class StartSliceJob(Job):
         self._slice_message.append(temp_mesh.name)
         if printing_mode in ["spherical", "spherical_full", "conical", "conical_full"]:
             cutting_filename = tempfile.NamedTemporaryFile('w', delete=False)
+            cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0])
             cutting_mesh.export(cutting_filename.name, 'stl')
             self._slice_message.append('-s')
             self._slice_message.append(cutting_filename.name)
@@ -796,6 +815,8 @@ class StartSliceJob(Job):
                         setting_value = (settings.get("cylindrical_mode_base_diameter")-settings.get("cylindrical_mode_overlap"))/2
                     if name == "r_step0":
                         setting_value = settings.get("cylindrical_layer_height_0")
+                    if name == "3d_slicer_sweep_type":
+                        setting_value = "0" if settings.get("printing_mode") in ["cylindrical", "cylindrical_full"] else "1"
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "round":

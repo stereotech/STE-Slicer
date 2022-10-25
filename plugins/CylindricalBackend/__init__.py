@@ -6,7 +6,11 @@ catalog = i18nCatalog("steslicer")
 def getMetaData():
     return {
         "backend_engine": {
-            "type": "cylindrical_full"
+            "types": [
+                "cylindrical_full",
+                "spherical_full",
+                "conical_full"
+            ]
         }
     }
 
