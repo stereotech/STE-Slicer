@@ -1,8 +1,11 @@
 import numpy as np
+from UM.Math.Vector import Vector
+from UM.Mesh.MeshBuilder import MeshBuilder
 from trimesh import transformations as tf
 from trimesh import triangles
 from trimesh.constants import log, tol
 from trimesh.base import Trimesh
+from trimesh.transformations import rotation_matrix
 
 def revolve(linestring,
             angle=None,
@@ -127,4 +130,60 @@ def revolve(linestring,
         # reversed on the input linestring
         assert mesh.is_volume
 
-    return
+    return mesh
+
+def cone(radius,
+         height,
+         sections=None,
+         transform=None,
+         **kwargs):
+    """
+    Create a mesh of a cone along Z centered at the origin.
+    Parameters
+    ----------
+    radius : float
+      The radius of the cylinder
+    height : float
+      The height of the cylinder
+    sections : int or None
+      How many pie wedges per revolution
+    transform : (4, 4) float or None
+      Transform to apply after creation
+    **kwargs : dict
+      Passed to Trimesh constructor
+    Returns
+    ----------
+    cone: trimesh.Trimesh
+      Resulting mesh of a cone
+    """
+    # create the 2D outline of a cone
+    linestring = [[0, 0],
+                  [radius, 0],
+                  [0, height]]
+    # revolve the profile to create a cone
+    if 'metadata' not in kwargs:
+        kwargs['metadata'] = dict()
+    kwargs['metadata'].update(
+        {'shape': 'cone',
+         'radius': radius,
+         'height': height})
+    cone = revolve(linestring=linestring,
+                   sections=sections,
+                   transform=transform,
+                   **kwargs)
+
+    return cone
+
+class MeshBuilderExt(MeshBuilder):
+    def __init__(self):
+        super().__init__()
+
+    def addCone(self, radius, height, sections = 30, color = None):
+        tcone = cone(radius=radius, height=height, sections=sections, transform=rotation_matrix(-np.pi / 2, [1, 0, 0]))
+        self.setVertices(np.asarray(tcone.vertices, dtype=np.float32))
+        self.setIndices(np.asarray(tcone.faces, dtype=np.int32))
+        if color:  # If we have a colour, add a colour to all of the vertices.
+            vertex_count = self.getVertexCount()
+            for i in range(vertex_count - 1):
+                self.setVertexColor(i, color)
+        return True

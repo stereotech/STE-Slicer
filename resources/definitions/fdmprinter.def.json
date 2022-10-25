@@ -800,12 +800,37 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
+                "conical_mode_base_angle":{
+                    "label": "Cone Angle",
+                    "description": "Angle of the cone base in 5D Conical printing mode",
+                    "type": "float",
+                    "unit": "°",
+                    "default_value": 10,
+                    "enabled": "resolveOrValue('printing_mode') in ['conical', 'conical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "0.01",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "conical_mode_base_radius":{
                     "label": "Cone Radius",
                     "description": "Radius of the cone base in 5D Conical printing mode",
                     "type": "float",
                     "unit": "mm",
                     "default_value": 10,
+                    "enabled": "resolveOrValue('printing_mode') in ['conical', 'conical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "conical_mode_base_height":{
+                    "label": "Cone Height",
+                    "description": "Height of the cone base in 5D Conical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "value": "conical_mode_base_radius / math.tan(math.radians(conical_mode_base_angle))",
                     "enabled": "resolveOrValue('printing_mode') in ['conical', 'conical_full']",
                     "minimum_value": "0",
                     "minimum_value_warning": "5",

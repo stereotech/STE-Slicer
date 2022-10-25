@@ -19,6 +19,9 @@ from UM.Signal import Signal
 from PyQt5.QtCore import QTimer
 from UM.View.RenderBatch import RenderBatch
 from UM.View.GL.OpenGL import OpenGL
+
+from steslicer.Utils.TrimeshUtils import MeshBuilderExt
+
 catalog = i18nCatalog("steslicer")
 
 import numpy
@@ -64,10 +67,13 @@ class BuildVolume(SceneNode):
 
         self._cutting_cylinder_mesh = None
         self._cutting_sphere_mesh = None
+        self._cutting_cone_mesh = None
         self._printing_mode = None
         self._cutting_cylinder_radius = 0.0
         self._cutting_cylinder_height = 0.0
         self._cutting_sphere_radius = 0.0
+        self._cutting_cone_radius = 0.0
+        self._cutting_cone_height = 0.0
 
         self._disallowed_areas = []
         self._disallowed_areas_no_brim = []
@@ -209,6 +215,7 @@ class BuildVolume(SceneNode):
         renderer.queueNode(self, mesh = self._origin_mesh, backface_cull = True)
         renderer.queueNode(self, mesh = self._cutting_cylinder_mesh, transparent=True, shader=self._shader)
         renderer.queueNode(self, mesh = self._cutting_sphere_mesh, transparent=True, shader=self._shader)
+        renderer.queueNode(self, mesh = self._cutting_cone_mesh, transparent=True, shader=self._shader)
         renderer.queueNode(self, mesh = self._grid_mesh, shader = self._grid_shader, backface_cull = True)
         if self._disallowed_area_mesh:
             renderer.queueNode(self, mesh = self._disallowed_area_mesh, shader = self._shader, transparent = True, backface_cull = True, sort = -9)
@@ -437,6 +444,10 @@ class BuildVolume(SceneNode):
         mb.addSphere(self._cutting_sphere_radius, color=self._disallowed_area_color)
         self._cutting_sphere_mesh = mb.build()
 
+        mb = MeshBuilderExt()
+        mb.addCone(self._cutting_cone_radius, self._cutting_cone_height, color=self._disallowed_area_color)
+        self._cutting_cone_mesh = mb.build()
+
         disallowed_area_height = 0.1
         disallowed_area_size = 0
         if self._disallowed_areas:
@@ -524,6 +535,16 @@ class BuildVolume(SceneNode):
         if self._printing_mode in ["spherical", "spherical_full"]:
             self._cutting_sphere_radius = self._global_container_stack.getProperty("spherical_mode_base_radius", "value")
 
+    def _updateCuttingCone(self):
+        old_cutting_cone_radius = self._cutting_cone_radius
+        old_cutting_cone_height = self._cutting_cone_height
+        self._printing_mode = self._global_container_stack.getProperty("printing_mode", "value")
+        self._cutting_cone_radius = 0.0
+        self._cutting_cone_height = 0.0
+        if self._printing_mode in ["conical", "conical_full"]:
+            self._cutting_cone_radius = self._global_container_stack.getProperty("conical_mode_base_radius",
+                                                                                     "value")
+            self._cutting_cone_height = self._global_container_stack.getProperty("conical_mode_base_height", "value")
 
     def _updateRaftThickness(self):
         old_raft_thickness = self._raft_thickness
@@ -596,6 +617,7 @@ class BuildVolume(SceneNode):
 
             self._updateCuttingCylinder()
             self._updateCuttingSphere()
+            self._updateCuttingCone()
 
             if self._engine_ready:
                 self.rebuild()
@@ -617,6 +639,7 @@ class BuildVolume(SceneNode):
         update_extra_z_clearance = True
         update_cutting_cylinder = False
         update_cutting_sphere = False
+        update_cutting_cone = False
 
         for setting_key in self._changed_settings_since_last_rebuild:
 
@@ -668,6 +691,10 @@ class BuildVolume(SceneNode):
                 update_cutting_sphere = True
                 rebuild_me = True
 
+            if setting_key in self._cutting_cone_settings:
+                update_cutting_cone = True
+                rebuild_me = True
+
         # We only want to update all of them once.
         if update_disallowed_areas:
             self._updateDisallowedAreas()
@@ -683,6 +710,9 @@ class BuildVolume(SceneNode):
 
         if update_cutting_sphere:
             self._updateCuttingSphere()
+
+        if update_cutting_cone:
+            self._updateCuttingCone()
 
         if rebuild_me:
             self.rebuild()
@@ -714,6 +744,7 @@ class BuildVolume(SceneNode):
         self._updateExtraZClearance()
         self._updateCuttingCylinder()
         self._updateCuttingSphere()
+        self._updateCuttingCone()
         self.rebuild()
 
     def _updateDisallowedAreas(self):
@@ -1127,3 +1158,4 @@ class BuildVolume(SceneNode):
     _limit_to_extruder_settings = ["wall_extruder_nr", "wall_0_extruder_nr", "wall_x_extruder_nr", "top_bottom_extruder_nr", "infill_extruder_nr", "support_infill_extruder_nr", "support_extruder_nr_layer_0", "support_bottom_extruder_nr", "support_roof_extruder_nr", "adhesion_extruder_nr"]
     _cutting_cylinder_settings = ["printing_mode", "cylindrical_mode_base_diameter", "machine_height"]
     _cutting_sphere_settings = ["printing_mode", "spherical_mode_base_radius"]
+    _cutting_cone_settings = ["printing_mode", "conical_mode_base_height", "conical_mode_base_radius"]
