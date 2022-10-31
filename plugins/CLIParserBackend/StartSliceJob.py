@@ -92,7 +92,7 @@ params_dict = {
             "default_value": 3
         },
         "round": {
-            "stack_key": "",
+            "stack_key": "printing_mode",
             "default_value": 1
         },
         "simplify_contours": {
@@ -106,12 +106,20 @@ params_dict = {
         "threads_round": {
             "stack_key": "",
             "default_value": 1
+        },
+        "3d_slice_type": {
+            "stack_key": "",
+            "default_value": 1
         }
     },
     "GCode": {
         "cli_quality": {
             "stack_key": "",
             "default_value": 4
+        },
+        "offset_type": {
+            "stack_key": "",
+            "default_value": 1
         },
         "outorder": {
             "stack_key": "",
@@ -252,6 +260,10 @@ params_dict = {
         "slicer3d_delete_short_contours": {
             "stack_key": "",
             "default_value": 2
+        },
+        "out_export_separately": {
+            "stack_key": "",
+            "default_value": 0
         }
     },
     "GCodeSupport": {
@@ -359,6 +371,16 @@ params_dict = {
             "stack_key": "",
             "default_value": "_0.5"
         },
+    },
+    "Interface": {
+        "show_jumps": {
+            "stack_key": "",
+            "default_value": 0
+        },
+        "show_normals": {
+            "stack_key": "",
+            "default_value": 0
+        }
     }
 }
 
@@ -816,15 +838,11 @@ class StartSliceJob(Job):
                     if name == "r_step0":
                         setting_value = settings.get("cylindrical_layer_height_0")
                     if name == "3d_slicer_sweep_type":
-                        setting_value = "0" if settings.get("printing_mode") in ["cylindrical", "cylindrical_full"] else "1"
+                        setting_value = "1" if settings.get("printing_mode") in ["cylindrical", "cylindrical_full"] else "0"
+                    if name == "round":
+                        setting_value = "1" if settings.get("printing_mode") in ["cylindrical","cylindrical_full"] else "10"
                 else:
                     setting_value = value.get("default_value", "")
-                    if name == "round":
-                        printing_mode = settings.get("printing_mode", "classic")
-                        if printing_mode in ["cylindrical", "cylindrical_full"]:
-                            setting_value = 1
-                        elif printing_mode in ["spherical", "spherical_full"]:
-                            setting_value = 2
                     if name == "support_base_r":
                         printing_mode = settings.get("printing_mode", "classic")
                         if printing_mode in ["spherical", "spherical_full"]:
