@@ -754,7 +754,7 @@ class StartSliceJob(Job):
             result["coordinate_system"] = "G55"
         elif printing_mode in ["conical_full","conical"]:
             result["cylindrical_rotate"] = "G0 A0"
-            result["coordinate_system"] = "G43"
+            result["coordinate_system"] = "G0 A0 \n"+"G43"
 
         initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
@@ -838,7 +838,7 @@ class StartSliceJob(Job):
                     if name == "r_step0":
                         setting_value = settings.get("cylindrical_layer_height_0")
                     if name == "3d_slicer_sweep_type":
-                        setting_value = "1" if settings.get("printing_mode") in ["cylindrical", "cylindrical_full"] else "0"
+                        setting_value = "0" if settings.get("printing_mode") in ["cylindrical", "cylindrical_full"] else "1"
                     if name == "round":
                         setting_value = "1" if settings.get("printing_mode") in ["cylindrical","cylindrical_full"] else "10"
                 else:
