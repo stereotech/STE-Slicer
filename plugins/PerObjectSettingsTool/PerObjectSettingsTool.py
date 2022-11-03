@@ -29,6 +29,7 @@ class PerObjectSettingsTool(Tool):
         Application.getInstance().getPreferences().preferenceChanged.connect(self._onPreferenceChanged)
         self._onPreferenceChanged("steslicer/active_mode")
 
+        self._global_container_stack = Application.getInstance().getGlobalContainerStack()
         Application.getInstance().globalContainerStackChanged.connect(self._onGlobalContainerChanged)
         self._onGlobalContainerChanged()
         Selection.selectionChanged.connect(self._updateEnabled)
@@ -109,11 +110,12 @@ class PerObjectSettingsTool(Tool):
             self._updateEnabled()
 
     def _onGlobalContainerChanged(self):
-        global_container_stack = Application.getInstance().getGlobalContainerStack()
-        if global_container_stack:
-
+        if not self._global_container_stack:
+            self._global_container_stack = Application.getInstance().getGlobalContainerStack()
+        if self._global_container_stack:
             # used for enabling or disabling per extruder settings per object
-            self._multi_extrusion = global_container_stack.getProperty("machine_extruder_count", "value") > 1
+            self._multi_extrusion = self._global_container_stack.getProperty("machine_extruder_count", "value") > 1
+            self._global_container_stack.propertyChanged.connect(self._onSettingPropertyChanged)
 
             extruder_stack = ExtruderManager.getInstance().getExtruderStack(0)
 
@@ -130,14 +132,24 @@ class PerObjectSettingsTool(Tool):
                             new_stack_id = new_stack.getId()
                     node.callDecoration("setActiveExtruder", new_stack_id)
 
-                self._updateEnabled()
+            self._updateEnabled()
+
+
+    def _onSettingPropertyChanged(self, setting_key: str, property_name: str):
+        if property_name != "value" and setting_key not in ["printing_mode"]:
+            return
+        self._updateEnabled()
 
     def _updateEnabled(self):
         selected_objects = Selection.getAllSelectedObjects()
+        plugin_enabled = False
+        global_container_stack = Application.getInstance().getGlobalContainerStack()
+        if global_container_stack:
+            plugin_enabled = global_container_stack.getProperty("printing_mode", "value") in ["classic"]
         if len(selected_objects)> 1:
             self._single_model_selected = False
         elif len(selected_objects) == 1 and selected_objects[0].callDecoration("isGroup"):
             self._single_model_selected = False # Group is selected, so tool needs to be disabled
         else:
             self._single_model_selected = True
-        Application.getInstance().getController().toolEnabledChanged.emit(self._plugin_id, self._advanced_mode and self._single_model_selected)
+        Application.getInstance().getController().toolEnabledChanged.emit(self._plugin_id, self._single_model_selected and plugin_enabled)

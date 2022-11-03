@@ -559,15 +559,15 @@ Rectangle
         })
 
         var index = Math.round(UM.Preferences.getValue("steslicer/active_mode"))
-
-        if(index != null && !isNaN(index))
-        {
-            currentModeIndex = index;
-        }
-        else
-        {
-            currentModeIndex = 0;
-        }
+        currentModeIndex = 0;
+        //if(index != null && !isNaN(index))
+        //{
+        //    currentModeIndex = index;
+        //}
+        //else
+        //{
+        //    currentModeIndex = 0;
+        //}
     }
 
     UM.SettingPropertyProvider

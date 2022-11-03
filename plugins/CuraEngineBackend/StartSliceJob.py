@@ -237,9 +237,16 @@ class StartSliceJob(Job):
                 if printing_mode == "cylindrical_full":
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
                         "cylindrical_mode_base_diameter", "value") / 2
+                    overlap = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty("cylindrical_mode_overlap", "value") / 2
                     height = node.getBoundingBox().height * 2
+                    if radius <= 15:
+                        section = 64
+                    elif 15 < radius <= 30:
+                        section = 256
+                    else:
+                        section = 1024
                     cutting_mesh = trimesh.primitives.Cylinder(
-                        radius=radius, height=height, sections=64)
+                        radius=radius + overlap, height=height, sections=section)
                     cutting_mesh.apply_transform(
                         trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
                 elif printing_mode == "spherical_full":
@@ -284,13 +291,13 @@ class StartSliceJob(Job):
                             node.getParent(), no_setting_override=True)
                         cutting_node.addDecorator(
                             node.getDecorator(SettingOverrideDecorator))
+
                 except Exception as e:
                     Logger.log("e", "Failed to intersect model! %s", e)
                     cutting_result = cutting_mesh
                     if cutting_result:
                         cutting_result.fill_holes()
                         cutting_result.fix_normals()
-
                         data = MeshData.MeshData(vertices=cutting_result.vertices.astype('float32'),
                                                  normals=cutting_result.face_normals.astype(
                                                      'float32'),
@@ -317,8 +324,42 @@ class StartSliceJob(Job):
                 if cutting_node is not None:
                     cutting_node.setName("cut_" + node.getName())
                     cutting_node.setMeshData(data)
-
                     cut_list.append(cutting_node)
+                    support_enable_top_support = stack.getProperty("support_enable_top_support", "value")
+                    support_enable = stack.getProperty("support_enable", "value")
+                    if support_enable and support_enable_top_support:
+                        try:
+                            cutting_support = cutting_mesh.difference(cutting_result, engine="scad")
+                            cutting_support.fill_holes()
+                            cutting_support.fix_normals()
+                            cutting_support_data = MeshData.MeshData(vertices=cutting_support.vertices.astype('float32'),
+                                                     normals=cutting_support.face_normals.astype(
+                                                         'float32'),
+                                                     indices=cutting_support.faces.astype('int64'))
+                            cutting_support_node = SteSlicerSceneNode(
+                                node.getParent(), no_setting_override=True)
+                            cutting_support_stack = cutting_support_node.callDecoration(
+                                "getStack")
+                            if not cutting_support_stack:
+                                cutting_support_node.addDecorator(
+                                    SettingOverrideDecorator())
+                                cutting_support_stack = cutting_support_node.callDecoration("getStack")
+                            settings = cutting_support_stack.getTop()
+                            if not (settings.getInstance("support_mesh") and settings.getProperty("support_mesh", "value")):
+                                definition = cutting_support_stack.getSettingDefinition(
+                                    "support_mesh")
+                                new_instance = SettingInstance(
+                                    definition, settings)
+                                new_instance.setProperty(
+                                    "value", True, emit_signals=False)
+                                # Ensure that the state is not seen as a user state.
+                                new_instance.resetState()
+                                settings.addInstance(new_instance)
+                            cutting_support_node.setName("cut_support_" + node.getName())
+                            cutting_support_node.setMeshData(cutting_support_data)
+                            cut_list.append(cutting_support_node)
+                        except Exception as e:
+                            Logger.log("e", "Failed to intersect model! %s", e)
 
             object_groups.append(cut_list)
 
@@ -442,10 +483,14 @@ class StartSliceJob(Job):
         result["day"] = ["Sun", "Mon", "Tue", "Wed",
                          "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
         printing_mode = result["printing_mode"]
+        cylindrical_raft_enabled = result["cylindrical_raft_enabled"]
         if printing_mode in ["cylindrical", "cylindrical_full"]:
             result["cylindrical_rotate"] = "G0 A%.2f" % (
                 90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
-            result["coordinate_system"] = "G56"
+            if cylindrical_raft_enabled:
+                result["coordinate_system"] = "G56"
+            else:
+                result["coordinate_system"] = "G55"
         elif printing_mode in ["spherical", "spherical_full"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
@@ -576,6 +621,10 @@ class StartSliceJob(Job):
             settings["cool_fan_enabled"] = settings["cool_fan_enabled_classic"]
             settings["cool_fan_speed_min"] = settings["cool_fan_speed_min_classic"]
             settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_classic"]
+
+            settings["layer_height"] = settings["classic_layer_height"]
+
+            settings["support_enable"] = settings["support_enable_classic"]
 
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():

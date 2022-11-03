@@ -1,9 +1,9 @@
 {
     "version": 2,
-    "name": "Extruder 1",
+    "name": "Main Extruder",
     "inherits": "fdmextruder",
     "metadata": {
-        "machine": "ste320",
+        "machine": "hte530v5",
         "position": "0"
     },
     "overrides": {
@@ -27,10 +27,10 @@
             "default_value": true
         },
         "machine_extruder_start_pos_x": {
-            "value": 15
+            "value": 0
         },
         "machine_extruder_start_pos_y": {
-            "value": 15
+            "value": 0
         },
         "machine_extruder_end_pos_abs": {
             "default_value": false

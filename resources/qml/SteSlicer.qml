@@ -1084,10 +1084,6 @@ UM.MainWindow
             {
                 restart();
             }
-            else if (SteSlicerApplication.needToShowLicense)
-            {
-                restart();
-            }
             else if(SteSlicer.MachineManager.activeMachine == null)
             {
                 addMachineDialog.open();

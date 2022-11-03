@@ -754,7 +754,8 @@
                         "cylindrical_full": "5D Spiral Full",
                         "spherical": "5D Spherical",
                         "spherical_full": "5D Spherical Full",
-                        "discrete": "5D Discrete"
+                        "conical": "5D Conical",
+                        "conical_full": "5D Conical Full"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
@@ -774,6 +775,19 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
+                "cylindrical_mode_overlap": {
+                    "label": "Cylindrical Parts Overlap",
+                    "description": "The value of cylindrical and center parts overlap",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 0,
+                    "enabled": "resolveOrValue('printing_mode') in ['cylindrical', 'cylindrical_full']",
+                    "minimum_value": "0",
+                    "maximum_value_warning": "2",
+                    "maximum_value": "10",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "spherical_mode_base_radius": {
                     "label": "Base Radius",
                     "description": "Radius of sphere base in 5D Spherical printing mode",
@@ -781,6 +795,82 @@
                     "unit": "mm",
                     "default_value": 10,
                     "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "spherical_mode_base_height": {
+                    "label": "Base Height",
+                    "description": "Height of sphere base in 5D Spherical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "value": "spherical_mode_base_radius",
+                    "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "spherical_mode_base_width": {
+                    "label": "Base Width",
+                    "description": "Width of sphere base in 5D Spherical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "value": "spherical_mode_base_radius",
+                    "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "spherical_mode_base_depth": {
+                    "label": "Base Depth",
+                    "description": "Depth of sphere base in 5D Spherical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "value": "spherical_mode_base_radius",
+                    "enabled": "resolveOrValue('printing_mode') in ['spherical', 'spherical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "conical_mode_base_angle":{
+                    "label": "Cone Angle",
+                    "description": "Angle of the cone base in 5D Conical printing mode",
+                    "type": "float",
+                    "unit": "°",
+                    "default_value": 10,
+                    "enabled": "resolveOrValue('printing_mode') in ['conical', 'conical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "0.01",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "conical_mode_base_radius":{
+                    "label": "Cone Radius",
+                    "description": "Radius of the cone base in 5D Conical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "enabled": "resolveOrValue('printing_mode') in ['conical', 'conical_full']",
+                    "minimum_value": "0",
+                    "minimum_value_warning": "5",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "conical_mode_base_height":{
+                    "label": "Cone Height",
+                    "description": "Height of the cone base in 5D Conical printing mode",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 10,
+                    "value": "conical_mode_base_radius / math.tan(math.radians(conical_mode_base_angle))",
+                    "enabled": "resolveOrValue('printing_mode') in ['conical', 'conical_full']",
                     "minimum_value": "0",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
@@ -815,14 +905,14 @@
                     "minimum_value": "0",
                     "default_value": 0,
                     "settable_per_extruder": false,
-                     "settable_per_mesh": false,
+                    "settable_per_mesh": false,
                     "settable_per_meshgroup": false,
                     "enabled": "resolveOrValue('printing_mode') == 'discrete'"
                 },
                 "discrete_mode_parts_intersection": {
                     "label": "Parts Intersection",
                     "description": "Intersection between separate parts of the print. This setting could improve adhesion between separate parts of the print",
-                   "type": "float",
+                    "type": "float",
                     "unit": "mm",
                     "default_value": 0.1,
                     "value": "resolveOrValue('layer_height_0') / 2",
@@ -845,27 +935,30 @@
                     "description": "Enables the reinforcement.",
                     "type": "bool",
                     "default_value": false,
-                    "value": "any(extruderValues('machine_fiber_extruder'))",
+                    "enabled": "any(extruderValues('machine_fiber_extruder'))",
+                    "value": false,
                     "settable_per_mesh": false,
-                    "settable_per_extruder": true,
+                    "settable_per_extruder": false,
                     "children": {
                         "reinforcement_enabled_classic": {
                             "label": "Enable Reinforcement on Classic",
                             "description": "Enables the reinforcement while printing classic.",
                             "type": "bool",
                             "default_value": false,
-                            "value": "any(extruderValues('machine_fiber_extruder'))",
+                            "value": "reinforcement_enabled",
+                            "enabled": "reinforcement_enabled",
                             "settable_per_mesh": false,
-                            "settable_per_extruder": true
+                            "settable_per_extruder": false
                         },
                         "reinforcement_enabled_cylindrical": {
                             "label": "Enable Reinforcement on Cylindrical",
                             "description": "Enables the reinforcement while printing cylindrical.",
                             "type": "bool",
                             "default_value": false,
-                            "value": "any(extruderValues('machine_fiber_extruder'))",
+                            "value": "reinforcement_enabled",
+                            "enabled": "reinforcement_enabled",
                             "settable_per_mesh": false,
-                            "settable_per_extruder": true
+                            "settable_per_extruder": false
                         }
                     }
                 },
@@ -876,7 +969,7 @@
                     "type": "float",
                     "default_value": 0.1,
                     "minimum_value": "0.001",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "children": {
@@ -886,7 +979,7 @@
                             "type": "int",
                             "default_value": 2,
                             "minimum_value": "1",
-                            "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                            "enabled": "reinforcement_enabled",
                             "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -900,7 +993,7 @@
                     "type": "float",
                     "default_value": 0.1,
                     "minimum_value": "0.001",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "children": {
@@ -910,7 +1003,7 @@
                             "type": "int",
                             "default_value": 2,
                             "minimum_value": "1",
-                            "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                            "enabled": "reinforcement_enabled",
                             "value": "max(1, round((reinforcement_height) / layer_height) + 1) if layer_height != 0 else 0",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -924,7 +1017,7 @@
                     "minimum_value_warning": "2",
                     "default_value": 4,
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled_classic",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
                 },
@@ -935,7 +1028,7 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled_classic",
                     "minimum_value_warning": "0",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
@@ -949,7 +1042,7 @@
                         "isotropic": "Isotropic"
                     },
                     "default_value": "concentric",
-                    "enabled": "reinforcement_enabled",
+                    "enabled": "reinforcement_enabled_classic",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
@@ -963,7 +1056,7 @@
                         "inner": "Inner Walls"
                     },
                     "default_value": "all",
-                    "enabled": "reinforcement_enabled",
+                    "enabled": "reinforcement_enabled_classic",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
@@ -974,7 +1067,30 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "10",
                     "type": "int",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled_classic",
+                    "minimum_value_warning": "0",
+                    "settable_per_mesh": true
+                },
+                "reinforcement_z_seam_type": {
+                    "label": "Fiber Z Seam Alignment",
+                    "description": "Starting point of each path in a layer. When paths in consecutive layers start at the same point a vertical seam may show on the print. When aligning these near a user specified location, the seam is easiest to remove. When placed randomly the inaccuracies at the paths' start will be less noticeable. When taking the shortest path the print will be quicker.",
+                    "type": "enum",
+                    "options": {
+                        "shortest": "Shortest",
+                        "random": "Random"
+                    },
+                    "default_value": "shortest",
+                    "limit_to_extruder": "fiber_infill_extruder_nr",
+                    "settable_per_mesh": true
+                },
+                "reinforcement_intermediate_layers": {
+                    "label": "Intermediate Layers",
+                    "description": "The number of intermediate layers between fiber layers",
+                    "default_value": 0,
+                    "minimum_value": "0",
+                    "maximum_value_warning": "10",
+                    "type": "int",
+                    "enabled": "reinforcement_enabled_classic",
                     "minimum_value_warning": "0",
                     "settable_per_mesh": true
                 },
@@ -984,7 +1100,7 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 5.5,
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled",
                     "minimum_value_warning": "-0.0001",
                     "maximum_value_warning": "10.0",
                     "settable_per_mesh": false,
@@ -995,7 +1111,7 @@
                     "description": "A list of fiber integer line directions to use when the fiber layers are printed. Elements from the list are used sequentially as the layers progress and when the end of the list is reached, it starts at the beginning again. The list items are separated by commas and the whole list is contained in square brackets. Default is an empty list which means use the traditional default angles (45 and 135 degrees).",
                     "type": "[int]",
                     "default_value": "[ ]",
-                    "enabled": "any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
                 },
@@ -1008,7 +1124,7 @@
                     "settable_per_extruder": false,
                     "settable_per_meshgroup": true,
                     "settable_globally": true,
-                    "enabled": "extruders_enabled_count > 1 and any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled",
+                    "enabled": "extruders_enabled_count > 1 and reinforcement_enabled",
                     "children": {
                         "classic_fiber_infill_extruder_nr": {
                             "label": "Classic Fiber Infill Extruder",
@@ -1020,7 +1136,7 @@
                             "settable_per_extruder": false,
                             "settable_per_meshgroup": true,
                             "settable_globally": true,
-                            "enabled": "extruders_enabled_count > 1 and any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled"
+                            "enabled": "extruders_enabled_count > 1 and reinforcement_enabled"
                         },
                         "cylindrical_fiber_infill_extruder_nr": {
                             "label": "Cylindrical Fiber Infill Extruder",
@@ -1032,10 +1148,36 @@
                             "settable_per_extruder": false,
                             "settable_per_meshgroup": true,
                             "settable_globally": true,
-                            "enabled": "extruders_enabled_count > 1 and printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full' and any(extruderValues('machine_fiber_extruder')) and reinforcement_enabled"
+                            "enabled": "extruders_enabled_count > 1 and printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full' and reinforcement_enabled"
                         }
                     }
-                }
+                },
+                "fiber_density": {
+                    "label": "Fiber Density",
+                    "description": "Adjusts the density of fiber of the print.",
+                    "unit": "%",
+                    "type": "float",
+                    "default_value": 50,
+                    "minimum_value": "0",
+                    "maximum_value_warning": "100",
+                    "limit_to_extruder": "infill_extruder_nr",
+                    "settable_per_mesh": true,
+                    "children": {
+                         "fiber_line_distance": {
+                             "label": "Fiber Line Distance",
+                             "description": "Distance between the printed fiber lines. This setting is calculated by the fiber density and the fiber line width.",
+                             "unit": "mm",
+                             "type": "float",
+                             "default_value": 2,
+                             "minimum_value": "0",
+                             "minimum_value_warning": "fiber_line_width",
+                             "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
+                             "limit_to_extruder": "infill_extruder_nr",
+                             "settable_per_mesh": true
+                 }
+    }
+}
+
             }
         },
         "resolution": {
@@ -1054,7 +1196,35 @@
                     "minimum_value_warning": "0.04",
                     "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
                     "settable_per_mesh": false,
-                    "settable_per_extruder": false
+                    "settable_per_extruder": false,
+                    "children": {
+                        "classic_layer_height": {
+                            "label": "Classic Layer Height",
+                            "description": "The height of each layer in mm. Higher values produce faster prints in lower resolution, lower values produce slower prints in higher resolution.",
+                            "unit": "mm",
+                            "type": "float",
+                            "default_value": 0.1,
+                            "value": "layer_height",
+                            "minimum_value": "0.001",
+                            "minimum_value_warning": "0.04",
+                            "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "cylindrical_layer_height": {
+                            "label": "5D Surface Layer Height",
+                            "description": "The height of each layer in mm. Higher values produce faster prints in lower resolution, lower values produce slower prints in higher resolution.",
+                            "unit": "mm",
+                            "type": "float",
+                            "default_value": 0.1,
+                            "value": "layer_height",
+                            "minimum_value": "0.001",
+                            "minimum_value_warning": "0.04",
+                            "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "layer_height_0": {
                     "label": "Initial Layer Height",
@@ -1063,6 +1233,19 @@
                     "type": "float",
                     "default_value": 0.3,
                     "resolve": "min(extruderValues('layer_height_0'))",
+                    "minimum_value": "0.001",
+                    "minimum_value_warning": "0.1",
+                    "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "cylindrical_layer_height_0": {
+                    "label": "Initial 5D Surface Layer Height",
+                    "description": "The height of the initial layer in mm. A thicker initial layer makes adhesion to the build plate easier.",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.3,
+                    "resolve": "min(extruderValues('cylindrical_layer_height_0'))",
                     "minimum_value": "0.001",
                     "minimum_value_warning": "0.1",
                     "maximum_value_warning": "0.8 * min(extruderValues('machine_nozzle_size'))",
@@ -1157,7 +1340,7 @@
                             "minimum_value": "0.001",
                             "minimum_value_warning": "0.1 + 0.4 * machine_nozzle_size",
                             "maximum_value_warning": "3 * machine_nozzle_size",
-                            "default_value": 0.9,
+                            "default_value": 1.2,
                             "type": "float",
                             "value": "max(extruderValues('machine_nozzle_size'))",
                             "enabled": "infill_sparse_density > 0 and reinforcement_enabled",
@@ -1855,7 +2038,7 @@
                             "enabled": "extruders_enabled_count > 1"
                         },
                         "cylindrical_infill_extruder_nr": {
-                            "label": "Cylindrical Infill Extruder",
+                            "label": "5D Surface Infill Extruder",
                             "description": "The extruder train used for printing infill. This is used in multi-extrusion.",
                             "type": "optional_extruder",
                             "value": "infill_extruder_nr",
@@ -2431,7 +2614,194 @@
                     "minimum_value_warning": "50",
                     "maximum_value_warning": "150",
                     "enabled": "machine_gcode_flavor != \"UltiGCode\"",
-                    "settable_per_mesh": true
+                    "settable_per_mesh": true,
+                    "children": {
+                        "wall_material_flow": {
+                            "label": "Wall Flow",
+                            "description": "Flow compensation on wall lines.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "value": "material_flow",
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "limit_to_extruder": "wall_0_extruder_nr if wall_x_extruder_nr == wall_0_extruder_nr else -1",
+                            "settable_per_mesh": true,
+                            "children": {
+                                "wall_0_material_flow": {
+                                    "label": "Outer Wall Flow",
+                                    "description": "Flow compensation on the outermost wall line.",
+                                    "unit": "%",
+                                    "type": "float",
+                                    "default_value": 100,
+                                    "value": "wall_material_flow",
+                                    "minimum_value": "5",
+                                    "minimum_value_warning": "50",
+                                    "maximum_value_warning": "150",
+                                    "limit_to_extruder": "wall_0_extruder_nr",
+                                    "settable_per_mesh": true
+                                },
+                                "wall_x_material_flow": {
+                                    "label": "Inner Wall(s) Flow",
+                                    "description": "Flow compensation on wall lines for all wall lines except the outermost one.",
+                                    "unit": "%",
+                                    "type": "float",
+                                    "default_value": 100,
+                                    "value": "wall_material_flow",
+                                    "minimum_value": "5",
+                                    "minimum_value_warning": "50",
+                                    "maximum_value_warning": "150",
+                                    "limit_to_extruder": "wall_x_extruder_nr",
+                                    "settable_per_mesh": true
+                                }
+                            }
+                        },
+                        "skin_material_flow": {
+                            "label": "Top/Bottom Flow",
+                            "description": "Flow compensation on top/bottom lines.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "value": "material_flow",
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "enabled": "top_layers > 0 or bottom_layers > 0",
+                            "limit_to_extruder": "top_bottom_extruder_nr",
+                            "settable_per_mesh": true
+                        },
+                        "roofing_material_flow": {
+                            "label": "Top Surface Skin Flow",
+                            "description": "Flow compensation on lines of the areas at the top of the print.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "value": "skin_material_flow",
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "limit_to_extruder": "roofing_extruder_nr",
+                            "settable_per_mesh": true,
+                            "enabled": "roofing_layer_count > 0 and top_layers > 0"
+                        },
+                        "infill_material_flow": {
+                            "label": "Infill Flow",
+                            "description": "Flow compensation on infill lines.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "value": "material_flow",
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "enabled": "infill_sparse_density > 0",
+                            "limit_to_extruder": "infill_extruder_nr",
+                            "settable_per_mesh": true
+                        },
+                        "fiber_infill_material_flow": {
+                            "label": "Fiber Infill Flow",
+                            "description": "Flow compensation on fiber infill lines.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "enabled": "reinforcement_enabled",
+                            "limit_to_extruder": "fiber_infill_extruder_nr",
+                            "settable_per_mesh": true
+                        },
+                        "skirt_brim_material_flow": {
+                            "label": "Skirt/Brim Flow",
+                            "description": "Flow compensation on skirt or brim lines.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "value": "material_flow",
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "enabled": "resolveOrValue('adhesion_type') == 'skirt' or resolveOrValue('adhesion_type') == 'brim' or resolveOrValue('draft_shield_enabled') or resolveOrValue('ooze_shield_enabled')",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        },
+                        "support_material_flow": {
+                            "label": "Support Flow",
+                            "description": "Flow compensation on support structure lines.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "value": "material_flow",
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "enabled": "support_enable",
+                            "limit_to_extruder": "support_infill_extruder_nr",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        },
+                        "support_interface_material_flow": {
+                            "label": "Support Interface Flow",
+                            "description": "Flow compensation on lines of support roof or floor.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "value": "material_flow",
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "enabled": "(support_enable) and support_interface_enable",
+                            "limit_to_extruder": "support_interface_extruder_nr",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true,
+                            "children": {
+                                "support_roof_material_flow": {
+                                    "label": "Support Roof Flow",
+                                    "description": "Flow compensation on support roof lines.",
+                                    "unit": "%",
+                                    "type": "float",
+                                    "default_value": 100,
+                                    "value": "extruderValue(support_roof_extruder_nr, 'support_interface_material_flow')",
+                                    "minimum_value": "5",
+                                    "minimum_value_warning": "50",
+                                    "maximum_value_warning": "150",
+                                    "enabled": "(support_enable) and support_roof_enable",
+                                    "limit_to_extruder": "support_roof_extruder_nr",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": true
+                                },
+                                "support_bottom_material_flow": {
+                                    "label": "Support Floor Flow",
+                                    "description": "Flow compensation on support floor lines.",
+                                    "unit": "%",
+                                    "type": "float",
+                                    "default_value": 100,
+                                    "value": "extruderValue(support_bottom_extruder_nr, 'support_interface_material_flow')",
+                                    "minimum_value": "5",
+                                    "minimum_value_warning": "50",
+                                    "maximum_value_warning": "150",
+                                    "enabled": "(support_enable) and support_bottom_enable",
+                                    "limit_to_extruder": "support_bottom_extruder_nr",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": true
+                                }
+                            }
+                        },
+                        "prime_tower_flow": {
+                            "label": "Prime Tower Flow",
+                            "description": "Flow compensation on prime tower lines.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 100,
+                            "value": "material_flow",
+                            "minimum_value": "5",
+                            "minimum_value_warning": "50",
+                            "maximum_value_warning": "150",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        }
+                    }
                 },
                 "material_flow_layer_0": {
                     "label": "Initial Layer Flow",
@@ -2676,9 +3046,8 @@
                             "type": "float",
                             "minimum_value": "0.1",
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
-                            "maximum_value_warning": "50",
-                            "default_value": 10,
-                            "value": "speed_print / 6",
+                            "maximum_value_warning": "15",
+                            "default_value": 5,
                             "enabled": "reinforcement_enabled",
                             "limit_to_extruder": "fiber_infill_extruder_nr",
                             "settable_per_mesh": true
@@ -2705,22 +3074,20 @@
                                     "minimum_value": "0.1",
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
-                                    "default_value": 60,
                                     "value": "speed_print",
                                     "enabled": "infill_sparse_density > 0",
                                     "limit_to_extruder": "infill_extruder_nr",
                                     "settable_per_mesh": true
                                 },
                                 "speed_infill_cylindrical": {
-                                    "label": "Cylindrical Infill Speed",
+                                    "label": "5D Surface Infill Speed",
                                     "description": "The speed at which cylindrical infill is printed.",
                                     "unit": "mm/s",
                                     "type": "float",
                                     "minimum_value": "0.1",
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
-                                    "default_value": 60,
-                                    "value": "speed_print",
+                                    "value": "1.2*speed_print",
                                     "enabled": "infill_sparse_density > 0",
                                     "limit_to_extruder": "infill_extruder_nr",
                                     "settable_per_mesh": true
@@ -2735,8 +3102,8 @@
                             "minimum_value": "0.1",
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                             "maximum_value_warning": "150",
-                            "default_value": 30,
-                            "value": "speed_print / 2",
+                            "default_value": 60,
+                            "value": "speed_print",
                             "settable_per_mesh": true,
                             "children": {
                                 "speed_wall_0": {
@@ -2748,7 +3115,7 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 30,
-                                    "value": "speed_wall",
+                                    "value": "speed_wall / 2",
                                     "limit_to_extruder": "wall_0_extruder_nr",
                                     "settable_per_mesh": true,
                                     "children": {
@@ -2761,12 +3128,12 @@
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
                                             "default_value": 30,
-                                            "value": "speed_wall",
+                                            "value": "speed_wall_0",
                                             "limit_to_extruder": "wall_0_extruder_nr",
                                             "settable_per_mesh": true
                                         },
                                         "speed_wall_0_cylindrical": {
-                                            "label": "Cylindrical Outer Wall Speed",
+                                            "label": "5D Surface Outer Wall Speed",
                                             "description": "The speed at which the cylindrical outermost walls are printed. Printing the outer wall at a lower speed improves the final skin quality. However, having a large difference between the inner wall speed and the outer wall speed will affect quality in a negative way.",
                                             "unit": "mm/s",
                                             "type": "float",
@@ -2774,7 +3141,7 @@
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
                                             "default_value": 30,
-                                            "value": "speed_wall",
+                                            "value": "speed_wall_0",
                                             "limit_to_extruder": "wall_0_extruder_nr",
                                             "settable_per_mesh": true
                                         }
@@ -2789,7 +3156,7 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 60,
-                                    "value": "speed_wall * 2",
+                                    "value": "resolveOrValue('speed_wall') if resolveOrValue('printing_mode') == 'classic' else 0.75*resolveOrValue('speed_wall')",
                                     "limit_to_extruder": "wall_x_extruder_nr",
                                     "settable_per_mesh": true,
                                     "children": {
@@ -2802,12 +3169,12 @@
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
                                             "default_value": 60,
-                                            "value": "speed_wall * 2",
+                                            "value": "speed_wall_x",
                                             "limit_to_extruder": "wall_x_extruder_nr",
                                             "settable_per_mesh": true
                                         },
                                         "speed_wall_x_cylindrical": {
-                                            "label": "Cylindrical Inner Wall Speed",
+                                            "label": "5D Surface Inner Wall Speed",
                                             "description": "The speed at which all cylindrical inner walls are printed. Printing the inner wall faster than the outer wall will reduce printing time. It works well to set this in between the outer wall speed and the infill speed.",
                                             "unit": "mm/s",
                                             "type": "float",
@@ -2815,7 +3182,7 @@
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
                                             "default_value": 60,
-                                            "value": "speed_wall * 2",
+                                            "value": "speed_print * 1.2",
                                             "limit_to_extruder": "wall_x_extruder_nr",
                                             "settable_per_mesh": true
                                         }
@@ -2846,13 +3213,13 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 25,
-                                    "value": "speed_topbottom",
+                                    "value": "speed_roofing",
                                     "limit_to_extruder": "roofing_extruder_nr",
                                     "settable_per_mesh": true,
                                     "enabled": "roofing_layer_count > 0 and top_layers > 0"
                                 },
                                 "speed_roofing_cylindrical": {
-                                    "label": "Cylindrical Top Surface Skin Speed",
+                                    "label": "5D Surface Top Surface Skin Speed",
                                     "description": "The speed at which cylindrical top surface skin layers are printed.",
                                     "unit": "mm/s",
                                     "type": "float",
@@ -2860,7 +3227,7 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 25,
-                                    "value": "speed_topbottom",
+                                    "value": "speed_print *1.2",
                                     "limit_to_extruder": "roofing_extruder_nr",
                                     "settable_per_mesh": true,
                                     "enabled": "roofing_layer_count > 0 and top_layers > 0"
@@ -2890,13 +3257,13 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 30,
-                                    "value": "speed_print / 2",
+                                    "value": "speed_topbottom",
                                     "limit_to_extruder": "top_bottom_extruder_nr",
                                     "enabled": "top_layers > 0 or bottom_layers > 0",
                                     "settable_per_mesh": true
                                 },
                                 "speed_topbottom_cylindrical": {
-                                    "label": "Cylindrical Top/Bottom Speed",
+                                    "label": "5D Surface Top/Bottom Speed",
                                     "description": "The speed at which cylindrical top/bottom layers are printed.",
                                     "unit": "mm/s",
                                     "type": "float",
@@ -2904,7 +3271,7 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 30,
-                                    "value": "speed_print / 2",
+                                    "value": "speed_print * 1.2",
                                     "limit_to_extruder": "top_bottom_extruder_nr",
                                     "enabled": "top_layers > 0 or bottom_layers > 0",
                                     "settable_per_mesh": true
@@ -2950,14 +3317,14 @@
                                             "minimum_value": "0.1",
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
-                                            "value": "speed_support",
+                                            "value": "speed_support_infill",
                                             "enabled": "support_enable",
                                             "limit_to_extruder": "support_infill_extruder_nr",
                                             "settable_per_mesh": false,
                                             "settable_per_extruder": true
                                         },
                                         "speed_support_infill_cylindrical": {
-                                            "label": "Cylindrical Support Infill Speed",
+                                            "label": "5D Surface Support Infill Speed",
                                             "description": "The speed at which the cylindrical infill of support is printed. Printing the infill at lower speeds improves stability.",
                                             "unit": "mm/s",
                                             "type": "float",
@@ -2965,7 +3332,7 @@
                                             "minimum_value": "0.1",
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
-                                            "value": "speed_support",
+                                            "value": "1.2*speed_print",
                                             "enabled": "support_enable",
                                             "limit_to_extruder": "support_infill_extruder_nr",
                                             "settable_per_mesh": false,
@@ -3060,12 +3427,12 @@
                             "minimum_value": "0.1",
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                             "maximum_value_warning": "300",
-                            "value": "speed_print if magic_spiralize else 120",
+                            "value": "120 if resolveOrValue('printing_mode') == 'classic' else resolveOrValue('speed_travel')",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         },
                         "speed_travel_cylindrical": {
-                            "label": "Cylindrical Travel Speed",
+                            "label": "5D Surface Travel Speed",
                             "description": "The speed at which cylindrical travel moves are made.",
                             "unit": "mm/s",
                             "type": "float",
@@ -3073,7 +3440,7 @@
                             "minimum_value": "0.1",
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                             "maximum_value_warning": "300",
-                            "value": "speed_print if magic_spiralize else 60",
+                            "value": "speed_print if resolveOrValue('printing_mode') == 'classic' else speed_print * 1.2",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         }
@@ -3116,12 +3483,12 @@
                                     "settable_per_mesh": true
                                 },
                                 "speed_print_layer_0_cylindrical": {
-                                    "label": "Cylindrical Initial Layer Print Speed",
-                                    "description": "The speed of printing for the cylindrical initial layer. A lower value is advised to improve adhesion to the build plate.",
+                                    "label": "5D Surface Initial Layer Print Speed",
+                                    "description": "The speed of printing for the 5D Surface initial layer. A lower value is advised to improve adhesion to the build plate.",
                                     "unit": "mm/s",
                                     "type": "float",
                                     "default_value": 30,
-                                    "value": "speed_layer_0",
+                                    "value": "speed_print * 1.2",
                                     "minimum_value": "0.1",
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "300",
@@ -3156,12 +3523,12 @@
                                     "settable_per_mesh": false
                                 },
                                 "speed_travel_layer_0_cylindrical": {
-                                    "label": "Cylindrical Initial Layer Travel Speed",
-                                    "description": "The speed of travel moves in the cylindrical initial layer. A lower value is advised to prevent pulling previously printed parts away from the build plate. The value of this setting can automatically be calculated from the ratio between the Travel Speed and the Print Speed.",
+                                    "label": "5D Surface Initial Layer Travel Speed",
+                                    "description": "The speed of travel moves in the 5D Surface initial layer. A lower value is advised to prevent pulling previously printed parts away from the build plate. The value of this setting can automatically be calculated from the ratio between the Travel Speed and the Print Speed.",
                                     "unit": "mm/s",
                                     "type": "float",
                                     "default_value": 60,
-                                    "value": "speed_layer_0 * speed_travel / speed_print",
+                                    "value": "1.2 * speed_print",
                                     "minimum_value": "0.1",
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "300",
@@ -3230,6 +3597,24 @@
                     "maximum_value_warning": "150",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
+                },
+                "speed_control_enable": {
+                    "label": "Speed Control Enable",
+                    "description": "Enabling speed adjustment.",
+                    "type": "bool",
+                    "default_value": false,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "speed_control_value": {
+                    "label": "Speed Control Value",
+                    "description": "The minimum value of the adjusted speed. if the calculated speed is less than this value, set this value.",
+                    "type": "float",
+                    "unit": "mm/s",
+                    "default_value": 1,
+                    "minimum_value": "0.1",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
                 },
                 "acceleration_enabled": {
                     "label": "Enable Acceleration Control",
@@ -4105,7 +4490,106 @@
                     "default_value": false,
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
-                }
+                },
+                "cool_chamber_fan_enabled": {
+                    "label": "Enable Chamber Cooling",
+                    "description": "Enables the chamber cooling fans while printing.",
+                    "type": "bool",
+                    "default_value": false,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed": {
+                    "label": "Chamber Fan Speed",
+                    "description": "The speed at which the chamber cooling fans spin.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "default_value": 100,
+                    "value": "100.0 if cool_chamber_fan_enabled else 0.0",
+                    "enabled": "cool_chamber_fan_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_min": {
+                    "label": "Regular Chamber Fan Speed",
+                    "description": "The speed at which the fans spin before hitting the threshold. When a layer prints faster than the threshold, the fan speed gradually inclines towards the maximum fan speed.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "value": "cool_chamber_fan_speed",
+                    "default_value": 100,
+                    "enabled": "cool_chamber_fan_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_min_classic": {
+                    "label": "Regular Chamber Fan Speed Classic",
+                    "description": "The speed at which the fans spin before hitting the threshold in classic. When a layer prints faster than the threshold, the fan speed gradually inclines towards the maximum fan speed.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "value": "cool_chamber_fan_speed",
+                    "default_value": 100,
+                    "enabled": "cool_chamber_fan_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_min_cylindrical": {
+                    "label": "Regular Chamber Fan Speed Cylindrical",
+                    "description": "The speed at which the fans spin before hitting the threshold in cylindrical. When a layer prints faster than the threshold, the fan speed gradually inclines towards the maximum fan speed.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "value": "cool_chamber_fan_speed",
+                    "default_value": 100,
+                    "enabled": "cool_chamber_fan_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_max": {
+                    "label": "Maximum Chamber Fan Speed",
+                    "description": "The speed at which the fans spin on the minimum layer time. The fan speed gradually increases between the regular fan speed and maximum fan speed when the threshold is hit.",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "max(0, cool_chamber_fan_speed_min)",
+                    "maximum_value": "100",
+                    "default_value": 100,
+                    "enabled": "cool_chamber_fan_enabled",
+                    "value": "cool_chamber_fan_speed",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
+                "cool_chamber_fan_speed_max_classic": {
+                            "label": "Maximum Chamber Fan Speed Classic",
+                            "description": "The speed at which the fans spin on the minimum layer time in classic. The fan speed gradually increases between the regular fan speed and maximum fan speed when the threshold is hit.",
+                            "unit": "%",
+                            "type": "float",
+                            "minimum_value": "max(0, cool_chamber_fan_speed_min)",
+                            "maximum_value": "100",
+                            "default_value": 100,
+                            "enabled": "cool_chamber_fan_enabled",
+                            "value": "cool_chamber_fan_speed",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        },
+                "cool_chamber_fan_speed_max_cylindrical": {
+                            "label": "Maximum Chamber Fan Speed Cylindrical",
+                            "description": "The speed at which the fans spin on the minimum layer time in cylindrical. The fan speed gradually increases between the regular fan speed and maximum fan speed when the threshold is hit.",
+                            "unit": "%",
+                            "type": "float",
+                            "minimum_value": "max(0, cool_chamber_fan_speed_min)",
+                            "maximum_value": "100",
+                            "default_value": 100,
+                            "enabled": "cool_chamber_fan_enabled",
+                            "value": "cool_chamber_fan_speed",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true
+                        }
             }
         },
         "support": {
@@ -4119,17 +4603,31 @@
                     "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
                     "type": "bool",
                     "default_value": false,
+                    "enabled": true,
                     "settable_per_mesh": true,
-                    "settable_per_extruder": false
-                },
-                "support_enable_cylindrical": {
-                    "label": "Generate Cylindrical Support",
-                    "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
-                    "type": "bool",
-                    "enabled": "support_enable",
-                    "default_value": false,
-                    "settable_per_mesh": true,
-                    "settable_per_extruder": false
+                    "settable_per_extruder": false,
+                    "children": {
+                        "support_enable_classic": {
+                            "label": "Generate Classic Support",
+                            "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
+                            "type": "bool",
+                            "enabled": "support_enable",
+                            "value": "support_enable",
+                            "default_value": false,
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": false
+                        },
+                        "support_enable_cylindrical": {
+                            "label": "Generate 5D Surface Support",
+                            "description": "Generate structures to support parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
+                            "type": "bool",
+                            "enabled": "support_enable",
+                            "value": "support_enable",
+                            "default_value": false,
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "support_extruder_nr": {
                     "label": "Support Extruder",
@@ -4207,6 +4705,15 @@
                     "resolve": "'everywhere' if 'everywhere' in extruderValues('support_type') else 'buildplate'",
                     "enabled": "support_enable or support_tree_enable",
                     "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "support_enable_top_support": {
+                    "label": "Generate Top Support",
+                    "description": "Generate top structures to support spiral parts of the model which have overhangs. Without these structures, such parts would collapse during printing.",
+                    "type": "bool",
+                    "enabled": "support_enable and printing_mode in ['cylindrical_full']",
+                    "default_value": false,
+                    "settable_per_mesh": true,
                     "settable_per_extruder": false
                 },
                 "support_angle": {
@@ -4493,6 +5000,17 @@
                     "minimum_value_warning": "-1 * machine_nozzle_size",
                     "maximum_value_warning": "10 * machine_nozzle_size",
                     "enabled": "support_enable",
+                    "settable_per_mesh": true
+                },
+                "support_first_offset": {
+                    "label": "Support Offset",
+                    "description": "Sets the distance from the support to the wall of the part.",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.1,
+                    "minimum_value_warning": "-1 * machine_nozzle_size",
+                    "maximum_value_warning": "10 * machine_nozzle_size",
+                    "enabled":"support_enable",
                     "settable_per_mesh": true
                 },
                 "support_infill_sparse_thickness": {
@@ -4986,7 +5504,8 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 15,
-                    "minimum_value_warning": "raft_interface_line_width",
+                    "value": "15 if resolveOrValue('printing_mode') == 'classic' else 0",
+                    "minimum_value_warning": "resolveOrValue('raft_interface_line_width') if resolveOrValue('printing_mode') == 'classic' else 0",
                     "maximum_value_warning": "20",
                     "enabled": "resolveOrValue('adhesion_type') in ['raft', 'none']",
                     "limit_to_extruder": "adhesion_extruder_nr",
@@ -5012,6 +5531,7 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 0.3,
+                    "value":"0.3 if resolveOrValue('printing_mode') == 'classic' else resolveOrValue('layer_height')",
                     "minimum_value": "0",
                     "maximum_value_warning": "min(extruderValues('machine_nozzle_size'))",
                     "enabled": "resolveOrValue('adhesion_type') == 'raft'",
@@ -5038,6 +5558,7 @@
                     "description": "The number of top layers on top of the 2nd raft layer. These are fully filled layers that the model sits on. 2 layers result in a smoother top surface than 1.",
                     "type": "int",
                     "default_value": 2,
+                    "value": "2 if resolveOrValue('printing_mode') == 'classic' else ((3.5-resolveOrValue('raft_base_thickness')-resolveOrValue('raft_interface_thickness'))/resolveOrValue('raft_surface_thickness'))",
                     "minimum_value": "0",
                     "maximum_value_warning": "20",
                     "enabled": "resolveOrValue('adhesion_type') == 'raft'",
@@ -5184,11 +5705,35 @@
                     "label": "Print cylindrical raft",
                     "description": "Print cylindrical raft on basement",
                     "type": "bool",
-                    "value": "machine_five_axis and not (resolveOrValue('printing_mode') == 'classic' and machine_hybrid) and resolveOrValue('printing_mode') in ['classic', 'discrete', 'cylindrical_full', 'spherical_full']",
+                    "value": "machine_five_axis and not (resolveOrValue('printing_mode') == 'classic' and machine_hybrid) and resolveOrValue('printing_mode') in ['discrete', 'cylindrical_full', 'spherical_full']",
                     "default_value": true,
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "enabled": true
+                },
+                "cylindrical_raft_extruder_nr": {
+                    "label": "Cylindrical Raft Extruder",
+                    "description": "The extruder train to use for printing the cylindrical raft. This is used in multi-extrusion.",
+                    "type": "extruder",
+                    "default_value": "0",
+                    "value": "defaultExtruderPosition()",
+                    "enabled": "extruders_enabled_count > 1 and cylindrical_raft_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
+                "cylindrical_raft_thickness": {
+                    "label": "C.R. Layer Thickness",
+                    "description": "Layer thickness of the cylindrical base raft. This should be a thick layer which sticks firmly to the printer build plate.",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.3,
+                    "value": "raft_base_thickness if resolveOrValue('printing_mode') == 'classic' else cylindrical_layer_height_0",
+                    "minimum_value": "0.001",
+                    "minimum_value_warning": "0.04",
+                    "maximum_value_warning": "0.75 * raft_base_line_width",
+                    "enabled": "cylindrical_raft_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
                 },
                 "cylindrical_raft_diameter": {
                     "label": "Cylindrical Raft diameter",
@@ -5196,7 +5741,7 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 15,
-                    "value": "resolveOrValue('cylindrical_mode_base_diameter') if resolveOrValue('printing_mode') == 'cylindrical_full' else resolveOrValue('spherical_mode_base_radius') * 2 if resolveOrValue('printing_mode') == 'spherical_full' else 15",
+                    "value": "cylindrical_mode_base_diameter if (cylindrical_mode_base_diameter < (non_printing_base_diameter+ 10*cylindrical_raft_thickness)) else (non_printing_base_diameter + 10 * cylindrical_raft_thickness)",
                     "minimum_value": "6",
                     "minimum_value_warning": "11",
                     "maximum_value_warning": "50",

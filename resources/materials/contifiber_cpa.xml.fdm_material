@@ -1,28 +1,39 @@
 <?xml version='1.0' encoding='utf-8'?>
-<fdmmaterial version="1.3" xmlns="">
+<fdmmaterial version="1.3"
+  xmlns="http://www.ultimaker.com/material">
   <metadata>
     <name>
       <brand>Stereotech</brand>
       <material>ContiFiber</material>
       <color></color>
-      <label>ContiFiber-CPA</label>
+      <label>ContiFiber CPA</label>
     </name>
-    <compatible></compatible>
-    <version></version>
-    <adhesion_info></adhesion_info>
-    <description></description>
-    <color_code></color_code>
+    <compatible>True</compatible>
+    <version>7</version>
+    <adhesion_info>Печать на столе: чистое стекло, для больших
+моделей нанести клей-адгезив
+Печать на цилиндрическом основании:
+наклеить малярный скотч или использовать
+основание из PA6</adhesion_info>
+    <description>Непрерывное углеволокно со связующим из полиамида для 5D печати. Применяется
+для печати прочных и легких функциональных изделий, конструктивных элементов,
+применяющихся в производстве, аэрокосмической отрасли, медицине и робототехнике.</description>
+    <color_code>#222222</color_code>
     <GUID>0d5a3633-17e5-463f-a572-f1517ac9770b</GUID>
-    <definition></definition>
+    <definition>fdmprinter</definition>
   </metadata>
   <properties>
-    <diameter>0.4</diameter>
+    <diameter>1.2</diameter>
     <density>1.45</density>
     <weight></weight>
   </properties>
   <settings>
+    <setting key="print temperature">250</setting>
     <setting key="standby temperature">200</setting>
-    <setting key="heated bed temperature"></setting>
-    <setting key="print temperature">270</setting>
+    <setting key="heated bed temperature">100</setting>
+    <setting key="print cooling">0.0</setting>
+    <setting key="retraction amount">0.0</setting>
+    <setting key="retraction speed">0</setting>
+    <setting key="speed print">20</setting>
   </settings>
 </fdmmaterial>

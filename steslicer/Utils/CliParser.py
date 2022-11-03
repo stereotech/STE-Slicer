@@ -75,7 +75,7 @@ class CliParser:
         # stack to get print settingd via getProperty method
         self._application = SteSlicerApplication.getInstance()
         self._global_stack = self._application.getGlobalContainerStack()  # type: GlobalStack
-        self._licensed = self._application.getLicenseManager().licenseValid
+        #self._licensed = self._application.getLicenseManager().licenseValid
 
         self._rot_nwp = Matrix()
         self._rot_nws = Matrix()

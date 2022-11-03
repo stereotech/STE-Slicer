@@ -2,7 +2,7 @@ import gc
 import subprocess
 from math import cos, sin
 from time import time
-from typing import NamedTuple, Optional, List, Union
+from typing import NamedTuple, Optional, List, Union, Dict
 
 import numpy
 from UM.Application import Application
@@ -16,6 +16,7 @@ from UM.i18n import i18nCatalog
 
 from steslicer.LayerDataBuilder import LayerDataBuilder
 from steslicer.LayerPolygon import LayerPolygon
+from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.Settings.ExtruderStack import ExtruderStack
 from steslicer.SteSlicerApplication import SteSlicerApplication
 
@@ -61,7 +62,7 @@ class GenerateBasementJob(Job):
         stack = self._global_stack.getTop()
         self._travel_speed = self._global_stack.getProperty(
             "speed_travel", "value")
-        self._raft_base_thickness = self._global_stack.getProperty("raft_base_thickness", "value")
+        self._raft_base_thickness = self._global_stack.getProperty("cylindrical_raft_thickness", "value")
         self._raft_base_line_width = self._global_stack.getProperty("raft_base_line_width", "value")
         self._raft_base_line_spacing = self._global_stack.getProperty("raft_base_line_spacing", "value")
         self._raft_speed = self._global_stack.getProperty("raft_speed", "value")
@@ -72,12 +73,15 @@ class GenerateBasementJob(Job):
         self._filament_diameter = extruder.getProperty(
             "material_diameter", "value")
 
+
         self._cylindrical_raft_enabled = stack.getProperty("cylindrical_raft_enabled", "value")
         if self._cylindrical_raft_enabled is None:
             self._cylindrical_raft_enabled = self._global_stack.getProperty("cylindrical_raft_enabled", "value")
         self._cylindrical_mode_base_diameter = self._global_stack.getProperty("cylindrical_raft_diameter", "value")
         self._non_printing_base_diameter = self._global_stack.getProperty("non_printing_base_diameter", "value")
         self._cylindrical_raft_base_height = self._global_stack.getProperty("cylindrical_raft_base_height", "value")
+
+        self._printing_mode = self._global_stack.getProperty("printing_mode", "value")
 
         self._enable_retraction = extruder.getProperty(
             "retraction_enable", "value")
@@ -145,6 +149,8 @@ class GenerateBasementJob(Job):
         Logger.log("d", "Generating basement...")
 
         if not self._cylindrical_raft_enabled:
+            if self._printing_mode == "classic":
+                return
             self._gcode_list.append(
                 "G0 A0 F600\nG92 E0 C0\n")
             return
@@ -153,8 +159,12 @@ class GenerateBasementJob(Job):
         self._gcode_position = Position(999, 999, 999, 0, 0, 0, 0, [0])
         self._first_move = True
         current_path = []  # type: List[List[float]]
+        self._extruder_offsets = self._extruderOffsets()  # dict with index the extruder number. can be empty
 
         layer_count = int((self._cylindrical_mode_base_diameter - self._non_printing_base_diameter) / (2 * self._raft_base_thickness))
+        if layer_count < 1:
+            layer_count = 1
+
 
         for layer_number in range(0, layer_count):
             if self._abort_requested:
@@ -163,10 +173,17 @@ class GenerateBasementJob(Job):
             self.processingProgress.emit(layer_number / layer_count)
             self._gcode_list.append(";LAYER:%s\n" % layer_number)
 
+            if self._first_move:
+                extruder = self._global_stack.getProperty("cylindrical_raft_extruder_nr", "value")
+                self._extruder_number = int(extruder)
+                if self._extruder_number + 1 > len(self._position.e):
+                    self._position.e.extend([0] * (self._extruder_number - len(self._position.e) + 1))
+                    self._gcode_position.e.extend([0] * (self._extruder_number - len(self._gcode_position.e) + 1))
+                self._gcode_list[-1] += "T%i\nG56;Set basement coordinate system\nG92 E0\n" % self._extruder_number
+
             self._gcode_list[-1] = self.processPolyline(layer_number, current_path, self._gcode_list[-1], layer_count)
 
-            self._createPolygon(layer_number, current_path, self._extruder_offsets.get(
-                self._extruder_number, [0, 0]))
+            self._createPolygon(layer_number, current_path)
             current_path.clear()
 
             if self._abort_requested:
@@ -174,7 +191,15 @@ class GenerateBasementJob(Job):
 
             Job.yieldThread()
 
-        self._gcode_list.append("G91\nG0 Z50\nG90\nG54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again\n")
+        end_gcode = "G54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again\n"
+        used_extruders = ExtruderManager.getInstance().getUsedExtruderStacks()
+        first_used_extruder = int(used_extruders[0].getMetaData().get("position", "0"))
+
+        if first_used_extruder != self._extruder_number:
+            first_print_temp = used_extruders[0].getProperty("material_print_temperature", "value")
+            tool_change_gcode = "T%i\nM109 S%i\n" % (first_used_extruder, first_print_temp)
+            end_gcode = tool_change_gcode + end_gcode
+        self._gcode_list.append("G91\nG0 Z50\nG90\n" + end_gcode)
 
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
@@ -288,7 +313,7 @@ class GenerateBasementJob(Job):
             i = x / length if length != 0 else 0
             j = y / length if length != 0 else 0
             k = 0
-            new_position = Position(x, y, z, i, j, k, 0, [0])
+            new_position = Position(x, y, z, i, j, k, 0, [0] * len(self._position.e))
             new_gcode_position = self._transformCoordinates(x, y, z, i, j, k, gcode_position)
             new_position.e[self._extruder_number] = position.e[self._extruder_number] + self._calculateExtrusion(
                 [x, y, z],
@@ -306,7 +331,7 @@ class GenerateBasementJob(Job):
             i = x / length if length != 0 else 0
             j = y / length if length != 0 else 0
             k = 0
-            new_position = Position(x, y, z, i, j, k, 0, [0])
+            new_position = Position(x, y, z, i, j, k, 0, [0] * len(self._position.e))
             new_gcode_position = self._transformCoordinates(x, y, z, i, j, k, gcode_position)
             new_position.e[self._extruder_number] = position.e[self._extruder_number] + self._calculateExtrusion(
                 [x, y, z],
@@ -345,7 +370,7 @@ class GenerateBasementJob(Job):
         pt = Vector(data=numpy.array([x, y, z, 1]))
         ret = tr.multiply(pt, True).getData()
 
-        return Position(ret[0], ret[1], ret[2], a, 0, c, 0, [0])
+        return Position(ret[0], ret[1], ret[2], a, 0, c, 0, [0] * len(position.e))
 
     def _setByRotationAxis(self, matrix, angle: float, direction: Vector, point: Optional[List[float]] = None) -> None:
         sina = numpy.sin(angle)
@@ -377,8 +402,7 @@ class GenerateBasementJob(Job):
         self._material_amounts[self._extruder_number] += float(dVe)
         return dVe / Af
 
-    def _createPolygon(self, layer_number: int, path: List[List[Union[float, int]]],
-                       extruder_offsets: List[float]) -> bool:
+    def _createPolygon(self, layer_number: int, path: List[List[Union[float, int]]]) -> bool:
         countvalid = 0
         for point in path:
             if point[8] > 0:
@@ -405,11 +429,11 @@ class GenerateBasementJob(Job):
         line_widths[:, 0] = self._raft_base_line_width
         line_thicknesses[:, 0] = self._raft_base_thickness
         points = numpy.empty((count, 6), numpy.float32)
-        extrusion_values = numpy.empty((count, 1), numpy.float32)
+        extrusion_values = numpy.empty((count, 2), numpy.float32)
         i = 0
         for point in path:
 
-            points[i, :] = [point[0] + extruder_offsets[0], point[2], -point[1] - extruder_offsets[1],
+            points[i, :] = [point[0], point[2], -point[1],
                             -point[4], point[5], -point[3]]
             extrusion_values[i] = point[7]
             if i > 0:
@@ -463,10 +487,11 @@ class GenerateBasementJob(Job):
 
     def _generateGCodeCommand(self, g: int, gcode_position: Position, feedrate: float) -> Optional[str]:
         gcode_command = "G%s" % g
+        extruder_offsets = self._extruder_offsets.get(self._extruder_number, [0, 0])
         if numpy.abs(gcode_position.x - self._gcode_position.x) > 0.0001:
-            gcode_command += " X%.2f" % gcode_position.x
+            gcode_command += " X%.2f" % (gcode_position.x + extruder_offsets[0])
         if numpy.abs(gcode_position.y - self._gcode_position.y) > 0.0001:
-            gcode_command += " Y%.2f" % gcode_position.y
+            gcode_command += " Y%.2f" % (gcode_position.y + extruder_offsets[1])
         if numpy.abs(gcode_position.z - self._gcode_position.z) > 0.0001:
             gcode_command += " Z%.2f" % gcode_position.z
         if numpy.abs(gcode_position.a - self._gcode_position.a) > 0.0001:
@@ -485,3 +510,12 @@ class GenerateBasementJob(Job):
             return gcode_command
         else:
             return None
+
+    ##  For showing correct x, y offsets for each extruder
+    def _extruderOffsets(self) -> Dict[int, List[float]]:
+        result = {}
+        for extruder in ExtruderManager.getInstance().getActiveExtruderStacks():
+            result[int(extruder.getMetaData().get("position", "0"))] = [
+                extruder.getProperty("machine_nozzle_offset_x", "value"),
+                extruder.getProperty("machine_nozzle_offset_y", "value")]
+        return result

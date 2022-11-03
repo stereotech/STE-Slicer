@@ -195,7 +195,7 @@ Button
     {
         id: settingsButton
 
-        visible: base.hovered || settingsButton.hovered
+        visible: true
         height: Math.round(base.height * 0.6)
         width: Math.round(base.height * 0.6)
 

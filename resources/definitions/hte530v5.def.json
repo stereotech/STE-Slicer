@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "name": "Stereotech Hybrid 530 V5",
+  "inherits": "steprinter530_v5",
+  "metadata": {
+    "author": "Stereotech",
+    "manufacturer": "Stereotech",
+    "visible": true,
+    "file_formats": "text/x-gcode",
+    "has_materials": true,
+    "machine_extruder_trains": {
+      "0": "stereotech_v5_extruder_main",
+      "1": "stereotech_v5_extruder_second"
+    },
+    "first_start_actions": [],
+    "supported_actions": []
+  },
+  "overrides": {
+    "machine_name": {
+      "default_value": "Stereotech Hybrid 530 V5"
+    }
+  }
+}
