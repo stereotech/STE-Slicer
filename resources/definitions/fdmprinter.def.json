@@ -921,6 +921,19 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "enabled": "resolveOrValue('printing_mode') == 'discrete'"
+                },
+                "cylindrical_round_segments": {
+                    "label": "Cylindrical Round Segments",
+                    "description": "Number of slicing segments",
+                    "type": "float",
+                    "unit": "mm",
+                    "default_value": 64,
+                    "enabled": "resolveOrValue('printing_mode') in ['cylindrical', 'cylindrical_full']",
+                    "minimum_value": "0",
+                    "maximum_value_warning": "256",
+                    "maximum_value": "256",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
                 }
             }
         },
