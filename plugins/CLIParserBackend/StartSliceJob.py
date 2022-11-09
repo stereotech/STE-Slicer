@@ -103,7 +103,11 @@ params_dict = {
         "threads_round": {
             "stack_key": "",
             "default_value": 1
-        }
+        },
+        "round_segments": {
+            "stack_key": "cylindrical_round_segments",
+            "default_value": 64
+        },
     },
     "GCode": {
         "cli_quality": {
