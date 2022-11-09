@@ -768,8 +768,6 @@ class StartSliceJob(Job):
                         setting_value = (settings.get("cylindrical_mode_base_diameter")-settings.get("cylindrical_mode_overlap"))/2
                     if name == "r_step0":
                         setting_value = settings.get("cylindrical_layer_height_0")
-                    if name == "round_segments":
-                        setting_value = settings.get("cylindrical_round_segments")
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "round":
