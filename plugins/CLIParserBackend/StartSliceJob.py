@@ -754,7 +754,7 @@ class StartSliceJob(Job):
             result["coordinate_system"] = "G55"
         elif printing_mode in ["conical_full","conical"]:
             result["cylindrical_rotate"] = "G0 A0"
-            result["coordinate_system"] = "G0 A0 \n"+"G43"
+            result["coordinate_system"] = "G43"
 
         initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
@@ -884,7 +884,7 @@ class StartSliceJob(Job):
         settings["machine_end_gcode"] = self._expandGcodeTokens(settings["machine_end_gcode"], initial_extruder_nr)
 
         printing_mode = settings["printing_mode"]
-        if printing_mode in ["cylindrical", "cylindrical_full"]:
+        if printing_mode in ["cylindrical", "cylindrical_full","spherical", "spherical_full", "conical_full", "conical"]:
             settings["infill_extruder_nr"] = settings["cylindrical_infill_extruder_nr"]
             settings["speed_infill"] = settings["speed_infill_cylindrical"]
             settings["speed_wall_0"] = settings["speed_wall_0_cylindrical"]
