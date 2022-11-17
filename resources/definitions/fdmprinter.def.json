@@ -755,7 +755,8 @@
                         "spherical": "5D Spherical",
                         "spherical_full": "5D Spherical Full",
                         "conical": "5D Conical",
-                        "conical_full": "5D Conical Full"
+                        "conical_full": "5D Conical Full",
+                        "discrete": "Discrete"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
