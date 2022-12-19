@@ -253,9 +253,10 @@ class CliParserBackend(QObject, Backend):
         self._start_slice_job = StartSliceJob(self.getGlicerEngineCommand(), slice_message)
         self._start_slice_job_build_plate = build_plate_to_be_sliced
         self._start_slice_job.setBuildPlate(self._start_slice_job_build_plate)
+        self._start_slice_job.finished.connect(self._onStartSliceCompleted)
         self._start_slice_job.start()
 
-        self._start_slice_job.finished.connect(self._onStartSliceCompleted)
+
 
     def _terminate(self) -> None:
         self._slicing = False
