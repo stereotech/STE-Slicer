@@ -116,7 +116,7 @@ params_dict = {
         },
         "outorder": {
             "stack_key": "",
-            "default_value": "PORCIUD"
+            "default_value": "PORCIUDK"
         },
         "head_size": {
             "stack_key": "",
@@ -232,6 +232,14 @@ params_dict = {
         },
         "composite_top_skin": {
             "stack_key": "reinforcement_top_skin_layers",
+            "default": 1
+        },
+        "composite_infill_round_double": {
+            "stack_key": "fiber_infill_pattern",
+            "default": 1
+        },
+        "composite_infill_round_connect": {
+            "stack_key": "fiber_infill_round_connect",
             "default": 1
         }
     },
@@ -595,7 +603,7 @@ class StartSliceJob(Job):
                 if radius <= 15:
                     section = 64
                 elif 15 < radius <= 30:
-                    section = 256
+                    section = 1024
                 else:
                     section = 1024
                 cutting_mesh = trimesh.primitives.Cylinder(
@@ -752,6 +760,13 @@ class StartSliceJob(Job):
                             setting_value = -1
                     if name == "infill_round_double":
                         if setting_value == "grid":
+                            setting_value = "1"
+                        elif setting_value == "concentric":
+                            setting_value = "2"
+                        else:
+                            setting_value = "0"
+                    if name == "composite_infill_round_double":
+                        if setting_value == 'grid':
                             setting_value = "1"
                         elif setting_value == "concentric":
                             setting_value = "2"
