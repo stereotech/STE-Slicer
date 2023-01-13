@@ -489,9 +489,9 @@ class GenerateBasementJob(Job):
         gcode_command = "G%s" % g
         extruder_offsets = self._extruder_offsets.get(self._extruder_number, [0, 0])
         if numpy.abs(gcode_position.x - self._gcode_position.x) > 0.0001:
-            gcode_command += " X%.2f" % (gcode_position.x + extruder_offsets[0])
+            gcode_command += " X%.2f" % (gcode_position.x - extruder_offsets[0])
         if numpy.abs(gcode_position.y - self._gcode_position.y) > 0.0001:
-            gcode_command += " Y%.2f" % (gcode_position.y + extruder_offsets[1])
+            gcode_command += " Y%.2f" % (gcode_position.y - extruder_offsets[1])
         if numpy.abs(gcode_position.z - self._gcode_position.z) > 0.0001:
             gcode_command += " Z%.2f" % gcode_position.z
         if numpy.abs(gcode_position.a - self._gcode_position.a) > 0.0001:

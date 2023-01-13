@@ -127,7 +127,7 @@ params_dict = {
         },
         "outorder": {
             "stack_key": "",
-            "default_value": "PORCIUD"
+            "default_value": "PORCIUDK"
         },
         "head_size": {
             "stack_key": "",
@@ -210,11 +210,11 @@ params_dict = {
             "default_value": 1
         },
         "composite_layer_start": {
-            "stack_key": "reinforcement_start_layer",
+            "stack_key": "reinforcement_start_layer_cylindrical",
             "default": 10
         },
         "composite_layer_count": {
-            "stack_key": "reinforcement_layer_count",
+            "stack_key": "reinforcement_layer_count_cylindrical",
             "default": 2
         },
         "composite_width": {
@@ -268,6 +268,21 @@ params_dict = {
         "out_export_separately": {
             "stack_key": "",
             "default_value": 0
+        "composite_infill_round_double": {
+            "stack_key": "fiber_infill_pattern",
+            "default": 1
+        },
+        "composite_infill_round_connect": {
+            "stack_key": "",
+            "default": 1
+        },
+        "composite_fast": {
+            "stack_key": "fiber_infill_round_connect",
+            "default": 0
+        },
+        "composite_layer_space": {
+            "stack_key": "reinforcement_intermediate_layers_cylindrical",
+            "default": 0
         }
     },
     "GCodeSupport": {
@@ -640,7 +655,7 @@ class StartSliceJob(Job):
                 if radius <= 15:
                     section = 64
                 elif 15 < radius <= 30:
-                    section = 256
+                    section = 1024
                 else:
                     section = 1024
                 cutting_mesh = trimesh.primitives.Cylinder(
@@ -830,6 +845,13 @@ class StartSliceJob(Job):
                             setting_value = "2"
                         else:
                             setting_value = "0"
+                    if name == "composite_infill_round_double":
+                        if setting_value == 'grid':
+                            setting_value = "1"
+                        elif setting_value == "concentric":
+                            setting_value = "2"
+                        else:
+                            setting_value = "0"
                     if name == "fill_perimeter_gaps":
                         if setting_value == "nowhere":
                             setting_value = "0"
@@ -845,6 +867,10 @@ class StartSliceJob(Job):
                         setting_value = "0" if settings.get("printing_mode") in ["cylindrical", "cylindrical_full"] else "1"
                     if name == "round":
                         setting_value = "1" if settings.get("printing_mode") in ["cylindrical","cylindrical_full"] else "10"
+                    if name == "composite_layer_start":
+                        setting_value = settings.get("reinforcement_start_layer_cylindrical") - 1           #
+                    if name == "composite_layer_space":
+                        setting_value = settings.get("reinforcement_intermediate_layers_cylindrical")+1     #
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "support_base_r":
@@ -907,6 +933,9 @@ class StartSliceJob(Job):
             settings["fiber_infill_extruder_nr"] = settings["cylindrical_fiber_infill_extruder_nr"]
 
             settings["layer_height_0"] = settings["cylindrical_layer_height_0"]
+            settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_cylindrical"]
+            settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
+            settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
 
             settings["magic_spiralize"] = False
 
