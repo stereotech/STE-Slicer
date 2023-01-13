@@ -268,6 +268,7 @@ params_dict = {
         "out_export_separately": {
             "stack_key": "",
             "default_value": 0
+        },
         "composite_infill_round_double": {
             "stack_key": "fiber_infill_pattern",
             "default": 1
