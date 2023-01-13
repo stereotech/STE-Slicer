@@ -994,8 +994,32 @@
                             "minimum_value": "1",
                             "enabled": "reinforcement_enabled",
                             "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": false,
+                            "children": {
+                                "reinforcement_start_layer_classic": {
+                                    "label": "Classic start layer",
+                                    "description": "Layer number, where reinforcement printing starts",
+                                    "type": "int",
+                                    "default_value": 2,
+                                    "minimum_value": "1",
+                                    "enabled": "reinforcement_enabled_classic",
+                                    "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": false
+                                },
+                                "reinforcement_start_layer_cylindrical": {
+                                    "label": "Cylindrical start layer",
+                                    "description": "Layer number, where reinforcement printing starts in cylindrical mode",
+                                    "type": "int",
+                                    "default_value": 2,
+                                    "minimum_value": "1",
+                                    "enabled": "reinforcement_enabled_cylindrical",
+                                    "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": false
+                                }
+                            }
                         }
                     }
                 },
@@ -1019,7 +1043,31 @@
                             "enabled": "reinforcement_enabled",
                             "value": "max(1, round((reinforcement_height) / layer_height) + 1) if layer_height != 0 else 0",
                             "settable_per_mesh": false,
-                            "settable_per_extruder": false
+                            "settable_per_extruder": false,
+                            "children": {
+                                "reinforcement_layer_count_classic": {
+                                    "label": "Classic layer count",
+                                    "description": "How many layers will be reinforced in classic mode",
+                                    "type": "int",
+                                    "default_value": 2,
+                                    "minimum_value": "1",
+                                    "enabled": "reinforcement_enabled_classic",
+                                    "value": "reinforcement_layer_count",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": false
+                                },
+                                "reinforcement_layer_count_cylindrical":{
+                                    "label": "Cylindrical layer count",
+                                    "description": "How many layers will be reinforced in cylindrical mode",
+                                    "type": "int",
+                                    "default_value": 2,
+                                    "minimum_value": "1",
+                                    "enabled": "reinforcement_enabled_cylindrical",
+                                    "value": "reinforcement_layer_count",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": false
+                                }
+                            }
                         }
                     }
                 },
@@ -1105,7 +1153,36 @@
                     "type": "int",
                     "enabled": "reinforcement_enabled_classic",
                     "minimum_value_warning": "0",
-                    "settable_per_mesh": true
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "children": {
+                        "reinforcement_intermediate_layers_classic": {
+                            "label": "Classic Intermediate Layers",
+                            "description": "The number of intermediate layers between fiber layers in classic mode",
+                            "default_value": 0,
+                            "minimum_value": "0",
+                            "maximum_value_warning": "10",
+                            "value": "reinforcement_intermediate_layers",
+                            "type": "int",
+                            "enabled": "reinforcement_enabled_classic",
+                            "minimum_value_warning": "0",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "reinforcement_intermediate_layers_cylindrical": {
+                            "label": "Cylindrical Intermediate Layers",
+                            "description": "The number of intermediate layers between fiber layers in cylindrical mode",
+                            "default_value": 0,
+                            "minimum_value": "0",
+                            "maximum_value_warning": "10",
+                            "value": "reinforcement_intermediate_layers",
+                            "type": "int",
+                            "enabled": "reinforcement_enabled_cylindrical",
+                            "minimum_value_warning": "0",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "reinforcement_min_fiber_line_length": {
                     "label": "Minimal Fiber Infill Distance",

@@ -199,11 +199,11 @@ params_dict = {
             "default_value": 1
         },
         "composite_layer_start": {
-            "stack_key": "reinforcement_start_layer",
+            "stack_key": "reinforcement_start_layer_cylindrical",
             "default": 10
         },
         "composite_layer_count": {
-            "stack_key": "reinforcement_layer_count",
+            "stack_key": "reinforcement_layer_count_cylindrical",
             "default": 2
         },
         "composite_width": {
@@ -239,8 +239,16 @@ params_dict = {
             "default": 1
         },
         "composite_infill_round_connect": {
-            "stack_key": "fiber_infill_round_connect",
+            "stack_key": "",
             "default": 1
+        },
+        "composite_fast": {
+            "stack_key": "fiber_infill_round_connect",
+            "default": 0
+        },
+        "composite_layer_space": {
+            "stack_key": "reinforcement_intermediate_layers_cylindrical",
+            "default": 0
         }
     },
     "GCodeSupport": {
@@ -783,6 +791,10 @@ class StartSliceJob(Job):
                         setting_value = (settings.get("cylindrical_mode_base_diameter")-settings.get("cylindrical_mode_overlap"))/2
                     if name == "r_step0":
                         setting_value = settings.get("cylindrical_layer_height_0")
+                    if name == "composite_layer_start":
+                        setting_value = settings.get("reinforcement_start_layer_cylindrical") - 1           #
+                    if name == "composite_layer_space":
+                        setting_value = settings.get("reinforcement_intermediate_layers_cylindrical")+1     #
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "round":
@@ -851,6 +863,9 @@ class StartSliceJob(Job):
             settings["fiber_infill_extruder_nr"] = settings["cylindrical_fiber_infill_extruder_nr"]
 
             settings["layer_height_0"] = settings["cylindrical_layer_height_0"]
+            settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_cylindrical"]
+            settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
+            settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
 
             settings["magic_spiralize"] = False
 
