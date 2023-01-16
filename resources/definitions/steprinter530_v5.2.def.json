@@ -1,0 +1,101 @@
+{
+  "version": 2,
+  "name": "STE Printer 530 V5.2",
+  "inherits": "steprinter_v5",
+  "metadata": {
+    "author": "Stereotech",
+    "manufacturer": "Stereotech LLC.",
+    "category": "Stereotech",
+    "visible": false
+  },
+  "overrides": {
+    "machine_width": {
+      "default_value": 320
+    },
+    "machine_height": {
+      "default_value": 300,
+      "value": "300 if resolveOrValue('printing_mode') in ['classic'] else 250"
+    },
+    "machine_depth": {
+      "default_value": 320
+    },
+    "machine_disallowed_areas": {
+      "default_value": [
+        [
+          [
+            -160,
+            160
+          ],
+          [
+            -160,
+            -160
+          ],
+          [
+            -110,
+            -160
+          ],
+          [
+            -110,
+            150
+          ]
+        ],
+        [
+          [
+            -160,
+            -160
+          ],
+          [
+            160,
+            -160
+          ],
+          [
+            160,
+            -155
+          ],
+          [
+            -160,
+            -155
+          ]
+        ],
+        [
+          [
+            160,
+            -160
+          ],
+          [
+            160,
+            160
+          ],
+          [
+            150,
+            160
+          ],
+          [
+            150,
+            -160
+          ]
+        ],
+        [
+          [
+            160,
+            160
+          ],
+          [
+            -160,
+            160
+          ],
+          [
+            -160,
+            155
+          ],
+          [
+            160,
+            155
+          ]
+        ]
+      ],
+      "value": "[[[-160,160],[-160, -160], [-135, -160], [-135, 150]],[[-160, -160],[160, -160],[160, -155],[-160, -155]],[[160, -160],[160, 160],[150, 160],[150, -160]],[[160, 160],[-160, 160],[-160, 155],[160, 155]]] if resolveOrValue('machine_shape') == 'rectangular' else []"
+    }
+  }
+}
+
