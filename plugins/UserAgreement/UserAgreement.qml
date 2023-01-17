@@ -12,7 +12,7 @@ UM.Dialog
     minimumHeight: Math.round(UM.Theme.getSize("modal_window_minimum").height * 0.5)
     width: minimumWidth
     height: minimumHeight
-    title: catalog.i18nc("@title:window", "User Agreement")
+    title: catalog.i18nc("@title:window", "ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ")
 
     TextArea
     {
@@ -114,7 +114,7 @@ UM.Dialog
         Button
         {
             anchors.right: parent.right
-            text: catalog.i18nc("@action:button", "I understand and agree")
+            text: catalog.i18nc("@action:button", "Я понимаю и согласен")
             onClicked: {
                 baseDialog.accepted()
             }
@@ -123,7 +123,7 @@ UM.Dialog
         Button
         {
             anchors.left: parent.left
-            text: catalog.i18nc("@action:button", "I don't agree")
+            text: catalog.i18nc("@action:button", "Я не согласен")
             onClicked: {
                 baseDialog.rejected()
             }
