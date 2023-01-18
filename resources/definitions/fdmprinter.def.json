@@ -1755,7 +1755,8 @@
                     "options": {
                         "lines": "Lines",
                         "concentric": "Concentric",
-                        "zigzag": "Zig Zag"
+                        "zigzag": "Zig Zag",
+                        "grid": "Grid"
                     },
                     "default_value": "lines",
                     "enabled": "top_layers > 0 or bottom_layers > 0",
@@ -1769,7 +1770,8 @@
                     "options": {
                         "lines": "Lines",
                         "concentric": "Concentric",
-                        "zigzag": "Zig Zag"
+                        "zigzag": "Zig Zag",
+                        "grid": "Grid"
                     },
                     "default_value": "lines",
                     "enabled": "top_layers > 0 or bottom_layers > 0",
