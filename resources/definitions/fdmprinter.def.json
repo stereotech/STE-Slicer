@@ -5164,6 +5164,16 @@
                     "limit_to_extruder": "support_infill_extruder_nr",
                     "settable_per_mesh": false
                 },
+                "support_skin_flip": {
+                    "label": "Support Skin Flip",
+                    "description": "Тurns the direction of filling support skins",
+                    "type": "bool",
+                    "enabled": "support_enable",
+                    "value": true,
+                    "default_value": false,
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": false
+                },
                 "support_interface_enable": {
                     "label": "Enable Support Interface",
                     "description": "Generate a dense interface between the model and the support. This will create a skin at the top of the support on which the model is printed and at the bottom of the support, where it rests on the model.",
@@ -5220,7 +5230,21 @@
                             "value": "extruderValue(support_roof_extruder_nr, 'support_interface_height')",
                             "limit_to_extruder": "support_roof_extruder_nr",
                             "enabled": "support_roof_enable and (support_enable or support_tree_enable)",
-                            "settable_per_mesh": true
+                            "settable_per_mesh": true,
+                            "children": {
+                                "support_top_layers": {
+                                    "label": "Support Roof Layers",
+                                    "description": "The number of roof layers. When calculated by the top thickness, this value is rounded to a whole number.",
+                                    "default_value": 8,
+                                    "minimum_value": "0",
+                                    "maximum_value_warning": "100",
+                                    "type": "int",
+                                    "minimum_value_warning": "2",
+                                    "value": "math.ceil(round(support_roof_height / resolveOrValue('layer_height'), 4))",
+                                    "limit_to_extruder": "support_infill_extruder_nr",
+                                    "settable_per_mesh": true
+                                }
+                            }
                         },
                         "support_bottom_height": {
                             "label": "Support Floor Thickness",
@@ -5234,7 +5258,20 @@
                             "maximum_value_warning": "10",
                             "limit_to_extruder": "support_bottom_extruder_nr",
                             "enabled": "support_bottom_enable and (support_enable or support_tree_enable)",
-                            "settable_per_mesh": true
+                            "settable_per_mesh": true,
+                            "children": {
+                                "support_bottom_layers": {
+                                    "label": "Support Floor Layers",
+                                    "description": "The number of floor layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
+                                    "minimum_value": "0",
+                                    "minimum_value_warning": "2",
+                                    "default_value": 6,
+                                    "type": "int",
+                                    "value": "math.ceil(round(support_bottom_height / resolveOrValue('layer_height'), 4))",
+                                    "limit_to_extruder": "support_infill_extruder_nr",
+                                    "settable_per_mesh": true
+                                }
+                            }
                         }
                     }
                 },

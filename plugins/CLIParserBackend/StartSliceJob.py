@@ -1,3 +1,4 @@
+import math
 import os
 import subprocess
 
@@ -289,7 +290,7 @@ params_dict = {
     "GCodeSupport": {
         "first_offset": {
             "stack_key": "support_first_offset",
-            "default_value": 0.1
+            "default_value": 0.7
         },
         "main_offset": {
             "stack_key": "support_offset",
@@ -315,6 +316,22 @@ params_dict = {
             "stack_key": "",
             "default_value": 2
         },
+        "upskin_width": {
+            "stack_key": "support_top_layers",
+            "default_value": 4
+        },
+        "downskin_width": {
+            "stack_key": "support_bottom_layers",
+            "default_value": 4
+        },
+        "infill_round_width": {
+            "stack_key": "support_line_width",
+            "default_value": 0.4
+        },
+        "infill_round_width_flip": {
+            "stack_key": "support_skin_flip",
+            "default_value": 0
+        }
     },
     "Support": {
         "support_base_r": {
@@ -879,7 +896,7 @@ class StartSliceJob(Job):
                         if printing_mode in ["spherical", "spherical_full"]:
                             setting_value = 0
                     if name == "support_model_delta_round":
-                        setting_value = settings.get("support_z_distance", 0.1) / settings.get("cylindrical_layer_height", 0.1)
+                        setting_value = math.ceil(settings.get("support_z_distance") / settings.get("cylindrical_layer_height"))
                     if name == "threads_round":
                         setting_value = os.cpu_count()
 
