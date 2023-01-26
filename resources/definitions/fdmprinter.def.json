@@ -1278,7 +1278,6 @@
                     },
                     "default_value": "grid",
                     "enabled": "reinforcement_enabled",
-                    "value": "'lines' if fiber_density > 25 else 'grid'",
                     "limit_to_extruder": "fiber_infill_extruder_nr",
                     "settable_per_mesh": true
                 },

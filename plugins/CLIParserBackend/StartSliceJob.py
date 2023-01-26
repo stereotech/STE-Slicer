@@ -218,7 +218,7 @@ params_dict = {
             "default": 2
         },
         "composite_width": {
-            "stack_key": "fiber_infill_line_width",
+            "stack_key": "fiber_line_distance",
             "default": 0.9
         },
         "composite_round_segm": {
@@ -847,7 +847,7 @@ class StartSliceJob(Job):
                         else:
                             setting_value = "0"
                     if name == "composite_infill_round_double":
-                        if setting_value == 'grid':
+                        if setting_value == "grid":
                             setting_value = "1"
                         elif setting_value == "concentric":
                             setting_value = "2"
