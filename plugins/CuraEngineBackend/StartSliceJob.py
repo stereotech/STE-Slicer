@@ -646,7 +646,7 @@ class StartSliceJob(Job):
             settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_classic"]
 
             settings["layer_height"] = settings["classic_layer_height"]
-
+            settings["reinforcement_enabled"] = settings["reinforcement_enabled_classic"]
             settings["support_enable"] = settings["support_enable_classic"]
             settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_classic"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_classic"]
