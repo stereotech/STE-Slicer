@@ -284,7 +284,12 @@ params_dict = {
         "composite_layer_space": {
             "stack_key": "reinforcement_intermediate_layers_cylindrical",
             "default": 0
+        },
+        "shell_round_double": {
+            "stack_key": "top_bottom_pattern",
+            "default": 0
         }
+
     },
     "GCodeSupport": {
         "first_offset": {
@@ -847,6 +852,13 @@ class StartSliceJob(Job):
                         else:
                             setting_value = "0"
                     if name == "composite_infill_round_double":
+                        if setting_value == "grid":
+                            setting_value = "1"
+                        elif setting_value == "concentric":
+                            setting_value = "2"
+                        else:
+                            setting_value = "0"
+                    if name == "shell_round_double":
                         if setting_value == "grid":
                             setting_value = "1"
                         elif setting_value == "concentric":
