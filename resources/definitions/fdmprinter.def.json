@@ -1151,7 +1151,7 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "10",
                     "type": "int",
-                    "enabled": "reinforcement_enabled_classic",
+                    "enabled": "reinforcement_enabled",
                     "minimum_value_warning": "0",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,

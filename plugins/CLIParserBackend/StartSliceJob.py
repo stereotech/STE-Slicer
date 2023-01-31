@@ -949,6 +949,7 @@ class StartSliceJob(Job):
             settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_cylindrical"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
+            settings["reinforcement_enabled"] = settings["reinforcement_enabled_cylindrical"]
 
             settings["magic_spiralize"] = False
 
