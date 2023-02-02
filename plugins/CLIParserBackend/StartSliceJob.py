@@ -238,11 +238,11 @@ params_dict = {
             "default": 999999
         },
         "composite_bottom_skin": {
-            "stack_key": "reinforcement_bottom_skin_layers",
+            "stack_key": "reinforcement_bottom_skin_layers_cylindrical",
             "default": 4,
         },
         "composite_top_skin": {
-            "stack_key": "reinforcement_top_skin_layers",
+            "stack_key": "reinforcement_top_skin_layers_cylindrical",
             "default": 1
         },
         "3d_slicer_sweep_type": {
@@ -950,6 +950,8 @@ class StartSliceJob(Job):
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
             settings["reinforcement_enabled"] = settings["reinforcement_enabled_cylindrical"]
+            settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_cylindrical"]
+            settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_cylindrical"]
 
             settings["magic_spiralize"] = False
 

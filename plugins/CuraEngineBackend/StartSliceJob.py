@@ -651,6 +651,9 @@ class StartSliceJob(Job):
             settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_classic"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_classic"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_classic"]
+            settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_classic"]
+            settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_classic"]
+
 
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():
