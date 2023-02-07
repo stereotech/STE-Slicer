@@ -4989,8 +4989,48 @@
                         }
                     }
                 },
+                "support_z_distance_cylindrical": {
+                    "label": "Cylindrical Support Z Distance",
+                    "description": "Distance from the top/bottom of the support structure to the print in cylindrical mode. This gap provides clearance to remove the supports after the model is printed. This value is rounded up to a multiple of the layer height.",
+                    "unit": "mm",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value_warning": "10",
+                    "default_value": 0.1,
+                    "limit_to_extruder": "support_interface_extruder_nr if support_interface_enable else support_infill_extruder_nr",
+                    "enabled": "support_enable_cylindrical or support_tree_enable",
+                    "settable_per_mesh": true,
+                    "children": {
+                        "support_top_distance_cylindrical": {
+                            "label": "Cylindrical Support Top Distance",
+                            "description": "Distance from the top of the support to the print.",
+                            "unit": "mm",
+                            "minimum_value": "0",
+                            "maximum_value_warning": "10",
+                            "default_value": 0.1,
+                            "type": "float",
+                            "enabled": "support_enable_cylindrical or support_tree_enable",
+                            "value": "extruderValue(support_roof_extruder_nr if support_roof_enable else support_infill_extruder_nr, 'support_z_distance_cylindrical')",
+                            "limit_to_extruder": "support_roof_extruder_nr if support_roof_enable else support_infill_extruder_nr",
+                            "settable_per_mesh": true
+                        },
+                        "support_bottom_distance_cylindrical": {
+                            "label": "Cylindrical Support Bottom Distance",
+                            "description": "Distance from the print to the bottom of the support.",
+                            "unit": "mm",
+                            "minimum_value": "0",
+                            "maximum_value_warning": "10",
+                            "default_value": 0.1,
+                            "value": "extruderValue(support_bottom_extruder_nr if support_bottom_enable else support_infill_extruder_nr, 'support_z_distance_cylindrical') if support_type == 'everywhere' else 0",
+                            "limit_to_extruder": "support_bottom_extruder_nr if support_bottom_enable else support_infill_extruder_nr",
+                            "type": "float",
+                            "enabled": "(support_enable_cylindrical or support_tree_enable) and resolveOrValue('support_type') == 'everywhere'",
+                            "settable_per_mesh": true
+                        }
+                    }
+                },
                 "support_z_distance": {
-                    "label": "Support Z Distance",
+                    "label": "Classic Support Z Distance",
                     "description": "Distance from the top/bottom of the support structure to the print. This gap provides clearance to remove the supports after the model is printed. This value is rounded up to a multiple of the layer height.",
                     "unit": "mm",
                     "type": "float",
@@ -4998,24 +5038,24 @@
                     "maximum_value_warning": "machine_nozzle_size",
                     "default_value": 0.1,
                     "limit_to_extruder": "support_interface_extruder_nr if support_interface_enable else support_infill_extruder_nr",
-                    "enabled": "support_enable or support_tree_enable",
+                    "enabled": "support_enable_classic or support_tree_enable",
                     "settable_per_mesh": true,
                     "children": {
                         "support_top_distance": {
-                            "label": "Support Top Distance",
+                            "label": "Classic Support Top Distance",
                             "description": "Distance from the top of the support to the print.",
                             "unit": "mm",
                             "minimum_value": "0",
                             "maximum_value_warning": "machine_nozzle_size",
                             "default_value": 0.1,
                             "type": "float",
-                            "enabled": "support_enable or support_tree_enable",
+                            "enabled": "support_enable_classic or support_tree_enable",
                             "value": "extruderValue(support_roof_extruder_nr if support_roof_enable else support_infill_extruder_nr, 'support_z_distance')",
                             "limit_to_extruder": "support_roof_extruder_nr if support_roof_enable else support_infill_extruder_nr",
                             "settable_per_mesh": true
                         },
                         "support_bottom_distance": {
-                            "label": "Support Bottom Distance",
+                            "label": "Classic Support Bottom Distance",
                             "description": "Distance from the print to the bottom of the support.",
                             "unit": "mm",
                             "minimum_value": "0",
@@ -5024,7 +5064,7 @@
                             "value": "extruderValue(support_bottom_extruder_nr if support_bottom_enable else support_infill_extruder_nr, 'support_z_distance') if support_type == 'everywhere' else 0",
                             "limit_to_extruder": "support_bottom_extruder_nr if support_bottom_enable else support_infill_extruder_nr",
                             "type": "float",
-                            "enabled": "(support_enable or support_tree_enable) and resolveOrValue('support_type') == 'everywhere'",
+                            "enabled": "(support_enable_classic or support_tree_enable) and resolveOrValue('support_type') == 'everywhere'",
                             "settable_per_mesh": true
                         }
                     }

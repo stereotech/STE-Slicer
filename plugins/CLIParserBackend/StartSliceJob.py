@@ -896,7 +896,7 @@ class StartSliceJob(Job):
                         if printing_mode in ["spherical", "spherical_full"]:
                             setting_value = 0
                     if name == "support_model_delta_round":
-                        setting_value = math.ceil(settings.get("support_z_distance") / settings.get("cylindrical_layer_height"))
+                        setting_value = math.ceil(settings.get("support_z_distance_cylindrical") / settings.get("cylindrical_layer_height"))
                     if name == "threads_round":
                         setting_value = os.cpu_count()
 
@@ -954,6 +954,10 @@ class StartSliceJob(Job):
             settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_cylindrical"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
+
+            settings["support_z_distance"] = settings["support_z_distance_cylindrical"]
+            settings["support_top_distance"] = settings["support_top_distance_cylindrical"]
+            settings["support_bottom_distance"] = settings["support_bottom_distance_cylindrical"]
 
             settings["magic_spiralize"] = False
 
