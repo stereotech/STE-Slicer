@@ -115,6 +115,10 @@ params_dict = {
             "stack_key": "cylindrical_round_segments",
             "default_value": 64
         },
+        "support_basement_only": {
+            "stack_key": "support_type",
+            "default_value": 1
+        }
     },
     "GCode": {
         "cli_quality": {
@@ -872,6 +876,11 @@ class StartSliceJob(Job):
                             setting_value = "1"
                         else:
                             setting_value = "1"
+                    if name == "support_basement_only":
+                        if setting_value == "buildplate":
+                            setting_value = 1
+                        else:
+                            setting_value = 0
                     if name == "r_start":
                         setting_value = (settings.get("cylindrical_mode_base_diameter")-settings.get("cylindrical_mode_overlap"))/2
                     if name == "r_step0":
