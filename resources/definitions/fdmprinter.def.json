@@ -1004,7 +1004,7 @@
                                     "default_value": 2,
                                     "minimum_value": "1",
                                     "enabled": "reinforcement_enabled_classic",
-                                    "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
+                                    "value": "reinforcement_start_layer if layer_height != 0 else 0",
                                     "settable_per_mesh": false,
                                     "settable_per_extruder": false
                                 },
@@ -1015,7 +1015,7 @@
                                     "default_value": 2,
                                     "minimum_value": "1",
                                     "enabled": "reinforcement_enabled_cylindrical",
-                                    "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
+                                    "value": "reinforcement_start_layer if layer_height != 0 else 0",
                                     "settable_per_mesh": false,
                                     "settable_per_extruder": false
                                 }
@@ -1075,12 +1075,36 @@
                     "label": "Bottom Layers",
                     "description": "The number of bottom layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
                     "minimum_value": "0",
-                    "minimum_value_warning": "2",
-                    "default_value": 4,
+                    "default_value": 2,
                     "type": "int",
-                    "enabled": "reinforcement_enabled_classic",
+                    "enabled": "reinforcement_enabled",
                     "limit_to_extruder": "top_bottom_extruder_nr",
-                    "settable_per_mesh": true
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": false,
+                    "children": {
+                        "reinforcement_bottom_skin_layers_classic": {
+                            "label": "Classic Bottom Layer",
+                            "description": "The number of bottom layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
+                            "type": "int",
+                            "default_value": 2,
+                            "minimum_value": "0",
+                            "enabled": "reinforcement_enabled_classic",
+                            "value": "reinforcement_bottom_skin_layers",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "reinforcement_bottom_skin_layers_cylindrical": {
+                            "label": "Cylindrical Bottom Layer",
+                            "description": "The number of bottom layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
+                            "type": "int",
+                            "default_value": 2,
+                            "minimum_value": "0",
+                            "enabled": "reinforcement_enabled_cylindrical",
+                            "value": "reinforcement_bottom_skin_layers",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "reinforcement_top_skin_layers": {
                     "label": "Top Layers",
@@ -1089,10 +1113,37 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
                     "type": "int",
-                    "enabled": "reinforcement_enabled_classic",
+                    "enabled": "reinforcement_enabled",
                     "minimum_value_warning": "0",
                     "limit_to_extruder": "top_bottom_extruder_nr",
-                    "settable_per_mesh": true
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": false,
+                    "children": {
+                        "reinforcement_top_skin_layers_classic": {
+                            "label": "Classic Top Layer",
+                            "description": "The number of top layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
+                            "type": "int",
+                            "default_value": 2,
+                            "minimum_value": "0",
+                            "maximum_value_warning": "100",
+                            "enabled": "reinforcement_enabled_classic",
+                            "value": "reinforcement_top_skin_layers",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "reinforcement_top_skin_layers_cylindrical": {
+                            "label": "Cylindrical Top Layer",
+                            "description": "The number of top layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
+                            "type": "int",
+                            "default_value": 2,
+                            "minimum_value": "0",
+                            "maximum_value_warning": "100",
+                            "enabled": "reinforcement_enabled_cylindrical",
+                            "value": "reinforcement_top_skin_layers",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "reinforcement_type": {
                     "label": "Fiber fill type",
