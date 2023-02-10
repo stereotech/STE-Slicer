@@ -222,6 +222,9 @@ class GCodeWriter(MeshWriter):
                 'MAXY': aabb.front.item(),
                 'MAXZ': aabb.top.item()}
 
+    def _checkingGcode(self,data: list):
+        return True
+
     def _getSlicerVersion(self):
         version = self._application.getVersion()
         return ";VERSION:%(VERSION)s\n" % \
