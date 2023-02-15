@@ -157,8 +157,8 @@ def cone(radius,
       Resulting mesh of a cone
     """
     # create the 2D outline of a cone
-    linestring = [[0, 0],
-                  [radius, 0],
+    linestring = [[0, -height],
+                  [2*radius, -height],
                   [0, height]]
     # revolve the profile to create a cone
     if 'metadata' not in kwargs:
