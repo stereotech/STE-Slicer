@@ -1363,8 +1363,7 @@
                     "description": "Connect the ends where the infill pattern meets the inner wall using a line which follows the shape of the inner wall. Enabling this setting can make the infill adhere to the walls better and reduce the effects of infill on the quality of vertical surfaces. Disabling this setting reduces the amount of material used.",
                     "type": "bool",
                     "default_value": false,
-                    "enabled": "(fiber_infill_pattern == 'lines' or fiber_infill_pattern == 'grid') and reinforcement_enabled",
-                    "limit_to_extruder": "fiber_infill_extruder_nr",
+                    "enabled": "(fiber_infill_pattern == 'lines' or fiber_infill_pattern == 'grid' or fiber_infill_pattern == 'concentric') and reinforcement_enabled",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "children": {
@@ -1373,8 +1372,7 @@
                             "description": "Connect the ends where the infill pattern meets the inner wall using a line which follows the shape of the inner wall. Enabling this setting can make the infill adhere to the walls better and reduce the effects of infill on the quality of vertical surfaces. Disabling this setting reduces the amount of material used.",
                             "type": "bool",
                             "default_value": false,
-                            "enabled": "(fiber_infill_pattern_classic == 'lines' or fiber_infill_pattern_classic == 'grid') and reinforcement_enabled_classic",
-                            "limit_to_extruder": "fiber_infill_extruder_nr",
+                            "enabled": "(fiber_infill_pattern_classic == 'lines' or fiber_infill_pattern_classic == 'grid' or fiber_infill_pattern == 'concentric') and reinforcement_enabled_classic",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
                         },
@@ -1384,7 +1382,6 @@
                             "type": "bool",
                             "default_value": false,
                             "enabled": "(fiber_infill_pattern_cylindrical == 'lines' or fiber_infill_pattern_cylindrical == 'grid') and reinforcement_enabled_cylindrical",
-                            "limit_to_extruder": "fiber_infill_extruder_nr",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
                         }
