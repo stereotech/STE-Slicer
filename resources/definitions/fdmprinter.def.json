@@ -1303,19 +1303,64 @@
                     "maximum_value_warning": "100",
                     "limit_to_extruder": "infill_extruder_nr",
                     "settable_per_mesh": true,
+                    "settable_per_extruder": false,
                     "children": {
-                         "fiber_line_distance": {
-                             "label": "Fiber Line Distance",
-                             "description": "Distance between the printed fiber lines. This setting is calculated by the fiber density and the fiber line width.",
-                             "unit": "mm",
-                             "type": "float",
-                             "default_value": 2,
-                             "minimum_value": "0",
-                             "minimum_value_warning": "fiber_infill_line_width",
-                             "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
-                             "limit_to_extruder": "infill_extruder_nr",
-                             "settable_per_mesh": true
-                         }
+                        "fiber_density_classic": {
+                            "label": "Classic Fiber Density",
+                            "description": "Adjusts the density of fiber of the print.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 50,
+                            "minimum_value": "0",
+                            "maximum_value_warning": "100",
+                            "enabled": "reinforcement_enabled_classic",
+                            "limit_to_extruder": "infill_extruder_nr",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "children": {
+                                "fiber_line_distance_classic": {
+                                    "label": "Classic Line Distance",
+                                    "description": "Distance between the printed fiber lines. This setting is calculated by the fiber density and the fiber line width.",
+                                    "unit": "mm",
+                                    "type": "float",
+                                    "default_value": 2,
+                                    "minimum_value": "0",
+                                    "minimum_value_warning": "fiber_infill_line_width",
+                                    "enabled": "reinforcement_enabled_classic",
+                                    "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_classic * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
+                                    "limit_to_extruder": "infill_extruder_nr",
+                                    "settable_per_mesh": true
+                                }
+                            }
+                        },
+                        "fiber_density_cylindrical": {
+                            "label": "Cylindrical Fiber Density ",
+                            "description": "Adjusts the density of fiber of the print.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 50,
+                            "minimum_value": "0",
+                            "maximum_value_warning": "100",
+                            "enabled": "reinforcement_enabled_cylindrical",
+                            "limit_to_extruder": "infill_extruder_nr",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "children": {
+                                "fiber_line_distance_cylindrical": {
+                                    "label": "Cylindrical Line Distance",
+                                    "description": "Distance between the printed fiber lines. This setting is calculated by the fiber density and the fiber line width.",
+                                    "unit": "mm",
+                                    "type": "float",
+                                    "default_value": 2,
+                                    "minimum_value": "0",
+                                    "minimum_value_warning": "fiber_infill_line_width",
+                                    "enabled": "reinforcement_enabled_cylindrical",
+                                    "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_cylindrical * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
+                                    "limit_to_extruder": "infill_extruder_nr",
+                                    "settable_per_mesh": true
+                                }
+                            }
+                        }
                     }
                 },
                 "fiber_infill_pattern": {
@@ -1329,17 +1374,69 @@
                     },
                     "default_value": "grid",
                     "enabled": "reinforcement_enabled",
-                    "limit_to_extruder": "fiber_infill_extruder_nr",
-                    "settable_per_mesh": true
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": false,
+                    "children": {
+                        "fiber_infill_pattern_classic": {
+                            "label": "Classic Infill Pattern",
+                            "description": "The pattern of the fiber infill material of the print. The line and zig zag infill swap direction on alternate layers, reducing material cost. The grid, triangle, tri-hexagon, cubic, octet, quarter cubic, cross and concentric patterns are fully printed every layer. Gyroid, cubic, quarter cubic and octet infill change with every layer to provide a more equal distribution of strength over each direction.",
+                            "type": "enum",
+                            "options": {
+                                "grid": "Grid",
+                                "lines": "Lines",
+                                "concentric": "Concentric"
+                            },
+                            "default_value": "grid",
+                            "value": "fiber_infill_pattern",
+                            "enabled": "reinforcement_enabled_classic",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": false
+                        },
+                        "fiber_infill_pattern_cylindrical": {
+                            "label": "Cylindrical Infill Pattern",
+                            "description": "The pattern of the fiber infill material of the print. The line and zig zag infill swap direction on alternate layers, reducing material cost. The grid, triangle, tri-hexagon, cubic, octet, quarter cubic, cross and concentric patterns are fully printed every layer. Gyroid, cubic, quarter cubic and octet infill change with every layer to provide a more equal distribution of strength over each direction.",
+                            "type": "enum",
+                            "options": {
+                                "grid": "Grid",
+                                "lines": "Lines",
+                                "concentric": "Concentric"
+                            },
+                            "default_value": "grid",
+                            "value": "fiber_infill_pattern",
+                            "enabled": "reinforcement_enabled_cylindrical",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "fiber_infill_round_connect": {
                     "label": "Connect Fiber Infill Lines",
                     "description": "Connect the ends where the infill pattern meets the inner wall using a line which follows the shape of the inner wall. Enabling this setting can make the infill adhere to the walls better and reduce the effects of infill on the quality of vertical surfaces. Disabling this setting reduces the amount of material used.",
                     "type": "bool",
                     "default_value": false,
-                    "enabled": "fiber_infill_pattern == 'lines' or fiber_infill_pattern == 'grid'",
-                    "limit_to_extruder": "fiber_infill_extruder_nr",
-                    "settable_per_mesh": true
+                    "enabled": "(fiber_infill_pattern == 'lines' or fiber_infill_pattern == 'grid' or fiber_infill_pattern == 'concentric') and reinforcement_enabled",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "children": {
+                        "fiber_infill_round_connect_classic": {
+                            "label": "Connect Infill Lines Classic",
+                            "description": "Connect the ends where the infill pattern meets the inner wall using a line which follows the shape of the inner wall. Enabling this setting can make the infill adhere to the walls better and reduce the effects of infill on the quality of vertical surfaces. Disabling this setting reduces the amount of material used.",
+                            "type": "bool",
+                            "default_value": false,
+                            "enabled": "(fiber_infill_pattern_classic == 'lines' or fiber_infill_pattern_classic == 'grid' or fiber_infill_pattern == 'concentric') and reinforcement_enabled_classic",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "fiber_infill_round_connect_cylindrical": {
+                            "label": "Connect Infill Lines Cylindrical",
+                            "description": "Connect the ends where the infill pattern meets the inner wall using a line which follows the shape of the inner wall. Enabling this setting can make the infill adhere to the walls better and reduce the effects of infill on the quality of vertical surfaces. Disabling this setting reduces the amount of material used.",
+                            "type": "bool",
+                            "default_value": false,
+                            "enabled": "(fiber_infill_pattern_cylindrical == 'lines' or fiber_infill_pattern_cylindrical == 'grid') and reinforcement_enabled_cylindrical",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
                 }
             }
         },

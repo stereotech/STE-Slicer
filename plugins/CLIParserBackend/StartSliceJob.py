@@ -223,7 +223,7 @@ params_dict = {
             "default": 2
         },
         "composite_width": {
-            "stack_key": "fiber_line_distance",
+            "stack_key": "fiber_line_distance_cylindrical",
             "default": 0.9
         },
         "composite_round_segm": {
@@ -275,7 +275,7 @@ params_dict = {
             "default_value": 0
         },
         "composite_infill_round_double": {
-            "stack_key": "fiber_infill_pattern",
+            "stack_key": "fiber_infill_pattern_cylindrical",
             "default": 1
         },
         "composite_infill_round_connect": {
@@ -283,7 +283,7 @@ params_dict = {
             "default": 1
         },
         "composite_fast": {
-            "stack_key": "fiber_infill_round_connect",
+            "stack_key": "fiber_infill_round_connect_cylindrical",
             "default": 0
         },
         "composite_layer_space": {
@@ -989,6 +989,9 @@ class StartSliceJob(Job):
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
             settings["reinforcement_enabled"] = settings["reinforcement_enabled_cylindrical"]
+            settings["fiber_infill_pattern"] = settings["fiber_infill_pattern_cylindrical"]
+            settings["fiber_density"] = settings["fiber_density_cylindrical"]
+            settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_cylindrical"]
             settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_cylindrical"]
             settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_cylindrical"]
 
