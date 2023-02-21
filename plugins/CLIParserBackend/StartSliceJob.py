@@ -1,3 +1,4 @@
+import math
 import os
 import subprocess
 
@@ -109,12 +110,16 @@ params_dict = {
         },
         "3d_slice_type": {
             "stack_key": "",
-            "default_value": 1
+            "default_value": 3
         },
         "round_segments": {
             "stack_key": "cylindrical_round_segments",
             "default_value": 64
         },
+        "support_basement_only": {
+            "stack_key": "support_type",
+            "default_value": 1
+        }
     },
     "GCode": {
         "cli_quality": {
@@ -238,11 +243,11 @@ params_dict = {
             "default": 999999
         },
         "composite_bottom_skin": {
-            "stack_key": "reinforcement_bottom_skin_layers",
+            "stack_key": "reinforcement_bottom_skin_layers_cylindrical",
             "default": 4,
         },
         "composite_top_skin": {
-            "stack_key": "reinforcement_top_skin_layers",
+            "stack_key": "reinforcement_top_skin_layers_cylindrical",
             "default": 1
         },
         "3d_slicer_sweep_type": {
@@ -294,7 +299,7 @@ params_dict = {
     "GCodeSupport": {
         "first_offset": {
             "stack_key": "support_first_offset",
-            "default_value": 0.1
+            "default_value": 0.7
         },
         "main_offset": {
             "stack_key": "support_offset",
@@ -320,6 +325,22 @@ params_dict = {
             "stack_key": "",
             "default_value": 2
         },
+        "upskin_width": {
+            "stack_key": "support_top_layers",
+            "default_value": 4
+        },
+        "downskin_width": {
+            "stack_key": "support_bottom_layers",
+            "default_value": 4
+        },
+        "infill_round_width": {
+            "stack_key": "support_line_width",
+            "default_value": 0.4
+        },
+        "infill_round_width_flip": {
+            "stack_key": "support_skin_flip",
+            "default_value": 0
+        }
     },
     "Support": {
         "support_base_r": {
@@ -697,12 +718,17 @@ class StartSliceJob(Job):
                 else:
                     section = 1024
                 cutting_mesh = cone(radius=radius, height=height, sections=section)
+
             # cut mesh by cylinder
             result = output_mesh.difference(cutting_mesh, engine="scad")
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
-        cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0.001])
+        if printing_mode in ["conical", "conical_full"]:
+            cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, (-height+0.001)])
+        else:
+            cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0.001])
+
         temp_mesh = tempfile.NamedTemporaryFile('w', delete=False)
         raft_thickness = (
                 global_stack.getProperty("raft_base_thickness", "value") +
@@ -772,14 +798,20 @@ class StartSliceJob(Job):
         result["day"] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(time.strftime("%w"))]
         printing_mode = result["printing_mode"]
         if printing_mode in ["cylindrical_full", "cylindrical"]:
+            result["prefix_middle_gcode"] = "G91\nG1 F1200 E-4\nG0 Z2\nG90\nG54\nG0 X10 Y20 F1200\nG92 E0 C0"
             result["cylindrical_rotate"] = "G0 A%.2f" % (90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
             result["coordinate_system"] = "G56"
+            result["postfix_middle_gcode"] = "G1 F200 E6\nG92 E0"
         elif printing_mode in ["spherical_full", "spherical"]:
+            result["prefix_middle_gcode"] = "G91\nG1 Z5\nG90\nG92 E0 C0"
             result["cylindrical_rotate"] = "G0 A0"
-            result["coordinate_system"] = "G55"
-        elif printing_mode in ["conical_full","conical"]:
+            result["coordinate_system"] = "G55\nG43"
+            result["postfix_middle_gcode"] = ";postfix_middle_gcode"
+        elif printing_mode in ["conical_full", "conical"]:
+            result["prefix_middle_gcode"] = "G91\nG1 Z5\nG90\nG92 E0 C0"
             result["cylindrical_rotate"] = "G0 A0"
-            result["coordinate_system"] = "G43"
+            result["coordinate_system"] = "G55\nG43"
+            result["postfix_middle_gcode"] = ";postfix_middle_gcode"
 
         initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")
@@ -842,8 +874,8 @@ class StartSliceJob(Job):
                     if name == "perimeter_count":
                         printing_mode = settings.get("printing_mode", "classic")
                         infill_pattern = settings.get("infill_pattern", "lines")
-                        if printing_mode in ["spherical", "spherical_full"]:
-                            setting_value = -1
+                        #if printing_mode in ["spherical", "spherical_full"]:
+                        #    //setting_value = 100
                     if name == "infill_round_double":
                         if setting_value == "grid":
                             setting_value = "1"
@@ -872,12 +904,17 @@ class StartSliceJob(Job):
                             setting_value = "1"
                         else:
                             setting_value = "1"
+                    if name == "support_basement_only":
+                        if setting_value == "buildplate":
+                            setting_value = 1
+                        else:
+                            setting_value = 0
                     if name == "r_start":
                         setting_value = (settings.get("cylindrical_mode_base_diameter")-settings.get("cylindrical_mode_overlap"))/2
                     if name == "r_step0":
                         setting_value = settings.get("cylindrical_layer_height_0")
                     if name == "3d_slicer_sweep_type":
-                        setting_value = "0" if settings.get("printing_mode") in ["cylindrical", "cylindrical_full"] else "1"
+                        setting_value = "0" if settings.get("printing_mode") in ["cylindrical", "cylindrical_full"] else "3"
                     if name == "round":
                         setting_value = "1" if settings.get("printing_mode") in ["cylindrical","cylindrical_full"] else "10"
                     if name == "composite_layer_start":
@@ -891,7 +928,7 @@ class StartSliceJob(Job):
                         if printing_mode in ["spherical", "spherical_full"]:
                             setting_value = 0
                     if name == "support_model_delta_round":
-                        setting_value = settings.get("support_z_distance", 0.1) / settings.get("cylindrical_layer_height", 0.1)
+                        setting_value = math.ceil(settings.get("support_z_distance_cylindrical") / settings.get("cylindrical_layer_height"))
                     if name == "threads_round":
                         setting_value = os.cpu_count()
 
@@ -906,6 +943,8 @@ class StartSliceJob(Job):
 
         # Pre-compute material material_bed_temp_prepend and material_print_temp_prepend
         start_gcode = settings["machine_start_gcode"]
+        middle_gcode = settings["machine_middle_gcode"]
+
         bed_temperature_settings = ["material_bed_temperature", "material_bed_temperature_layer_0"]
         pattern = r"\{(%s)(,\s?\w+)?\}" % "|".join(
             bed_temperature_settings)  # match {setting} as well as {setting, extruder_nr}
@@ -953,6 +992,12 @@ class StartSliceJob(Job):
             settings["fiber_infill_pattern"] = settings["fiber_infill_pattern_cylindrical"]
             settings["fiber_density"] = settings["fiber_density_cylindrical"]
             settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_cylindrical"]
+            settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_cylindrical"]
+            settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_cylindrical"]
+
+            settings["support_z_distance"] = settings["support_z_distance_cylindrical"]
+            settings["support_top_distance"] = settings["support_top_distance_cylindrical"]
+            settings["support_bottom_distance"] = settings["support_bottom_distance_cylindrical"]
 
             settings["magic_spiralize"] = False
 

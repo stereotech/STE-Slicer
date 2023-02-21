@@ -522,7 +522,7 @@ class StartSliceJob(Job):
             result["coordinate_system"] = "G55"
         elif printing_mode in ["conical_full","conical"]:
             result["cylindrical_rotate"] = "G0 A0"
-            result["coordinate_system"] = "G56"
+            result["coordinate_system"] = "G55"
 
         initial_extruder_stack = SteSlicerApplication.getInstance(
         ).getExtruderManager().getUsedExtruderStacks()[0]
@@ -655,6 +655,8 @@ class StartSliceJob(Job):
             settings["fiber_density"] = settings["fiber_density_classic"]
             settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_classic"]
             settings["fiber_line_distance"] = settings["fiber_line_distance_classic"]
+            settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_classic"]
+            settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_classic"]
 
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():
