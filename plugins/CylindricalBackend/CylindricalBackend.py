@@ -136,10 +136,13 @@ class CylindricalBackend(QObject, MultiBackend):
 
     def _loadBackends(self) -> None:
         classic_backend = self._backend_manager.getBackendByType("classic")
-        prining_mode = self._global_container_stack.getProperty("printing_mode", "value")
-        if prining_mode.endswith("_full"):
-            prining_mode = prining_mode[:-5]
-        cylindrical_backend = self._backend_manager.getBackendByType(prining_mode)
+        if self._global_container_stack is None:
+            printing_mode = "classic"
+        else:
+            printing_mode = self._global_container_stack.getProperty("printing_mode", "value")
+            if printing_mode.endswith("_full"):
+                printing_mode = printing_mode[:-5]
+        cylindrical_backend = self._backend_manager.getBackendByType(printing_mode)
         if classic_backend is None or cylindrical_backend is None:
             raise ModuleNotFoundError("Not all Backends found")
         self._states = [BackendState.NotStarted, BackendState.NotStarted]

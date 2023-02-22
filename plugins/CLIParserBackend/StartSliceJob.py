@@ -802,16 +802,19 @@ class StartSliceJob(Job):
             result["cylindrical_rotate"] = "G0 A%.2f" % (90 * result["machine_a_axis_multiplier"] / result["machine_a_axis_divider"])
             result["coordinate_system"] = "G56"
             result["postfix_middle_gcode"] = "G1 F200 E6\nG92 E0"
+            result["prefix_end_gcode"] = ";prefix_end_gcode"
         elif printing_mode in ["spherical_full", "spherical"]:
             result["prefix_middle_gcode"] = "G91\nG1 Z5\nG90\nG92 E0 C0"
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55\nG43"
             result["postfix_middle_gcode"] = ";postfix_middle_gcode"
+            result["prefix_end_gcode"] = "G40"
         elif printing_mode in ["conical_full", "conical"]:
             result["prefix_middle_gcode"] = "G91\nG1 Z5\nG90\nG92 E0 C0"
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55\nG43"
             result["postfix_middle_gcode"] = ";postfix_middle_gcode"
+            result["prefix_end_gcode"] = "G40"
 
         initial_extruder_stack = SteSlicerApplication.getInstance().getExtruderManager().getUsedExtruderStacks()[0]
         initial_extruder_nr = initial_extruder_stack.getProperty("extruder_nr", "value")

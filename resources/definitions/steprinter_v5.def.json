@@ -123,7 +123,7 @@
             "default_value": "{prefix_middle_gcode}\n{cylindrical_rotate}\n{coordinate_system}\n{postfix_middle_gcode}"
         },
         "machine_end_gcode": {
-            "default_value": "END"
+            "default_value": "{prefix_end_gcode}\nEND"
         }
     }
 }
