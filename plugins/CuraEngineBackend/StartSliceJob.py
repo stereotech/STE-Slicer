@@ -22,6 +22,7 @@ from UM.Scene.Iterator.DepthFirstIterator import DepthFirstIterator
 from UM.Scene.Scene import Scene  # For typing.
 from UM.Settings.Validator import ValidatorState
 from UM.Settings.SettingRelation import RelationType
+from trimesh.transformations import rotation_matrix
 
 from steslicer.Settings.SettingOverrideDecorator import SettingOverrideDecorator
 from steslicer.SteSlicerApplication import SteSlicerApplication
@@ -29,6 +30,7 @@ from steslicer.Scene.SteSlicerSceneNode import SteSlicerSceneNode
 from steslicer.OneAtATimeIterator import OneAtATimeIterator
 from steslicer.Settings.ExtruderManager import ExtruderManager
 from steslicer.GcodeStartEndFormatter import GcodeStartEndFormatter
+from steslicer.Utils.TrimeshUtils import cone
 
 NON_PRINTING_MESH_SETTINGS = [
     "anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
@@ -196,7 +198,7 @@ class StartSliceJob(Job):
 
                     if temp_list:
                         object_groups.append(temp_list)
-            elif printing_mode in ["cylindrical_full", "spherical_full"]:
+            elif printing_mode in ["cylindrical_full", "spherical_full", "conical_full"]:
                 temp_list = []
                 has_printing_mesh = False
 
@@ -231,7 +233,7 @@ class StartSliceJob(Job):
                 self.setResult(StartJobResult.ObjectSettingError)
                 return
 
-        if temp_list and printing_mode in ["cylindrical_full", "spherical_full"]:
+        if temp_list and printing_mode in ["cylindrical_full", "spherical_full", "conical_full"]:
             cut_list = []
             for node in temp_list:
                 if printing_mode == "cylindrical_full":
@@ -250,11 +252,29 @@ class StartSliceJob(Job):
                     cutting_mesh.apply_transform(
                         trimesh.transformations.rotation_matrix(numpy.pi / 2, [1, 0, 0]))
                 elif printing_mode == "spherical_full":
+                    width = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "spherical_mode_base_width", "value")
+                    height = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "spherical_mode_base_height", "value")
+                    depth = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "spherical_mode_base_depth", "value")
+                    radius = max(width, height, depth)
+                    cutting_mesh = trimesh.primitives.Sphere(radius=radius).to_mesh()
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(width/radius, [0,0,0], [1,0,0]))
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(depth/radius, [0,0,0], [0,0,1]))
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(height/radius, [0,0,0], [0,1,0]))
+                elif printing_mode == "conical_full":
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
-                        "spherical_mode_base_radius", "value")
-                    cutting_mesh = trimesh.primitives.Sphere(
-                        radius=radius, subdivisions=3
-                    )
+                        "conical_mode_base_radius", "value")
+                    height = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
+                        "conical_mode_base_height", "value")
+                    if radius <= 15:
+                        section = 64
+                    elif 15 < radius <= 30:
+                        section = 256
+                    else:
+                        section = 1024
+                    cutting_mesh = cone(radius=radius, height=height, sections=section, transform=rotation_matrix(-numpy.pi / 2, [1, 0, 0]))
                 else:
                     cutting_mesh = None
 
@@ -491,15 +511,23 @@ class StartSliceJob(Job):
                 result["coordinate_system"] = "G56"
             else:
                 result["coordinate_system"] = "G55"
+            result["prefix_end_gcode"] = ";prefix_end_gcode"
         elif printing_mode in ["spherical", "spherical_full"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
+            result["prefix_end_gcode"] = "G40"
         elif printing_mode in ["classic"] and result["machine_hybrid"]:
             result["cylindrical_rotate"] = "G4 P100"
             result["coordinate_system"] = "G54"
+            result["prefix_end_gcode"] = ";prefix_end_gcode"
         elif printing_mode in ["classic"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
+            result["prefix_end_gcode"] = ";prefix_end_gcode"
+        elif printing_mode in ["conical_full","conical"]:
+            result["cylindrical_rotate"] = "G0 A0"
+            result["coordinate_system"] = "G55"
+            result["prefix_end_gcode"] = "G40"
 
         initial_extruder_stack = SteSlicerApplication.getInstance(
         ).getExtruderManager().getUsedExtruderStacks()[0]
@@ -606,7 +634,7 @@ class StartSliceJob(Job):
             settings["machine_end_gcode"], initial_extruder_nr)
 
         printing_mode = settings["printing_mode"]
-        if printing_mode in ["classic", "cylindrical_full"]:
+        if printing_mode in ["classic", "cylindrical_full", "spherical_full", "conical_full"]:
             settings["infill_extruder_nr"] = settings["classic_infill_extruder_nr"]
             settings["speed_infill"] = settings["speed_infill_classic"]
             settings["speed_wall_0"] = settings["speed_wall_0_classic"]
@@ -623,8 +651,17 @@ class StartSliceJob(Job):
             settings["cool_fan_speed_max"] = settings["cool_fan_speed_max_classic"]
 
             settings["layer_height"] = settings["classic_layer_height"]
-
+            settings["reinforcement_enabled"] = settings["reinforcement_enabled_classic"]
             settings["support_enable"] = settings["support_enable_classic"]
+            settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_classic"]
+            settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_classic"]
+            settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_classic"]
+            settings["fiber_infill_pattern"] = settings["fiber_infill_pattern_classic"]
+            settings["fiber_density"] = settings["fiber_density_classic"]
+            settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_classic"]
+            settings["fiber_line_distance"] = settings["fiber_line_distance_classic"]
+            settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_classic"]
+            settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_classic"]
 
         # Add all sub-messages for each individual setting.
         for key, value in settings.items():

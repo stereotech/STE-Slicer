@@ -12,7 +12,7 @@
             "maximum_value": "1"
         },
         "machine_nozzle_offset_x": {
-            "default_value": 30.6
+            "default_value": 31.0
         },
         "machine_nozzle_offset_y": {
             "default_value": 0.0
@@ -30,19 +30,19 @@
             "default_value": false
         },
         "machine_extruder_start_pos_x": {
-            "value": 50
+            "value": 0
         },
         "machine_extruder_start_pos_y": {
-            "value": 2
+            "value": 0
         },
         "machine_extruder_end_pos_abs": {
             "default_value": false
         },
         "machine_extruder_end_pos_x": {
-            "value": 50
+            "value": 0
         },
         "machine_extruder_end_pos_y": {
-            "value": 2
+            "value": 0
         },
         "machine_fiber_extruder": {
             "default_value": true

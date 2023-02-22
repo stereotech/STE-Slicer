@@ -7,7 +7,9 @@ def getMetaData():
     return {
         "backend_engine": {
             "types": [
-                "cylindrical"
+                "cylindrical",
+                "spherical",
+                "conical"
             ]
         }
     }

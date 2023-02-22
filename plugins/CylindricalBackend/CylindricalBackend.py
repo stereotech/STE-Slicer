@@ -108,6 +108,8 @@ class CylindricalBackend(QObject, MultiBackend):
         self._application.initializationFinished.connect(self.initialize)
 
     def initialize(self) -> None:
+        self._application.globalContainerStackChanged.connect(self._onGlobalStackChanged)
+        self._onGlobalStackChanged()
         self._loadBackends()
 
         self._multi_build_plate_model = self._application.getMultiBuildPlateModel()
@@ -117,8 +119,7 @@ class CylindricalBackend(QObject, MultiBackend):
         if self._multi_build_plate_model:
             self._multi_build_plate_model.activeBuildPlateChanged.connect(self._onActiveViewChanged)
 
-        self._application.globalContainerStackChanged.connect(self._onGlobalStackChanged)
-        self._onGlobalStackChanged()
+
 
         # extruder enable / disable. Actually wanted to use machine manager here, but the initialization order causes it to crash
         ExtruderManager.getInstance().extrudersChanged.connect(self._extruderChanged)
@@ -135,7 +136,13 @@ class CylindricalBackend(QObject, MultiBackend):
 
     def _loadBackends(self) -> None:
         classic_backend = self._backend_manager.getBackendByType("classic")
-        cylindrical_backend = self._backend_manager.getBackendByType("cylindrical")
+        if self._global_container_stack is None:
+            printing_mode = "classic"
+        else:
+            printing_mode = self._global_container_stack.getProperty("printing_mode", "value")
+            if printing_mode.endswith("_full"):
+                printing_mode = printing_mode[:-5]
+        cylindrical_backend = self._backend_manager.getBackendByType(printing_mode)
         if classic_backend is None or cylindrical_backend is None:
             raise ModuleNotFoundError("Not all Backends found")
         self._states = [BackendState.NotStarted, BackendState.NotStarted]

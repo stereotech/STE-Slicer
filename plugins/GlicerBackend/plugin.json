@@ -1,8 +1,0 @@
-{
-    "name": "Glicer Backend",
-    "author": "Stereotech LLC.",
-    "version": "1.0.0",
-    "description": "Provides working with Glicer Engine",
-    "api": 5,
-    "i18n-catalog": "steslicer"
-}
