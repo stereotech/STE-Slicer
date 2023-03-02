@@ -14,9 +14,9 @@ from steslicer.Machines.QualityManager import getMachineDefinitionIDForQualitySe
 from steslicer.Utils.Threading import call_on_qt_thread
 from steslicer.Snapshot import Snapshot
 
-
 from PyQt5.QtCore import QBuffer
 from UM.i18n import i18nCatalog
+
 catalog = i18nCatalog("steslicer")
 
 
@@ -83,6 +83,11 @@ class GCodeWriter(MeshWriter):
         gcode_list = gcode_dict.get(active_build_plate, None)
         if gcode_list is not None:
             has_settings = False
+            check_gcode = self._checkingGcode(gcode_list)
+            if not check_gcode:
+                self._application.п
+                self.setInformation(catalog.i18nc("@warning:status", "Incorrect GCODE. Repeat the slicing of the model"))
+                return False
             preview_image = self._getPreviewImage()
             if preview_image:
                 stream.write(preview_image)
@@ -222,8 +227,44 @@ class GCodeWriter(MeshWriter):
                 'MAXY': aabb.front.item(),
                 'MAXZ': aabb.top.item()}
 
-    def _checkingGcode(self,data: list):
-        return True
+    def _checkingGcode(self, data: list):
+        start_gcode = False
+        end_gcode = False
+        sequence_layers = False
+        current_layer = 0
+        previous_layer = -1
+        verified_gcode = self._prepareData(data)
+        for index, layer in enumerate(verified_gcode):
+            split_layer = layer.rsplit('\n', len(layer))
+            for line in split_layer:
+                line = line.strip()
+                if line == 'STARTT':
+                    start_gcode = True
+                elif line == 'END':
+                    end_gcode = True
+                elif line.startswith(";LAYER_COUNT:"):
+                    #number_layer = getValue(line, ";LAYER_COUNT:")
+                    current_layer = 0
+                    previous_layer = -1
+                elif line.startswith(";LAYER:"):
+                    current_layer = line[len(";LAYER:"):]
+                    try:
+                        current_layer = int(current_layer)
+                    except ValueError:
+                        continue
+                    if current_layer >= 0 and current_layer == (previous_layer+1):
+                        previous_layer = current_layer
+                        sequence_layers = True
+                    elif current_layer < 0:
+                        sequence_layers = True
+                    else:
+                        sequence_layers = False
+                else:
+                    pass
+        if start_gcode and end_gcode and sequence_layers:
+            return True
+
+        return False
 
     def _getSlicerVersion(self):
         version = self._application.getVersion()
@@ -233,7 +274,7 @@ class GCodeWriter(MeshWriter):
                }
     @call_on_qt_thread  # must be called from the main thread because of OpenGL
     def _createSnapshot(self):
-        
+
         Logger.log("d", "Creating thumbnail image...")
         try:
             snapshot = Snapshot.snapshot(width = 300, height = 300)
@@ -258,3 +299,18 @@ class GCodeWriter(MeshWriter):
                 }
         else:
             return None
+
+    # function for separating merged ("stuck together") layers
+    def _prepareData(self, data: list):
+        prepare_data = data
+        for index, layer in enumerate(data):
+            res = [i for i in range(len(layer)) if layer.startswith(";LAYER:", i)]
+            if len(res) > 1:
+                my_list = layer.rsplit(';LAYER:', len(res) - 1)
+                for i in range(len(res)):
+                    if my_list[i].startswith(";LAYER:"):
+                        prepare_data[index] = my_list[i]
+                        continue
+                    my_list[i] = ";LAYER:" + my_list[i]
+                    prepare_data.insert(index + i, my_list[i])
+        return prepare_data
