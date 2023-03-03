@@ -924,6 +924,11 @@ class StartSliceJob(Job):
                         setting_value = settings.get("reinforcement_start_layer_cylindrical") - 1           #
                     if name == "composite_layer_space":
                         setting_value = settings.get("reinforcement_intermediate_layers_cylindrical")+1     #
+                    if name == "upskin_width" and region == "GCodeSupport":
+                        setting_value = settings.get("support_top_layers") if settings.get("support_roof_enable") else "0"
+                    if name == "downskin_width" and region == "GCodeSupport":
+                        setting_value = settings.get("support_bottom_layers") if settings.get(
+                            "support_bottom_enable") else "0"
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "support_base_r":
