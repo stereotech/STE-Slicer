@@ -865,8 +865,6 @@ class StartSliceJob(Job):
                             setting_value = "0"
                     if name in ["rsize", "first_offset", "last_offset", "support_base_r"]:
                         setting_value /= 2
-                        if name == "support_base_r":
-                            setting_value += settings.get("cylindrical_layer_height", 0.2)
                         if name == "first_offset" and region =="GCodeSupport":
                             setting_value = settings.get("support_first_offset")
                     if name in ["upskin_width", "downskin_width"]:
@@ -914,6 +912,9 @@ class StartSliceJob(Job):
                             setting_value = 0
                     if name == "r_start":
                         setting_value = (settings.get("cylindrical_mode_base_diameter")-settings.get("cylindrical_mode_overlap"))/2
+                    if name == "support_base_r":
+                        setting_value = (settings.get("cylindrical_mode_base_diameter") - settings.get(
+                            "cylindrical_mode_overlap")) / 2
                     if name == "r_step0":
                         setting_value = settings.get("cylindrical_layer_height_0")
                     if name == "3d_slicer_sweep_type":
