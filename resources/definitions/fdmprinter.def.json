@@ -1301,9 +1301,9 @@
                     "default_value": 50,
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
-                    "limit_to_extruder": "infill_extruder_nr",
+                    "limit_to_extruder": "fiber_infill_extruder_nr",
                     "settable_per_mesh": true,
-                    "settable_per_extruder": false,
+                    "settable_per_extruder": true,
                     "children": {
                         "fiber_density_classic": {
                             "label": "Classic Fiber Density",
@@ -1314,9 +1314,8 @@
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
                             "enabled": "reinforcement_enabled_classic",
-                            "limit_to_extruder": "infill_extruder_nr",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false,
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true,
                             "children": {
                                 "fiber_line_distance_classic": {
                                     "label": "Classic Line Distance",
@@ -1328,8 +1327,9 @@
                                     "minimum_value_warning": "fiber_infill_line_width",
                                     "enabled": "reinforcement_enabled_classic",
                                     "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_classic * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
-                                    "limit_to_extruder": "infill_extruder_nr",
-                                    "settable_per_mesh": true
+                                    "limit_to_extruder": "fiber_infill_extruder_nr",
+                                    "settable_per_mesh": true,
+                                    "settable_per_extruder": true
                                 }
                             }
                         },
@@ -1342,9 +1342,9 @@
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
                             "enabled": "reinforcement_enabled_cylindrical",
-                            "limit_to_extruder": "infill_extruder_nr",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false,
+                            "limit_to_extruder": "fiber_infill_extruder_nr",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true,
                             "children": {
                                 "fiber_line_distance_cylindrical": {
                                     "label": "Cylindrical Line Distance",
@@ -1356,8 +1356,9 @@
                                     "minimum_value_warning": "fiber_infill_line_width",
                                     "enabled": "reinforcement_enabled_cylindrical",
                                     "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_cylindrical * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
-                                    "limit_to_extruder": "infill_extruder_nr",
-                                    "settable_per_mesh": true
+                                    "limit_to_extruder": "fiber_infill_extruder_nr",
+                                    "settable_per_mesh": true,
+                                    "settable_per_extruder": true
                                 }
                             }
                         }
