@@ -85,7 +85,6 @@ class GCodeWriter(MeshWriter):
             has_settings = False
             check_gcode = self._checkingGcode(gcode_list)
             if not check_gcode:
-                self._application.п
                 self.setInformation(catalog.i18nc("@warning:status", "Incorrect GCODE. Repeat the slicing of the model"))
                 return False
             preview_image = self._getPreviewImage()
@@ -238,7 +237,7 @@ class GCodeWriter(MeshWriter):
             split_layer = layer.rsplit('\n', len(layer))
             for line in split_layer:
                 line = line.strip()
-                if line == 'STARTT':
+                if line == 'START':
                     start_gcode = True
                 elif line == 'END':
                     end_gcode = True
