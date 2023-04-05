@@ -298,11 +298,11 @@ params_dict = {
     },
     "GCodeSupport": {
         "first_offset": {
-            "stack_key": "support_first_offset",
+            "stack_key": "support_offset_cylindrical",
             "default_value": 0.7
         },
         "main_offset": {
-            "stack_key": "support_offset",
+            "stack_key": "support_xy_distance_cylindrical",
             "default_value": 0.1
         },
         "last_offset": {
@@ -866,7 +866,7 @@ class StartSliceJob(Job):
                     if name in ["rsize", "first_offset", "last_offset", "support_base_r"]:
                         setting_value /= 2
                         if name == "first_offset" and region =="GCodeSupport":
-                            setting_value = settings.get("support_first_offset")
+                            setting_value = -settings.get("support_offset_cylindrical")
                     if name in ["upskin_width", "downskin_width"]:
                        setting_value = setting_value if setting_value < 100 else 100
                     if name == "supportangle":
@@ -930,6 +930,8 @@ class StartSliceJob(Job):
                     if name == "downskin_width" and region == "GCodeSupport":
                         setting_value = settings.get("support_bottom_layers") if settings.get(
                             "support_bottom_enable") else "0"
+                    if name == "main_offset" and region == "GCodeSupport":
+                        setting_value = -1 * settings.get("support_xy_distance_cylindrical")
                 else:
                     setting_value = value.get("default_value", "")
                     if name == "support_base_r":
@@ -1007,6 +1009,7 @@ class StartSliceJob(Job):
             settings["support_z_distance"] = settings["support_z_distance_cylindrical"]
             settings["support_top_distance"] = settings["support_top_distance_cylindrical"]
             settings["support_bottom_distance"] = settings["support_bottom_distance_cylindrical"]
+            settings["support_xy_distance"] = settings["support_xy_distance_cylindrical"]
 
             settings["magic_spiralize"] = False
 

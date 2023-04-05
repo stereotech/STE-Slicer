@@ -5220,7 +5220,7 @@
                     }
                 },
                 "support_xy_distance": {
-                    "label": "Support X/Y Distance",
+                    "label": "Classic Support X/Y Distance",
                     "description": "Distance of the support structure from the print in the X/Y directions.",
                     "unit": "mm",
                     "type": "float",
@@ -5229,6 +5229,18 @@
                     "default_value": 0.7,
                     "limit_to_extruder": "support_infill_extruder_nr",
                     "enabled": "support_enable or support_tree_enable",
+                    "settable_per_mesh": true
+                },
+                "support_xy_distance_cylindrical": {
+                    "label": "Cylindrical Support X/Y Distance",
+                    "description": "Distance of the support structure from the print in the X/Y directions.",
+                    "unit": "mm",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value_warning": "1.5 * machine_nozzle_tip_outer_diameter",
+                    "default_value": 0.7,
+                    "limit_to_extruder": "support_infill_extruder_nr",
+                    "enabled": "support_enable_cylindrical or support_tree_enable",
                     "settable_per_mesh": true
                 },
                 "support_xy_overrides_z": {
@@ -5305,15 +5317,16 @@
                     "enabled": "support_enable",
                     "settable_per_mesh": true
                 },
-                "support_first_offset": {
-                    "label": "Support Offset",
-                    "description": "Sets the distance from the support to the wall of the part.",
+                "support_offset_cylindrical": {
+                    "label": "Cylindrical Support Horizontal Expansion",
+                    "description": "Amount of offset applied to all support polygons in each layer. Positive values can smooth out the support areas and result in more sturdy support.",
                     "unit": "mm",
                     "type": "float",
-                    "default_value": 0.1,
+                    "default_value": 0.2,
+                    "limit_to_extruder": "support_infill_extruder_nr",
                     "minimum_value_warning": "-1 * machine_nozzle_size",
-                    "maximum_value_warning": "10 * machine_nozzle_size",
-                    "enabled":"support_enable",
+                    "maximum_value_warning": "100 * machine_nozzle_size",
+                    "enabled": "support_enable_cylindrical",
                     "settable_per_mesh": true
                 },
                 "support_infill_sparse_thickness": {
