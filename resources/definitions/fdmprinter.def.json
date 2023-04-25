@@ -1145,35 +1145,8 @@
                         }
                     }
                 },
-                "reinforcement_type": {
-                    "label": "Fiber fill type",
-                    "description": "The fiber fill type chooses the algorithms which control how fiber will be used to reinforce the part.\n\nConcentric is good for reinforcing the walls of a part while Isotropic makes a part relatively stiff in all directions.",
-                    "type": "enum",
-                    "options": {
-                        "concentric": "Concentric",
-                        "isotropic": "Isotropic"
-                    },
-                    "default_value": "concentric",
-                    "enabled": "reinforcement_enabled_classic",
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": true
-                },
-                "reinforcement_walls_to_reinforce": {
-                    "label": "Walls to Reinforce",
-                    "description": "Select which walls will be reinforced with concentric fill",
-                    "type": "enum",
-                    "options": {
-                        "all": "All Walls",
-                        "outer": "Outer Walls",
-                        "inner": "Inner Walls"
-                    },
-                    "default_value": "all",
-                    "enabled": "reinforcement_enabled_classic",
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": true
-                },
                 "reinforcement_concentric_fiber_rings": {
-                    "label": "Concentric Fiber Rings",
+                    "label": "Concentric Fiber Walls",
                     "description": "The number of rings of concentric fiber fill added per layer. The more rings, the stronger your part.",
                     "default_value": 2,
                     "minimum_value": "0",
