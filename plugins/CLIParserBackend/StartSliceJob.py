@@ -212,7 +212,7 @@ params_dict = {
         },
         "infill_main_offset": {
             "stack_key": "",
-            "default_value": 1
+            "default_value": 0
         },
         "composite_layer_start": {
             "stack_key": "reinforcement_start_layer_cylindrical",
