@@ -324,6 +324,7 @@ class CylindricalBackend(QObject, MultiBackend):
                 self._stored_optimized_layer_data[self._start_slice_job_build_plate] = []
         self._stored_optimized_layer_data[self._start_slice_job_build_plate].extend(job.getLayersData())
         self._layers_size = len(self._stored_optimized_layer_data[self._start_slice_job_build_plate])
+        #self._layers_size = self._classic_layers_size
         if self._generate_basement_job is job:
             self._generate_basement_job = None
         # sending to the first backend
