@@ -6,32 +6,32 @@
       <brand>Stereotech</brand>
       <material>Proto</material>
       <color></color>
-      <label>Proto PLA</label>
+      <label>Proto PVA</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
     <adhesion_info>печать на столе: Нанести клей-адгезив на чистое обезжиренное стекло;
 печать на цилиндрическом основании: Наклеить малярный скотч на основание. Для изделий с толщиной меньше 3 мм
 - нанести на скотч клей-адгезив.</adhesion_info>
-    <description>Полимерный материал на основе PLA. Прост в печати и не требует специальных
-температурных условий, имеет низкую усадку. Предназначен для печати любых
-декоративных и функциональных моделей, макетов и прототипов.</description>
+    <description>Полимерный материал на основе поливинилового спирта PVA. Этот материал нетоксичен и легко растворяется
+в ванне с тёплой водой (35-50°С), поэтому он отлично подходит для печати поддерживающих структур изделий со сложной
+геометрией.</description>
     <color_code>#00FF00</color_code>
-    <GUID>466bc1af-1556-4067-939e-21cb753fbb80</GUID>
+    <GUID>ac7f462e-2f70-4ddf-b323-200c04d387a2</GUID>
     <definition>fdmprinter</definition>
   </metadata>
   <properties>
     <diameter>1.75</diameter>
-    <density>1.25</density>
+    <density>1.05</density>
     <weight></weight>
   </properties>
   <settings>
     <setting key="print temperature">210</setting>
     <setting key="standby temperature">175</setting>
     <setting key="heated bed temperature">60</setting>
-    <setting key="print cooling">100.0</setting>
-    <setting key="retraction amount">3.0</setting>
+    <setting key="print cooling">75.0</setting>
+    <setting key="retraction amount">4.0</setting>
     <setting key="retraction speed">30</setting>
-    <setting key="speed print">60</setting>
+    <setting key="speed print">35</setting>
   </settings>
 </fdmmaterial>
