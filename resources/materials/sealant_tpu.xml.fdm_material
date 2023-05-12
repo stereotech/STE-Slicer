@@ -18,7 +18,7 @@
     <description>Гибкий термополиуретан. Обладает высокой химической стойкостью к растворам
 кислот и щелочей, жирам, маслам, ксилолу, дизельному топливу и предназначен для
 печати уплотнений, прокладок и гибких элементов.</description>
-    <color_code>#444444</color_code>
+    <color_code>#FFFFF0</color_code>
     <GUID>4785515a-6098-4dac-8efc-f7f48d1366e7</GUID>
     <definition>fdmprinter</definition>
   </metadata>

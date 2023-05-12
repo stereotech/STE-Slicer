@@ -17,7 +17,7 @@
 адгезив</adhesion_info>
     <description>Полимерный материал с высокой ударопрочностью, высокой адгезией между слоев и
 низкой усадкой. Предназначен для корпусов, держателей и габаритных изделий.</description>
-    <color_code>#0022AA</color_code>
+    <color_code>#00FF00</color_code>
     <GUID>b8d13d29-6eb3-40ec-aace-4a46ccf3519c</GUID>
     <definition>fdmprinter</definition>
   </metadata>

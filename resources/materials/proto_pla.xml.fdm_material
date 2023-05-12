@@ -16,7 +16,7 @@
     <description>Полимерный материал на основе PLA. Прост в печати и не требует специальных
 температурных условий, имеет низкую усадку. Предназначен для печати любых
 декоративных и функциональных моделей, макетов и прототипов.</description>
-    <color_code>#00FF00</color_code>
+    <color_code>#00FFFF</color_code>
     <GUID>466bc1af-1556-4067-939e-21cb753fbb80</GUID>
     <definition>fdmprinter</definition>
   </metadata>

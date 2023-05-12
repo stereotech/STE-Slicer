@@ -16,7 +16,7 @@
     <description>Полимерный материал на основе поливинилового спирта PVA. Этот материал нетоксичен и легко растворяется
 в ванне с тёплой водой (35-50°С), поэтому он отлично подходит для печати поддерживающих структур изделий со сложной
 геометрией.</description>
-    <color_code>#00FF00</color_code>
+    <color_code>#FFFF00</color_code>
     <GUID>ac7f462e-2f70-4ddf-b323-200c04d387a2</GUID>
     <definition>fdmprinter</definition>
   </metadata>

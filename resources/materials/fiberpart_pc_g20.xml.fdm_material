@@ -16,7 +16,7 @@
     <description>Очень прочный и жёсткий композит на основе PC с высоким содержанием стекловолокна (20%).
                  Максимально широкий диапазон температур, высокая химстойкость.
                  Для нагруженных функциональных деталей.</description>
-    <color_code>#222222</color_code>
+    <color_code>#3C3CF7</color_code>
     <GUID>21c7f710-c23e-4799-a8f7-595f92ebec62</GUID>
     <definition>fdmprinter</definition>
   </metadata>
