@@ -882,7 +882,7 @@
                     "type": "float",
                     "unit": "mm",
                     "default_value": 6,
-                    "enabled": true,
+                    "enabled": "resolveOrValue('printing_mode') in ['cylindrical', 'cylindrical_full']",
                     "minimum_value": "4",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
