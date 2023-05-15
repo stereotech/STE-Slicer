@@ -11,7 +11,7 @@ Generic HIPS 1.75mm profile. The data in this file may not be correct for your s
         </name>
         <GUID>a468d86a-220c-47eb-99a5-bbb47e514eb0</GUID>
         <version>2</version>
-        <color_code>#12f3e0</color_code>
+        <color_code>#4B0082</color_code>
     </metadata>
     <properties>
         <density>1.24</density>

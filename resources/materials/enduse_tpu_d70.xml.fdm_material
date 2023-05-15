@@ -6,30 +6,33 @@
       <brand>Stereotech</brand>
       <material>Enduse</material>
       <color></color>
-      <label>Enduse ABS</label>
+      <label>Enduse TPU D70</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
     <adhesion_info>печать на столе: нанести клей-адгезив на чистое обезжиренное стекло;
 печать на цилиндрическом основании: наклеить малярный скотч на основание.
 Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив</adhesion_info>
-    <description>Предназначен для производства разнообразных функциональных деталей, в первую очередь корпусов,рукояток,
-крючков, держателей и оснастки. Не стоек к атмосферным воздействиям(УФ-излучение, высокая влажность).</description>
-    <color_code>#C16251</color_code>
-    <GUID>15332acf-86f6-438f-81e9-f3e7c1288d8a</GUID>
+    <description>Термопластичный полиуретан с твёрдостью 70 по шкале Шора D.
+Обладает высокой химической стойкостью к растворам кислот и щелочей, жирам, маслам, ксилолу, дизельному топливу.
+Подходит для изготовления различных уплотнений, в том числе для подвижных соединений – О-образных колец,
+манжетных уплотнений.
+</description>
+    <color_code>#F8F8FF</color_code>
+    <GUID>86ce8c3b-59c3-4cda-994e-2e26e11d53a3</GUID>
     <definition>fdmprinter</definition>
   </metadata>
   <properties>
     <diameter>1.75</diameter>
-    <density>1.05</density>
+    <density>1.23</density>
     <weight></weight>
   </properties>
   <settings>
-    <setting key="print temperature">250</setting>
+    <setting key="print temperature">220</setting>
     <setting key="standby temperature">175</setting>
-    <setting key="heated bed temperature">100</setting>
+    <setting key="heated bed temperature">60</setting>
     <setting key="print cooling">0.0</setting>
-    <setting key="retraction amount">3.0</setting>
+    <setting key="retraction amount">3.5</setting>
     <setting key="retraction speed">25</setting>
     <setting key="speed print">50</setting>
   </settings>

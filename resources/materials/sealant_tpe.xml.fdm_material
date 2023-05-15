@@ -17,7 +17,7 @@
 наклеить малярный скотч</adhesion_info>
     <description>Гибкий полимер, по свойствам похожий на твердый силикон. предназначен для печати
 кнопок, патрубков, уплотнений, прокладок и гибких элементов.</description>
-    <color_code>#FFFF00</color_code>
+    <color_code>#FFFFF0</color_code>
     <GUID>7b87e013-0b21-4104-9db3-209a64e8e717</GUID>
     <definition>fdmprinter</definition>
   </metadata>

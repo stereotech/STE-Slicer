@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<fdmmaterial version="1.3"
+  xmlns="http://www.ultimaker.com/material">
+  <metadata>
+    <name>
+      <brand>Stereotech</brand>
+      <material>Sealant</material>
+      <color></color>
+      <label>Sealant TPU A95</label>
+    </name>
+    <compatible>True</compatible>
+    <version>7</version>
+    <adhesion_info>Печать на столе: Нанести клей-адгезив на чистое обезжиренное стекло
+                   Печать на цилиндрическом основании: Наклеить малярный скотч на основание.
+                   Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив</adhesion_info>
+    <description>Гибкий термополиуретан. Обладает высокой химической стойкостью к растворам кислот и щелочей,
+                 жирам, маслам, ксилолу, дизельному топливу. Термопластичный полиуретан весьма гигроскопичен,
+                 то есть хорошо впитывает влагу. При правильной температуре 3D-печати и использовании сухого
+                 материала получаемые изделия будут демонстрировать очень высокую прочность на разрыв.
+                 Предназначен для печати уплотнений, прокладок и гибких элементов. </description>
+    <color_code>#FFFFF0</color_code>
+    <GUID>0568a03d-8d33-4f9a-aa41-899feadf11b7</GUID>
+    <definition>fdmprinter</definition>
+  </metadata>
+  <properties>
+    <diameter>1.75</diameter>
+    <density>1.15</density>
+    <weight></weight>
+  </properties>
+  <settings>
+    <setting key="print temperature">220</setting>
+    <setting key="standby temperature">175</setting>
+    <setting key="heated bed temperature">50</setting>
+    <setting key="print cooling">20.0</setting>
+    <setting key="retraction amount">2.0</setting>
+    <setting key="retraction speed">10</setting>
+    <setting key="speed print">30</setting>
+  </settings>
+</fdmmaterial>

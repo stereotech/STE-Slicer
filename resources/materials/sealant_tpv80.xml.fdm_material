@@ -17,7 +17,7 @@
     <description>Термопластичный вулканизат. Жиро-, масло-, бензостойкий термоэластопласт на
 основе полипропилена, применяется для изготовления химически стойких уплотнений,
 прокладок и гибких элементов.</description>
-    <color_code>#AAAA00</color_code>
+    <color_code>#666666</color_code>
     <GUID>d79a48a0-bce9-4bba-b5fb-ac54296d9f3f</GUID>
     <definition>fdmprinter</definition>
   </metadata>
