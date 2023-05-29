@@ -732,6 +732,7 @@ class StartSliceJob(Job):
         temp_mesh = tempfile.NamedTemporaryFile('w', delete=False)
         raft_thickness = (
                 global_stack.getProperty("raft_base_thickness", "value") +
+                global_stack.getProperty("raft_interface_layers", "value") *
                 global_stack.getProperty("raft_interface_thickness", "value") +
                 global_stack.getProperty("raft_surface_layers", "value") *
                 global_stack.getProperty("raft_surface_thickness", "value") +
