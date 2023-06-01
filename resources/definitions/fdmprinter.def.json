@@ -1153,6 +1153,7 @@
                     "maximum_value_warning": "10",
                     "type": "int",
                     "enabled": "reinforcement_enabled_classic",
+                    "limit_to_extruder": "fiber_infill_extruder_nr",
                     "minimum_value_warning": "0",
                     "settable_per_mesh": true
                 },
@@ -1287,6 +1288,7 @@
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
                             "enabled": "reinforcement_enabled_classic",
+                            "limit_to_extruder": "fiber_infill_extruder_nr",
                             "settable_per_mesh": true,
                             "settable_per_extruder": true,
                             "children": {
