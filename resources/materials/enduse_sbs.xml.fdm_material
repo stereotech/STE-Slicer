@@ -18,7 +18,7 @@
     <description>Полимерный материал с допуском для контакта с пищей (в том числе горячей).
 Предназначен для печати ударопрочных корпусов, тактильно приятных конечных
 изделий (накладок, ручек, панелей).</description>
-    <color_code>#FF3333</color_code>
+    <color_code>#873757</color_code>
     <GUID>f81d9901-bb3c-457e-8b83-2bd81965cc25</GUID>
     <definition>fdmprinter</definition>
   </metadata>

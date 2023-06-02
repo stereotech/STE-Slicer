@@ -11,7 +11,7 @@ Generic PC profile. The data in this file may not be correct for your specific m
         </name>
         <GUID>62414577-94d1-490d-b1e4-7ef3ec40db02</GUID>
         <version>4</version>
-        <color_code>#F29030</color_code>
+        <color_code>#0000FF</color_code>
         <description>Strong, tough and temperature resistant. PC offers a great print quality, heat resistance up to 110ºC, mechanical strength and toughness.</description>
         <adhesion_info>Use glue for small prints. An adhesion sheet is recommended for larger prints. Set your print speed to a low value (10mm/sec) to get better layer bonding.</adhesion_info>
     </metadata>

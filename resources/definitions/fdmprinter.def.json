@@ -751,11 +751,7 @@
                     "options": {
                         "classic": "Classic",
                         "cylindrical": "5D Spiral",
-                        "cylindrical_full": "5D Spiral Full",
-                        "spherical": "5D Spherical",
-                        "spherical_full": "5D Spherical Full",
-                        "conical": "5D Conical",
-                        "conical_full": "5D Conical Full"
+                        "cylindrical_full": "5D Spiral Full"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
@@ -882,7 +878,7 @@
                     "type": "float",
                     "unit": "mm",
                     "default_value": 6,
-                    "enabled": true,
+                    "enabled": "resolveOrValue('printing_mode') in ['cylindrical', 'cylindrical_full']",
                     "minimum_value": "4",
                     "minimum_value_warning": "5",
                     "settable_per_mesh": false,
@@ -1145,35 +1141,8 @@
                         }
                     }
                 },
-                "reinforcement_type": {
-                    "label": "Fiber fill type",
-                    "description": "The fiber fill type chooses the algorithms which control how fiber will be used to reinforce the part.\n\nConcentric is good for reinforcing the walls of a part while Isotropic makes a part relatively stiff in all directions.",
-                    "type": "enum",
-                    "options": {
-                        "concentric": "Concentric",
-                        "isotropic": "Isotropic"
-                    },
-                    "default_value": "concentric",
-                    "enabled": "reinforcement_enabled_classic",
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": true
-                },
-                "reinforcement_walls_to_reinforce": {
-                    "label": "Walls to Reinforce",
-                    "description": "Select which walls will be reinforced with concentric fill",
-                    "type": "enum",
-                    "options": {
-                        "all": "All Walls",
-                        "outer": "Outer Walls",
-                        "inner": "Inner Walls"
-                    },
-                    "default_value": "all",
-                    "enabled": "reinforcement_enabled_classic",
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": true
-                },
                 "reinforcement_concentric_fiber_rings": {
-                    "label": "Concentric Fiber Rings",
+                    "label": "Concentric Fiber Walls",
                     "description": "The number of rings of concentric fiber fill added per layer. The more rings, the stronger your part.",
                     "default_value": 2,
                     "minimum_value": "0",
@@ -1301,9 +1270,9 @@
                     "default_value": 50,
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
-                    "limit_to_extruder": "infill_extruder_nr",
+                    "limit_to_extruder": "fiber_infill_extruder_nr",
                     "settable_per_mesh": true,
-                    "settable_per_extruder": false,
+                    "settable_per_extruder": true,
                     "children": {
                         "fiber_density_classic": {
                             "label": "Classic Fiber Density",
@@ -1314,9 +1283,8 @@
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
                             "enabled": "reinforcement_enabled_classic",
-                            "limit_to_extruder": "infill_extruder_nr",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false,
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true,
                             "children": {
                                 "fiber_line_distance_classic": {
                                     "label": "Classic Line Distance",
@@ -1328,8 +1296,9 @@
                                     "minimum_value_warning": "fiber_infill_line_width",
                                     "enabled": "reinforcement_enabled_classic",
                                     "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_classic * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
-                                    "limit_to_extruder": "infill_extruder_nr",
-                                    "settable_per_mesh": true
+                                    "limit_to_extruder": "fiber_infill_extruder_nr",
+                                    "settable_per_mesh": true,
+                                    "settable_per_extruder": true
                                 }
                             }
                         },
@@ -1342,9 +1311,9 @@
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
                             "enabled": "reinforcement_enabled_cylindrical",
-                            "limit_to_extruder": "infill_extruder_nr",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false,
+                            "limit_to_extruder": "fiber_infill_extruder_nr",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true,
                             "children": {
                                 "fiber_line_distance_cylindrical": {
                                     "label": "Cylindrical Line Distance",
@@ -1356,8 +1325,9 @@
                                     "minimum_value_warning": "fiber_infill_line_width",
                                     "enabled": "reinforcement_enabled_cylindrical",
                                     "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_cylindrical * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
-                                    "limit_to_extruder": "infill_extruder_nr",
-                                    "settable_per_mesh": true
+                                    "limit_to_extruder": "fiber_infill_extruder_nr",
+                                    "settable_per_mesh": true,
+                                    "settable_per_extruder": true
                                 }
                             }
                         }
@@ -3349,7 +3319,7 @@
                                     "minimum_value": "0.1",
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
-                                    "value": "1.2*speed_print",
+                                    "value": "speed_print",
                                     "enabled": "infill_sparse_density > 0",
                                     "limit_to_extruder": "infill_extruder_nr",
                                     "settable_per_mesh": true
@@ -3418,7 +3388,7 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 60,
-                                    "value": "resolveOrValue('speed_wall') if resolveOrValue('printing_mode') == 'classic' else 0.75*resolveOrValue('speed_wall')",
+                                    "value": "resolveOrValue('speed_wall')",
                                     "limit_to_extruder": "wall_x_extruder_nr",
                                     "settable_per_mesh": true,
                                     "children": {
@@ -3444,7 +3414,7 @@
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
                                             "default_value": 60,
-                                            "value": "speed_print * 1.2",
+                                            "value": "speed_wall_x",
                                             "limit_to_extruder": "wall_x_extruder_nr",
                                             "settable_per_mesh": true
                                         }
@@ -3489,7 +3459,7 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 25,
-                                    "value": "speed_print *1.2",
+                                    "value": "speed_roofing",
                                     "limit_to_extruder": "roofing_extruder_nr",
                                     "settable_per_mesh": true,
                                     "enabled": "roofing_layer_count > 0 and top_layers > 0"
@@ -3533,7 +3503,7 @@
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "150",
                                     "default_value": 30,
-                                    "value": "speed_print * 1.2",
+                                    "value": "speed_topbottom",
                                     "limit_to_extruder": "top_bottom_extruder_nr",
                                     "enabled": "top_layers > 0 or bottom_layers > 0",
                                     "settable_per_mesh": true
@@ -3594,7 +3564,7 @@
                                             "minimum_value": "0.1",
                                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                             "maximum_value_warning": "150",
-                                            "value": "1.2*speed_print",
+                                            "value": "speed_support_infill",
                                             "enabled": "support_enable",
                                             "limit_to_extruder": "support_infill_extruder_nr",
                                             "settable_per_mesh": false,
@@ -3702,7 +3672,7 @@
                             "minimum_value": "0.1",
                             "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                             "maximum_value_warning": "300",
-                            "value": "speed_print if resolveOrValue('printing_mode') == 'classic' else speed_print * 1.2",
+                            "value": "120 if resolveOrValue('printing_mode') == 'classic' else resolveOrValue('speed_travel')",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         }
@@ -3750,7 +3720,7 @@
                                     "unit": "mm/s",
                                     "type": "float",
                                     "default_value": 30,
-                                    "value": "speed_print * 1.2",
+                                    "value": "speed_layer_0",
                                     "minimum_value": "0.1",
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "300",
@@ -3790,7 +3760,7 @@
                                     "unit": "mm/s",
                                     "type": "float",
                                     "default_value": 60,
-                                    "value": "1.2 * speed_print",
+                                    "value": "speed_layer_0 * speed_travel / speed_print",
                                     "minimum_value": "0.1",
                                     "maximum_value": "math.sqrt(machine_max_feedrate_x ** 2 + machine_max_feedrate_y ** 2)",
                                     "maximum_value_warning": "300",
@@ -5105,7 +5075,7 @@
                     "description": "Generate a brim within the support infill regions of the first layer. This brim is printed underneath the support, not around it. Enabling this setting increases the adhesion of support to the build plate.",
                     "type": "bool",
                     "default_value": false,
-                    "enabled": "support_enable or support_tree_enable",
+                    "enabled": "(support_enable or support_tree_enable) and resolveOrValue('adhesion_type') != 'none'",
                     "limit_to_extruder": "support_infill_extruder_nr",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
@@ -5118,7 +5088,7 @@
                     "default_value": 8.0,
                     "minimum_value": "0.0",
                     "maximum_value_warning": "50.0",
-                    "enabled": "support_enable",
+                    "enabled": "support_enable and support_brim_enable",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true,
                     "limit_to_extruder": "support_infill_extruder_nr",
@@ -5131,7 +5101,7 @@
                             "minimum_value": "0",
                             "maximum_value_warning": "50 / skirt_brim_line_width",
                             "value": "math.ceil(support_brim_width / (skirt_brim_line_width * initial_layer_line_width_factor / 100.0))",
-                            "enabled": "support_enable",
+                            "enabled": "support_enable and support_brim_enable",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true,
                             "limit_to_extruder": "support_infill_extruder_nr"
@@ -5219,7 +5189,7 @@
                     }
                 },
                 "support_xy_distance": {
-                    "label": "Support X/Y Distance",
+                    "label": "Classic Support X/Y Distance",
                     "description": "Distance of the support structure from the print in the X/Y directions.",
                     "unit": "mm",
                     "type": "float",
@@ -5228,6 +5198,18 @@
                     "default_value": 0.7,
                     "limit_to_extruder": "support_infill_extruder_nr",
                     "enabled": "support_enable or support_tree_enable",
+                    "settable_per_mesh": true
+                },
+                "support_xy_distance_cylindrical": {
+                    "label": "Cylindrical Support X/Y Distance",
+                    "description": "Distance of the support structure from the print in the X/Y directions.",
+                    "unit": "mm",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value_warning": "1.5 * machine_nozzle_tip_outer_diameter",
+                    "default_value": 0.7,
+                    "limit_to_extruder": "support_infill_extruder_nr",
+                    "enabled": "support_enable_cylindrical or support_tree_enable",
                     "settable_per_mesh": true
                 },
                 "support_xy_overrides_z": {
@@ -5304,15 +5286,16 @@
                     "enabled": "support_enable",
                     "settable_per_mesh": true
                 },
-                "support_first_offset": {
-                    "label": "Support Offset",
-                    "description": "Sets the distance from the support to the wall of the part.",
+                "support_offset_cylindrical": {
+                    "label": "Cylindrical Support Horizontal Expansion",
+                    "description": "Amount of offset applied to all support polygons in each layer. Positive values can smooth out the support areas and result in more sturdy support.",
                     "unit": "mm",
                     "type": "float",
-                    "default_value": 0.1,
+                    "default_value": 0.2,
+                    "limit_to_extruder": "support_infill_extruder_nr",
                     "minimum_value_warning": "-1 * machine_nozzle_size",
-                    "maximum_value_warning": "10 * machine_nozzle_size",
-                    "enabled":"support_enable",
+                    "maximum_value_warning": "100 * machine_nozzle_size",
+                    "enabled": "support_enable_cylindrical",
                     "settable_per_mesh": true
                 },
                 "support_infill_sparse_thickness": {
@@ -5896,7 +5879,7 @@
                     "label": "Raft Top Layers",
                     "description": "The number of top layers on top of the 2nd raft layer. These are fully filled layers that the model sits on. 2 layers result in a smoother top surface than 1.",
                     "type": "int",
-                    "default_value": 2,
+                    "default_value": 1,
                     "value": "2 if resolveOrValue('printing_mode') == 'classic' else ((3.5-resolveOrValue('raft_base_thickness')-resolveOrValue('raft_interface_thickness'))/resolveOrValue('raft_surface_thickness'))",
                     "minimum_value": "0",
                     "maximum_value_warning": "20",
@@ -5949,6 +5932,35 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": true,
                     "limit_to_extruder": "adhesion_extruder_nr"
+                },
+                "raft_interface_height": {
+                    "label": "Raft Middle Height",
+                    "description": "height of the middle part of the raft in mm",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.1,
+                    "value": "1.5*resolveOrValue('layer_height')",
+                    "minimum_value": 0.0,
+                    "maximum_value_warning": "40",
+                    "enabled": "resolveOrValue('adhesion_type') == 'raft' and  resolveOrValue('printing_mode') in ['classic', 'cylindrical_full']",
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": true,
+                    "limit_to_extruder": "adhesion_extruder_nr",
+                    "children":{
+                        "raft_interface_layers": {
+                            "label": "Raft Middle Layers",
+                            "description": "The number of layers between the base and the surface of the raft. These comprise the main thickness of the raft. Increasing this creates a thicker, sturdier raft.",
+                            "type": "int",
+                            "default_value": 1,
+                            "minimum_value": "0",
+                            "value": "math.ceil(round(raft_interface_height / raft_interface_thickness))",
+                            "maximum_value_warning": "20",
+                            "enabled": "resolveOrValue('adhesion_type') == 'raft' and  resolveOrValue('printing_mode') in ['classic', 'cylindrical_full']",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true,
+                            "limit_to_extruder": "adhesion_extruder_nr"
+                        }
+                    }
                 },
                 "raft_interface_thickness": {
                     "label": "Raft Middle Thickness",

@@ -18,7 +18,7 @@
     <description>Синтетический каучук. Специальный материал, который своим свойствам очень близок
 к настоящей резине, повторяя все её свойства. Предназначен для изготовления кнопок,
 уплотнителей, амортизаторов.</description>
-    <color_code>#222222</color_code>
+    <color_code>#A55341</color_code>
     <GUID>7b87e013-0b21-4104-9db3-209a64e8e718</GUID>
     <definition>fdmprinter</definition>
   </metadata>

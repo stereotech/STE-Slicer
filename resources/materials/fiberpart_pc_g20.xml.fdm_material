@@ -6,31 +6,31 @@
       <brand>Stereotech</brand>
       <material>Fiberpart</material>
       <color></color>
-      <label>Fiberpart ABS G4</label>
+      <label>Fiberpart PC G20</label>
     </name>
     <compatible>True</compatible>
     <version>7</version>
     <adhesion_info>печать на столе: нанести клей-адгезив на чистое обезжиренное стекло;
                    печать на цилиндрическом основании: наклеить малярный скотч на основание.
                    Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив</adhesion_info>
-    <description>Полимерный материал на основе ABS с добавлением небольшого количества стекловолокна(4%).
-                 От простого ABS-пластика отличается повышенной прочностью и шероховатой поверхностью после печати.
-                 Применяется для печати функциональных изделий, конструктивных элементов.</description>
-    <color_code>#C36856</color_code>
-    <GUID>52b4f16f-e5ea-4595-9963-d8c97da3a935</GUID>
+    <description>Очень прочный и жёсткий композит на основе PC с высоким содержанием стекловолокна (20%).
+                 Максимально широкий диапазон температур, высокая химстойкость.
+                 Для нагруженных функциональных деталей.</description>
+    <color_code>#3C3CF7</color_code>
+    <GUID>21c7f710-c23e-4799-a8f7-595f92ebec62</GUID>
     <definition>fdmprinter</definition>
   </metadata>
   <properties>
     <diameter>1.75</diameter>
-    <density>1.1</density>
+    <density>1.18</density>
     <weight></weight>
   </properties>
   <settings>
-    <setting key="print temperature">240</setting>
+    <setting key="print temperature">290</setting>
     <setting key="standby temperature">175</setting>
-    <setting key="heated bed temperature">100</setting>
+    <setting key="heated bed temperature">110</setting>
     <setting key="print cooling">0.0</setting>
-    <setting key="retraction amount">6.0</setting>
+    <setting key="retraction amount">6.5</setting>
     <setting key="retraction speed">25</setting>
     <setting key="speed print">50</setting>
   </settings>

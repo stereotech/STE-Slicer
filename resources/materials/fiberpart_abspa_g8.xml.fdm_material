@@ -10,16 +10,14 @@
     </name>
     <compatible>True</compatible>
     <version>7</version>
-    <adhesion_info>печать на столе: нанести клей-адгезив на
-чистое обезжиренное стекло;
-печать на цилиндрическом основании:
-наклеить малярный скотч на основание и
-нанести клей-адгезив</adhesion_info>
+    <adhesion_info>печать на столе: нанести клей-адгезив на чистое обезжиренное стекло;
+                   печать на цилиндрическом основании: наклеить малярный скотч на основание.
+                   Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив</adhesion_info>
     <description>Композит на основе ABS/PA армированный стекловолокном. Применяется для печати
-функциональных изделий, конструктивных элементов, где требуется высокая
-ударопрочность и стойкость к ультрафиолету. Инертен к большинству доступных
-химических растворителей</description>
-    <color_code>#333333</color_code>
+                 функциональных изделий, конструктивных элементов, где требуется высокая
+                 ударопрочность и стойкость к ультрафиолету. Инертен к большинству доступных
+                 химических растворителей</description>
+    <color_code>#9A754B</color_code>
     <GUID>3a747b85-c844-473e-80fe-5cd4aa73eefe</GUID>
     <definition>fdmprinter</definition>
   </metadata>
@@ -33,8 +31,8 @@
     <setting key="standby temperature">175</setting>
     <setting key="heated bed temperature">110</setting>
     <setting key="print cooling">0.0</setting>
-    <setting key="retraction amount">6.5</setting>
-    <setting key="retraction speed">30</setting>
+    <setting key="retraction amount">7.0</setting>
+    <setting key="retraction speed">20</setting>
     <setting key="speed print">40</setting>
   </settings>
 </fdmmaterial>

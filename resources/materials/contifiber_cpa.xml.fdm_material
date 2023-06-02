@@ -23,7 +23,7 @@
     <definition>fdmprinter</definition>
   </metadata>
   <properties>
-    <diameter>1.2</diameter>
+    <diameter>0.6</diameter>
     <density>1.45</density>
     <weight></weight>
   </properties>

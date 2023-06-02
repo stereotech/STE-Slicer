@@ -450,7 +450,7 @@ Item
                         contextMenu.provider = provider
                         contextMenu.popup();
                     }
-                    onShowTooltip: base.showTooltip(delegate, { x: -UM.Theme.getSize("default_arrow").width, y: Math.round(delegate.height / 2) }, text)
+                    onShowTooltip: base.showTooltip(delegate, Qt.point(UM.Theme.getSize("setting_control").width + UM.Theme.getSize("default_margin").width, 0), text)
                     onHideTooltip: base.hideTooltip()
                     onShowAllHiddenInheritedSettings:
                     {
