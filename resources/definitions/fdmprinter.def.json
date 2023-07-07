@@ -1076,7 +1076,7 @@
                     "enabled": "reinforcement_enabled",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true,
-                    "settable_per_extruder": false,
+                    "settable_per_extruder": true,
                     "children": {
                         "reinforcement_bottom_skin_layers_classic": {
                             "label": "Classic Bottom Layer",
@@ -1113,7 +1113,7 @@
                     "minimum_value_warning": "0",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true,
-                    "settable_per_extruder": false,
+                    "settable_per_extruder": true,
                     "children": {
                         "reinforcement_top_skin_layers_classic": {
                             "label": "Classic Top Layer",

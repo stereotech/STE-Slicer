@@ -724,7 +724,7 @@ class StartSliceJob(Job):
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
-        if printing_mode in ["conical", "conical_full"]:
+        if printing_mode in ["conical", "conical_full", "spherical", "spherical_full"]:
             cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, (-height+0.001)])
         else:
             cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0.001])
