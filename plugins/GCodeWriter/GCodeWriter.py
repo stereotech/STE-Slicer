@@ -89,7 +89,7 @@ class GCodeWriter(MeshWriter):
             slicer_version = self._getSlicerVersion()
             stream.write(slicer_version)
             printing_mode = self._getPrintingMode()
-            stream.write(mode)
+            stream.write(printing_mode)
             scene_size = self._getSerializedBounding()
             stream.write(scene_size)
             for gcode in gcode_list:
