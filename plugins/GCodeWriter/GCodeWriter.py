@@ -88,6 +88,8 @@ class GCodeWriter(MeshWriter):
                 stream.write(preview_image)
             slicer_version = self._getSlicerVersion()
             stream.write(slicer_version)
+            printing_mode = self._getPrintingMode()
+            stream.write(printing_mode)
             scene_size = self._getSerializedBounding()
             stream.write(scene_size)
             for gcode in gcode_list:
@@ -227,6 +229,13 @@ class GCodeWriter(MeshWriter):
         return ";VERSION:%(VERSION)s\n" % \
                {
                 'VERSION': version
+               }
+
+    def _getPrintingMode(self):
+        printing_mode = self._application.getInstance().getGlobalContainerStack().getProperty("printing_mode", "value")
+        return ";PRINTING_MODE = %(MODE)s\n" % \
+               {
+                   'MODE': printing_mode
                }
     @call_on_qt_thread  # must be called from the main thread because of OpenGL
     def _createSnapshot(self):
