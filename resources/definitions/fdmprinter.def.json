@@ -971,6 +971,67 @@
                         }
                     }
                 },
+                "fiber_infill_extruder_nr": {
+                    "label": "Fiber Infill Extruder",
+                    "description": "The extruder train used for printing fiber infill. This is used in multi-extrusion.",
+                    "type": "optional_extruder",
+                    "default_value": "1",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": true,
+                    "settable_globally": false,
+                    "enabled":false,
+                    "children": {
+                        "classic_fiber_infill_extruder_nr": {
+                            "label": "Classic Fiber Infill Extruder",
+                            "description": "The extruder train used for printing fiber infill. This is used in multi-extrusion.",
+                            "type": "optional_extruder",
+                            "value": "fiber_infill_extruder_nr",
+                            "default_value": "1",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": true,
+                            "settable_globally": false,
+                            "enabled": false
+                        },
+                        "cylindrical_fiber_infill_extruder_nr": {
+                            "label": "Cylindrical Fiber Infill Extruder",
+                            "description": "The extruder train used for printing fiber infill. This is used in multi-extrusion.",
+                            "type": "optional_extruder",
+                            "value": "fiber_infill_extruder_nr",
+                            "default_value": "1",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": true,
+                            "settable_globally": false,
+                            "enabled": false
+                        }
+                    }
+                },
+                "reinforcement_z_seam_type": {
+                    "label": "Fiber Z Seam Alignment",
+                    "description": "Starting point of each path in a layer. When paths in consecutive layers start at the same point a vertical seam may show on the print. When aligning these near a user specified location, the seam is easiest to remove. When placed randomly the inaccuracies at the paths' start will be less noticeable. When taking the shortest path the print will be quicker.",
+                    "type": "enum",
+                    "options": {
+                        "shortest": "Shortest",
+                        "random": "Random"
+                    },
+                    "default_value": "shortest",
+                    "limit_to_extruder": "fiber_infill_extruder_nr",
+                    "settable_per_mesh": true
+                },
+                "reinforcement_min_fiber_line_length": {
+                    "label": "Minimal Fiber Infill Distance",
+                    "description": "The length of material extruded in straight line in the infill",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 5.5,
+                    "enabled": "reinforcement_enabled",
+                    "minimum_value_warning": "-0.0001",
+                    "maximum_value_warning": "10.0",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
                 "reinforcement_range": {
                     "label": "Enable Reinforcement Range",
                     "description": "Enable reinforcement ranges.",
@@ -1163,18 +1224,6 @@
                     "minimum_value_warning": "0",
                     "settable_per_mesh": true
                 },
-                "reinforcement_z_seam_type": {
-                    "label": "Fiber Z Seam Alignment",
-                    "description": "Starting point of each path in a layer. When paths in consecutive layers start at the same point a vertical seam may show on the print. When aligning these near a user specified location, the seam is easiest to remove. When placed randomly the inaccuracies at the paths' start will be less noticeable. When taking the shortest path the print will be quicker.",
-                    "type": "enum",
-                    "options": {
-                        "shortest": "Shortest",
-                        "random": "Random"
-                    },
-                    "default_value": "shortest",
-                    "limit_to_extruder": "fiber_infill_extruder_nr",
-                    "settable_per_mesh": true
-                },
                 "reinforcement_intermediate_layers": {
                     "label": "Intermediate Layers",
                     "description": "The number of intermediate layers between fiber layers",
@@ -1215,18 +1264,7 @@
                         }
                     }
                 },
-                "reinforcement_min_fiber_line_length": {
-                    "label": "Minimal Fiber Infill Distance",
-                    "description": "The length of material extruded in straight line in the infill",
-                    "unit": "mm",
-                    "type": "float",
-                    "default_value": 5.5,
-                    "enabled": "reinforcement_enabled",
-                    "minimum_value_warning": "-0.0001",
-                    "maximum_value_warning": "10.0",
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": true
-                },
+
                 "fiber_infill_angles": {
                     "label": "Fiber Infill Line Directions",
                     "description": "A list of fiber integer line directions to use when the fiber layers are printed. Elements from the list are used sequentially as the layers progress and when the end of the list is reached, it starts at the beginning again. The list items are separated by commas and the whole list is contained in square brackets. Default is an empty list which means use the traditional default angles (45 and 135 degrees).",
@@ -1235,43 +1273,6 @@
                     "enabled": "reinforcement_enabled",
                     "limit_to_extruder": "top_bottom_extruder_nr",
                     "settable_per_mesh": true
-                },
-                "fiber_infill_extruder_nr": {
-                    "label": "Fiber Infill Extruder",
-                    "description": "The extruder train used for printing fiber infill. This is used in multi-extrusion.",
-                    "type": "optional_extruder",
-                    "default_value": "-1",
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": false,
-                    "settable_per_meshgroup": true,
-                    "settable_globally": true,
-                    "enabled": "extruders_enabled_count > 1 and reinforcement_enabled",
-                    "children": {
-                        "classic_fiber_infill_extruder_nr": {
-                            "label": "Classic Fiber Infill Extruder",
-                            "description": "The extruder train used for printing fiber infill. This is used in multi-extrusion.",
-                            "type": "optional_extruder",
-                            "value": "fiber_infill_extruder_nr",
-                            "default_value": "-1",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false,
-                            "settable_per_meshgroup": true,
-                            "settable_globally": true,
-                            "enabled": "extruders_enabled_count > 1 and reinforcement_enabled"
-                        },
-                        "cylindrical_fiber_infill_extruder_nr": {
-                            "label": "Cylindrical Fiber Infill Extruder",
-                            "description": "The extruder train used for printing fiber infill. This is used in multi-extrusion.",
-                            "type": "optional_extruder",
-                            "value": "fiber_infill_extruder_nr",
-                            "default_value": "-1",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false,
-                            "settable_per_meshgroup": true,
-                            "settable_globally": true,
-                            "enabled": "extruders_enabled_count > 1 and printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full' and reinforcement_enabled"
-                        }
-                    }
                 },
                 "fiber_density": {
                     "label": "Fiber Density",
