@@ -1271,7 +1271,7 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
                     "limit_to_extruder": "fiber_infill_extruder_nr",
-                    "settable_per_mesh": true,
+                    "settable_per_mesh": false,
                     "settable_per_extruder": true,
                     "children": {
                         "fiber_density_classic": {
@@ -1283,6 +1283,8 @@
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
                             "enabled": "reinforcement_enabled_classic",
+                            "value": "fiber_density",
+                            "limit_to_extruder": "fiber_infill_extruder_nr",
                             "settable_per_mesh": true,
                             "settable_per_extruder": true,
                             "children": {
@@ -1310,6 +1312,7 @@
                             "default_value": 50,
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
+                            "value": "fiber_density",
                             "enabled": "reinforcement_enabled_cylindrical",
                             "limit_to_extruder": "fiber_infill_extruder_nr",
                             "settable_per_mesh": true,
