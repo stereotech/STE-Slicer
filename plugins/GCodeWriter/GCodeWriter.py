@@ -233,7 +233,16 @@ class GCodeWriter(MeshWriter):
 
     def _getPrintingMode(self):
         printing_mode = self._application.getInstance().getGlobalContainerStack().getProperty("printing_mode", "value")
-        return ";PRINTING_MODE = %(MODE)s\n" % \
+        if printing_mode == "classic":
+            printing_mode = "Classic"
+        elif printing_mode == "cylindrical":
+            printing_mode = "5D Spiral"
+        elif printing_mode == "cylindrical_full":
+            printing_mode = "5D Spiral Full"
+        else:
+            printing_mode = "Classic"
+
+        return ";PRINTING_MODE:[%(MODE)s]\n" % \
                {
                    'MODE': printing_mode
                }
