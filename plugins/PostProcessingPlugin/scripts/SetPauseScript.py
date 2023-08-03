@@ -1,4 +1,5 @@
 from ..Script import Script
+import re #To perform the search and replace.
 
 from UM.Application import Application #To get the current printer's settings.
 
@@ -87,4 +88,14 @@ class SetPauseScript(Script):
         if tmp_print > 0:
             prepend_gcode += self.putValue(M = 104, S = int(tmp_print)) + " ;resume temperature\n"
         intermediate_data[layer_index[pause_layer-1]] += prepend_gcode
+        a = 0
+        for i in range(layer_index[pause_layer-1], len(intermediate_data)):
+            lines = intermediate_data[i].split("\n")
+            for line in lines:
+                m = self.getValue(line, "M")
+                if m is not None and (m == 104 or m == 109):
+                    s = self.getValue(line, "S")
+                    if s is not None and (s != 0):
+                        a += 1
+            b = a
         return intermediate_data
