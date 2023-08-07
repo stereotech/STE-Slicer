@@ -233,7 +233,7 @@ class GCodeWriter(MeshWriter):
 
     def _getPrintingMode(self):
         printing_mode = self._application.getInstance().getGlobalContainerStack().getProperty("printing_mode", "value")
-        return ";PRINTING_MODE = %(MODE)s\n" % \
+        return ";PRINTING_MODE:[%(MODE)s]\n" % \
                {
                    'MODE': printing_mode
                }
