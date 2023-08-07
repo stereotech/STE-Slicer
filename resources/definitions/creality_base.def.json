@@ -1,0 +1,134 @@
+{
+    "version": 2,
+    "name": "Creality Base Printer",
+    "inherits": "fdmprinter",
+    "metadata": {
+        "author": "Stereotech",
+        "manufacturer": "Creality3D",
+        "category": "Stereotech",
+        "visible": false,
+        "file_formats": "text/x-gcode",
+        "has_materials": true,
+         "machine_extruder_trains": {
+            "0": "creality_base_extruder_0"
+        }
+    },
+    "overrides": {
+        "machine_max_feedrate_e": {
+            "default_value": 45
+        },
+        "machine_max_feedrate_x": {
+            "default_value": 150
+        },
+        "machine_max_feedrate_y": {
+            "default_value": 150
+        },
+        "machine_max_feedrate_z": {
+            "default_value": 25
+        },
+        "machine_acceleration": {
+            "default_value": 1000
+        },
+        "machine_max_acceleration_z": {
+            "default_value": 200
+        },
+        "machine_max_jerk_xy": {
+            "default_value": 1.58
+        },
+        "machine_max_jerk_z": {
+            "default_value": 0.7
+        },
+        "material_print_temperature": {
+            "minimum_value": "0"
+        },
+        "material_bed_temperature": {
+            "minimum_value": "0"
+        },
+        "material_standby_temperature": {
+            "minimum_value": "0"
+        },
+        "extruder_prime_pos_y": {
+            "minimum_value": "0",
+            "maximum_value": "machine_depth"
+        },
+        "extruder_prime_pos_x": {
+            "minimum_value": "0",
+            "maximum_value": "machine_width"
+        },
+        "relative_extrusion": {
+            "value": false,
+            "enabled": false
+        },
+        "retraction_amount": {
+            "default_value": 3
+        },
+        "machine_head_with_fans_polygon": {
+            "default_value": [
+                [
+                    -26,
+                    -34
+                ],
+                [
+                    -26,
+                    -32
+                ],
+                [
+                    32,
+                    -32
+                ],
+                [
+                    32,
+                    34
+                ]
+            ]
+        },
+        "gantry_height": {
+            "value": "25"
+        },
+        "machine_use_extruder_offset_to_offset_coords": {
+            "default_value": true
+        },
+        "machine_gcode_flavor": {
+            "default_value": "RepRap (Marlin/Sprinter)"
+        },
+        "switch_extruder_retraction_amount": {
+            "value": "4"
+        },
+        "machine_a_axis_divider": {
+            "value": 1
+        },
+        "machine_c_axis_divider": {
+            "value": 3
+        },
+        "machine_center_is_zero": {
+            "default_value": true,
+            "value": "resolveOrValue('printing_mode') not in ['classic']"
+        },
+        "machine_heated_bed": {
+            "default_value": false,
+            "value": "resolveOrValue('printing_mode') in ['classic']"
+        },
+        "machine_shape": {
+            "default_value": "elliptic",
+            "value": "'rectangular' if resolveOrValue('printing_mode') in ['classic'] else 'elliptic'"
+        },
+        "machine_five_axis": {
+            "default_value": true
+        },
+        "machine_hybrid": {
+            "default_value": true
+        },
+        "machine_extruder_count": {
+            "default_value": 1
+        },
+        "machine_start_gcode": {
+            "default_value": ";STE Slicer 5D Gcode\nSTART\nG1 F200 E15 ;extrude 15 mm of feed stock\nG1 F200 E13.5 ;make retraction\nG92 E0 ;zero the extruded length again\n{coordinate_system};Move to the first coordinate system"
+        },
+        "machine_middle_gcode": {
+            "default_value": "{prefix_middle_gcode}\n{cylindrical_rotate}\n{coordinate_system}\n{postfix_middle_gcode}"
+        },
+        "machine_end_gcode": {
+            "default_value": "{prefix_end_gcode}\nEND"
+        }
+    }
+}
