@@ -3830,24 +3830,6 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
-                "speed_control_enable": {
-                    "label": "Speed Control Enable",
-                    "description": "Enabling speed adjustment.",
-                    "type": "bool",
-                    "default_value": false,
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": false
-                },
-                "speed_control_value": {
-                    "label": "Speed Control Value",
-                    "description": "The minimum value of the adjusted speed. if the calculated speed is less than this value, set this value.",
-                    "type": "float",
-                    "unit": "mm/s",
-                    "default_value": 1,
-                    "minimum_value": "0.1",
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": false
-                },
                 "acceleration_enabled": {
                     "label": "Enable Acceleration Control",
                     "description": "Enables adjusting the print head acceleration. Increasing the accelerations can reduce printing time at the cost of print quality.",
