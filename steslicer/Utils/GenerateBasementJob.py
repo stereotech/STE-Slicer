@@ -191,15 +191,20 @@ class GenerateBasementJob(Job):
 
             Job.yieldThread()
 
+        prefix_end_gcode = "G91\nG0 Z50\nG90\n"
         end_gcode = "G54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again\n"
         used_extruders = ExtruderManager.getInstance().getUsedExtruderStacks()
+        machine_name = str(used_extruders[0].getMetaData().get("machine", "0"))
+        if machine_name == "Creality Ender-3 / Ender-3 v2":
+            prefix_end_gcode = prefix_end_gcode.replace("Z50", "Z100")
+            end_gcode = end_gcode.replace("Z100", "Z200")
         first_used_extruder = int(used_extruders[0].getMetaData().get("position", "0"))
 
         if first_used_extruder != self._extruder_number:
             first_print_temp = used_extruders[0].getProperty("material_print_temperature", "value")
             tool_change_gcode = "T%i\nM109 S%i\n" % (first_used_extruder, first_print_temp)
             end_gcode = tool_change_gcode + end_gcode
-        self._gcode_list.append("G91\nG0 Z50\nG90\n" + end_gcode)
+        self._gcode_list.append(prefix_end_gcode + end_gcode)
 
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
