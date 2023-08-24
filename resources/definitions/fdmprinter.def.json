@@ -2685,6 +2685,20 @@
                     "settable_per_mesh": false,
                     "minimum_value": "-273.15"
                 },
+                "build_volume_temperature":
+                {
+                    "label": "Build Volume Temperature",
+                    "description": "The temperature of the environment to print in. If this is 0, the build volume temperature will not be adjusted.",
+                    "unit": "°C",
+                    "type": "float",
+                    "default_value": 0,
+                    "minimum_value": "-273.15",
+                    "minimum_value_warning": "0",
+                    "maximum_value_warning": "200",
+                    "enabled": "machine_heated_build_volume",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false
+                },
                 "material_print_temperature": {
                     "label": "Printing Temperature",
                     "description": "The temperature used for printing.",
