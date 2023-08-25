@@ -672,6 +672,7 @@ class StartSliceJob(Job):
         trimesh.repair.fix_inversion(output_mesh, multibody=True)
         output_mesh.fill_holes()
         output_mesh.fix_normals()
+
         # create_cutting_cylinder
         global_stack = SteSlicerApplication.getInstance().getGlobalContainerStack()
         printing_mode = global_stack.getProperty("printing_mode", "value")
