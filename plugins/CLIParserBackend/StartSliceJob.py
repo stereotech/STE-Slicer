@@ -997,6 +997,7 @@ class StartSliceJob(Job):
             settings["fiber_infill_extruder_nr"] = settings["cylindrical_fiber_infill_extruder_nr"]
 
             settings["layer_height_0"] = settings["cylindrical_layer_height_0"]
+            settings["layer_height"] = settings["cylindrical_layer_height"]
             settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_cylindrical"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
