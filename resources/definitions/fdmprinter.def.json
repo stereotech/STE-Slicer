@@ -1046,48 +1046,34 @@
                     "label": "Reinforcement start height",
                     "description": "Height, where reinforcement printing starts",
                     "unit": "mm",
-                    "type": "float",
-                    "default_value": 0.1,
+                    "type": "[int]",
+                    "default_value": "[ ]",
                     "minimum_value": "0.001",
                     "enabled": "reinforcement_enabled",
                     "settable_per_mesh": false,
-                    "settable_per_extruder": false,
+                    "settable_per_extruder": true,
                     "children": {
-                                "reinforcement_start_layer_classic": {
-                                    "label": "Classic start layer",
-                                    "description": "Layer number, where reinforcement printing starts",
-                                    "type": "int",
-                                    "default_value": 2,
-                                    "minimum_value": "1",
-                                    "enabled": "reinforcement_enabled_classic",
-                                    "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
-                                    "settable_per_mesh": false,
-                                    "settable_per_extruder": false
-                                },
-                                "reinforcement_start_layer_cylindrical": {
-                                    "label": "Cylindrical start layer",
-                                    "description": "Layer number, where reinforcement printing starts in cylindrical mode",
-                                    "type": "int",
-                                    "default_value": 2,
-                                    "minimum_value": "1",
-                                    "enabled": "reinforcement_enabled_cylindrical",
-                                    "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
-                                    "settable_per_mesh": false,
-                                    "settable_per_extruder": false
-                                },
-                        "reinforcement_start_layer": {
-                            "label": "Reinforcement start layer",
+                        "reinforcement_start_layer_classic": {
+                            "label": "Classic start layer",
                             "description": "Layer number, where reinforcement printing starts",
-                            "type": "int",
-                            "default_value": 2,
+                            "type": "[int]",
+                            "default_value": "[ ]",
                             "minimum_value": "1",
-                            "enabled": "reinforcement_enabled",
+                            "enabled": "reinforcement_enabled_classic",
+                            "value": " ((reinforcement_start_height) / layer_height) + 1 if layer_height != 0 else 0",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "reinforcement_start_layer_cylindrical": {
+                            "label": "Cylindrical start layer",
+                            "description": "Layer number, where reinforcement printing starts in cylindrical mode",
+                            "type": "[int]",
+                            "default_value": "[ ]",
+                            "minimum_value": "1",
+                            "enabled": "reinforcement_enabled_cylindrical",
                             "value": "max(1, round((reinforcement_start_height) / layer_height) + 1) if layer_height != 0 else 0",
-                            "settable_per_mesh": true,
-                            "settable_per_extruder": false,
-                            "children": {
-
-                            }
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
                         }
                     }
                 },
