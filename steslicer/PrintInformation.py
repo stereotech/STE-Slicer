@@ -230,10 +230,7 @@ class PrintInformation(QObject):
                 if material_values and "spool_weight" in material_values:
                     weight_per_spool = float(material_values["spool_weight"])
                 else:
-                    if extruder_stack.getMetaDataEntry("properties", {}).get("weight", 0) is not None:
-                        weight_per_spool = float(extruder_stack.getMetaDataEntry("properties", {}).get("weight", 0))
-                    else:
-                        weight_per_spool = 0.0
+                    weight_per_spool = float(extruder_stack.getMetaDataEntry("properties", {}).get("weight", 0))
 
                 cost_per_spool = float(material_values["spool_cost"] if material_values and "spool_cost" in material_values else 0)
 
