@@ -18,6 +18,7 @@ Generic TPU 95A profile. The data in this file may not be correct for your speci
     <properties>
         <density>1.22</density>
         <diameter>1.75</diameter>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="print temperature">228</setting>
