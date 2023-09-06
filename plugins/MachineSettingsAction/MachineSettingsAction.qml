@@ -160,6 +160,14 @@ SteSlicer.MachineAction
                             }
                             Loader
                             {
+                                id: heatedBuildVolumeCheckBox
+                                sourceComponent: simpleCheckBox
+                                property var settingKey: "machine_heated_build_volume"
+                                property string label: catalog.i18nc("@option:check", "Heated Build Volume")
+                                property bool forceUpdateOnChange: true
+                            }
+                            Loader
+                            {
                                 id: fiveAxisCheckBox
                                 sourceComponent: simpleCheckBox
                                 property var settingKey: "machine_five_axis"
