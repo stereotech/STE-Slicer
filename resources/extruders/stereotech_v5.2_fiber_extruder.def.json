@@ -39,10 +39,10 @@
             "default_value": false
         },
         "machine_extruder_end_pos_x": {
-            "value": 50
+            "value": 0
         },
         "machine_extruder_end_pos_y": {
-            "value": 2
+            "value": 0
         },
         "machine_fiber_extruder": {
             "default_value": true
