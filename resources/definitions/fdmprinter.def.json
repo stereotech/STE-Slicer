@@ -1941,6 +1941,13 @@
                     "enabled": "wall_0_extruder_nr == wall_x_extruder_nr",
                     "settable_per_mesh": true
                 },
+                "skin_before_walls": {
+                    "label": "Skin Before Walls",
+                    "description": "Print the skin before printing the walls. Printing the walls first may lead to more accurate walls, but overhangs print worse. Printing the skin first leads to sturdier walls, but the skin pattern might sometimes show through the surface.",
+                    "type": "bool",
+                    "default_value": false,
+                    "settable_per_mesh": true
+                },
                 "alternate_extra_perimeter": {
                     "label": "Alternate Extra Wall",
                     "description": "Prints an extra wall at every other layer. This way infill gets caught between these extra walls, resulting in stronger prints.",
