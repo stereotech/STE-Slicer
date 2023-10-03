@@ -751,8 +751,7 @@
                     "options": {
                         "classic": "Classic",
                         "cylindrical": "5D Spiral",
-                        "cylindrical_full": "5D Spiral Full",
-                        "discrete": "Discrete"
+                        "cylindrical_full": "5D Spiral Full"
                     },
                     "default_value": "classic",
                     "enabled": "machine_five_axis",
