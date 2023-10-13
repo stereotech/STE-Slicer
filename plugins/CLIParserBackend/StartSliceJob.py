@@ -346,7 +346,7 @@ params_dict = {
         },
         "infill_angle": {
             "stack_key": "",
-            "default_value": 0
+            "default_value": "0;"
         },
         "infill_fast": {
             "stack_key": "",
@@ -364,9 +364,9 @@ params_dict = {
             "stack_key": "support_line_width",
             "default_value": 0.4
         },
-        "infill_round_width_flip": {
-            "stack_key": "support_skin_flip",
-            "default_value": 0
+        "infill_skin_angle": {
+            "stack_key": "",
+            "default_value": "[0;]"
         }
     },
     "Support": {
@@ -949,7 +949,7 @@ class StartSliceJob(Job):
                                 if len(my_list[i]):
                                     setting_value += "[%s;%s;]" % (my_list[i], (90 - int(my_list[i])) if (int(my_list[i]) == 90 or (int(my_list[i]) == 0)) else (180 - int(my_list[i])))
                             if len(my_list) == 1 and len(my_list[0]) == 0:
-                                setting_value += "[%s;%s;]"% (45, 135)
+                                setting_value += "[%s;%s;]" % (45, 135)
                         elif pattern == "concentric":
                             setting_value += "[%s;]" % (0)
                     if name == "infill_skin_angle":
@@ -1023,6 +1023,14 @@ class StartSliceJob(Job):
                         setting_value = math.ceil(settings.get("support_z_distance_cylindrical") / settings.get("cylindrical_layer_height"))
                     if name == "threads_round":
                         setting_value = os.cpu_count()
+                    if name == "infill_skin_angle" and region =="GCodeSupport":
+                        pattern = settings.get("support_interface_pattern")
+                        if pattern == "lines":
+                            setting_value = "[%s;][%s;]" % (45, 135)
+                        elif pattern == "grid":
+                            setting_value = "[%s;%s;]" % (45, 135)
+                        else:
+                            setting_value = "%s;" % (0)
 
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
