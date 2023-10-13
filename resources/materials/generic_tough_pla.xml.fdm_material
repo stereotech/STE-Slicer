@@ -18,6 +18,7 @@ Generic Tough PLA profile. The data in this file may not be correct for your spe
     <properties>
         <density>1.24</density>
         <diameter>2.85</diameter>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="anti ooze retract position">-4</setting>

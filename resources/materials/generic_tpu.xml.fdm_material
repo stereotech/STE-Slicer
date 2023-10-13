@@ -18,6 +18,7 @@ Generic TPU 95A profile. The data in this file may not be correct for your speci
     <properties>
         <density>1.22</density>
         <diameter>2.85</diameter>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="anti ooze retract position">-6.5</setting>

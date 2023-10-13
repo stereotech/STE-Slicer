@@ -163,7 +163,7 @@ params_dict = {
             "default_value": 2
         },
         "infill_angle": {
-            "stack_key": "",
+            "stack_key": "infill_angles",
             "default_value": 45
         },
         "infill_shift": {
@@ -216,39 +216,55 @@ params_dict = {
         },
         "composite_layer_start": {
             "stack_key": "reinforcement_start_layer_cylindrical",
-            "default": 10
+            "default_value": 10
         },
         "composite_layer_count": {
             "stack_key": "reinforcement_layer_count_cylindrical",
-            "default": 2
+            "default_value": 2
         },
         "composite_width": {
             "stack_key": "fiber_line_distance_cylindrical",
-            "default": 0.9
+            "default_value": 0.9
+        },
+        "composite_offset": {
+            "stack_key": "",
+            "default_value": 0
         },
         "composite_round_segm": {
             "stack_key": "",
-            "default": 16
+            "default_value": 16
+        },
+        "composite_walls_count": {
+            "stack_key": "",
+            "default_value": 0
+        },
+        "composite_infill_angle": {
+            "stack_key": "",
+            "default_value": 0
+        },
+        "composite_connect": {
+            "stack_key": "",
+            "default_value": 0
         },
         "composite_round_radius": {
             "stack_key": "",
-            "default": 1
+            "default_value": 1
         },
         "composite_round": {
             "stack_key": "",
-            "default": 4
+            "default_value": 4
         },
         "composite_min_length": {
             "stack_key": "",#"reinforcement_min_fiber_line_length",
-            "default": 999999
+            "default_value": 999999
         },
         "composite_bottom_skin": {
             "stack_key": "reinforcement_bottom_skin_layers_cylindrical",
-            "default": 4,
+            "default_value": 4,
         },
         "composite_top_skin": {
             "stack_key": "reinforcement_top_skin_layers_cylindrical",
-            "default": 1
+            "default_value": 1
         },
         "3d_slicer_sweep_type": {
             "stack_key": "printing_mode",
@@ -276,25 +292,36 @@ params_dict = {
         },
         "composite_infill_round_double": {
             "stack_key": "fiber_infill_pattern_cylindrical",
-            "default": 1
+            "default_value": 1
         },
         "composite_infill_round_connect": {
             "stack_key": "",
-            "default": 1
+            "default_value": 1
         },
         "composite_fast": {
             "stack_key": "fiber_infill_round_connect_cylindrical",
-            "default": 0
+            "default_value": 0
         },
         "composite_layer_space": {
             "stack_key": "reinforcement_intermediate_layers_cylindrical",
-            "default": 0
+            "default_value": 0
+        },
+        "composite_infill_type": {
+            "stack_key": "",
+            "default_value": 0
         },
         "shell_round_double": {
             "stack_key": "top_bottom_pattern",
-            "default": 0
+            "default_value": 0
+        },
+        "infill_skin_angle": {
+            "stack_key": "skin_angles",
+            "default_value": 45
+        },
+        "infill_angle_type": {
+            "stack_key": "",
+            "default_value": 0
         }
-
     },
     "GCodeSupport": {
         "first_offset": {
@@ -319,7 +346,7 @@ params_dict = {
         },
         "infill_angle": {
             "stack_key": "",
-            "default_value": 0
+            "default_value": "0;"
         },
         "infill_fast": {
             "stack_key": "",
@@ -337,9 +364,9 @@ params_dict = {
             "stack_key": "support_line_width",
             "default_value": 0.4
         },
-        "infill_round_width_flip": {
-            "stack_key": "support_skin_flip",
-            "default_value": 0
+        "infill_skin_angle": {
+            "stack_key": "",
+            "default_value": "[0;]"
         }
     },
     "Support": {
@@ -426,7 +453,20 @@ params_dict = {
         "show_normals": {
             "stack_key": "",
             "default_value": 0
+        },
+        "show_traces_as_boxes": {
+            "stack_key": "",
+            "default_value": 1
+        },
+        "boxes_size": {
+            "stack_key": "",
+            "default_value": 1
+        },
+        "normalize_when_load": {
+            "stack_key": "",
+            "default_value": 0
         }
+
     }
 }
 
@@ -724,7 +764,7 @@ class StartSliceJob(Job):
         except Exception as e:
             Logger.log("e", "Exception while differece model! %s", e)
             result = output_mesh
-        if printing_mode in ["conical", "conical_full"]:
+        if printing_mode in ["conical", "conical_full", "spherical", "spherical_full"]:
             cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, (-height+0.001)])
         else:
             cutting_mesh = trimesh.intersections.slice_mesh_plane(cutting_mesh, [0, 0, 1], [0, 0, 0.001])
@@ -880,7 +920,7 @@ class StartSliceJob(Job):
                         #    //setting_value = 100
                     if name == "infill_round_double":
                         if setting_value == "grid":
-                            setting_value = "1"
+                            setting_value = "0"
                         elif setting_value == "concentric":
                             setting_value = "2"
                         else:
@@ -892,9 +932,49 @@ class StartSliceJob(Job):
                             setting_value = "2"
                         else:
                             setting_value = "0"
+                    if name == "infill_angle":
+                        pattern = settings.get("infill_pattern")
+                        angles = "".join(settings.get("infill_angles").split())
+                        angle = angles.strip("[]")
+                        my_list = angle.rsplit(',', len(angle))
+                        setting_value = ""
+                        if pattern == "lines":
+                            for i in range(len(my_list)):
+                                if len(my_list[i]):
+                                    setting_value += "[%s;]"% (my_list[i])
+                            if len(my_list) == 1 and len(my_list[0]) == 0:
+                                setting_value += "[%s;][%s;]"% (45, 135)
+                        elif pattern == "grid":
+                            for i in range(len(my_list)):
+                                if len(my_list[i]):
+                                    setting_value += "[%s;%s;]" % (my_list[i], (90 - int(my_list[i])) if (int(my_list[i]) == 90 or (int(my_list[i]) == 0)) else (180 - int(my_list[i])))
+                            if len(my_list) == 1 and len(my_list[0]) == 0:
+                                setting_value += "[%s;%s;]" % (45, 135)
+                        elif pattern == "concentric":
+                            setting_value += "[%s;]" % (0)
+                    if name == "infill_skin_angle":
+                        pattern = settings.get("top_bottom_pattern")
+                        angles = "".join(settings.get("skin_angles").split())
+                        angle = angles.strip("[]")
+                        my_list = angle.rsplit(',', len(angle))
+                        setting_value = ""
+                        if pattern == "lines":
+                            for i in range(len(my_list)):
+                                if len(my_list[i]):
+                                    setting_value += "[%s;]" % (my_list[i])
+                            if len(my_list) == 1 and len(my_list[0]) == 0:
+                                setting_value += "[%s;][%s;]" % (45, 135)
+                        elif pattern == "grid":
+                            for i in range(len(my_list)):
+                                if len(my_list[i]):
+                                    setting_value += "[%s;%s;]" % (my_list[i], (90 - int(my_list[i])) if (int(my_list[i]) == 90 or (int(my_list[i]) == 0)) else (180 - int(my_list[i])))
+                            if len(my_list) == 1 and len(my_list[0]) == 0:
+                                setting_value += "[%s;%s;]" % (45, 135)
+                        elif pattern == "concentric":
+                            setting_value += "[%s;]" % (0)
                     if name == "shell_round_double":
                         if setting_value == "grid":
-                            setting_value = "1"
+                            setting_value = "0"
                         elif setting_value == "concentric":
                             setting_value = "2"
                         else:
@@ -943,6 +1023,14 @@ class StartSliceJob(Job):
                         setting_value = math.ceil(settings.get("support_z_distance_cylindrical") / settings.get("cylindrical_layer_height"))
                     if name == "threads_round":
                         setting_value = os.cpu_count()
+                    if name == "infill_skin_angle" and region =="GCodeSupport":
+                        pattern = settings.get("support_interface_pattern")
+                        if pattern == "lines":
+                            setting_value = "[%s;][%s;]" % (45, 135)
+                        elif pattern == "grid":
+                            setting_value = "[%s;%s;]" % (45, 135)
+                        else:
+                            setting_value = "%s;" % (0)
 
                 sub.text = setting_value.__str__()
                 Job.yieldThread()
@@ -997,6 +1085,7 @@ class StartSliceJob(Job):
             settings["fiber_infill_extruder_nr"] = settings["cylindrical_fiber_infill_extruder_nr"]
 
             settings["layer_height_0"] = settings["cylindrical_layer_height_0"]
+            settings["layer_height"] = settings["cylindrical_layer_height"]
             settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_cylindrical"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]

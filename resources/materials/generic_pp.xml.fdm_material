@@ -18,6 +18,7 @@ Generic Polypropylene profile. Serves as an example file, data in this file is n
     <properties>
         <diameter>2.85</diameter>
         <density>0.89</density>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="anti ooze retract position">-8</setting>

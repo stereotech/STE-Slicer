@@ -3,16 +3,16 @@
     "name": "Fiber Extruder",
     "inherits": "fdmextruder",
     "metadata": {
-        "machine": "hfe530v5.2",
-        "position": "1"
+        "machine": "steprinter750",
+        "position": "2"
     },
     "overrides": {
         "extruder_nr": {
-            "default_value": 1,
-            "maximum_value": "1"
+            "default_value": 2,
+            "maximum_value": "2"
         },
         "machine_nozzle_offset_x": {
-            "default_value": 31.0
+            "default_value": 82.0
         },
         "machine_nozzle_offset_y": {
             "default_value": 0.0
@@ -39,10 +39,10 @@
             "default_value": false
         },
         "machine_extruder_end_pos_x": {
-            "value": 0
+            "value": 50
         },
         "machine_extruder_end_pos_y": {
-            "value": 0
+            "value": 2
         },
         "machine_fiber_extruder": {
             "default_value": true

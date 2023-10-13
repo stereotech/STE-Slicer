@@ -18,6 +18,7 @@ Generic PC profile. The data in this file may not be correct for your specific m
     <properties>
         <density>1.19</density>
         <diameter>1.75</diameter>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="print temperature">270</setting>
