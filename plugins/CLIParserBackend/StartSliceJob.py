@@ -293,6 +293,10 @@ params_dict = {
         "shell_round_double": {
             "stack_key": "top_bottom_pattern",
             "default": 0
+        },
+        "composite_size": {
+            "stack_key": "fiber_infill_line_width",
+            "default": 1.2
         }
 
     },
