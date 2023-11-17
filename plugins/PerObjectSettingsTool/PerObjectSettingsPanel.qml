@@ -231,6 +231,8 @@ Item {
                                         return settingTextField
                                     case "float":
                                         return settingTextField
+                                    case "[float]":
+                                        return settingTextField
                                     case "enum":
                                         return settingComboBox
                                     case "extruder":

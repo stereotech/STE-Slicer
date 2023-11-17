@@ -954,8 +954,8 @@
                             "description": "Enables the reinforcement while printing classic.",
                             "type": "bool",
                             "default_value": false,
-                            "value": "reinforcement_enabled",
-                            "enabled": "reinforcement_enabled",
+                            "value": "reinforcement_enabled and (printing_mode == 'classic' or printing_mode == 'cylindrical_full')",
+                            "enabled": "reinforcement_enabled and (printing_mode == 'classic' or printing_mode == 'cylindrical_full')",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
                         },
@@ -964,8 +964,8 @@
                             "description": "Enables the reinforcement while printing cylindrical.",
                             "type": "bool",
                             "default_value": false,
-                            "value": "reinforcement_enabled",
-                            "enabled": "reinforcement_enabled",
+                            "value": "reinforcement_enabled and (printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full')",
+                            "enabled": "reinforcement_enabled and (printing_mode == 'cylindrical' or printing_mode == 'cylindrical_full')",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
                         }
@@ -1031,16 +1031,6 @@
                     "maximum_value_warning": "10.0",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
-                },
-                "reinforcement_range": {
-                    "label": "Enable Reinforcement Range",
-                    "description": "Enable reinforcement ranges.",
-                    "type": "bool",
-                    "default_value": false,
-                    "enabled": "reinforcement_enabled",
-                    "value": false,
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": false
                 },
                 "reinforcement_start_height": {
                     "label": "Reinforcement start height",
@@ -1142,20 +1132,19 @@
                     "label": "Bottom Layers",
                     "description": "The number of bottom layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
                     "minimum_value": "0",
-                    "default_value": 2,
+                    "default_value": 0,
                     "type": "int",
                     "enabled": "reinforcement_enabled",
-                    "limit_to_extruder": "top_bottom_extruder_nr",
-                    "settable_per_mesh": true,
-                    "settable_per_extruder": true,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
                     "children": {
                         "reinforcement_bottom_skin_layers_classic": {
                             "label": "Classic Bottom Layer",
                             "description": "The number of bottom layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
                             "type": "[int]",
-                            "default_value": 2,
+                            "default_value": 0,
                             "minimum_value": "0",
-                            "enabled": "reinforcement_enabled_classic",
+                            "enabled": "reinforcement_enabled_classic and reinforcement_bottom_skin_layers != 0",
                             "value": "[reinforcement_bottom_skin_layers]",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -1164,9 +1153,9 @@
                             "label": "Cylindrical Bottom Layer",
                             "description": "The number of bottom layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
                             "type": "[int]",
-                            "default_value": 2,
+                            "default_value": 0,
                             "minimum_value": "0",
-                            "enabled": "reinforcement_enabled_cylindrical",
+                            "enabled": "reinforcement_enabled_cylindrical and reinforcement_bottom_skin_layers != 0",
                             "value": "[reinforcement_bottom_skin_layers]",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -1176,24 +1165,23 @@
                 "reinforcement_top_skin_layers": {
                     "label": "Top Layers",
                     "description": "The number of top layers. When calculated by the top thickness, this value is rounded to a whole number.",
-                    "default_value": 1,
+                    "default_value": 0,
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
                     "type": "int",
                     "enabled": "reinforcement_enabled",
                     "minimum_value_warning": "0",
-                    "limit_to_extruder": "top_bottom_extruder_nr",
-                    "settable_per_mesh": true,
+                    "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "children": {
                         "reinforcement_top_skin_layers_classic": {
                             "label": "Classic Top Layer",
                             "description": "The number of top layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
                             "type": "[int]",
-                            "default_value": 2,
+                            "default_value": 0,
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
-                            "enabled": "reinforcement_enabled_classic",
+                            "enabled": "reinforcement_enabled_classic and reinforcement_top_skin_layers != 0",
                             "value": "[reinforcement_top_skin_layers]",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -1202,10 +1190,10 @@
                             "label": "Cylindrical Top Layer",
                             "description": "The number of top layers. When calculated by the bottom thickness, this value is rounded to a whole number.",
                             "type": "[int]",
-                            "default_value": 2,
+                            "default_value": 0,
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
-                            "enabled": "reinforcement_enabled_cylindrical",
+                            "enabled": "reinforcement_enabled_cylindrical and reinforcement_top_skin_layers != 0",
                             "value": "[reinforcement_top_skin_layers]",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -1213,26 +1201,26 @@
                     }
                 },
                 "reinforcement_concentric_fiber_rings": {
-                    "label": "Concentric Fiber Walls",
+                    "label": "Fiber Walls Count",
                     "description": "The number of rings of concentric fiber fill added per layer. The more rings, the stronger your part.",
-                    "default_value": 2,
+                    "default_value": 0,
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
                     "type": "int",
                     "enabled": "reinforcement_enabled",
                     "minimum_value_warning": "0",
-                    "settable_per_mesh": true,
+                    "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "children": {
                         "reinforcement_wall_count_classic": {
                             "label": "Classic Wall Count",
                             "description": "The number of fiber walls added to each layer in the classic mode.",
                             "type": "[int]",
-                            "default_value": 2,
+                            "default_value": 0,
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
                             "value": "[reinforcement_concentric_fiber_rings]",
-                            "enabled": "reinforcement_enabled_classic",
+                            "enabled": "reinforcement_enabled_classic and reinforcement_concentric_fiber_rings != 0",
                             "minimum_value_warning": "0",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -1241,11 +1229,11 @@
                             "label": "Cylindrical Wall Count",
                             "description": "The number of fiber walls added to each layer in the cylindrical mode.",
                             "type": "[int]",
-                            "default_value": 2,
+                            "default_value": 0,
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
                             "value": "[reinforcement_concentric_fiber_rings]",
-                            "enabled": "reinforcement_enabled_cylindrical",
+                            "enabled": "reinforcement_enabled_cylindrical and reinforcement_concentric_fiber_rings != 0",
                             "minimum_value_warning": "0",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -1258,7 +1246,6 @@
                     "description": "The number of intermediate layers between fiber layers",
                     "default_value": 0,
                     "minimum_value": "0",
-                    "maximum_value_warning": "10",
                     "type": "int",
                     "enabled": "reinforcement_enabled",
                     "minimum_value_warning": "0",
@@ -1273,7 +1260,7 @@
                             "maximum_value_warning": "10",
                             "value": "[reinforcement_intermediate_layers]",
                             "type": "[int]",
-                            "enabled": "reinforcement_enabled_classic",
+                            "enabled": "reinforcement_enabled_classic and reinforcement_intermediate_layers != 0",
                             "minimum_value_warning": "0",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -1286,7 +1273,7 @@
                             "maximum_value_warning": "10",
                             "value": "[reinforcement_intermediate_layers]",
                             "type": "[int]",
-                            "enabled": "reinforcement_enabled_cylindrical",
+                            "enabled": "reinforcement_enabled_cylindrical and reinforcement_intermediate_layers != 0",
                             "minimum_value_warning": "0",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
@@ -1303,7 +1290,7 @@
                         "concentric": "Concentric",
                         "none": "None"
                     },
-                    "default_value": "lines",
+                    "default_value": "none",
                     "enabled": "reinforcement_enabled",
                     "settable_per_mesh": true,
                     "settable_per_extruder": false,
@@ -1369,7 +1356,7 @@
                     "default_value": 50,
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
-                    "limit_to_extruder": "fiber_infill_extruder_nr",
+                    "enabled": "reinforcement_enabled and fiber_infill_pattern!= 'none'",
                     "settable_per_mesh": true,
                     "settable_per_extruder": true,
                     "children": {
@@ -1380,23 +1367,23 @@
                             "type": "float",
                             "default_value": 50,
                             "minimum_value": "0",
+                            "value": "fiber_density",
                             "maximum_value_warning": "100",
-                            "enabled": "reinforcement_enabled_classic",
-                            "settable_per_mesh": true,
+                            "enabled": "reinforcement_enabled_classic and fiber_infill_pattern!= 'none'",
+                            "settable_per_mesh": false,
                             "settable_per_extruder": true,
                             "children": {
                                 "fiber_line_distance_classic": {
                                     "label": "Classic Line Distance",
                                     "description": "Distance between the printed fiber lines. This setting is calculated by the fiber density and the fiber line width.",
                                     "unit": "mm",
-                                    "type": "float",
+                                    "type": "[float]",
                                     "default_value": 2,
                                     "minimum_value": "0",
                                     "minimum_value_warning": "fiber_infill_line_width",
-                                    "enabled": "reinforcement_enabled_classic",
-                                    "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_classic * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
-                                    "limit_to_extruder": "fiber_infill_extruder_nr",
-                                    "settable_per_mesh": true,
+                                    "enabled": "reinforcement_enabled_classic and fiber_infill_pattern!= 'none'",
+                                    "value": "[0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_classic * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))]",
+                                    "settable_per_mesh": false,
                                     "settable_per_extruder": true
                                 }
                             }
@@ -1409,54 +1396,54 @@
                             "default_value": 50,
                             "minimum_value": "0",
                             "maximum_value_warning": "100",
-                            "enabled": "reinforcement_enabled_cylindrical",
-                            "limit_to_extruder": "fiber_infill_extruder_nr",
-                            "settable_per_mesh": true,
+                            "value": "fiber_density",
+                            "enabled": "reinforcement_enabled_cylindrical and fiber_infill_pattern!= 'none'",
+                            "settable_per_mesh": false,
                             "settable_per_extruder": true,
                             "children": {
                                 "fiber_line_distance_cylindrical": {
                                     "label": "Cylindrical Line Distance",
                                     "description": "Distance between the printed fiber lines. This setting is calculated by the fiber density and the fiber line width.",
                                     "unit": "mm",
-                                    "type": "float",
+                                    "type": "[float]",
                                     "default_value": 2,
                                     "minimum_value": "0",
                                     "minimum_value_warning": "fiber_infill_line_width",
-                                    "enabled": "reinforcement_enabled_cylindrical",
-                                    "value": "0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_cylindrical * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))",
-                                    "limit_to_extruder": "fiber_infill_extruder_nr",
-                                    "settable_per_mesh": true,
+                                    "enabled": "reinforcement_enabled_cylindrical and fiber_infill_pattern!= 'none'",
+                                    "value": "[0 if fiber_density == 0 else (fiber_infill_line_width * 100) / fiber_density_cylindrical * (2 if infill_pattern == 'grid' else (3 if infill_pattern == 'triangles' or infill_pattern == 'trihexagon' or infill_pattern == 'cubic' or infill_pattern == 'cubicsubdiv' else (2 if infill_pattern == 'tetrahedral' or infill_pattern == 'quarter_cubic' else (1 if infill_pattern == 'cross' or infill_pattern == 'cross_3d' else 1))))]",
+                                    "settable_per_mesh": false,
                                     "settable_per_extruder": true
                                 }
                             }
                         }
                     }
                 },
-
                 "fiber_infill_round_connect": {
                     "label": "Connect Fiber Infill Lines",
                     "description": "Connect the ends where the infill pattern meets the inner wall using a line which follows the shape of the inner wall. Enabling this setting can make the infill adhere to the walls better and reduce the effects of infill on the quality of vertical surfaces. Disabling this setting reduces the amount of material used.",
                     "type": "bool",
                     "default_value": false,
-                    "enabled": "(fiber_infill_pattern == 'lines' or fiber_infill_pattern == 'grid' or fiber_infill_pattern == 'concentric') and reinforcement_enabled",
+                    "enabled": "reinforcement_enabled and fiber_infill_pattern!= 'none'",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
                     "children": {
                         "fiber_infill_round_connect_classic": {
                             "label": "Connect Infill Lines Classic",
                             "description": "Connect the ends where the infill pattern meets the inner wall using a line which follows the shape of the inner wall. Enabling this setting can make the infill adhere to the walls better and reduce the effects of infill on the quality of vertical surfaces. Disabling this setting reduces the amount of material used.",
-                            "type": "bool",
-                            "default_value": false,
-                            "enabled": "(fiber_infill_pattern_classic == 'lines' or fiber_infill_pattern_classic == 'grid' or fiber_infill_pattern == 'concentric') and reinforcement_enabled_classic",
+                            "type": "[int]",
+                            "default_value": 0,
+                            "enabled": "reinforcement_enabled_classic and fiber_infill_pattern!= 'none' and fiber_infill_round_connect",
+                            "value": "[1 if fiber_infill_round_connect else 0]",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
                         },
                         "fiber_infill_round_connect_cylindrical": {
                             "label": "Connect Infill Lines Cylindrical",
                             "description": "Connect the ends where the infill pattern meets the inner wall using a line which follows the shape of the inner wall. Enabling this setting can make the infill adhere to the walls better and reduce the effects of infill on the quality of vertical surfaces. Disabling this setting reduces the amount of material used.",
-                            "type": "bool",
-                            "default_value": false,
-                            "enabled": "(fiber_infill_pattern_cylindrical == 'lines' or fiber_infill_pattern_cylindrical == 'grid') and reinforcement_enabled_cylindrical",
+                            "type": "[int]",
+                            "default_value": 0,
+                            "value": "[1 if fiber_infill_round_connect else 0]",
+                            "enabled": "reinforcement_enabled_cylindrical and fiber_infill_pattern!= 'none' and fiber_infill_round_connect",
                             "settable_per_mesh": false,
                             "settable_per_extruder": false
                         }

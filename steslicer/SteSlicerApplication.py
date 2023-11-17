@@ -357,6 +357,7 @@ class SteSlicerApplication(QtApplication):
         SettingDefinition.addSettingType("extruder", None, str, Validator)
         SettingDefinition.addSettingType("optional_extruder", None, str, None)
         SettingDefinition.addSettingType("[int]", None, str, None)
+        SettingDefinition.addSettingType("[float]", None, str, None)
 
         SettingFunction.registerOperator("extruderValue", self._steslicer_formula_functions.getValueInExtruder)
         SettingFunction.registerOperator("extruderValues", self._steslicer_formula_functions.getValuesInAllExtruders)

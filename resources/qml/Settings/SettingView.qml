@@ -366,6 +366,8 @@ Item
                             return "SettingTextField.qml"
                         case "float":
                             return "SettingTextField.qml"
+                        case "[float]":
+                            return "SettingTextField.qml"
                         case "enum":
                             return "SettingComboBox.qml"
                         case "extruder":

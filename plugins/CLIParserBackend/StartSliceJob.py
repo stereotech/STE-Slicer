@@ -216,7 +216,7 @@ params_dict = {
         },
         "composite_layer_start": {
             "stack_key": "reinforcement_start_layer_cylindrical",
-            "default": 10
+            "default": 0
         },
         "composite_layer_count": {
             "stack_key": "reinforcement_layer_count_cylindrical",
@@ -224,7 +224,11 @@ params_dict = {
         },
         "composite_width": {
             "stack_key": "fiber_line_distance_cylindrical",
-            "default": 0.9
+            "default": 1.2
+        },
+        "composite_offset": {
+            "stack_key": "fiber_line_distance_cylindrical",
+            "default": 1.2
         },
         "composite_round_segm": {
             "stack_key": "",
@@ -274,15 +278,11 @@ params_dict = {
             "stack_key": "",
             "default_value": 0
         },
-        "composite_infill_round_double": {
+        "composite_infill_type": {
             "stack_key": "fiber_infill_pattern_cylindrical",
             "default": 1
         },
-        "composite_infill_round_connect": {
-            "stack_key": "",
-            "default": 1
-        },
-        "composite_fast": {
+        "composite_connect": {
             "stack_key": "fiber_infill_round_connect_cylindrical",
             "default": 0
         },
@@ -297,7 +297,16 @@ params_dict = {
         "composite_size": {
             "stack_key": "fiber_infill_line_width",
             "default": 1.2
+        },
+        "composite_walls_count": {
+            "stack_key": "reinforcement_wall_count_cylindrical",
+            "default": 0
+        },
+        "composite_infill_angle": {
+            "stack_key": "fiber_infill_angles_cylindrical",
+            "default": 45
         }
+
 
     },
     "GCodeSupport": {
@@ -428,6 +437,18 @@ params_dict = {
             "default_value": 0
         },
         "show_normals": {
+            "stack_key": "",
+            "default_value": 0
+        },
+        "show_traces_as_boxes": {
+            "stack_key": "",
+            "default_value": 1
+        },
+        "boxes_size": {
+            "stack_key": "",
+            "default_value": 1
+        },
+        "normalize_when_load": {
             "stack_key": "",
             "default_value": 0
         }
@@ -853,6 +874,25 @@ class StartSliceJob(Job):
         self._slice_message.append('-c')
         self._slice_message.append(temp_config.name)
 
+    def _generateSettings(self, name, setting: Dict, offset: int):
+        prev_setting = "".join(setting.get(name).split())
+        split_setting = prev_setting.strip("[]")
+        my_list = split_setting.rsplit(',', len(split_setting))
+        new_setting = ""
+        for i in range(len(my_list)):
+            if len(my_list[i]):
+                new_setting += "%s " % (int(my_list[i]) + offset)
+        return new_setting
+    def _generateSettingsFloat(self, name, setting: Dict, offset: int):
+        prev_setting = "".join(setting.get(name).split())
+        split_setting = prev_setting.strip("[]")
+        my_list = split_setting.rsplit(',', len(split_setting))
+        new_setting = ""
+        for i in range(len(my_list)):
+            if len(my_list[i]):
+                new_setting += "%s " % (float(my_list[i]) + offset)
+        return new_setting
+
     def _generateGlicerConfig(self, filename: str, settings: Dict) -> None:
         root = eltree.Element("root")
         normalize = "normalize_when_load"
@@ -883,13 +923,6 @@ class StartSliceJob(Job):
                         #if printing_mode in ["spherical", "spherical_full"]:
                         #    //setting_value = 100
                     if name == "infill_round_double":
-                        if setting_value == "grid":
-                            setting_value = "1"
-                        elif setting_value == "concentric":
-                            setting_value = "2"
-                        else:
-                            setting_value = "0"
-                    if name == "composite_infill_round_double":
                         if setting_value == "grid":
                             setting_value = "1"
                         elif setting_value == "concentric":
@@ -927,9 +960,57 @@ class StartSliceJob(Job):
                     if name == "round":
                         setting_value = "1" if settings.get("printing_mode") in ["cylindrical","cylindrical_full"] else "10"
                     if name == "composite_layer_start":
-                        setting_value = settings.get("reinforcement_start_layer_cylindrical") - 1           #
+                        setting_value = self._generateSettings("reinforcement_start_layer_cylindrical", settings, 1)
+                    if name == "composite_layer_count":
+                        setting_value = self._generateSettings("reinforcement_layer_count_cylindrical", settings, 0)
+                    if name == "composite_bottom_skin":
+                        setting_value = self._generateSettings("reinforcement_bottom_skin_layers_cylindrical", settings, 0)
+                    if name == "composite_top_skin":
+                        setting_value = self._generateSettings("reinforcement_top_skin_layers_cylindrical", settings, 0)
+                    if name == "composite_walls_count":
+                        setting_value = ""
+                        wall_count = self._generateSettings("reinforcement_wall_count_cylindrical", settings, 0)
+                        pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                        my_list = wall_count.rsplit(' ', len(wall_count))
+                        my_list1 = pattern.rsplit(' ', len(pattern))
+                        for i in range(len(my_list1)):
+                            if my_list1[i] == "2":
+                                setting_value += "%s " % (int(-1))
+                            else:
+                                setting_value += "%s " % ((my_list[i]))
+
                     if name == "composite_layer_space":
-                        setting_value = settings.get("reinforcement_intermediate_layers_cylindrical")+1     #
+                        setting_value = self._generateSettings("reinforcement_wall_count_cylindrical", settings, 1)
+                    if name == "composite_infill_type":
+                        setting_value = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                    if name == "composite_infill_angle":
+                        setting_value = self._generateSettings("fiber_infill_angles_cylindrical", settings, 0)
+                    if name == "composite_connect":
+                        setting_value = self._generateSettings("fiber_infill_round_connect_cylindrical", settings, 0)
+                    if name == "composite_width":
+                        setting_value = ""
+                        line_distance = self._generateSettingsFloat("fiber_line_distance_cylindrical", settings, 0)
+                        pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                        distance_list = line_distance.rsplit(' ', len(line_distance))
+                        pattern_list = pattern.rsplit(' ', len(pattern))
+                        for i in range(len(pattern_list)):
+                            if pattern_list[i] == "2":
+                                setting_value += "%s " % (float(1.2))
+                            else:
+                                setting_value += "%s " % (distance_list[i])
+
+                    if name == "composite_offset":
+                        setting_value = ""
+                        line_distance = self._generateSettingsFloat("fiber_line_distance_cylindrical", settings, 0)
+                        pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                        distance_list = line_distance.rsplit(' ', len(line_distance))
+                        pattern_list = pattern.rsplit(' ', len(pattern))
+                        for i in range(len(pattern_list)):
+                            if len(pattern_list[i]):
+                                if pattern_list[i] == "2":
+                                     setting_value += "%s " % (distance_list[i])
+                                else:
+                                    setting_value += "%s " % (float(1.2))
                     if name == "upskin_width" and region == "GCodeSupport":
                         setting_value = settings.get("support_top_layers") if settings.get("support_roof_enable") else "0"
                     if name == "downskin_width" and region == "GCodeSupport":
