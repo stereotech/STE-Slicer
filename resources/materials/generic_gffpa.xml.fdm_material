@@ -18,6 +18,7 @@ This is the baseline profile for Glass Fiber Filled Polyamides for the Print Pro
     <properties>
         <density>1.35</density>
         <diameter>2.85</diameter>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="anti ooze retract position">-8</setting>

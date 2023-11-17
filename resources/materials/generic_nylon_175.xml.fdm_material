@@ -18,6 +18,7 @@ Generic Nylon 1.75mm profile. The data in this file may not be correct for your 
     <properties>
         <density>1.14</density>
         <diameter>1.75</diameter>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="print temperature">245</setting>

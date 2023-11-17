@@ -18,6 +18,7 @@ Generic break away support material profile. The data in this file may not be co
     <properties>
         <density>1.22</density>
         <diameter>2.85</diameter>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="anti ooze retract position">-20</setting>

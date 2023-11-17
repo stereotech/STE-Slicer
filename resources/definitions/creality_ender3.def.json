@@ -1,0 +1,54 @@
+{
+    "version": 2,
+    "name": "Creality Ender-3 / Ender-3 v2",
+    "inherits": "creality_base",
+    "metadata":
+    {
+        "visible": true,
+        "quality_definition": "creality_base"
+    },
+    "overrides":
+    {
+        "gantry_height": { "value": 25 },
+        "machine_name": { "default_value": "Creality Ender-3" },
+        "machine_depth": {
+            "default_value": 235,
+            "value": "235 if resolveOrValue('printing_mode') in ['classic'] else 150"
+        },
+        "machine_height": {
+            "default_value": 250,
+            "value": "250 if resolveOrValue('printing_mode') in ['classic'] else 120"
+        },
+        "machine_width": {
+            "default_value": 235,
+            "value": "235 if resolveOrValue('printing_mode') in ['classic'] else 150"
+        },
+        "machine_disallowed_areas":
+        {
+            "default_value": [
+                [
+                    [-117.5, 117.5],
+                    [-117.5, 108],
+                    [117.5, 108],
+                    [117.5, 117.5]
+                ],
+                [
+                    [-117.5, -108],
+                    [-117.5, -117.5],
+                    [117.5, -117.5],
+                    [117.5, -108]
+                ]
+            ],
+            "value": "[[[-117.5, 117.5], [-117.5, 108], [117.5, 108], [117.5, 117.5]], [[-117.5, -108], [-117.5, -117.5], [117.5, -117.5], [117.5, -108]]] if resolveOrValue('machine_shape') == 'rectangular' else []"
+        },
+        "machine_head_with_fans_polygon":
+        {
+            "default_value": [
+                [-26, 34],
+                [-26, -32],
+                [32, -32],
+                [32, 34]
+            ]
+        }
+    }
+}

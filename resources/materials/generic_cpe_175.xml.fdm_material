@@ -18,6 +18,7 @@ Generic CPE 1.75mm profile. The data in this file may not be correct for your sp
     <properties>
         <density>1.27</density>
         <diameter>1.75</diameter>
+        <weight>750</weight>
     </properties>
     <settings>
         <setting key="print temperature">240</setting>
