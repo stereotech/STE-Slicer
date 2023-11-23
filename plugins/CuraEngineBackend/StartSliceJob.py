@@ -633,6 +633,7 @@ class StartSliceJob(Job):
         settings["machine_end_gcode"] = self._expandGcodeTokens(
             settings["machine_end_gcode"], initial_extruder_nr)
 
+        settings_test = settings["fiber_infill_pattern_classic"]
         printing_mode = settings["printing_mode"]
         if printing_mode in ["classic", "cylindrical_full", "spherical_full", "conical_full"]:
             settings["infill_extruder_nr"] = settings["classic_infill_extruder_nr"]
@@ -671,6 +672,19 @@ class StartSliceJob(Job):
             setting_message.value = str(value).encode("utf-8")
             Job.yieldThread()
 
+    # this is a temporary function. necessary until reinforcement ranges are implemented
+    def _settingPrepare(self, name: str, setting: Dict):
+        settings_test = setting[name]
+        if isinstance(settings_test, list):
+            my_list = settings_test
+        else:
+            prev_setting = "".join(settings_test.split())
+            split_setting = prev_setting.strip("[]")
+            my_list = split_setting.rsplit(',', len(split_setting))
+        new_setting = ""
+        if my_list[0] != '':
+            new_setting += "%s " % (float(my_list[0]))
+        return new_setting
     # Sends for some settings which extruder they should fallback to if not
     #   set.
     #
