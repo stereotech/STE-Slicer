@@ -1358,8 +1358,8 @@
                     "minimum_value": "0",
                     "maximum_value_warning": "100",
                     "enabled": "reinforcement_enabled and fiber_infill_pattern!= 'none'",
-                    "settable_per_mesh": true,
-                    "settable_per_extruder": true,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
                     "children": {
                         "fiber_density_classic": {
                             "label": "Classic Fiber Density",
@@ -1379,7 +1379,7 @@
                                     "description": "Distance between the printed fiber lines. This setting is calculated by the fiber density and the fiber line width.",
                                     "unit": "mm",
                                     "type": "float",
-                                    "default_value": 2,
+                                    "default_value": 0,
                                     "minimum_value": "0",
                                     "minimum_value_warning": "fiber_infill_line_width",
                                     "enabled": "reinforcement_enabled_classic and fiber_infill_pattern!= 'none'",

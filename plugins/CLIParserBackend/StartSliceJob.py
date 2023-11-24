@@ -1019,7 +1019,7 @@ class StartSliceJob(Job):
                     if name == "round":
                         setting_value = "1" if settings.get("printing_mode") in ["cylindrical","cylindrical_full"] else "10"
                     if name == "composite_layer_start":
-                        setting_value = self._generateSettings("reinforcement_start_layer_cylindrical", settings, 0)
+                        setting_value = self._generateSettings("reinforcement_start_layer_cylindrical", settings, -1)
                     if name == "composite_layer_count":
                         setting_value = self._generateSettings("reinforcement_layer_count_cylindrical", settings, 0)
                     if name == "composite_bottom_skin":
@@ -1048,27 +1048,33 @@ class StartSliceJob(Job):
                         setting_value = self._generateSettings("fiber_infill_round_connect_cylindrical", settings, 0)
                     if name == "composite_width":
                         setting_value = ""
-                        line_distance = self._generateSettingsFloat("fiber_line_distance_cylindrical", settings, 0)
-                        pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
-                        distance_list = line_distance.rsplit(' ', len(line_distance))
-                        pattern_list = pattern.rsplit(' ', len(pattern))
-                        for i in range(len(pattern_list)):
-                            if pattern_list[i] == "2":
-                                setting_value += "%s " % (float(1.2))
-                            else:
-                                setting_value += "%s " % (distance_list[i])
+                        if settings.get("reinforcement_enabled_cylindrical"):
+                            line_distance = self._generateSettingsFloat("fiber_line_distance_cylindrical", settings, 0)
+                            pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                            distance_list = line_distance.rsplit(' ', len(line_distance))
+                            pattern_list = pattern.rsplit(' ', len(pattern))
+                            for i in range(len(pattern_list)):
+                                if pattern_list[i] == "2":
+                                    setting_value += "%s " % (float(1.2))
+                                else:
+                                    setting_value += "%s " % (distance_list[i])
+                        else:
+                            setting_value += "%s " % (float(0))
                     if name == "composite_offset":
                         setting_value = ""
-                        line_distance = self._generateSettingsFloat("fiber_line_distance_cylindrical", settings, 0)
-                        pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
-                        distance_list = line_distance.rsplit(' ', len(line_distance))
-                        pattern_list = pattern.rsplit(' ', len(pattern))
-                        for i in range(len(pattern_list)):
-                            if len(pattern_list[i]):
-                                if pattern_list[i] == "2":
-                                     setting_value += "%s " % (distance_list[i])
-                                else:
-                                    setting_value += "%s " % (float(1.2))
+                        if settings.get("reinforcement_enabled_cylindrical"):
+                            line_distance = self._generateSettingsFloat("fiber_line_distance_cylindrical", settings, 0)
+                            pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                            distance_list = line_distance.rsplit(' ', len(line_distance))
+                            pattern_list = pattern.rsplit(' ', len(pattern))
+                            for i in range(len(pattern_list)):
+                                if len(pattern_list[i]):
+                                    if pattern_list[i] == "2":
+                                        setting_value += "%s " % (distance_list[i])
+                                    else:
+                                        setting_value += "%s " % (float(1.2))
+                        else:
+                            setting_value += "%s " % (float(0))
                     if name == "upskin_width" and region == "GCodeSupport":
                         setting_value = settings.get("support_top_layers") if settings.get("support_roof_enable") else "0"
                     if name == "downskin_width" and region == "GCodeSupport":

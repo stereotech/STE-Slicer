@@ -657,9 +657,9 @@ class StartSliceJob(Job):
             settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_classic"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_classic"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_classic"]
-            settings["fiber_infill_pattern"] = settings["fiber_infill_pattern_classic"]
+            settings["fiber_infill_pattern"] = self._getFiberPattern("fiber_infill_pattern_classic", settings)
             settings["fiber_density"] = settings["fiber_density_classic"]
-            settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_classic"]
+            settings["fiber_infill_round_connect"] = self._getFiberConnect("fiber_infill_round_connect_classic", settings)
             settings["fiber_line_distance"] = settings["fiber_line_distance_classic"]
             settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_classic"]
             settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_classic"]
@@ -684,6 +684,38 @@ class StartSliceJob(Job):
         new_setting = ""
         if my_list[0] != '':
             new_setting += "%s " % (float(my_list[0]))
+        return new_setting
+
+    # this is a temporary function. necessary until reinforcement ranges are implemented
+    def _getFiberPattern(self,name: str, setting: Dict):
+        settings_test = setting[name]
+        new_setting = ""
+        if isinstance(settings_test, list):
+            my_list = settings_test
+        else:
+            prev_setting = "".join(settings_test.split())
+            split_setting = prev_setting.strip("[]")
+            my_list = split_setting.rsplit(',', len(split_setting))
+        if my_list[0] == 2:
+            new_setting += "concentric"
+        elif my_list[0] == 1:
+            new_setting += "grid"
+        else:
+            new_setting += "lines"
+        return new_setting
+    def _getFiberConnect(self,name: str, setting: Dict):
+        settings_test = setting[name]
+        #new_setting = ""
+        if isinstance(settings_test, list):
+            my_list = settings_test
+        else:
+            prev_setting = "".join(settings_test.split())
+            split_setting = prev_setting.strip("[]")
+            my_list = split_setting.rsplit(',', len(split_setting))
+        if my_list[0] == 0:
+            new_setting = (bool(0))
+        else:
+            new_setting = (bool(1))
         return new_setting
     # Sends for some settings which extruder they should fallback to if not
     #   set.
