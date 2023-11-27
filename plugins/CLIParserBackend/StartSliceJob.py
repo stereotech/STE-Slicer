@@ -122,6 +122,70 @@ params_dict = {
         }
     },
     "GCode": {
+        "composite_layer_start": {
+            "stack_key": "reinforcement_start_layer_cylindrical",
+            "default": 0
+        },
+        "composite_layer_count": {
+            "stack_key": "reinforcement_layer_count_cylindrical",
+            "default_value": 2
+        },
+        "composite_width": {
+            "stack_key": "fiber_line_distance_cylindrical",
+            "default": 1.2
+        },
+        "composite_offset": {
+            "stack_key": "fiber_line_distance_cylindrical",
+            "default": 1.2
+        },
+        "composite_round_segm": {
+            "stack_key": "",
+            "default_value": 16
+        },
+        "composite_round_radius": {
+            "stack_key": "",
+            "default_value": 1
+        },
+        "composite_round": {
+            "stack_key": "",
+            "default_value": 4
+        },
+        "composite_min_length": {
+            "stack_key": "reinforcement_min_fiber_line_length",
+            "default_value": 999999
+        },
+        "composite_bottom_skin": {
+            "stack_key": "reinforcement_bottom_skin_layers_cylindrical",
+            "default_value": 4,
+        },
+        "composite_top_skin": {
+            "stack_key": "reinforcement_top_skin_layers_cylindrical",
+            "default_value": 1
+        },
+        "composite_infill_type": {
+            "stack_key": "fiber_infill_pattern_cylindrical",
+            "default_value": 1
+        },
+        "composite_connect": {
+            "stack_key": "fiber_infill_round_connect_cylindrical",
+            "default_value": 0
+        },
+        "composite_layer_space": {
+            "stack_key": "reinforcement_intermediate_layers_cylindrical",
+            "default_value": 0
+        },
+        "composite_size": {
+            "stack_key": "fiber_infill_line_width",
+            "default": 1.2
+        },
+        "composite_walls_count": {
+            "stack_key": "reinforcement_wall_count_cylindrical",
+            "default": 0
+        },
+        "composite_infill_angle": {
+            "stack_key": "fiber_infill_angles_cylindrical",
+            "default": 45
+        },
         "cli_quality": {
             "stack_key": "",
             "default_value": 4
@@ -214,58 +278,6 @@ params_dict = {
             "stack_key": "",
             "default_value": 0
         },
-        "composite_layer_start": {
-            "stack_key": "reinforcement_start_layer_cylindrical",
-            "default_value": 10
-        },
-        "composite_layer_count": {
-            "stack_key": "reinforcement_layer_count_cylindrical",
-            "default_value": 2
-        },
-        "composite_width": {
-            "stack_key": "fiber_line_distance_cylindrical",
-            "default_value": 0.9
-        },
-        "composite_offset": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "composite_round_segm": {
-            "stack_key": "",
-            "default_value": 16
-        },
-        "composite_walls_count": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "composite_infill_angle": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "composite_connect": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "composite_round_radius": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "composite_round": {
-            "stack_key": "",
-            "default_value": 4
-        },
-        "composite_min_length": {
-            "stack_key": "",#"reinforcement_min_fiber_line_length",
-            "default_value": 999999
-        },
-        "composite_bottom_skin": {
-            "stack_key": "reinforcement_bottom_skin_layers_cylindrical",
-            "default_value": 4,
-        },
-        "composite_top_skin": {
-            "stack_key": "reinforcement_top_skin_layers_cylindrical",
-            "default_value": 1
-        },
         "3d_slicer_sweep_type": {
             "stack_key": "printing_mode",
             "default_value": 0
@@ -287,26 +299,6 @@ params_dict = {
             "default_value": 2
         },
         "out_export_separately": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "composite_infill_round_double": {
-            "stack_key": "fiber_infill_pattern_cylindrical",
-            "default_value": 1
-        },
-        "composite_infill_round_connect": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "composite_fast": {
-            "stack_key": "fiber_infill_round_connect_cylindrical",
-            "default_value": 0
-        },
-        "composite_layer_space": {
-            "stack_key": "reinforcement_intermediate_layers_cylindrical",
-            "default_value": 0
-        },
-        "composite_infill_type": {
             "stack_key": "",
             "default_value": 0
         },
@@ -463,6 +455,10 @@ params_dict = {
             "default_value": 1
         },
         "normalize_when_load": {
+            "stack_key": "",
+            "default_value": 0
+        },
+        "Spotlight": {
             "stack_key": "",
             "default_value": 0
         }
@@ -889,6 +885,33 @@ class StartSliceJob(Job):
         self._slice_message.append('-c')
         self._slice_message.append(temp_config.name)
 
+    def _generateSettings(self, name, setting: Dict, offset: int):
+        setting_value = setting.get(name)
+        if isinstance(setting.get(name), list):
+            my_list = setting.get(name)
+        else:
+            prev_setting = "".join(setting.get(name).split())
+            split_setting = prev_setting.strip("[]")
+            my_list = split_setting.rsplit(',', len(split_setting))
+        new_setting = ""
+        for i in range(len(my_list)):
+            if my_list[i] != '':
+                new_setting += "%s " % (int(my_list[i]) + offset)
+        return new_setting
+
+    def _generateSettingsFloat(self, name, setting: Dict, offset: int):
+        if isinstance(setting.get(name), list):
+            my_list = setting.get(name)
+        else:
+            prev_setting = "".join(setting.get(name).split())
+            split_setting = prev_setting.strip("[]")
+            my_list = split_setting.rsplit(',', len(split_setting))
+        new_setting = ""
+        for i in range(len(my_list)):
+            if my_list[i] != '':
+                new_setting += "%s " % (float(my_list[i]) + offset)
+        return new_setting
+
     def _generateGlicerConfig(self, filename: str, settings: Dict) -> None:
         root = eltree.Element("root")
         normalize = "normalize_when_load"
@@ -921,13 +944,6 @@ class StartSliceJob(Job):
                     if name == "infill_round_double":
                         if setting_value == "grid":
                             setting_value = "0"
-                        elif setting_value == "concentric":
-                            setting_value = "2"
-                        else:
-                            setting_value = "0"
-                    if name == "composite_infill_round_double":
-                        if setting_value == "grid":
-                            setting_value = "1"
                         elif setting_value == "concentric":
                             setting_value = "2"
                         else:
@@ -1003,9 +1019,62 @@ class StartSliceJob(Job):
                     if name == "round":
                         setting_value = "1" if settings.get("printing_mode") in ["cylindrical","cylindrical_full"] else "10"
                     if name == "composite_layer_start":
-                        setting_value = settings.get("reinforcement_start_layer_cylindrical") - 1           #
+                        setting_value = self._generateSettings("reinforcement_start_layer_cylindrical", settings, -1)
+                    if name == "composite_layer_count":
+                        setting_value = self._generateSettings("reinforcement_layer_count_cylindrical", settings, 0)
+                    if name == "composite_bottom_skin":
+                        setting_value = self._generateSettings("reinforcement_bottom_skin_layers_cylindrical", settings, 0)
+                    if name == "composite_top_skin":
+                        setting_value = self._generateSettings("reinforcement_top_skin_layers_cylindrical", settings, 0)
+                    if name == "composite_walls_count":
+                        setting_value = ""
+                        wall_count = self._generateSettings("reinforcement_wall_count_cylindrical", settings, 0)
+                        pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                        my_list = wall_count.rsplit(' ', len(wall_count))
+                        my_list1 = pattern.rsplit(' ', len(pattern))
+                        for i in range(len(my_list1)):
+                            if my_list1[i] == "2":
+                                setting_value += "%s " % (int(-1))
+                            else:
+                                setting_value += "%s " % ((my_list[i]))
                     if name == "composite_layer_space":
-                        setting_value = settings.get("reinforcement_intermediate_layers_cylindrical")+1     #
+                        setting_value = self._generateSettings("reinforcement_intermediate_layers_cylindrical", settings, 1)
+                    if name == "composite_infill_type":
+                        setting_value = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                        count = 1
+                    if name == "composite_infill_angle":
+                        setting_value = self._generateSettings("fiber_infill_angles_cylindrical", settings, 0)
+                    if name == "composite_connect":
+                        setting_value = self._generateSettings("fiber_infill_round_connect_cylindrical", settings, 0)
+                    if name == "composite_width":
+                        setting_value = ""
+                        if settings.get("reinforcement_enabled_cylindrical"):
+                            line_distance = self._generateSettingsFloat("fiber_line_distance_cylindrical", settings, 0)
+                            pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                            distance_list = line_distance.rsplit(' ', len(line_distance))
+                            pattern_list = pattern.rsplit(' ', len(pattern))
+                            for i in range(len(pattern_list)):
+                                if pattern_list[i] == "2":
+                                    setting_value += "%s " % (float(1.2))
+                                else:
+                                    setting_value += "%s " % (distance_list[i])
+                        else:
+                            setting_value += "%s " % (float(0))
+                    if name == "composite_offset":
+                        setting_value = ""
+                        if settings.get("reinforcement_enabled_cylindrical"):
+                            line_distance = self._generateSettingsFloat("fiber_line_distance_cylindrical", settings, 0)
+                            pattern = self._generateSettings("fiber_infill_pattern_cylindrical", settings, 0)
+                            distance_list = line_distance.rsplit(' ', len(line_distance))
+                            pattern_list = pattern.rsplit(' ', len(pattern))
+                            for i in range(len(pattern_list)):
+                                if len(pattern_list[i]):
+                                    if pattern_list[i] == "2":
+                                        setting_value += "%s " % (distance_list[i])
+                                    else:
+                                        setting_value += "%s " % (float(1.2))
+                        else:
+                            setting_value += "%s " % (float(0))
                     if name == "upskin_width" and region == "GCodeSupport":
                         setting_value = settings.get("support_top_layers") if settings.get("support_roof_enable") else "0"
                     if name == "downskin_width" and region == "GCodeSupport":
@@ -1086,15 +1155,15 @@ class StartSliceJob(Job):
 
             settings["layer_height_0"] = settings["cylindrical_layer_height_0"]
             settings["layer_height"] = settings["cylindrical_layer_height"]
-            settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_cylindrical"]
+            #settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_cylindrical"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_cylindrical"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
             settings["reinforcement_enabled"] = settings["reinforcement_enabled_cylindrical"]
-            settings["fiber_infill_pattern"] = settings["fiber_infill_pattern_cylindrical"]
-            settings["fiber_density"] = settings["fiber_density_cylindrical"]
-            settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_cylindrical"]
-            settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_cylindrical"]
-            settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_cylindrical"]
+            #settings["fiber_infill_pattern"] = settings["fiber_infill_pattern_cylindrical"]
+           #settings["fiber_density"] = settings["fiber_density_cylindrical"]
+            #settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_cylindrical"]
+            #settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_cylindrical"]
+           # settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_cylindrical"]
 
             settings["support_z_distance"] = settings["support_z_distance_cylindrical"]
             settings["support_top_distance"] = settings["support_top_distance_cylindrical"]

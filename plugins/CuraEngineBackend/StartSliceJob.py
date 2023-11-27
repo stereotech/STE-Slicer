@@ -239,7 +239,8 @@ class StartSliceJob(Job):
                 if printing_mode == "cylindrical_full":
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
                         "cylindrical_mode_base_diameter", "value") / 2
-                    overlap = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty("cylindrical_mode_overlap", "value") / 2
+                    overlap = SteSlicerApplication.getInstance().getGlobalContainerStack(
+                    ).getProperty("cylindrical_mode_overlap", "value") / 2
                     height = node.getBoundingBox().height * 2
                     if radius <= 15:
                         section = 64
@@ -259,10 +260,14 @@ class StartSliceJob(Job):
                     depth = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
                         "spherical_mode_base_depth", "value")
                     radius = max(width, height, depth)
-                    cutting_mesh = trimesh.primitives.Sphere(radius=radius).to_mesh()
-                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(width/radius, [0,0,0], [1,0,0]))
-                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(depth/radius, [0,0,0], [0,0,1]))
-                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(height/radius, [0,0,0], [0,1,0]))
+                    cutting_mesh = trimesh.primitives.Sphere(
+                        radius=radius).to_mesh()
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(
+                        width/radius, [0, 0, 0], [1, 0, 0]))
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(
+                        depth/radius, [0, 0, 0], [0, 0, 1]))
+                    cutting_mesh.apply_transform(trimesh.transformations.scale_matrix(
+                        height/radius, [0, 0, 0], [0, 1, 0]))
                 elif printing_mode == "conical_full":
                     radius = SteSlicerApplication.getInstance().getGlobalContainerStack().getProperty(
                         "conical_mode_base_radius", "value")
@@ -274,7 +279,8 @@ class StartSliceJob(Job):
                         section = 256
                     else:
                         section = 1024
-                    cutting_mesh = cone(radius=radius, height=height, sections=section, transform=rotation_matrix(-numpy.pi / 2, [1, 0, 0]))
+                    cutting_mesh = cone(radius=radius, height=height, sections=section,
+                                        transform=rotation_matrix(-numpy.pi / 2, [1, 0, 0]))
                 else:
                     cutting_mesh = None
 
@@ -345,17 +351,20 @@ class StartSliceJob(Job):
                     cutting_node.setName("cut_" + node.getName())
                     cutting_node.setMeshData(data)
                     cut_list.append(cutting_node)
-                    support_enable_top_support = stack.getProperty("support_enable_top_support", "value")
-                    support_enable = stack.getProperty("support_enable", "value")
+                    support_enable_top_support = stack.getProperty(
+                        "support_enable_top_support", "value")
+                    support_enable = stack.getProperty(
+                        "support_enable", "value")
                     if support_enable and support_enable_top_support:
                         try:
-                            cutting_support = cutting_mesh.difference(cutting_result, engine="scad")
+                            cutting_support = cutting_mesh.difference(
+                                cutting_result, engine="scad")
                             cutting_support.fill_holes()
                             cutting_support.fix_normals()
                             cutting_support_data = MeshData.MeshData(vertices=cutting_support.vertices.astype('float32'),
-                                                     normals=cutting_support.face_normals.astype(
-                                                         'float32'),
-                                                     indices=cutting_support.faces.astype('int64'))
+                                                                     normals=cutting_support.face_normals.astype(
+                                'float32'),
+                                indices=cutting_support.faces.astype('int64'))
                             cutting_support_node = SteSlicerSceneNode(
                                 node.getParent(), no_setting_override=True)
                             cutting_support_stack = cutting_support_node.callDecoration(
@@ -363,7 +372,8 @@ class StartSliceJob(Job):
                             if not cutting_support_stack:
                                 cutting_support_node.addDecorator(
                                     SettingOverrideDecorator())
-                                cutting_support_stack = cutting_support_node.callDecoration("getStack")
+                                cutting_support_stack = cutting_support_node.callDecoration(
+                                    "getStack")
                             settings = cutting_support_stack.getTop()
                             if not (settings.getInstance("support_mesh") and settings.getProperty("support_mesh", "value")):
                                 definition = cutting_support_stack.getSettingDefinition(
@@ -375,8 +385,10 @@ class StartSliceJob(Job):
                                 # Ensure that the state is not seen as a user state.
                                 new_instance.resetState()
                                 settings.addInstance(new_instance)
-                            cutting_support_node.setName("cut_support_" + node.getName())
-                            cutting_support_node.setMeshData(cutting_support_data)
+                            cutting_support_node.setName(
+                                "cut_support_" + node.getName())
+                            cutting_support_node.setMeshData(
+                                cutting_support_data)
                             cut_list.append(cutting_support_node)
                         except Exception as e:
                             Logger.log("e", "Failed to intersect model! %s", e)
@@ -524,7 +536,7 @@ class StartSliceJob(Job):
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
             result["prefix_end_gcode"] = ";prefix_end_gcode"
-        elif printing_mode in ["conical_full","conical"]:
+        elif printing_mode in ["conical_full", "conical"]:
             result["cylindrical_rotate"] = "G0 A0"
             result["coordinate_system"] = "G55"
             result["prefix_end_gcode"] = "G40"
@@ -633,6 +645,7 @@ class StartSliceJob(Job):
         settings["machine_end_gcode"] = self._expandGcodeTokens(
             settings["machine_end_gcode"], initial_extruder_nr)
 
+        settings_test = settings["fiber_infill_pattern_classic"]
         printing_mode = settings["printing_mode"]
         if printing_mode in ["classic", "cylindrical_full", "spherical_full", "conical_full"]:
             settings["infill_extruder_nr"] = settings["classic_infill_extruder_nr"]
@@ -656,9 +669,11 @@ class StartSliceJob(Job):
             settings["reinforcement_intermediate_layers"] = settings["reinforcement_intermediate_layers_classic"]
             settings["reinforcement_layer_count"] = settings["reinforcement_layer_count_classic"]
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_classic"]
-            settings["fiber_infill_pattern"] = settings["fiber_infill_pattern_classic"]
+            settings["fiber_infill_pattern"] = self._getFiberPattern(
+                "fiber_infill_pattern_classic", settings)
             settings["fiber_density"] = settings["fiber_density_classic"]
-            settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_classic"]
+            settings["fiber_infill_round_connect"] = self._getFiberConnect(
+                "fiber_infill_round_connect_classic", settings)
             settings["fiber_line_distance"] = settings["fiber_line_distance_classic"]
             settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_classic"]
             settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_classic"]
@@ -671,6 +686,48 @@ class StartSliceJob(Job):
             setting_message.value = str(value).encode("utf-8")
             Job.yieldThread()
 
+    # this is a temporary function. necessary until reinforcement ranges are implemented
+    def _settingPrepare(self, name: str, setting: Dict):
+        settings_test = setting[name]
+        if isinstance(settings_test, list):
+            my_list = settings_test
+        else:
+            prev_setting = "".join(settings_test.split())
+            split_setting = prev_setting.strip("[]")
+            my_list = split_setting.rsplit(',', len(split_setting))
+        new_setting = ""
+        if my_list[0] != '':
+            new_setting += "%s " % (float(my_list[0]))
+        return new_setting
+
+    # this is a temporary function. necessary until reinforcement ranges are implemented
+    def _getFiberPattern(self, name: str, setting: Dict):
+        settings_test = setting[name]
+        new_setting = ""
+        if isinstance(settings_test, list):
+            my_list = settings_test
+        else:
+            prev_setting = "".join(settings_test.split())
+            split_setting = prev_setting.strip("[]")
+            my_list = split_setting.rsplit(',', len(split_setting))
+        if my_list[0] == 2:
+            new_setting += "concentric"
+        elif my_list[0] == 1:
+            new_setting += "grid"
+        else:
+            new_setting += "lines"
+        return new_setting
+
+    def _getFiberConnect(self, name: str, setting: Dict):
+        settings_test = setting[name]
+        # new_setting = ""
+        if isinstance(settings_test, list):
+            my_list = settings_test
+        else:
+            prev_setting = "".join(settings_test.split())
+            split_setting = prev_setting.strip("[]")
+            my_list = split_setting.rsplit(',', len(split_setting))
+        return my_list[0] != 0
     # Sends for some settings which extruder they should fallback to if not
     #   set.
     #
@@ -679,6 +736,7 @@ class StartSliceJob(Job):
     #
     #   \param stack The global stack with all settings, from which to read the
     #   limit_to_extruder property.
+
     def _buildGlobalInheritsStackMessage(self, stack: ContainerStack) -> None:
         for key in stack.getAllKeys():
             extruder_position = int(
