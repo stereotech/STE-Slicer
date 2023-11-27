@@ -304,7 +304,7 @@ params_dict = {
         },
         "shell_round_double": {
             "stack_key": "top_bottom_pattern",
-            "default": 0
+            "default_value": 0
         },
         "infill_skin_angle": {
             "stack_key": "skin_angles",
