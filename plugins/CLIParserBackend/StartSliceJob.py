@@ -1054,10 +1054,11 @@ class StartSliceJob(Job):
                             distance_list = line_distance.rsplit(' ', len(line_distance))
                             pattern_list = pattern.rsplit(' ', len(pattern))
                             for i in range(len(pattern_list)):
-                                if pattern_list[i] == "2":
-                                    setting_value += "%s " % (float(1.2))
-                                else:
-                                    setting_value += "%s " % (distance_list[i])
+                                if len(pattern_list[i]):
+                                    if pattern_list[i] == "2":
+                                        setting_value += "%s " % (float(1.2))
+                                    else:
+                                        setting_value += "%s " % (distance_list[i])
                         else:
                             setting_value += "%s " % (float(0))
                     if name == "composite_offset":
