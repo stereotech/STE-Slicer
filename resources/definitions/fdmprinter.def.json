@@ -5911,6 +5911,19 @@
                     "settable_per_extruder": true,
                     "limit_to_extruder": "adhesion_extruder_nr"
                 },
+                "raft_thickness": {
+                    "label": "Total Raft Thickness",
+                    "description": "The total thickness of the raft layers",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.05,
+                    "value": "4*resolveOrValue('layer_height')",
+                    "minimum_value": "3*resolveOrValue('layer_height')",
+                    "enabled": "resolveOrValue('adhesion_type') == 'raft'",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "limit_to_extruder": "adhesion_extruder_nr"
+                },
                 "raft_surface_layers": {
                     "label": "Raft Top Layers",
                     "description": "The number of top layers on top of the 2nd raft layer. These are fully filled layers that the model sits on. 2 layers result in a smoother top surface than 1.",
