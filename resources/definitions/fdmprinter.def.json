@@ -5911,18 +5911,62 @@
                     "settable_per_extruder": true,
                     "limit_to_extruder": "adhesion_extruder_nr"
                 },
-                "raft_surface_layers": {
-                    "label": "Raft Top Layers",
-                    "description": "The number of top layers on top of the 2nd raft layer. These are fully filled layers that the model sits on. 2 layers result in a smoother top surface than 1.",
-                    "type": "int",
-                    "default_value": 1,
-                    "value": "2 if resolveOrValue('printing_mode') == 'classic' else ((3.5-resolveOrValue('raft_base_thickness')-resolveOrValue('raft_interface_thickness'))/resolveOrValue('raft_surface_thickness'))",
-                    "minimum_value": "0",
-                    "maximum_value_warning": "20",
+                "raft_total_height": {
+                    "label": "Total Raft Height",
+                    "description": "The total thickness of the raft layers",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0.05,
+                    "value": "10 * cylindrical_raft_thickness - (resolveOrValue('raft_base_thickness')  + resolveOrValue('raft_surface_thickness') + resolveOrValue('raft_interface_thickness')) if (cylindrical_mode_base_diameter < cylindrical_raft_diameter) else (resolveOrValue('raft_base_thickness')  + resolveOrValue('raft_surface_thickness') + resolveOrValue('raft_interface_thickness')) ",
+                    "minimum_value": "3*resolveOrValue('layer_height')",
                     "enabled": "resolveOrValue('adhesion_type') == 'raft'",
-                    "settable_per_mesh": false,
+                    "settable_per_mesh": true,
                     "settable_per_extruder": true,
-                    "limit_to_extruder": "adhesion_extruder_nr"
+                    "limit_to_extruder": "adhesion_extruder_nr",
+                    "children": {
+                        "raft_surface_layers": {
+                            "label": "Raft Top Layers",
+                            "description": "The number of top layers on top of the 2nd raft layer. These are fully filled layers that the model sits on. 2 layers result in a smoother top surface than 1.",
+                            "type": "int",
+                            "default_value": 1,
+                            "value": "math.ceil(round(resolveOrValue('raft_surface_thickness')/resolveOrValue('layer_height')))",
+                            "minimum_value": "0",
+                            "maximum_value_warning": "20",
+                            "enabled": "resolveOrValue('adhesion_type') == 'raft'",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": true,
+                            "limit_to_extruder": "adhesion_extruder_nr"
+                        },
+                        "raft_interface_height": {
+                            "label": "Raft Middle Height",
+                            "description": "height of the middle part of the raft in mm",
+                            "unit": "mm",
+                            "type": "float",
+                            "default_value": 0.1,
+                            "value": "resolveOrValue('raft_total_height') - resolveOrValue('raft_base_thickness') - resolveOrValue('raft_surface_thickness')",
+                            "minimum_value": 0.0,
+                            "maximum_value_warning": "40",
+                            "enabled": "resolveOrValue('adhesion_type') == 'raft' and  resolveOrValue('printing_mode') in ['classic', 'cylindrical_full']",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true,
+                            "limit_to_extruder": "adhesion_extruder_nr",
+                            "children":{
+                                "raft_interface_layers": {
+                                    "label": "Raft Middle Layers",
+                                    "description": "The number of layers between the base and the surface of the raft. These comprise the main thickness of the raft. Increasing this creates a thicker, sturdier raft.",
+                                    "type": "int",
+                                    "default_value": 1,
+                                    "minimum_value": "0",
+                                    "value": "math.ceil(round(raft_interface_height / raft_interface_thickness))",
+                                    "maximum_value_warning": "20",
+                                    "enabled": "resolveOrValue('adhesion_type') == 'raft' and  resolveOrValue('printing_mode') in ['classic', 'cylindrical_full']",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": true,
+                                    "limit_to_extruder": "adhesion_extruder_nr"
+                                }
+                            }
+                        }
+                    }
                 },
                 "raft_surface_thickness": {
                     "label": "Raft Top Layer Thickness",
@@ -5930,7 +5974,7 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 0.1,
-                    "value": "resolveOrValue('layer_height')",
+                    "value": "2 * resolveOrValue('layer_height') if resolveOrValue('printing_mode') == 'classic' else resolveOrValue('layer_height')",
                     "minimum_value": "0.001",
                     "minimum_value_warning": "0.04",
                     "maximum_value_warning": "0.75 * machine_nozzle_size",
@@ -5969,35 +6013,7 @@
                     "settable_per_extruder": true,
                     "limit_to_extruder": "adhesion_extruder_nr"
                 },
-                "raft_interface_height": {
-                    "label": "Raft Middle Height",
-                    "description": "height of the middle part of the raft in mm",
-                    "unit": "mm",
-                    "type": "float",
-                    "default_value": 0.1,
-                    "value": "1.5*resolveOrValue('layer_height')",
-                    "minimum_value": 0.0,
-                    "maximum_value_warning": "40",
-                    "enabled": "resolveOrValue('adhesion_type') == 'raft' and  resolveOrValue('printing_mode') in ['classic', 'cylindrical_full']",
-                    "settable_per_mesh": true,
-                    "settable_per_extruder": true,
-                    "limit_to_extruder": "adhesion_extruder_nr",
-                    "children":{
-                        "raft_interface_layers": {
-                            "label": "Raft Middle Layers",
-                            "description": "The number of layers between the base and the surface of the raft. These comprise the main thickness of the raft. Increasing this creates a thicker, sturdier raft.",
-                            "type": "int",
-                            "default_value": 1,
-                            "minimum_value": "0",
-                            "value": "math.ceil(round(raft_interface_height / raft_interface_thickness))",
-                            "maximum_value_warning": "20",
-                            "enabled": "resolveOrValue('adhesion_type') == 'raft' and  resolveOrValue('printing_mode') in ['classic', 'cylindrical_full']",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": true,
-                            "limit_to_extruder": "adhesion_extruder_nr"
-                        }
-                    }
-                },
+
                 "raft_interface_thickness": {
                     "label": "Raft Middle Thickness",
                     "description": "Layer thickness of the middle raft layer.",
@@ -6128,9 +6144,9 @@
                     "unit": "mm",
                     "type": "float",
                     "default_value": 15,
-                    "value": "cylindrical_mode_base_diameter if (cylindrical_mode_base_diameter < (non_printing_base_diameter+ 10*cylindrical_raft_thickness)) else (non_printing_base_diameter + 10 * cylindrical_raft_thickness)",
+                    "value": "cylindrical_mode_base_diameter if (cylindrical_mode_base_diameter > (non_printing_base_diameter + 10*cylindrical_raft_thickness)) else (non_printing_base_diameter + 10 * cylindrical_raft_thickness)",
                     "minimum_value": "6",
-                    "minimum_value_warning": "11",
+                    "minimum_value_warning": "6",
                     "maximum_value_warning": "50",
                     "enabled": "cylindrical_raft_enabled",
                     "settable_per_mesh": false,
