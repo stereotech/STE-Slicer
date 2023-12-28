@@ -192,7 +192,7 @@ class GenerateBasementJob(Job):
             Job.yieldThread()
 
         prefix_end_gcode = "G91\nG0 Z50\nG90\n"
-        end_gcode = "G54\nG0 Z100 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again\n"
+        end_gcode = "G54\nG0 Z200 A0 F600\nG92 E0 C0\nG1 F200 E-2\nG92 E0 ;zero the extruded length again\nG55\nG1 F200 E2\nG92 E0 ;zero the extruded length again\n"
         used_extruders = ExtruderManager.getInstance().getUsedExtruderStacks()
         machine_name = str(used_extruders[0].getMetaData().get("machine", "0"))
         if machine_name == "Creality Ender-3 / Ender-3 v2":
