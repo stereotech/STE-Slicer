@@ -75,6 +75,6 @@ class ProcessCliJob(Job):
         for index in range(len(self._output_path)):
             cli = cli_list.getRepeatedMessage("cli", index)
             cli.filename = self._output_path[index]
-            #cli.filename = 'C:\\Users\\frylo\\AppData\\Local\\Temp\\test2_perimeterinflll.cli'
+            #cli.filename = 'C:\\Users\\Oleg-Stereotech\\AppData\\Local\\Temp\\_f62emfw.cli'
 
         self.setResult(StartJobResult.Finished)

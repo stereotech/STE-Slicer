@@ -159,11 +159,20 @@ class CylindricalBackend(QObject, MultiBackend):
         self.backendStateChange.emit(BackendState.NotStarted)
         if self._slicing:
             self.close()
+            self._stored_layer_data = []
+            self._stored_optimized_layer_data = {}
+            self.processingProgress.emit(0.0)
+            self.backendStateChange.emit(BackendState.NotStarted)
 
         if self._generate_basement_job is not None:
             Logger.log("d", "Aborting generate basement job...")
             self._generate_basement_job.abort()
             self._generate_basement_job = None
+
+        if self._glicer_process is not None:
+            Logger.log("d", "Aborting process glicer job...")
+            self._glicer_process.kill()
+            self._glicer_process = None
 
         if self._process_cli_job is not None:
             Logger.log("d", "Aborting process cli job...")
@@ -174,6 +183,8 @@ class CylindricalBackend(QObject, MultiBackend):
             Logger.log("d", "Aborting process layers job...")
             self._process_layers_job.abort()
             self._process_layers_job = None
+
+
 
         if self._error_message:
             self._error_message.hide()
