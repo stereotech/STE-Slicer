@@ -164,6 +164,7 @@ class CylindricalBackend(QObject, MultiBackend):
             self.processingProgress.emit(0.0)
             self.backendStateChange.emit(BackendState.NotStarted)
 
+
         if self._generate_basement_job is not None:
             Logger.log("d", "Aborting generate basement job...")
             self._generate_basement_job.abort()
@@ -184,10 +185,9 @@ class CylindricalBackend(QObject, MultiBackend):
             self._process_layers_job.abort()
             self._process_layers_job = None
 
-
-
         if self._error_message:
             self._error_message.hide()
+
 
     @pyqtSlot()
     def forceSlice(self) -> None:
