@@ -204,7 +204,10 @@ class GenerateBasementJob(Job):
             first_print_temp = used_extruders[0].getProperty("material_print_temperature", "value")
             tool_change_gcode = "T%i\nM109 S%i\n" % (first_used_extruder, first_print_temp)
             end_gcode = tool_change_gcode + end_gcode
-        self._gcode_list.append(prefix_end_gcode + end_gcode)
+        if self._global_stack.getProperty("printing_mode", "value") == "discrete":
+            self._gcode_list.append(prefix_end_gcode + end_gcode + "G43\n")
+        else:
+            self._gcode_list.append(prefix_end_gcode + end_gcode)
 
     def processPolyline(self, layer_number: int, path: List[List[Union[float, int]]], gcode_line: str, layer_count: int) -> str:
         radius = self._non_printing_base_diameter / 2 + (self._raft_base_thickness * (layer_number + 1))
