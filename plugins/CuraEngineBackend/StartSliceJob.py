@@ -357,8 +357,10 @@ class StartSliceJob(Job):
                         "support_enable", "value")
                     if support_enable and support_enable_top_support:
                         try:
-                            cutting_support = cutting_mesh.difference(
-                                cutting_result, engine="scad")
+                            height = node.getBoundingBox().height
+                            offset = stack.getProperty("support_offset_cylindrical", "value")
+                            cutting_mesh.apply_transform(trimesh.transformations.scale_matrix((height+offset)/height, [0, 0, 0], [0, 1, 0]))
+                            cutting_support = cutting_mesh.difference(cutting_result, engine="scad")
                             cutting_support.fill_holes()
                             cutting_support.fix_normals()
                             cutting_support_data = MeshData.MeshData(vertices=cutting_support.vertices.astype('float32'),
