@@ -7,6 +7,7 @@ from string import Formatter
 from enum import IntEnum
 import time
 from typing import Any, cast, Dict, List, Optional, Set
+from collections import OrderedDict
 import re
 import Arcus #For typing.
 
@@ -37,434 +38,446 @@ from steslicer.Utils.TrimeshUtils import cone
 
 NON_PRINTING_MESH_SETTINGS = ["anti_overhang_mesh", "infill_mesh", "cutting_mesh"]
 
-params_dict = {
-    "Camera": {'xsize': {
-        "stack_key": "machine_width",
-        "default_value": 200,
-    }, 'ysize': {
-        "stack_key": "machine_depth",
-        "default_value": 200,
-    }, 'zsize': {
-        "stack_key": "machine_height",
-        "default_value": 200
-    }, 'rsize': {
-        "stack_key": "machine_width",
-        "default_value": 100
-    }, 'round': {
-        "stack_key": "",
-        "default_value": 1
-    }, 'zones': {
-        "stack_key": "",
-        "default_value": ""
-    }, 'segmentcount': {
-        "stack_key": "",
-        "default_value": 32
-    }, 'minimize_height': {
-        "stack_key": "",
-        "default_value": 0
-    }, 'minimize_square': {
-        "stack_key": "",
-        "default_value": 1
-    }, 'delta': {
-        "stack_key": "",
-        "default_value": 0.5
-    }, 'center': {
-        "stack_key": "machine_center_is_zero",
-        "default_value": 1
-    }, '_shadows': {
-        "stack_key": "",
-        "default_value": 1
-    }},
-    "Slice": {
-        "z_step": {
-            "stack_key": "cylindrical_layer_height",
-            "default_value": 0.2
-        },
-        "r_step": {
-            "stack_key": "cylindrical_layer_height",
-            "default_value": 0.2
-        },
-        "r_step0": {
-            "stack_key": "cylindrical_layer_height_0",
-            "default_value": 0.3
-        },
-        "r_start": {
-            "stack_key": "cylindrical_mode_base_diameter",
-            "default_value": 3
-        },
-        "round": {
-            "stack_key": "printing_mode",
-            "default_value": 1
-        },
-        "simplify_contours": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "support_model_delta_round": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "threads_round": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "3d_slice_type": {
-            "stack_key": "",
-            "default_value": 3
-        },
-        "round_segments": {
-            "stack_key": "cylindrical_round_segments",
-            "default_value": 64
-        },
-        "support_basement_only": {
-            "stack_key": "support_type",
-            "default_value": 1
-        }
-    },
-    "GCode": {
-        "composite_layer_start": {
-            "stack_key": "reinforcement_start_layer_cylindrical",
-            "default": 0
-        },
-        "composite_layer_count": {
-            "stack_key": "reinforcement_layer_count_cylindrical",
-            "default_value": 2
-        },
-        "composite_width": {
-            "stack_key": "fiber_line_distance_cylindrical",
-            "default": 1.2
-        },
-        "composite_offset": {
-            "stack_key": "fiber_line_distance_cylindrical",
-            "default": 1.2
-        },
-        "composite_round_segm": {
-            "stack_key": "",
-            "default_value": 16
-        },
-        "composite_round_radius": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "composite_round": {
-            "stack_key": "",
-            "default_value": 4
-        },
-        "composite_min_length": {
-            "stack_key": "reinforcement_min_fiber_line_length",
-            "default_value": 999999
-        },
-        "composite_bottom_skin": {
-            "stack_key": "reinforcement_bottom_skin_layers_cylindrical",
-            "default_value": 4,
-        },
-        "composite_top_skin": {
-            "stack_key": "reinforcement_top_skin_layers_cylindrical",
-            "default_value": 1
-        },
-        "composite_infill_type": {
-            "stack_key": "fiber_infill_pattern_cylindrical",
-            "default_value": 1
-        },
-        "composite_connect": {
-            "stack_key": "fiber_infill_round_connect_cylindrical",
-            "default_value": 0
-        },
-        "composite_layer_space": {
-            "stack_key": "reinforcement_intermediate_layers_cylindrical",
-            "default_value": 0
-        },
-        "composite_size": {
-            "stack_key": "fiber_infill_line_width",
-            "default": 1.2
-        },
-        "composite_walls_count": {
-            "stack_key": "reinforcement_wall_count_cylindrical",
-            "default": 0
-        },
-        "composite_infill_angle": {
-            "stack_key": "fiber_infill_angles_cylindrical",
-            "default": 45
-        },
-        "cli_quality": {
-            "stack_key": "",
-            "default_value": 4
-        },
-        "offset_type": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "outorder": {
-            "stack_key": "",
-            "default_value": "PORCIUDK"
-        },
-        "head_size": {
-            "stack_key": "",
-            "default_value": 0.01
-        },
-        "main_offset": {
-            "stack_key": "line_width",
-            "default_value": 0.4
-        },
-        "first_offset": {
-            "stack_key": "line_width",
-            "default_value": 0.2
-        },
-        "last_offset": {
-            "stack_key": "line_width",
-            "default_value": 0.2
-        },
-        "perimeter_count": {
-            "stack_key": "wall_line_count",
-            "default_value": 2
-        },
-        "infill_width": {
-            "stack_key": "infill_line_distance",
-            "default_value": 2
-        },
-        "infill_fast": {
-            "stack_key": "",
-            "default_value": 2
-        },
-        "infill_angle": {
-            "stack_key": "infill_angles",
-            "default_value": 45
-        },
-        "infill_shift": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "fdm_speed": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "units": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "keep_bounds": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "type": {
-            "stack_key": "",
-            "default_value": "C"
-        },
-        "upskin_width": {
-            "stack_key": "top_layers",
-            "default_value": 4
-        },
-        "downskin_width": {
-            "stack_key": "bottom_layers",
-            "default_value": 4
-        },
-        "infill_round_double": {
-          "stack_key": "infill_pattern",
-          "default_value": 0
-        },
-        "infill_round_connect": {
-          "stack_key": "zig_zaggify_infill",
-          "default_value": 0
-        },
-        "infill_round_width": {
-            "stack_key": "skin_line_width",
-            "default_value": 0.4
-        },
-        "split_layer_contours": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "infill_main_offset": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "3d_slicer_sweep_type": {
-            "stack_key": "printing_mode",
-            "default_value": 0
-        },
-        "3d_slicer_min_line_len": {
-            "stack_key": "",
-            "default_value": 0.1
-        },
-        "slicer3d_k": {
-            "stack_key": "",
-            "default_value": 0.9999
-        },
-        "slicer3d_sort_contours": {
-            "stack_key": "",
-            "default_value": 2
-        },
-        "slicer3d_delete_short_contours": {
-            "stack_key": "",
-            "default_value": 2
-        },
-        "out_export_separately": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "shell_round_double": {
-            "stack_key": "top_bottom_pattern",
-            "default_value": 0
-        },
-        "infill_skin_angle": {
-            "stack_key": "skin_angles",
-            "default_value": 45
-        },
-        "infill_angle_type": {
-            "stack_key": "",
-            "default_value": 0
-        }
-    },
-    "GCodeSupport": {
-        "first_offset": {
-            "stack_key": "support_offset_cylindrical",
-            "default_value": 0.7
-        },
-        "main_offset": {
-            "stack_key": "support_xy_distance_cylindrical",
-            "default_value": 0.1
-        },
-        "last_offset": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "perimeter_count": {
-            "stack_key": "support_wall_count",
-            "default_value": 0
-        },
-        "infill_width": {
-            "stack_key": "support_line_distance",
-            "default_value": 2.66
-        },
-        "infill_angle": {
-            "stack_key": "",
-            "default_value": "0;"
-        },
-        "infill_fast": {
-            "stack_key": "",
-            "default_value": 2
-        },
-        "upskin_width": {
-            "stack_key": "support_top_layers",
-            "default_value": 4
-        },
-        "downskin_width": {
-            "stack_key": "support_bottom_layers",
-            "default_value": 4
-        },
-        "infill_round_width": {
-            "stack_key": "support_line_width",
-            "default_value": 0.4
-        },
-        "infill_skin_angle": {
-            "stack_key": "",
-            "default_value": "[0;]"
-        }
-    },
-    "Support": {
-        "support_base_r": {
-            "stack_key": "cylindrical_mode_base_diameter",
-            "default_value": 3
-        },
-        "supportangle": {
-            "stack_key": "support_angle",
-            "default_value": 50
-        },
-        "customangle": {
-            "stack_key": "",
-            "default_value": 6
-        },
-    },
-    "SupportPattern": {
-        "cx": {
-            "stack_key": "",
-            "default_value": 10
-        },
-        "cy": {
-            "stack_key": "",
-            "default_value": 10
-        },
-        "k": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "spline": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "perimeter": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "perimeter_width": {
-            "stack_key": "",
-            "default_value": 0.5
-        },
-        "perimeter_step": {
-            "stack_key": "",
-            "default_value": 0.5
-        },
-        "perimeter_holes": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "hedge": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "hedgeinbody": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "bridgesheight": {
-            "stack_key": "",
-            "default_value": "_0.5"
-        },
-        "bridgesspaces": {
-            "stack_key": "",
-            "default_value": "_1"
-        },
-        "bridgesoffset": {
-            "stack_key": "",
-            "default_value": "_0"
-        },
-        "patternholes": {
-            "stack_key": "",
-            "default_value": ""
-        },
-        "holesheight": {
-            "stack_key": "",
-            "default_value": "_0.5"
-        },
-    },
-    "Interface": {
-        "show_jumps": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "show_normals": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "show_traces_as_boxes": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "boxes_size": {
-            "stack_key": "",
-            "default_value": 1
-        },
-        "normalize_when_load": {
-            "stack_key": "",
-            "default_value": 0
-        },
-        "Spotlight": {
-            "stack_key": "",
-            "default_value": 0
-        }
-
-    }
-}
+params_dict = [
+    ("Camera", [
+        ("xsize", [
+            ("stack_key", "machine_width"),
+            ("default_value", 200)
+        ]),
+        ("ysize", [
+            ("stack_key", "machine_depth"),
+            ("default_value", 200)
+        ]),
+        ("zsize", [
+            ("stack_key", "machine_height"),
+            ("default_value", 200)
+        ]),
+        ("rsize", [
+            ("stack_key", "machine_width"),
+            ("default_value", 100)
+        ]),
+        ("round", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("zones", [
+            ("stack_key", ""),
+            ("default_value", "")
+        ]),
+        ("segmentcount", [
+            ("stack_key", ""),
+            ("default_value", 32)
+        ]),
+        ("minimize_height", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("minimize_square", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("delta", [
+            ("stack_key", ""),
+            ("default_value", 0.5)
+        ]),
+        ("center", [
+            ("stack_key", "machine_center_is_zero"),
+            ("default_value", 1)
+        ]),
+        ("_shadows", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ])
+    ]),
+    ("Slice", [
+        ("z_step", [
+            ("stack_key", "cylindrical_layer_height"),
+            ("default_value", 0.2)
+        ]),
+        ("r_step", [
+            ("stack_key", "cylindrical_layer_height"),
+            ("default_value", 0.2)
+        ]),
+        ("r_step0", [
+            ("stack_key", "cylindrical_layer_height_0"),
+            ("default_value", 0.3)
+        ]),
+        ("r_start", [
+            ("stack_key", "cylindrical_mode_base_diameter"),
+            ("default_value", 3)
+        ]),
+        ("round", [
+            ("stack_key", "printing_mode"),
+            ("default_value", 1)
+        ]),
+        ("simplify_contours", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("support_model_delta_round", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("threads_round", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("3d_slice_type", [
+            ("stack_key", ""),
+            ("default_value", 3)
+        ]),
+        ("round_segments", [
+            ("stack_key", "cylindrical_round_segments"),
+            ("default_value", 64)
+        ]),
+        ("support_basement_only", [
+            ("stack_key", "support_type"),
+            ("default_value", 1)
+        ])
+    ]),
+    ("GCode", [
+        ("composite_layer_start", [
+            ("stack_key", "reinforcement_start_layer_cylindrical"),
+            ("default_value", 0)
+        ]),
+        ("composite_layer_count", [
+            ("stack_key", "reinforcement_layer_count_cylindrical"),
+            ("default_value", 2)
+        ]),
+        ("composite_width", [
+            ("stack_key", "fiber_line_distance_cylindrical"),
+            ("default_value", 1.2)
+        ]),
+        ("composite_offset", [
+            ("stack_key", "fiber_line_distance_cylindrical"),
+            ("default_value", 1.2)
+        ]),
+        ("composite_round_segm", [
+            ("stack_key", ""),
+            ("default_value", 16)
+        ]),
+        ("composite_round_radius", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("composite_round", [
+            ("stack_key", ""),
+            ("default_value", 4)
+        ]),
+        ("composite_min_length", [
+            ("stack_key", "reinforcement_min_fiber_line_length"),
+            ("default_value", 999999)
+        ]),
+        ("composite_bottom_skin", [
+            ("stack_key", "reinforcement_bottom_skin_layers_cylindrical"),
+            ("default_value", 4)
+        ]),
+        ("composite_top_skin", [
+            ("stack_key", "reinforcement_top_skin_layers_cylindrical"),
+            ("default_value", 1)
+        ]),
+        ("composite_infill_type", [
+            ("stack_key", "fiber_infill_pattern_cylindrical"),
+            ("default_value", 1)
+        ]),
+        ("composite_connect", [
+            ("stack_key", "fiber_infill_round_connect_cylindrical"),
+            ("default_value", 0)
+        ]),
+        ("composite_layer_space", [
+            ("stack_key", "reinforcement_intermediate_layers_cylindrical"),
+            ("default_value", 0)
+        ]),
+        ("composite_size", [
+            ("stack_key", "fiber_infill_line_width"),
+            ("default_value", 1.2)
+        ]),
+        ("composite_walls_count", [
+            ("stack_key", "reinforcement_wall_count_cylindrical"),
+            ("default_value", 0)
+        ]),
+        ("composite_infill_angle", [
+            ("stack_key", "fiber_infill_angles_cylindrical"),
+            ("default_value", 45)
+        ]),
+        ("cli_quality", [
+            ("stack_key", ""),
+            ("default_value", 4)
+        ]),
+        ("offset_type", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("outorder", [
+            ("stack_key", ""),
+            ("default_value", "PORCIUDK")
+        ]),
+        ("head_size", [
+            ("stack_key", ""),
+            ("default_value", 0.01)
+        ]),
+        ("main_offset", [
+            ("stack_key", "line_width"),
+            ("default_value", 0.4)
+        ]),
+        ("first_offset", [
+            ("stack_key", "line_width"),
+            ("default_value", 0.2)
+        ]),
+        ("last_offset", [
+            ("stack_key", "line_width"),
+            ("default_value", 0.2)
+        ]),
+        ("perimeter_count", [
+            ("stack_key", "wall_line_count"),
+            ("default_value", 2)
+        ]),
+        ("infill_width", [
+            ("stack_key", "infill_line_distance"),
+            ("default_value", 2)
+        ]),
+        ("infill_fast", [
+            ("stack_key", ""),
+            ("default_value", 2)
+        ]),
+        ("infill_angle", [
+            ("stack_key", "infill_angles"),
+            ("default_value", 45)
+        ]),
+        ("infill_shift", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("fdm_speed", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("units", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("keep_bounds", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("type", [
+            ("stack_key", ""),
+            ("default_value", "C")
+        ]),
+        ("upskin_width", [
+            ("stack_key", "top_layers"),
+            ("default_value", 4)
+        ]),
+        ("downskin_width", [
+            ("stack_key", "bottom_layers"),
+            ("default_value", 4)
+        ]),
+        ("infill_round_double", [
+            ("stack_key", "infill_pattern"),
+            ("default_value", 0)
+        ]),
+        ("infill_round_connect", [
+            ("stack_key", "zig_zaggify_infill"),
+            ("default_value", 0)
+        ]),
+        ("infill_round_width", [
+            ("stack_key", "skin_line_width"),
+            ("default_value", 0.4)
+        ]),
+        ("split_layer_contours", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("infill_main_offset", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("3d_slicer_sweep_type", [
+            ("stack_key", "printing_mode"),
+            ("default_value", 0)
+        ]),
+        ("3d_slicer_min_line_len", [
+            ("stack_key", ""),
+            ("default_value", 0.1)
+        ]),
+        ("slicer3d_k", [
+            ("stack_key", ""),
+            ("default_value", 0.9999)
+        ]),
+        ("slicer3d_sort_contours", [
+            ("stack_key", ""),
+            ("default_value", 2)
+        ]),
+        ("slicer3d_delete_short_contours", [
+            ("stack_key", ""),
+            ("default_value", 2)
+        ]),
+        ("out_export_separately", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("shell_round_double", [
+            ("stack_key", "top_bottom_pattern"),
+            ("default_value", 0)
+        ]),
+        ("infill_skin_angle", [
+            ("stack_key", "skin_angles"),
+            ("default_value", 45)
+        ]),
+        ("infill_angle_type", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ])
+    ]),
+    ("GCodeSupport", [
+        ("first_offset", [
+            ("stack_key", "support_offset_cylindrical"),
+            ("default_value", 0.7)
+        ]),
+        ("main_offset", [
+            ("stack_key", "support_xy_distance_cylindrical"),
+            ("default_value", 0.1)
+        ]),
+        ("last_offset", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("perimeter_count", [
+            ("stack_key", "support_wall_count"),
+            ("default_value", 0)
+        ]),
+        ("infill_width", [
+            ("stack_key", "support_line_distance"),
+            ("default_value", 2.66)
+        ]),
+        ("infill_angle", [
+            ("stack_key", ""),
+            ("default_value", "0;")
+        ]),
+        ("infill_fast", [
+            ("stack_key", ""),
+            ("default_value", 2)
+        ]),
+        ("upskin_width", [
+            ("stack_key", "support_top_layers"),
+            ("default_value", 4)
+        ]),
+        ("downskin_width", [
+            ("stack_key", "support_bottom_layers"),
+            ("default_value", 4)
+        ]),
+        ("infill_round_width", [
+            ("stack_key", "support_line_width"),
+            ("default_value", 0.4)
+        ]),
+        ("infill_skin_angle", [
+            ("stack_key", ""),
+            ("default_value", "[0;]")
+        ])
+    ]),
+    ("Support", [
+        ("support_base_r", [
+            ("stack_key", "cylindrical_mode_base_diameter"),
+            ("default_value", 3)
+        ]),
+        ("supportangle", [
+            ("stack_key", "support_angle"),
+            ("default_value", 50)
+        ]),
+        ("customangle", [
+            ("stack_key", ""),
+            ("default_value", 6)
+        ])
+    ]),
+    ("SupportPattern", [
+        ("cx", [
+            ("stack_key", ""),
+            ("default_value", 10)
+        ]),
+        ("cy", [
+            ("stack_key", ""),
+            ("default_value", 10)
+        ]),
+        ("k", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("spline", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("perimeter", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("perimeter_width", [
+            ("stack_key", ""),
+            ("default_value", 0.5)
+        ]),
+        ("perimeter_step", [
+            ("stack_key", ""),
+            ("default_value", 0.5)
+        ]),
+        ("perimeter_holes", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("hedge", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("hedgeinbody", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("bridgesheight", [
+            ("stack_key", ""),
+            ("default_value", "_0.5")
+        ]),
+        ("bridgesspaces", [
+            ("stack_key", ""),
+            ("default_value", "_1")
+        ]),
+        ("bridgesoffset", [
+            ("stack_key", ""),
+            ("default_value", "_0")
+        ]),
+        ("patternholes", [
+            ("stack_key", ""),
+            ("default_value", "")
+        ]),
+        ("holesheight", [
+            ("stack_key", ""),
+            ("default_value", "_0.5")
+        ]),
+    ]),
+    ("Interface", [
+        ("show_jumps", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("show_normals", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("show_traces_as_boxes", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("boxes_size", [
+            ("stack_key", ""),
+            ("default_value", 1)
+        ]),
+        ("normalize_when_load", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ]),
+        ("Spotlight", [
+            ("stack_key", ""),
+            ("default_value", 0)
+        ])
+    ])
+]
 
 class StartJobResult(IntEnum):
     Finished = 1
@@ -917,8 +930,9 @@ class StartSliceJob(Job):
         normalize = "normalize_when_load"
         sub = eltree.SubElement(root, "param", attrib={'NAME': normalize, 'PARAM': ''})
         sub.text = "0"
-        for region, params in params_dict.items():
-            for name, value in params.items():
+        for region, params in OrderedDict(params_dict).items():
+            for name, value in OrderedDict(params).items():
+                value = OrderedDict(value)
                 sub = eltree.SubElement(root, "param", attrib={'NAME': name, 'REGION': region, 'PARAM': ''})
                 setting_value = settings.get(value.get("stack_key", ""), None)
                 if setting_value is not None:
@@ -1161,10 +1175,10 @@ class StartSliceJob(Job):
             settings["reinforcement_start_layer"] = settings["reinforcement_start_layer_cylindrical"]
             settings["reinforcement_enabled"] = settings["reinforcement_enabled_cylindrical"]
             #settings["fiber_infill_pattern"] = settings["fiber_infill_pattern_cylindrical"]
-           #settings["fiber_density"] = settings["fiber_density_cylindrical"]
+            #settings["fiber_density"] = settings["fiber_density_cylindrical"]
             #settings["fiber_infill_round_connect"] = settings["fiber_infill_round_connect_cylindrical"]
             #settings["reinforcement_bottom_skin_layers"] = settings["reinforcement_bottom_skin_layers_cylindrical"]
-           # settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_cylindrical"]
+            #settings["reinforcement_top_skin_layers"] = settings["reinforcement_top_skin_layers_cylindrical"]
 
             settings["support_z_distance"] = settings["support_z_distance_cylindrical"]
             settings["support_top_distance"] = settings["support_top_distance_cylindrical"]
