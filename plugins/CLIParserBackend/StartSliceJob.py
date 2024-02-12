@@ -597,16 +597,15 @@ class StartSliceJob(Job):
                         per_object_stack = node.callDecoration("getStack")
                         is_non_printing_mesh = False
                         if per_object_stack:
-                            is_non_printing_mesh = any(
-                                per_object_stack.getProperty(key, "value") for key in NON_PRINTING_MESH_SETTINGS)
-
+                            is_non_printing_mesh = any(per_object_stack.getProperty(key, "value") for key in NON_PRINTING_MESH_SETTINGS)
                         # Find a reason not to add the node
                         if node.callDecoration("getBuildPlateNumber") != self._build_plate_number:
                             continue
                         if getattr(node, "_outside_buildarea", False) and not is_non_printing_mesh:
                             continue
 
-                        temp_list.append(node)
+                        if not per_object_stack.getProperty("anti_overhang_mesh", "value"):
+                            temp_list.append(node)
                         if not is_non_printing_mesh:
                             has_printing_mesh = True
 
