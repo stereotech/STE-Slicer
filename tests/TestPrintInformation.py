@@ -51,7 +51,7 @@ def test_setProjectName():
     # Test simple name
     project_name = ["HelloWorld",".3mf"]
     print_information.setProjectName(project_name[0] + project_name[1])
-     + project_name[0] == print_information._job_name
+    + project_name[0] == print_information._job_name
 
     # Test the name with one dot
     project_name = ["Hello.World",".3mf"]
